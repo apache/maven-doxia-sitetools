@@ -22,9 +22,9 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>doxia</artifactId>
+    <artifactId>doxia-site</artifactId>
     <groupId>org.apache.maven.doxia</groupId>
-    <version>1.0-alpha-9-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
   </parent>
   <artifactId>doxia-site-renderer</artifactId>
   <name>Doxia Site Renderer Component</name>
@@ -73,22 +73,19 @@ under the License.
       <artifactId>commons-collections</artifactId>
       <version>3.2</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-module-xhtml</artifactId>
-      <version>${projectVersion}</version>
-    </dependency>
     <!-- The modules are not in doxia core anymore so you have to state a dependency so that
          the component descriptor gets picked up. -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-module-apt</artifactId>
-      <version>${projectVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-module-xdoc</artifactId>
-      <version>${projectVersion}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-module-xhtml</artifactId>
+    </dependency>    
   </dependencies>
 </project>
