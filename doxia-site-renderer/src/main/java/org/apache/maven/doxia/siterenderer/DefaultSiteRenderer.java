@@ -78,7 +78,8 @@ import java.util.zip.ZipFile;
  * @version $Id:DefaultSiteRenderer.java 348612 2005-11-24 12:54:19 +1100 (Thu, 24 Nov 2005) brett $
  * @plexus.component role-hint="default"
  */
-public class DefaultSiteRenderer
+public class
+    DefaultSiteRenderer
     extends AbstractLogEnabled
     implements Renderer
 {
