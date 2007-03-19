@@ -20,7 +20,7 @@ package org.apache.maven.doxia.siterenderer;
  */
 
 import org.apache.maven.doxia.Doxia;
-import org.apache.maven.doxia.module.xhtml.RenderingContext;
+import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
