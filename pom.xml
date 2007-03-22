@@ -65,9 +65,9 @@ under the License.
     </mailingList>
   </mailingLists>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/doxia/doxia-site/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/doxia/doxia-site/trunk</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/doxia/doxia-site/trunk</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/trunk</developerConnection>
+    <url>http://svn.apache.org/viewcvs.cgi/maven/doxia/doxia-sitetools/trunk</url>
   </scm>
   <build>
     <plugins>
