@@ -181,6 +181,7 @@ public class
 
                 RenderingContext context = new RenderingContext( moduleBasedir, doc, module.getParserId() );
 
+                // DOXIA-111: we need a general filter here that knows how to alter the context
                 if ( doc.endsWith( ".vm" ) )
                 {
                     context.setAttribute( "velocity", "true" );
@@ -289,6 +290,7 @@ public class
         {
             Reader reader = null;
 
+            // DOXIA-111: the filter used here must be checked generally.
             if ( renderingContext.getAttribute( "velocity" ) != null )
             {
                 String resource = new File( fullPathDoc ).getAbsolutePath();
