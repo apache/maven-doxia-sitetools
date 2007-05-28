@@ -19,6 +19,11 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  * under the License.
  */
 
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.doxia.site.decoration.Banner;
 import org.apache.maven.doxia.site.decoration.Body;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
@@ -26,32 +31,21 @@ import org.apache.maven.doxia.site.decoration.LinkItem;
 import org.apache.maven.doxia.site.decoration.Logo;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.MenuItem;
-import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * Manage inheritance of the decoration model.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
  * @plexus.component role="org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler"
  */
-public class DefaultDecorationModelInheritanceAssembler
-    implements DecorationModelInheritanceAssembler
+public class DefaultDecorationModelInheritanceAssembler implements DecorationModelInheritanceAssembler
 {
     public void assembleModelInheritance( String name, DecorationModel child, DecorationModel parent,
                                           String childBaseUrl, String parentBaseUrl )
     {
-        String prefix = getParentPrefix( parentBaseUrl, childBaseUrl );
-
-        if ( !prefix.endsWith( "/" ) )
-        {
-            prefix += "/";
-        }
+        URLContainer urlContainer = new URLContainer( parentBaseUrl, childBaseUrl );
 
         // cannot inherit from null parent.
         if ( parent != null )
@@ -59,15 +53,14 @@ public class DefaultDecorationModelInheritanceAssembler
             if ( child.getBannerLeft() == null )
             {
                 child.setBannerLeft( parent.getBannerLeft() );
-
-                resolveBannerPaths( child.getBannerLeft(), prefix, parentBaseUrl );
+                resolveBannerPaths( child.getBannerLeft(), urlContainer );
             }
 
             if ( child.getBannerRight() == null )
             {
                 child.setBannerRight( parent.getBannerRight() );
 
-                resolveBannerPaths( child.getBannerRight(), prefix, parentBaseUrl );
+                resolveBannerPaths( child.getBannerRight(), urlContainer );
             }
 
             if ( child.getPublishDate() == null )
@@ -85,34 +78,33 @@ public class DefaultDecorationModelInheritanceAssembler
                 child.setSkin( parent.getSkin() );
             }
 
-            child.setPoweredBy(
-                mergePoweredByLists( child.getPoweredBy(), parent.getPoweredBy(), prefix, parentBaseUrl ) );
+            child.setPoweredBy( mergePoweredByLists( child.getPoweredBy(), parent.getPoweredBy(), urlContainer ) );
 
-            assembleBodyInheritance( name, childBaseUrl, child, parent, prefix, parentBaseUrl );
+            assembleBodyInheritance( name, child, parent, urlContainer );
 
             assembleCustomInheritance( child, parent );
         }
     }
 
-    public void resolvePaths( DecorationModel decoration, String baseUrl )
+    public void resolvePaths( final DecorationModel decoration, final String childBaseUrl )
     {
-        String prefix = ".";
+        URLContainer urlContainer = new URLContainer( null, childBaseUrl );
 
         if ( decoration.getBannerLeft() != null )
         {
-            resolveBannerPaths( decoration.getBannerLeft(), prefix, baseUrl );
+            resolveBannerPaths( decoration.getBannerLeft(), urlContainer );
         }
 
         if ( decoration.getBannerRight() != null )
         {
-            resolveBannerPaths( decoration.getBannerRight(), prefix, baseUrl );
+            resolveBannerPaths( decoration.getBannerRight(), urlContainer );
         }
 
         for ( Iterator i = decoration.getPoweredBy().iterator(); i.hasNext(); )
         {
             Logo logo = (Logo) i.next();
 
-            resolveLogoPaths( logo, prefix, baseUrl );
+            resolveLogoPaths( logo, urlContainer );
         }
 
         if ( decoration.getBody() != null )
@@ -121,48 +113,40 @@ public class DefaultDecorationModelInheritanceAssembler
             {
                 LinkItem linkItem = (LinkItem) i.next();
 
-                resolveLinkItemPaths( linkItem, prefix, baseUrl );
+                resolveLinkItemPaths( linkItem, urlContainer );
             }
 
             for ( Iterator i = decoration.getBody().getBreadcrumbs().iterator(); i.hasNext(); )
             {
                 LinkItem linkItem = (LinkItem) i.next();
 
-                resolveLinkItemPaths( linkItem, prefix, baseUrl );
+                resolveLinkItemPaths( linkItem, urlContainer );
             }
 
             for ( Iterator i = decoration.getBody().getMenus().iterator(); i.hasNext(); )
             {
                 Menu menu = (Menu) i.next();
 
-                resolveMenuPaths( menu.getItems(), prefix, baseUrl );
+                resolveMenuPaths( menu.getItems(), urlContainer );
             }
         }
     }
 
-    private void resolveBannerPaths( Banner banner, String prefix, String baseUrl )
+    /**
+     * Resolves all relative pathes between the elements in a banner. The banner element might contain relative pathes
+     * to the oldBaseUrl, these are changed to the newBannerUrl.
+     *
+     * @param banner
+     * @param prefix
+     * @param baseUrl
+     */
+    private void resolveBannerPaths( final Banner banner, final URLContainer urlContainer )
     {
         if ( banner != null )
         {
-            banner.setHref( resolvePath( banner.getHref(), prefix, baseUrl ) );
-            banner.setSrc( resolvePath( banner.getSrc(), prefix, baseUrl ) );
+            banner.setHref( convertPath( banner.getHref(), urlContainer ) );
+            banner.setSrc( convertPath( banner.getSrc(), urlContainer ) );
         }
-    }
-
-    private String resolvePath( String href, String prefix, String baseUrl )
-    {
-        String path = null;
-        if ( href != null )
-        {
-            String relativePath = getParentPrefix( href, baseUrl );
-
-            if ( relativePath.startsWith( "/" ) )
-            {
-                relativePath = relativePath.substring( 1 );
-            }
-            path = PathTool.calculateLink( relativePath, prefix );
-        }
-        return path;
     }
 
     private void assembleCustomInheritance( DecorationModel child, DecorationModel parent )
@@ -177,8 +161,8 @@ public class DefaultDecorationModelInheritanceAssembler
         }
     }
 
-    private void assembleBodyInheritance( String name, String childUrl, DecorationModel child, DecorationModel parent,
-                                          String prefix, String baseUrl )
+    private void assembleBodyInheritance( final String name, final DecorationModel child, final DecorationModel parent,
+                                          final URLContainer urlContainer )
     {
         Body cBody = child.getBody();
         Body pBody = parent.getBody();
@@ -205,27 +189,26 @@ public class DefaultDecorationModelInheritanceAssembler
                 cBody.setHead( Xpp3Dom.mergeXpp3Dom( (Xpp3Dom) cBody.getHead(), (Xpp3Dom) pBody.getHead() ) );
             }
 
-            cBody.setLinks( mergeLinkItemLists( cBody.getLinks(), pBody.getLinks(), prefix, baseUrl ) );
+            cBody.setLinks( mergeLinkItemLists( cBody.getLinks(), pBody.getLinks(), urlContainer ) );
 
             if ( cBody.getBreadcrumbs().isEmpty() && !pBody.getBreadcrumbs().isEmpty() )
             {
                 LinkItem breadcrumb = new LinkItem();
                 breadcrumb.setName( name );
-                breadcrumb.setHref( childUrl );
+                breadcrumb.setHref( urlContainer.getNewPath() );
                 cBody.getBreadcrumbs().add( breadcrumb );
             }
-            cBody.setBreadcrumbs(
-                mergeLinkItemLists( cBody.getBreadcrumbs(), pBody.getBreadcrumbs(), prefix, baseUrl ) );
+            cBody.setBreadcrumbs( mergeLinkItemLists( cBody.getBreadcrumbs(), pBody.getBreadcrumbs(), urlContainer ) );
 
-            cBody.setMenus( mergeMenus( cBody.getMenus(), pBody.getMenus(), prefix, baseUrl ) );
+            cBody.setMenus( mergeMenus( cBody.getMenus(), pBody.getMenus(), urlContainer ) );
         }
     }
 
-    private List mergeMenus( List dominant, List recessive, String prefix, String baseUrl )
+    private List mergeMenus( final List childMenus, final List parentMenus, final URLContainer urlContainer )
     {
         List menus = new ArrayList();
 
-        for ( Iterator it = dominant.iterator(); it.hasNext(); )
+        for ( Iterator it = childMenus.iterator(); it.hasNext(); )
         {
             Menu menu = (Menu) it.next();
 
@@ -233,7 +216,7 @@ public class DefaultDecorationModelInheritanceAssembler
         }
 
         int topCounter = 0;
-        for ( Iterator it = recessive.iterator(); it.hasNext(); )
+        for ( Iterator it = parentMenus.iterator(); it.hasNext(); )
         {
             Menu menu = (Menu) it.next();
 
@@ -242,48 +225,48 @@ public class DefaultDecorationModelInheritanceAssembler
                 menus.add( topCounter, menu );
                 topCounter++;
 
-                resolveMenuPaths( menu.getItems(), prefix, baseUrl );
+                resolveMenuPaths( menu.getItems(), urlContainer );
             }
             else if ( "bottom".equals( menu.getInherit() ) )
             {
                 menus.add( menu );
 
-                resolveMenuPaths( menu.getItems(), prefix, baseUrl );
+                resolveMenuPaths( menu.getItems(), urlContainer );
             }
         }
 
         return menus;
     }
 
-    private void resolveMenuPaths( List items, String prefix, String baseUrl )
+    private void resolveMenuPaths( final List items, final URLContainer urlContainer )
     {
         for ( Iterator i = items.iterator(); i.hasNext(); )
         {
             MenuItem item = (MenuItem) i.next();
-            resolveLinkItemPaths( item, prefix, baseUrl );
-            resolveMenuPaths( item.getItems(), prefix, baseUrl );
+            resolveLinkItemPaths( item, urlContainer );
+            resolveMenuPaths( item.getItems(), urlContainer );
         }
     }
 
-    private void resolveLinkItemPaths( LinkItem item, String prefix, String baseUrl )
+    private void resolveLinkItemPaths( LinkItem item, final URLContainer urlContainer )
     {
         if ( item.getHref() != null )
         {
-            item.setHref( resolvePath( item.getHref(), prefix, baseUrl ) );
+            item.setHref( convertPath( item.getHref(), urlContainer ) );
         }
         else
         {
-            item.setHref( "" );
+            item.setHref( convertPath( "", urlContainer ) );
         }
     }
 
-    private void resolveLogoPaths( Logo logo, String prefix, String baseUrl )
+    private void resolveLogoPaths( final Logo logo, final URLContainer urlContainer )
     {
-        logo.setImg( resolvePath( logo.getImg(), prefix, baseUrl ) );
-        resolveLinkItemPaths( logo, prefix, baseUrl );
+        logo.setImg( convertPath( logo.getImg(), urlContainer ) );
+        resolveLinkItemPaths( logo, urlContainer );
     }
 
-    private List mergeLinkItemLists( List childList, List parentList, String prefix, String baseUrl )
+    private List mergeLinkItemLists( final List childList, final List parentList, final URLContainer urlContainer )
     {
         List items = new ArrayList();
 
@@ -291,7 +274,7 @@ public class DefaultDecorationModelInheritanceAssembler
         {
             LinkItem item = (LinkItem) it.next();
 
-            resolveLinkItemPaths( item, prefix, baseUrl );
+            resolveLinkItemPaths( item, urlContainer );
 
             if ( !items.contains( item ) )
             {
@@ -312,7 +295,7 @@ public class DefaultDecorationModelInheritanceAssembler
         return items;
     }
 
-    private List mergePoweredByLists( List childList, List parentList, String prefix, String baseUrl )
+    private List mergePoweredByLists( final List childList, final List parentList, final URLContainer urlContainer )
     {
         List logos = new ArrayList();
 
@@ -325,7 +308,7 @@ public class DefaultDecorationModelInheritanceAssembler
                 logos.add( logo );
             }
 
-            resolveLogoPaths( logo, prefix, baseUrl );
+            resolveLogoPaths( logo, urlContainer );
         }
 
         for ( Iterator it = childList.iterator(); it.hasNext(); )
@@ -341,105 +324,44 @@ public class DefaultDecorationModelInheritanceAssembler
         return logos;
     }
 
-    private static String getParentPrefix( String parentUrl, String childUrl )
+    private String convertPath( final String relativePath, final URLContainer urlContainer )
     {
-        String prefix = parentUrl;
-
-        if ( childUrl.startsWith( parentUrl ) )
+        try
         {
-            prefix = getRelativePath( childUrl, parentUrl );
+            PathDescriptor oldPathDescriptor = new PathDescriptor( urlContainer.getOldPath(), relativePath );
+            PathDescriptor newPathDescriptor = new PathDescriptor( urlContainer.getNewPath(), "" );
 
-            String parentPath = "";
-            for ( StringTokenizer tok = new StringTokenizer( prefix, "/" ); tok.hasMoreTokens(); tok.nextToken() )
-            {
-                parentPath += "../";
-            }
-            prefix = parentPath;
+            PathDescriptor relativePathDescriptor = PathUtils.convertPath( oldPathDescriptor, newPathDescriptor );
+
+            return relativePathDescriptor.getLocation();
         }
-        else if ( parentUrl.startsWith( childUrl ) )
+        catch ( MalformedURLException mue )
         {
-            prefix = getRelativePath( parentUrl, childUrl );
+            throw new RuntimeException( "While converting Pathes:", mue );
         }
-/*
-        // [MSITE-62] This is to test the ../ relative paths, which I am inclined not to use
-        else
-        {
-            String[] parentSplit = splitUrl( parentUrl );
-            String[] childSplit = splitUrl( childUrl );
-
-            if ( parentSplit != null && childSplit != null )
-            {
-                if ( parentSplit[0].equals( childSplit[0] ) && parentSplit[1].equals( childSplit[1] ) )
-                {
-                    prefix = "";
-                    boolean mismatched = false;
-                    String parentPath = parentSplit[2].substring( 1 );
-                    String childPath = childSplit[2].substring( 1 );
-                    StringTokenizer tok = new StringTokenizer( childPath, "/" );
-                    while ( tok.hasMoreTokens() )
-                    {
-                        String part = tok.nextToken();
-
-                        if ( !mismatched && parentPath.startsWith( part ) )
-                        {
-                            parentPath = parentPath.substring( part.length() + 1 );
-                        }
-                        else
-                        {
-                            mismatched = true;
-                            prefix += "../";
-                        }
-                    }
-                    prefix += parentPath;
-                }
-            }
-        }
-*/
-
-        return prefix;
     }
 
-/* [MSITE-62] This is to test the ../ relative paths, which I am inclined not to use
-    private static String[] splitUrl( String url )
+    public final class URLContainer
     {
-        String[] retValue = null;
 
-        int protocolIndex = url.indexOf( "://" );
+        private final String oldPath;
 
-        if ( protocolIndex >= 0 )
+        private final String newPath;
+
+        public URLContainer( final String oldPath, final String newPath )
         {
-            String protocol = url.substring( 0, protocolIndex );
-
-            String host = url.substring( protocolIndex + 3 );
-
-            int pathIndex = host.indexOf( '/' );
-
-            if ( pathIndex >= 0 )
-            {
-                String path = host.substring( pathIndex );
-                host = host.substring( 0, pathIndex );
-                if ( host.length() == 0 && "file".equals( protocol ) )
-                {
-                    host = "localhost";
-                }
-
-                retValue = new String[3];
-                retValue[0] = protocol;
-                retValue[1] = host;
-                retValue[2] = path;
-            }
+            this.oldPath = oldPath;
+            this.newPath = newPath;
         }
-        return retValue;
-    }
-*/
 
-    private static String getRelativePath( String childUrl, String parentUrl )
-    {
-        String relative = childUrl.substring( parentUrl.length() );
-        if ( relative.startsWith( "/" ) )
+        public String getNewPath()
         {
-            relative = relative.substring( 1 );
+            return this.newPath;
         }
-        return relative;
+
+        public String getOldPath()
+        {
+            return this.oldPath;
+        }
     }
 }
