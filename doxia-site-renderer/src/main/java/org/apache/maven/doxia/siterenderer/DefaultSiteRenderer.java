@@ -33,42 +33,16 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.Os;
-import org.codehaus.plexus.util.PathTool;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.velocity.VelocityComponent;
+import org.codehaus.plexus.util.*;
 import org.codehaus.plexus.velocity.SiteResourceLoader;
+import org.codehaus.plexus.velocity.VelocityComponent;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.io.StringWriter;
-import java.io.StringReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.DateFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -79,24 +53,32 @@ import java.util.zip.ZipFile;
  * @plexus.component role-hint="default"
  */
 public class
-    DefaultSiteRenderer
-    extends AbstractLogEnabled
-    implements Renderer
+        DefaultSiteRenderer
+        extends AbstractLogEnabled
+        implements Renderer
 {
     // ----------------------------------------------------------------------
     // Requirements
     // ----------------------------------------------------------------------
 
-    /** @plexus.requirement */
+    /**
+     * @plexus.requirement
+     */
     private VelocityComponent velocity;
 
-    /** @plexus.requirement */
+    /**
+     * @plexus.requirement
+     */
     private SiteModuleManager siteModuleManager;
 
-    /** @plexus.requirement */
+    /**
+     * @plexus.requirement
+     */
     private Doxia doxia;
 
-    /** @plexus.requirement */
+    /**
+     * @plexus.requirement
+     */
     private I18N i18n;
 
     private static final String RESOURCE_DIR = "org/apache/maven/doxia/siterenderer/resources";
@@ -112,7 +94,7 @@ public class
     public void render( Collection documents,
                         SiteRenderingContext siteRenderingContext,
                         File outputDirectory )
-        throws RendererException, IOException
+            throws RendererException, IOException
     {
         renderModule( documents, siteRenderingContext, outputDirectory );
 
@@ -124,7 +106,7 @@ public class
     }
 
     public Map locateDocumentFiles( SiteRenderingContext siteRenderingContext )
-        throws IOException, RendererException
+            throws IOException, RendererException
     {
         Map files = new LinkedHashMap();
         Map moduleExcludes = siteRenderingContext.getModuleExcludes();
@@ -143,7 +125,7 @@ public class
                     if ( moduleExcludes != null && moduleExcludes.containsKey( module.getParserId() ) )
                     {
                         addModuleFiles( moduleBasedir, module, (String) moduleExcludes.get( module.getParserId() ),
-                                        files );
+                                files );
                     }
                     else
                     {
@@ -162,12 +144,12 @@ public class
                 if ( moduleExcludes != null && moduleExcludes.containsKey( module.getParserId() ) )
                 {
                     addModuleFiles( module.getBasedir(), siteModuleManager.getSiteModule( module.getParserId() ),
-                                    (String) moduleExcludes.get( module.getParserId() ), files );
+                            (String) moduleExcludes.get( module.getParserId() ), files );
                 }
                 else
                 {
                     addModuleFiles( module.getBasedir(), siteModuleManager.getSiteModule( module.getParserId() ), null,
-                                    files );
+                            files );
                 }
             }
             catch ( SiteModuleNotFoundException e )
@@ -182,11 +164,16 @@ public class
                                  SiteModule module,
                                  String excludes,
                                  Map files )
-        throws IOException, RendererException
+            throws IOException, RendererException
     {
         if ( moduleBasedir.exists() )
         {
-            List docs = FileUtils.getFileNames( moduleBasedir, "**/*." + module.getExtension(), excludes, false );
+            List docs = new ArrayList();
+
+            docs.addAll( FileUtils.getFileNames( moduleBasedir, "**/*." + module.getExtension(), excludes, false ) );
+
+            // download.apt.vm
+            docs.addAll( FileUtils.getFileNames( moduleBasedir, "**/*." + module.getExtension() + ".vm", excludes, false ) );
 
             for ( Iterator k = docs.iterator(); k.hasNext(); )
             {
@@ -194,13 +181,21 @@ public class
 
                 RenderingContext context = new RenderingContext( moduleBasedir, doc, module.getParserId() );
 
+                if ( doc.endsWith( ".vm" ) )
+                {
+                    context.setAttribute( "velocity", "true" );
+                }
+
                 String key = context.getOutputName();
 
                 if ( files.containsKey( key ) )
                 {
                     DocumentRenderer renderer = (DocumentRenderer) files.get( key );
+
                     RenderingContext originalContext = renderer.getRenderingContext();
+
                     File originalDoc = new File( originalContext.getBasedir(), originalContext.getInputName() );
+
                     throw new RendererException( "Files '" + doc + "' clashes with existing '" + originalDoc + "'." );
                 }
                 // -----------------------------------------------------------------------
@@ -212,12 +207,15 @@ public class
                     if ( entry.getKey().toString().toLowerCase().equals( key.toLowerCase() ) )
                     {
                         DocumentRenderer renderer = (DocumentRenderer) files.get( entry.getKey() );
+
                         RenderingContext originalContext = renderer.getRenderingContext();
+
                         File originalDoc = new File( originalContext.getBasedir(), originalContext.getInputName() );
+
                         if ( Os.isFamily( "windows" ) )
                         {
                             throw new RendererException(
-                                "Files '" + doc + "' clashes with existing '" + originalDoc + "'." );
+                                    "Files '" + doc + "' clashes with existing '" + originalDoc + "'." );
                         }
 
                         getLogger().warn( "Files '" + doc + "' could clashes with existing '" + originalDoc + "'." );
@@ -232,7 +230,7 @@ public class
     private void renderModule( Collection docs,
                                SiteRenderingContext siteRenderingContext,
                                File outputDirectory )
-        throws IOException, RendererException
+            throws IOException, RendererException
     {
         for ( Iterator i = docs.iterator(); i.hasNext(); )
         {
@@ -260,7 +258,7 @@ public class
                 getLogger().debug( "Generating " + outputFile );
 
                 OutputStreamWriter writer = new OutputStreamWriter( new FileOutputStream( outputFile ),
-                                                                    siteRenderingContext.getOutputEncoding() );
+                        siteRenderingContext.getOutputEncoding() );
 
                 try
                 {
@@ -281,7 +279,7 @@ public class
     public void renderDocument( Writer writer,
                                 RenderingContext renderingContext,
                                 SiteRenderingContext context )
-        throws RendererException, FileNotFoundException, UnsupportedEncodingException
+            throws RendererException, FileNotFoundException, UnsupportedEncodingException
     {
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
 
@@ -289,34 +287,38 @@ public class
 
         try
         {
-            Reader reader;
+            Reader reader = null;
 
-            String resource = new File( fullPathDoc ).getAbsolutePath();
-
-            try
+            if ( renderingContext.getAttribute( "velocity" ) != null )
             {
-                SiteResourceLoader.setResource( resource );
+                String resource = new File( fullPathDoc ).getAbsolutePath();
 
-                Context vc = createContext( sink, context );
+                try
+                {
+                    SiteResourceLoader.setResource( resource );
 
-                StringWriter sw = new StringWriter();
+                    Context vc = createContext( sink, context );
 
-                velocity.getEngine().mergeTemplate( resource, vc, sw );
+                    StringWriter sw = new StringWriter();
 
-                reader = new StringReader( sw.toString() );
+                    velocity.getEngine().mergeTemplate( resource, vc, sw );
+
+                    reader = new StringReader( sw.toString() );
+                }
+                catch ( Exception e )
+                {
+                    if ( getLogger().isDebugEnabled() )
+                    {
+                        getLogger().error( "Error parsing " + resource + " as a velocity template, using as text.", e );
+                    }
+                    else
+                    {
+                        getLogger().error( "Error parsing " + resource + " as a velocity template, using as text." );
+                    }
+                }
             }
-            catch ( Exception e )
+            else
             {
-                if ( getLogger().isDebugEnabled() )
-                {
-                    getLogger().error( "Error parsing " + resource + " as a velocity template, using as text.", e );
-                }
-                else
-                {
-                    getLogger().error( "Error parsing " + resource + " as a velocity template, using as text." );
-                }
-
-
                 reader = new InputStreamReader( new FileInputStream( fullPathDoc ), context.getInputEncoding() );
             }
 
@@ -331,7 +333,7 @@ public class
         catch ( ParseException e )
         {
             getLogger().error( "Error parsing " + fullPathDoc + ": line [" + e.getLineNumber() + "] " + e.getMessage(),
-                               e );
+                    e );
         }
         finally
         {
@@ -421,7 +423,7 @@ public class
     public void generateDocument( Writer writer,
                                   SiteRendererSink sink,
                                   SiteRenderingContext siteRenderingContext )
-        throws RendererException
+            throws RendererException
     {
         Context context = createContext( sink, siteRenderingContext );
 
@@ -431,7 +433,7 @@ public class
     private void writeTemplate( Writer writer,
                                 Context context,
                                 SiteRenderingContext siteContext )
-        throws RendererException
+            throws RendererException
     {
         ClassLoader old = null;
 
@@ -461,11 +463,13 @@ public class
         }
     }
 
-    /** @noinspection OverlyBroadCatchBlock,UnusedCatchParameter */
+    /**
+     * @noinspection OverlyBroadCatchBlock,UnusedCatchParameter
+     */
     private void processTemplate( String templateName,
                                   Context context,
                                   Writer writer )
-        throws RendererException
+            throws RendererException
     {
         Template template;
 
@@ -493,7 +497,7 @@ public class
                                                       DecorationModel decoration,
                                                       String defaultWindowTitle,
                                                       Locale locale )
-        throws IOException
+            throws IOException
     {
         SiteRenderingContext context = new SiteRenderingContext();
 
@@ -533,7 +537,7 @@ public class
                                                           DecorationModel decoration,
                                                           String defaultWindowTitle,
                                                           Locale locale )
-        throws MalformedURLException
+            throws MalformedURLException
     {
         SiteRenderingContext context = new SiteRenderingContext();
 
@@ -565,7 +569,7 @@ public class
     public void copyResources( SiteRenderingContext siteContext,
                                File resourcesDirectory,
                                File outputDirectory )
-        throws IOException
+            throws IOException
     {
         if ( siteContext.getSkinJarFile() != null )
         {
@@ -602,7 +606,7 @@ public class
         if ( siteContext.isUsingDefaultTemplate() )
         {
             InputStream resourceList = getClass().getClassLoader()
-                .getResourceAsStream( RESOURCE_DIR + "/resources.txt" );
+                    .getResourceAsStream( RESOURCE_DIR + "/resources.txt" );
 
             if ( resourceList != null )
             {
@@ -650,7 +654,7 @@ public class
     private void copyFileFromZip( ZipFile file,
                                   ZipEntry entry,
                                   File destFile )
-        throws IOException
+            throws IOException
     {
         FileOutputStream fos = new FileOutputStream( destFile );
 
@@ -673,7 +677,7 @@ public class
      */
     protected void copyDirectory( File source,
                                   File destination )
-        throws IOException
+            throws IOException
     {
         if ( source.exists() )
         {
