@@ -19,6 +19,10 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  * under the License.
  */
 
+import java.io.File;
+
+import org.codehaus.plexus.util.StringUtils;
+
 import junit.framework.TestCase;
 
 /**
@@ -26,10 +30,8 @@ import junit.framework.TestCase;
  *
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
  */
-
 public class PathDescriptorTest extends TestCase
 {
-
     public void testAbsPath() throws Exception
     {
         String path = "absolutePath";
@@ -293,8 +295,17 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        assertEquals( "wrong path", base + "/" + path, desc.getPath() );
-        assertEquals( "wrong location", base + "/" + path, desc.getLocation() );
+        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        {
+            String s = StringUtils.replace( new File( base + "/" + path ).toURL().toString(), "file:", "" );
+            assertEquals( "wrong path", s, desc.getPath() );
+            assertEquals( "wrong location", s, desc.getLocation() );
+        }
+        else
+        {
+            assertEquals( "wrong path", base + "/" + path, desc.getPath() );
+            assertEquals( "wrong location", base + "/" + path, desc.getLocation() );
+        }
     }
 
     public void testFileBaseRelPath() throws Exception
@@ -310,8 +321,17 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        assertEquals( "wrong path", base + "/" + path, desc.getPath() );
-        assertEquals( "wrong location", base + "/" + path, desc.getLocation() );
+        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        {
+            String s = StringUtils.replace( new File( base + "/" + path ).toURL().toString(), "file:", "" );
+            assertEquals( "wrong path", s, desc.getPath() );
+            assertEquals( "wrong location", s, desc.getLocation() );
+        }
+        else
+        {
+            assertEquals( "wrong path", base + "/" + path, desc.getPath() );
+            assertEquals( "wrong location", base + "/" + path, desc.getLocation() );
+        }
     }
 
     public void testFileBaseEmptyAbsPath() throws Exception
@@ -327,8 +347,17 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        assertEquals( "wrong path", base, desc.getPath() );
-        assertEquals( "wrong location", base, desc.getLocation() );
+        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        {
+            String s = StringUtils.replace( new File( base ).toURL().toString(), "file:", "" );
+            assertEquals( "wrong path", s, desc.getPath() );
+            assertEquals( "wrong location", s, desc.getLocation() );
+        }
+        else
+        {
+            assertEquals( "wrong path", base, desc.getPath() );
+            assertEquals( "wrong location", base, desc.getLocation() );
+        }
     }
 
     public void testFileBaseEmptyRelPath() throws Exception
@@ -344,8 +373,17 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        assertEquals( "wrong path", base, desc.getPath() );
-        assertEquals( "wrong location", base, desc.getLocation() );
+        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        {
+            String s = StringUtils.replace( new File( base ).toURL().toString(), "file:", "" );
+            assertEquals( "wrong path", s, desc.getPath() );
+            assertEquals( "wrong location", s, desc.getLocation() );
+        }
+        else
+        {
+            assertEquals( "wrong path", base, desc.getPath() );
+            assertEquals( "wrong location", base, desc.getLocation() );
+        }
     }
 
     public void testFileBaseNullPath() throws Exception
@@ -378,8 +416,17 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        assertEquals( "wrong path", base + "/" + path, desc.getPath() );
-        assertEquals( "wrong location", base + "/" + path, desc.getLocation() );
+        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        {
+            String s = StringUtils.replace( new File( base + "/" + path ).toURL().toString(), "file:", "" );
+            assertEquals( "wrong path", s, desc.getPath() );
+            assertEquals( "wrong location", s, desc.getLocation() );
+        }
+        else
+        {
+            assertEquals( "wrong path", base + "/" + path, desc.getPath() );
+            assertEquals( "wrong location", base + "/" + path, desc.getLocation() );
+        }
     }
 
     public void testPathBaseRelPath() throws Exception
@@ -395,8 +442,17 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        assertEquals( "wrong path", base + "/" + path, desc.getPath() );
-        assertEquals( "wrong location", base + "/" + path, desc.getLocation() );
+        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        {
+            String s = StringUtils.replace( new File( base + "/" + path ).toURL().toString(), "file:", "" );
+            assertEquals( "wrong path", s, desc.getPath() );
+            assertEquals( "wrong location", s, desc.getLocation() );
+        }
+        else
+        {
+            assertEquals( "wrong path", base + "/" + path, desc.getPath() );
+            assertEquals( "wrong location", base + "/" + path, desc.getLocation() );
+        }
     }
 
     public void testPathBaseEmptyAbsPath() throws Exception
@@ -412,8 +468,17 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        assertEquals( "wrong path", base, desc.getPath() );
-        assertEquals( "wrong location", base, desc.getLocation() );
+        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        {
+            String s = StringUtils.replace( new File( base ).toURL().toString(), "file:", "" );
+            assertEquals( "wrong path", s, desc.getPath() );
+            assertEquals( "wrong location", s, desc.getLocation() );
+        }
+        else
+        {
+            assertEquals( "wrong path", base, desc.getPath() );
+            assertEquals( "wrong location", base, desc.getLocation() );
+        }
     }
 
     public void testPathBaseEmptyRelPath() throws Exception
@@ -429,8 +494,17 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        assertEquals( "wrong path", base, desc.getPath() );
-        assertEquals( "wrong location", base, desc.getLocation() );
+        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        {
+            String s = StringUtils.replace( new File( base ).toURL().toString(), "file:", "" );
+            assertEquals( "wrong path", s, desc.getPath() );
+            assertEquals( "wrong location", s, desc.getLocation() );
+        }
+        else
+        {
+            assertEquals( "wrong path", base, desc.getPath() );
+            assertEquals( "wrong location", base, desc.getLocation() );
+        }
     }
 
     public void testPathBaseNullPath() throws Exception
@@ -446,7 +520,16 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        assertEquals( "wrong path", base, desc.getPath() );
-        assertEquals( "wrong location", base, desc.getLocation() );
+        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        {
+            String s = StringUtils.replace( new File( base ).toURL().toString(), "file:", "" );
+            assertEquals( "wrong path", s, desc.getPath() );
+            assertEquals( "wrong location", s, desc.getLocation() );
+        }
+        else
+        {
+            assertEquals( "wrong path", base, desc.getPath() );
+            assertEquals( "wrong location", base, desc.getLocation() );
+        }
     }
 }
