@@ -21,6 +21,7 @@ package org.apache.maven.doxia.siterenderer.sink;
 
 import org.apache.maven.doxia.module.xhtml.XhtmlSink;
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.sink.Sink;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -33,7 +34,7 @@ import java.util.List;
  */
 public class SiteRendererSink
     extends XhtmlSink
-    implements org.codehaus.doxia.sink.Sink
+    implements Sink
 {
     private String date = "";
 
