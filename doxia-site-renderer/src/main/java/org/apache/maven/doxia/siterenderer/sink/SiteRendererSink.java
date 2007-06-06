@@ -21,7 +21,7 @@ package org.apache.maven.doxia.siterenderer.sink;
 
 import org.apache.maven.doxia.module.xhtml.XhtmlSink;
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
-import org.apache.maven.doxia.sink.Sink;
+import org.codehaus.doxia.sink.Sink;
 
 import java.io.StringWriter;
 import java.io.Writer;
