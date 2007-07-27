@@ -106,5 +106,10 @@ under the License.
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-module-xhtml</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.4.3</version>
+    </dependency>
   </dependencies>
 </project>
