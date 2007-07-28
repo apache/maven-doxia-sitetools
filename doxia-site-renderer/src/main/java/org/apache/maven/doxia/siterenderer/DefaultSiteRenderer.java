@@ -651,6 +651,20 @@ public class
             copyDirectory( resourcesDirectory, outputDirectory );
         }
 
+        // Check for the existence of /css/site.css
+        File siteCssFile = new File( outputDirectory, "/css/site.css" );
+        if ( !siteCssFile.exists() )
+        {
+            // If it's not there - create an empty file, DOXIA-86
+            if ( getLogger().isDebugEnabled() )
+            {
+                getLogger().debug(
+                    "The file '" + siteCssFile.getAbsolutePath() + "' does not exists. Creating an empty file." );
+            }
+            FileWriter w = new FileWriter( siteCssFile );
+            w.write( "" );
+            IOUtil.close( w );
+        }
     }
 
     private void copyFileFromZip( ZipFile file,
