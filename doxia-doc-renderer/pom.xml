@@ -67,7 +67,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-core</artifactId>
-    </dependency>  
+    </dependency>
     <dependency>
       <groupId>com.lowagie</groupId>
       <artifactId>itext</artifactId>
@@ -86,7 +86,6 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.4.3</version>
     </dependency>
     <dependency>
       <groupId>xalan</groupId>

@@ -38,12 +38,12 @@ under the License.
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/DOXIA</url>
   </issueManagement>
-  
+
   <properties>
     <projectVersion>1.0-SNAPSHOT</projectVersion>
     <doxiaVersion>1.0-alpha-9-SNAPSHOT</doxiaVersion>
   </properties>
-  
+
   <mailingLists>
     <mailingList>
       <name>Doxia Developer List</name>
@@ -106,7 +106,7 @@ under the License.
         <groupId>org.apache.maven.doxia</groupId>
         <artifactId>doxia-core</artifactId>
         <version>${doxiaVersion}</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>org.apache.maven.doxia</groupId>
         <artifactId>doxia-module-apt</artifactId>
@@ -146,7 +146,7 @@ under the License.
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-utils</artifactId>
-        <version>1.4.1</version>
+        <version>1.4.4</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
