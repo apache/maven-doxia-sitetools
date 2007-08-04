@@ -70,7 +70,7 @@ under the License.
           <field-name>velocity</field-name>
         </requirement>
         <requirement>
-          <role>org.apache.maven.doxia.site.module.manager.SiteModuleManager</role>
+          <role>org.apache.maven.doxia.module.site.manager.SiteModuleManager</role>
           <field-name>siteModuleManager</field-name>
         </requirement>
         <requirement>
