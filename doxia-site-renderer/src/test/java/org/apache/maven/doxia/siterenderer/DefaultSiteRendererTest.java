@@ -48,7 +48,7 @@ import java.util.Map;
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @author <a href="mailto:evenisse@codehaus.org>Emmanuel Venisse</a>
- * @version $Id:DefaultSiteRendererTest.java 348612 2005-11-24 12:54:19 +1100 (Thu, 24 Nov 2005) brett $
+ * @version $Id$
  */
 public class DefaultSiteRendererTest
     extends PlexusTestCase
@@ -64,7 +64,7 @@ public class DefaultSiteRendererTest
         throws Exception
     {
         super.setUp();
-        
+
         renderer = (Renderer) lookup( Renderer.ROLE );
 
         // Safety
@@ -153,7 +153,7 @@ public class DefaultSiteRendererTest
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttributeValue( "name" ), "list_section" );
+        assertEquals( a.getAttributeValue( "name" ), "List_Section" );
 
         HtmlDivision div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
