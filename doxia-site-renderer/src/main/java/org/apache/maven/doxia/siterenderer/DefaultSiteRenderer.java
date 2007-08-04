@@ -24,9 +24,9 @@ import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.module.SiteModule;
-import org.apache.maven.doxia.site.module.manager.SiteModuleManager;
-import org.apache.maven.doxia.site.module.manager.SiteModuleNotFoundException;
+import org.apache.maven.doxia.module.site.SiteModule;
+import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
+import org.apache.maven.doxia.module.site.manager.SiteModuleNotFoundException;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -49,7 +49,8 @@ import java.util.zip.ZipFile;
 /**
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id:DefaultSiteRenderer.java 348612 2005-11-24 12:54:19 +1100 (Thu, 24 Nov 2005) brett $
+ * @version $Id$
+ * @since 1.0
  * @plexus.component role-hint="default"
  */
 public class
