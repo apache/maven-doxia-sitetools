@@ -308,7 +308,7 @@ public class DefaultSiteRenderer
 
                     StringWriter sw = new StringWriter();
 
-                    velocity.getEngine().mergeTemplate( resource, vc, sw );
+                    velocity.getEngine().mergeTemplate( resource, context.getInputEncoding(), vc, sw );
 
                     reader = new StringReader( sw.toString() );
                 }
