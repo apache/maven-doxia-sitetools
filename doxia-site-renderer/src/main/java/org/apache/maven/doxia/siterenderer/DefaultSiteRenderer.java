@@ -22,6 +22,7 @@ package org.apache.maven.doxia.siterenderer;
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 import org.apache.maven.doxia.parser.ParseException;
+import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.module.site.SiteModule;
@@ -53,10 +54,9 @@ import java.util.zip.ZipFile;
  * @since 1.0
  * @plexus.component role-hint="default"
  */
-public class
-        DefaultSiteRenderer
-        extends AbstractLogEnabled
-        implements Renderer
+public class DefaultSiteRenderer
+    extends AbstractLogEnabled
+    implements Renderer
 {
     // ----------------------------------------------------------------------
     // Requirements
@@ -92,6 +92,7 @@ public class
     // Renderer implementation
     // ----------------------------------------------------------------------
 
+    /** {@inheritDoc} */
     public void render( Collection documents,
                         SiteRenderingContext siteRenderingContext,
                         File outputDirectory )
@@ -106,6 +107,7 @@ public class
         }
     }
 
+    /** {@inheritDoc} */
     public Map locateDocumentFiles( SiteRenderingContext siteRenderingContext )
             throws IOException, RendererException
     {
@@ -278,6 +280,7 @@ public class
         }
     }
 
+    /** {@inheritDoc} */
     public void renderDocument( Writer writer,
                                 RenderingContext renderingContext,
                                 SiteRenderingContext context )
@@ -285,16 +288,17 @@ public class
     {
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
 
-        String fullPathDoc = new File( renderingContext.getBasedir(), renderingContext.getInputName() ).getPath();
+        File doc = new File( renderingContext.getBasedir(), renderingContext.getInputName() );
 
         try
         {
             Reader reader = null;
+            Parser parser = doxia.getParser( renderingContext.getParserId() );
 
             // DOXIA-111: the filter used here must be checked generally.
             if ( renderingContext.getAttribute( "velocity" ) != null )
             {
-                String resource = new File( fullPathDoc ).getAbsolutePath();
+                String resource = doc.getAbsolutePath();
 
                 try
                 {
@@ -322,7 +326,17 @@ public class
             }
             else
             {
-                reader = new InputStreamReader( new FileInputStream( fullPathDoc ), context.getInputEncoding() );
+                switch ( parser.getType() )
+                {
+                    case Parser.XML_TYPE:
+                        reader = ReaderFactory.newXmlReader( doc );
+                        break;
+
+                    case Parser.TXT_TYPE:
+                    case Parser.UNKNOWN_TYPE:
+                    default:
+                        reader = ReaderFactory.newReader( doc, context.getInputEncoding() );
+                }
             }
 
             doxia.parse( reader, renderingContext.getParserId(), sink );
@@ -331,12 +345,15 @@ public class
         }
         catch ( ParserNotFoundException e )
         {
-            throw new RendererException( "Error getting a parser for " + fullPathDoc + ": " + e.getMessage() );
+            throw new RendererException( "Error getting a parser for " + doc + ": " + e.getMessage() );
         }
         catch ( ParseException e )
         {
-            getLogger().error( "Error parsing " + fullPathDoc + ": line [" + e.getLineNumber() + "] " + e.getMessage(),
-                    e );
+            getLogger().error( "Error parsing " + doc + ": line [" + e.getLineNumber() + "] " + e.getMessage(), e );
+        }
+        catch ( IOException e )
+        {
+            getLogger().error( "Error parsing " + doc + " to detect encoding", e );
         }
         finally
         {
@@ -423,6 +440,7 @@ public class
         return context;
     }
 
+    /** {@inheritDoc} */
     public void generateDocument( Writer writer,
                                   SiteRendererSink sink,
                                   SiteRenderingContext siteRenderingContext )
@@ -495,6 +513,7 @@ public class
         }
     }
 
+    /** {@inheritDoc} */
     public SiteRenderingContext createContextForSkin( File skinFile,
                                                       Map attributes,
                                                       DecorationModel decoration,
@@ -534,6 +553,7 @@ public class
         return context;
     }
 
+    /** {@inheritDoc} */
     public SiteRenderingContext createContextForTemplate( File templateFile,
                                                           File skinFile,
                                                           Map attributes,
@@ -569,6 +589,7 @@ public class
         }
     }
 
+    /** {@inheritDoc} */
     public void copyResources( SiteRenderingContext siteContext,
                                File resourcesDirectory,
                                File outputDirectory )
