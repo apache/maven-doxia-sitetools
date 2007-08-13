@@ -23,7 +23,7 @@ under the License.
   <components>
     <component>
       <role>org.codehaus.plexus.velocity.VelocityComponent</role>
-      <role-hint>default</role-hint>
+      <role-hint>doxia-default</role-hint>
       <implementation>org.codehaus.plexus.velocity.DefaultVelocityComponent</implementation>
       <configuration>
         <properties>
@@ -69,6 +69,7 @@ under the License.
         <requirement>
           <role>org.codehaus.plexus.velocity.VelocityComponent</role>
           <field-name>velocity</field-name>
+          <role-hint>doxia-default</role-hint>
         </requirement>
         <requirement>
           <role>org.apache.maven.doxia.module.site.manager.SiteModuleManager</role>
