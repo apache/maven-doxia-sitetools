@@ -26,7 +26,7 @@ under the License.
     <p>This is a reference for the site decoration descriptor used in Doxia.</p>
     <p>An XSD is available at:</p>
     <ul>
-      <li><a href="http://maven.apache.org/decoration-1.0.0.xsd">http://maven.apache.org/decoration-1.0.0.xsd</a> for Maven 2.0.</li>
+      <li><a href="http://maven.apache.org/xsd/decoration-1.0.0.xsd">http://maven.apache.org/xsd/decoration-1.0.0.xsd</a> for Maven 2.0.</li>
     </ul>
   ]]></description>
   <defaults>
