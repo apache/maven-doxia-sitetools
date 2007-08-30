@@ -131,7 +131,6 @@ under the License.
     <xsl:template match="chapter/title/chunk|section/title/chunk"
         mode="body">
         <xsl:copy>
-            <xsl:apply-templates select="@*" mode="body" />
             <xsl:attribute name="localdestination">
                 <xsl:value-of select="generate-id(.)" />
             </xsl:attribute>
@@ -157,7 +156,6 @@ under the License.
     <!--  Update depth and numberdepth -->
     <xsl:template match="chapter" mode="body">
         <xsl:copy>
-            <xsl:apply-templates select="@*" mode="body" />
             <xsl:attribute name="depth">1</xsl:attribute>
             <xsl:attribute name="numberdepth">1</xsl:attribute>
             <xsl:apply-templates select="text()|*" mode="body" />
@@ -166,7 +164,6 @@ under the License.
 
     <xsl:template match="section" mode="body">
         <xsl:copy>
-            <xsl:apply-templates select="@*" mode="body" />
             <xsl:variable name="depth.from.context"
                 select="count(ancestor::*)" />
             <xsl:attribute name="depth">
