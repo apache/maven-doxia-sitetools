@@ -32,7 +32,7 @@ under the License.
   <artifactId>doxia-site</artifactId>
   <packaging>pom</packaging>
   <name>Doxia</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0-alpha-9-SNAPSHOT</version>
   <url>http://maven.apache.org/doxia</url>
   <issueManagement>
     <system>jira</system>
@@ -40,7 +40,7 @@ under the License.
   </issueManagement>
 
   <properties>
-    <projectVersion>1.0-SNAPSHOT</projectVersion>
+    <projectVersion>1.0-alpha-9-SNAPSHOT</projectVersion>
     <doxiaVersion>1.0-alpha-9-SNAPSHOT</doxiaVersion>
   </properties>
 
