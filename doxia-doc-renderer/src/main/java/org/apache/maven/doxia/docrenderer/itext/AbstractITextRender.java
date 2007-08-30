@@ -222,7 +222,7 @@ public abstract class AbstractITextRender
                             outTmp = outTmp.substring( 0, outTmp.lastIndexOf( "." ) );
 
                             String outRef = StringUtils.replace( tocItem.getRef(), "\\", "/" );
-                            if (outRef.lastIndexOf( "." )!= -1)
+                            if ( outRef.lastIndexOf( "." ) != -1 )
                             {
                                 outRef = outRef.substring( 0, outRef.lastIndexOf( "." ) );
                             }
@@ -400,11 +400,23 @@ public abstract class AbstractITextRender
      */
     private void addTransformerParameters( Transformer transformer, DocumentModel documentModel )
     {
-        transformer.setParameter( "title", documentModel.getMeta().getTitle() );
-        transformer.setParameter( "author", documentModel.getMeta().getAuthor() );
+        if ( documentModel.getMeta().getTitle() != null )
+        {
+            transformer.setParameter( "title", documentModel.getMeta().getTitle() );
+        }
+        if ( documentModel.getMeta().getAuthor() != null )
+        {
+            transformer.setParameter( "author", documentModel.getMeta().getAuthor() );
+        }
         transformer.setParameter( "creationdate", new Date().toString() );
-        transformer.setParameter( "subject", documentModel.getMeta().getSubject() );
-        transformer.setParameter( "keywords", documentModel.getMeta().getKeywords() );
+        if ( documentModel.getMeta().getSubject() != null )
+        {
+            transformer.setParameter( "subject", documentModel.getMeta().getSubject() );
+        }
+        if ( documentModel.getMeta().getKeywords() != null )
+        {
+            transformer.setParameter( "keywords", documentModel.getMeta().getKeywords() );
+        }
         transformer.setParameter( "producer", "Generated with Doxia by " + System.getProperty( "user.name" ) );
         if ( ITextUtil.isPageSizeSupported( documentModel.getMeta().getTitle() ) )
         {
@@ -416,7 +428,10 @@ public abstract class AbstractITextRender
         }
 
         transformer.setParameter( "frontPageHeader", "" );
-        transformer.setParameter( "frontPageTitle", documentModel.getMeta().getTitle() );
+        if ( documentModel.getMeta().getTitle() != null )
+        {
+            transformer.setParameter( "frontPageTitle", documentModel.getMeta().getTitle() );
+        }
         transformer.setParameter( "frontPageFooter", "Generated date " + new Date().toString() );
     }
 
