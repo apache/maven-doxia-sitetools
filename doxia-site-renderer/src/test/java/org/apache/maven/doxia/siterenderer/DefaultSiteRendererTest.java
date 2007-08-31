@@ -151,10 +151,6 @@ public class DefaultSiteRendererTest
         // Verify link
         // ----------------------------------------------------------------------
 
-        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertNotNull( a );
-        assertEquals( a.getAttributeValue( "name" ), "List_Section" );
-
         HtmlDivision div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
         assertEquals( div.getAttributeValue( "class" ), "section" );
@@ -162,6 +158,10 @@ public class DefaultSiteRendererTest
         HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
         assertNotNull( h2 );
         assertEquals( h2.asText(), "List Section" );
+
+        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
+        assertNotNull( a );
+        assertEquals( a.getAttributeValue( "name" ), "List_Section" );
 
         // ----------------------------------------------------------------------
         // Unordered lists
@@ -415,10 +415,6 @@ public class DefaultSiteRendererTest
         // Verify link
         // ----------------------------------------------------------------------
 
-        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertNotNull( a );
-        assertEquals( a.getAttributeValue( "name" ), "section_name" );
-
         HtmlDivision div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
         assertEquals( div.getAttributeValue( "class" ), "section" );
@@ -426,6 +422,10 @@ public class DefaultSiteRendererTest
         HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
         assertNotNull( h2 );
         assertEquals( h2.asText(), "section name" );
+
+        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
+        assertNotNull( a );
+        assertEquals( a.getAttributeValue( "name" ), "section_name" );
 
         // ----------------------------------------------------------------------
         // Paragraph
