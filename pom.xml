@@ -70,20 +70,6 @@ under the License.
     <url>http://svn.apache.org/viewcvs.cgi/maven/doxia/doxia-sitetools/trunk</url>
   </scm>
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-maven-plugin</artifactId>
-        <version>1.3.5</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
     <pluginManagement>
       <plugins>
         <plugin>
