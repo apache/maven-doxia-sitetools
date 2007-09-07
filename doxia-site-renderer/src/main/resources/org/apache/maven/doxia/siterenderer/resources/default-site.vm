@@ -302,10 +302,15 @@
     <meta http-equiv="Content-Type" content="text/html; charset=${outputEncoding}" />
     #if ( $decoration.body.head )
       #foreach( $item in $decoration.body.head.getChildren() )
+        ## Workaround for DOXIA-150 due to a non-desired behaviour in p-u
+        ## @see org.codehaus.plexus.util.xml.Xpp3Dom#toString()
+        ## @see org.codehaus.plexus.util.xml.Xpp3Dom#toUnescapedString()
+        #set ( $documentHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" )
+        #set ( $documentHeader = $documentHeader.replaceAll( "\\", "" ) )
         #if ( $item.name == "script" )
-          $item.toUnescapedString()
+          $StringUtils.replace( $item.toUnescapedString(), $documentHeader, "" )
         #else
-          $item.toString()
+          $StringUtils.replace( $item.toString(), $documentHeader, "" )
         #end
       #end
     #end
