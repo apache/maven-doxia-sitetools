@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <groupId>org.apache.maven.doxia</groupId>
-  <artifactId>doxia-site</artifactId>
+  <artifactId>doxia-sitetools</artifactId>
   <version>1.0-alpha-9-SNAPSHOT</version>
   <packaging>pom</packaging>
 
