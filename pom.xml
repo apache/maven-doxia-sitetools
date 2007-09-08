@@ -36,7 +36,7 @@ under the License.
   <url>http://maven.apache.org/doxia</url>
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.codehaus.org/browse/DOXIA</url>
+    <url>http://jira.codehaus.org/browse/DOXIASITE</url>
   </issueManagement>
 
   <properties>
