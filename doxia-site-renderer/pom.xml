@@ -28,6 +28,7 @@ under the License.
   </parent>
   <artifactId>doxia-site-renderer</artifactId>
   <name>Doxia Site Renderer Component</name>
+  <description>The Site Renderer handles the rendering of sites.</description>
   <contributors>
     <contributor>
       <name>Vincent Siveton</name>
