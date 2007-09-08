@@ -677,7 +677,16 @@ public class DefaultSiteRenderer
         File siteCssFile = new File( outputDirectory, "/css/site.css" );
         if ( !siteCssFile.exists() )
         {
-            // If it's not there - create an empty file, DOXIA-86
+            // Create the subdirectory css if it doesn't exist, DOXIA-151
+            File cssDirectory = new File( outputDirectory, "/css/" );
+            boolean created = cssDirectory.mkdirs();
+            if ( created && getLogger().isDebugEnabled() )
+            {
+                getLogger().debug(
+                    "The directory '" + cssDirectory.getAbsolutePath() + "' did not exist. It was created." );
+            }
+
+            // If the file is not there - create an empty file, DOXIA-86
             if ( getLogger().isDebugEnabled() )
             {
                 getLogger().debug(
