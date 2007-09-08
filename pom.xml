@@ -39,7 +39,7 @@ under the License.
   <url>http://maven.apache.org/doxia/doxia-sitetools</url>
 
   <properties>
-    <projectVersion>1.0-alpha-9-SNAPSHOT</projectVersion>
+    <projectVersion>${project.version}</projectVersion>
     <doxiaVersion>1.0-alpha-9-SNAPSHOT</doxiaVersion>
   </properties>
 
