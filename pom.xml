@@ -88,7 +88,7 @@ under the License.
 
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.codehaus.org/browse/DOXIASITE</url>
+    <url>http://jira.codehaus.org/browse/DOXIASITETOOLS</url>
   </issueManagement>
 
   <scm>
