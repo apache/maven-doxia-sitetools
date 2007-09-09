@@ -40,7 +40,7 @@ under the License.
 
   <properties>
     <projectVersion>${project.version}</projectVersion>
-    <doxiaVersion>1.0-alpha-9-SNAPSHOT</doxiaVersion>
+    <doxiaVersion>1.0-alpha-9</doxiaVersion>
   </properties>
 
   <mailingLists>
@@ -100,6 +100,13 @@ under the License.
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <tagBase>https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/tags</tagBase>
+          </configuration>
+        </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.3</version>
