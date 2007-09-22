@@ -166,6 +166,10 @@ public class DefaultSiteRendererTest
         // ----------------------------------------------------------------------
         // Unordered lists
         // ----------------------------------------------------------------------
+        div = (HtmlDivision) elementIterator.next();
+        assertNotNull( div );
+        assertEquals( div.getAttributeValue( "class" ), "section" );
+
         HtmlHeader4 h4 = (HtmlHeader4) elementIterator.next();
         assertNotNull( h4 );
         assertEquals( h4.asText(), "Unordered lists" );
@@ -250,6 +254,10 @@ public class DefaultSiteRendererTest
         // ----------------------------------------------------------------------
         // Ordered lists
         // ----------------------------------------------------------------------
+        div = (HtmlDivision) elementIterator.next();
+        assertNotNull( div );
+        assertEquals( div.getAttributeValue( "class" ), "section" );
+
         h4 = (HtmlHeader4) elementIterator.next();
         assertNotNull( h4 );
         assertEquals( h4.asText(), "Ordered lists" );
@@ -331,6 +339,10 @@ public class DefaultSiteRendererTest
         // ----------------------------------------------------------------------
         // Definition lists
         // ----------------------------------------------------------------------
+        div = (HtmlDivision) elementIterator.next();
+        assertNotNull( div );
+        assertEquals( div.getAttributeValue( "class" ), "section" );
+
         h4 = (HtmlHeader4) elementIterator.next();
         assertNotNull( h4 );
         assertEquals( h4.asText(), "Definition lists" );
