@@ -21,12 +21,15 @@ package org.apache.maven.doxia.siterenderer.sink;
 
 import org.apache.maven.doxia.module.xhtml.XhtmlSink;
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
-import org.codehaus.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.util.HtmlTools;
 
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.text.html.HTML.Tag;
 
 /**
  * @author <a href="mailto:evenisse@codehaus.org>Emmanuel Venisse</a>
@@ -151,4 +154,69 @@ public class SiteRendererSink
     {
         setHeadFlag( true );
     }
+
+    /**
+     * Sets the head flag to true so the title text is buffered until the closing tag.
+     */
+    public void sectionTitle1()
+    {
+        setHeadFlag( true );
+    }
+
+    /**
+     * Writes out a sectionTitle1 block, including an anchor that is constructed from the
+     * buffered title text via {@link org.apache.maven.doxia.util.HtmlTools#encodeId(String)}.
+     */
+    public void sectionTitle1_()
+    {
+        String sectionTitle = "";
+
+        if ( getBuffer().length() > 0 )
+        {
+            sectionTitle = getBuffer().toString();
+        }
+
+        resetBuffer();
+
+        setHeadFlag( false );
+
+        writeStartTag( Tag.H2 );
+        anchor( HtmlTools.encodeId( sectionTitle ) );
+        anchor_();
+        text( sectionTitle );
+        writeEndTag( Tag.H2 );
+    }
+
+    /**
+     * Sets the head flag to true so the title text is buffered until the closing tag.
+     */
+    public void sectionTitle2()
+    {
+        setHeadFlag( true );
+    }
+
+    /**
+     * Writes out a sectionTitle2 block, including an anchor that is constructed from the
+     * buffered title text via {@link org.apache.maven.doxia.util.HtmlTools#encodeId(String)}.
+     */
+    public void sectionTitle2_()
+    {
+        String sectionTitle = "";
+
+        if ( getBuffer().length() > 0 )
+        {
+            sectionTitle = getBuffer().toString();
+        }
+
+        resetBuffer();
+
+        setHeadFlag( false );
+
+        writeStartTag( Tag.H3 );
+        anchor( HtmlTools.encodeId( sectionTitle ) );
+        anchor_();
+        text( sectionTitle );
+        writeEndTag( Tag.H3 );
+    }
+
 }
