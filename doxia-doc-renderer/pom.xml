@@ -70,13 +70,17 @@ under the License.
       <artifactId>doxia-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-sink-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.lowagie</groupId>
       <artifactId>itext</artifactId>
       <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-i18n</artifactId>
+      <artifactId>plexus-container-default</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
