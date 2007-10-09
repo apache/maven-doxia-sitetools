@@ -137,9 +137,8 @@ public class ITextPdfRenderer
 
                 String fullDocPath = getBaseDir() + File.separator
                             + module.getSourceDirectory() + File.separator + key;
-                System.err.println( "fullDocPath: " + fullDocPath );
+
                 String iTextFileName = key.substring( 0, key.indexOf( "." ) + 1 ) + "xml";
-                System.err.println( "iTextFileName: " + iTextFileName );
 
                 File iTextFile = new File( outputDirectory, iTextFileName );
                 if ( !iTextFile.getParentFile().exists() )
@@ -148,7 +147,6 @@ public class ITextPdfRenderer
                 }
 
                 String pdfFileName = key.substring( 0, key.indexOf( "." ) + 1 ) + getOutputExtension();
-                System.err.println( "pdfFileName: " + pdfFileName );
 
                 File pdfFile = new File( outputDirectory, pdfFileName );
                 if ( !pdfFile.getParentFile().exists() )
