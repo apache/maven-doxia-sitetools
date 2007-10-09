@@ -25,26 +25,26 @@ package org.apache.maven.doxia.docrenderer;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  */
-public class DocRendererException
+public class DocumentRendererException
     extends Exception
 {
     /**
-     * Default constructor
+     * Default constructor.
      *
-     * @param message
+     * @param message An error message.
      */
-    public DocRendererException( String message )
+    public DocumentRendererException( String message )
     {
         super( message );
     }
 
     /**
-     * Other constructor
+     * Other constructor.
      *
-     * @param message
-     * @param t
+     * @param message An error message.
+     * @param t The cause.
      */
-    public DocRendererException( String message, Throwable t )
+    public DocumentRendererException( String message, Throwable t )
     {
         super( message, t );
     }

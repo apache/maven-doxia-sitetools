@@ -24,7 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.maven.doxia.docrenderer.DocRendererException;
+import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.module.itext.ITextUtil;
 
 /**
@@ -50,7 +50,7 @@ public class DefaultPdfRenderer
      * @see org.apache.maven.doxia.docrenderer.itext.AbstractITextRender#generateOutput(java.io.File, java.io.File)
      */
     public void generateOutput( File iTextFile, File iTextOutput )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         getLogger().debug( "Writing : " + iTextOutput );
         try
@@ -59,7 +59,7 @@ public class DefaultPdfRenderer
         }
         catch ( RuntimeException e )
         {
-            throw new DocRendererException( "Error writing PDF from " + iTextOutput + ": " + e.getMessage() );
+            throw new DocumentRendererException( "Error writing PDF from " + iTextOutput + ": " + e.getMessage() );
         }
     }
 }

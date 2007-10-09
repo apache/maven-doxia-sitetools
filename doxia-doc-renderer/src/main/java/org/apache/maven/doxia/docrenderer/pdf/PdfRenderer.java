@@ -22,7 +22,7 @@ package org.apache.maven.doxia.docrenderer.pdf;
 import java.io.File;
 
 import org.apache.maven.doxia.docrenderer.DocumentRenderer;
-import org.apache.maven.doxia.docrenderer.DocRendererException;
+import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 
 /**
  * PDF renderer interface.
@@ -40,8 +40,8 @@ public interface PdfRenderer extends DocumentRenderer
      *
      * @param inputFile eg a fo or an itext file.
      * @param pdfFile the pdf file to generate.
-     * @throws DocRendererException if any.
+     * @throws DocumentRendererException if any.
      */
    void generatePdf( File inputFile, File pdfFile )
-        throws DocRendererException;
+        throws DocumentRendererException;
 }

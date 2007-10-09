@@ -82,11 +82,11 @@ public abstract class AbstractDocumentRenderer
      *
      * @param documentModel the document model, containing all the metadata, etc.
      *
-     * @throws DocRendererException if any
+     * @throws DocumentRendererException if any
      * @throws IOException if any
      */
     public abstract void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
-        throws DocRendererException, IOException;
+        throws DocumentRendererException, IOException;
 
       //--------------------------------------------
      //
@@ -94,14 +94,14 @@ public abstract class AbstractDocumentRenderer
 
     /** {@inheritDoc} */
     public void render( Collection files, File outputDirectory, DocumentModel documentModel )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         render( getFilesToProcess( files ), outputDirectory, documentModel );
     }
 
     /** {@inheritDoc} */
     public void render( File baseDirectory, File outputDirectory, DocumentModel documentModel )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         render( getFilesToProcess( baseDirectory ), outputDirectory, documentModel );
     }
@@ -115,11 +115,11 @@ public abstract class AbstractDocumentRenderer
      *
      * @param outputDirectory the output directory where the document should be generated.
      *
-     * @throws DocRendererException if any
+     * @throws DocumentRendererException if any
      * @throws IOException if any
      */
     public void render( File baseDirectory, File outputDirectory )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         render( baseDirectory, outputDirectory, new DocumentModel() );
     }
@@ -135,11 +135,11 @@ public abstract class AbstractDocumentRenderer
      * @param documentDescriptor a file containing the document model.
      *              If this file does not exist or is null, some default settings will be used.
      *
-     * @throws DocRendererException if any
+     * @throws DocumentRendererException if any
      * @throws IOException if any
      */
     public void render( File baseDirectory, File outputDirectory, File documentDescriptor )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         if ( ( documentDescriptor == null ) || ( !documentDescriptor.exists() ) )
         {
@@ -249,7 +249,7 @@ public abstract class AbstractDocumentRenderer
 
     /** {@inheritDoc} */
     public DocumentModel readDocumentModel( File documentDescriptor )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         DocumentModel documentModel;
 
@@ -259,7 +259,7 @@ public abstract class AbstractDocumentRenderer
         }
         catch ( XmlPullParserException e )
         {
-            throw new DocRendererException( "Error parsing document descriptor", e );
+            throw new DocumentRendererException( "Error parsing document descriptor", e );
         }
 
         return documentModel;
@@ -295,11 +295,11 @@ public abstract class AbstractDocumentRenderer
      * @param fullDocPath absolute path to the source document.
      * @param parserId determines the parser to use.
      * @param sink the sink to receive the events.
-     * @throws DocRendererException in case of a parsing error.
+     * @throws DocumentRendererException in case of a parsing error.
      * @throws IOException if the source document cannot be opened.
      */
     protected void parse( String fullDocPath, String parserId, Sink sink )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         try
         {
@@ -309,12 +309,12 @@ public abstract class AbstractDocumentRenderer
         }
         catch ( ParserNotFoundException e )
         {
-            throw new DocRendererException( "No parser '" + parserId
+            throw new DocumentRendererException( "No parser '" + parserId
                         + "' found for " + fullDocPath + ": " + e.getMessage() );
         }
         catch ( ParseException e )
         {
-            throw new DocRendererException( "Error parsing " + fullDocPath + ": " + e.getMessage(), e );
+            throw new DocumentRendererException( "Error parsing " + fullDocPath + ": " + e.getMessage(), e );
         }
         finally
         {

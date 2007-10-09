@@ -42,7 +42,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.maven.doxia.docrenderer.DocRendererException;
+import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.document.DocumentModel;
 import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
 import org.apache.maven.doxia.module.itext.ITextSink;
@@ -85,10 +85,10 @@ public class ITextPdfRenderer
      *
      * @param iTextFile the iText file.
      * @param pdfFile the target PDF file.
-     * @throws DocRendererException In case of a conversion problem.
+     * @throws DocumentRendererException In case of a conversion problem.
      */
     public void generatePdf( File iTextFile, File pdfFile )
-        throws DocRendererException
+        throws DocumentRendererException
     {
         getLogger().debug( "Generating : " + pdfFile );
 
@@ -98,17 +98,17 @@ public class ITextPdfRenderer
         }
         catch ( IOException e )
         {
-            throw new DocRendererException( "Cannot create PDF from " + iTextFile + ": " + e.getMessage(), e );
+            throw new DocumentRendererException( "Cannot create PDF from " + iTextFile + ": " + e.getMessage(), e );
         }
         catch ( RuntimeException e )
         {
-            throw new DocRendererException( "Error creating PDF from " + iTextFile + ": " + e.getMessage(), e );
+            throw new DocumentRendererException( "Error creating PDF from " + iTextFile + ": " + e.getMessage(), e );
         }
     }
 
     /** {@inheritDoc} */
     public void render( Map files, File outputDirectory, DocumentModel model )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         String outputName = model.getOutputName();
 
@@ -182,11 +182,11 @@ public class ITextPdfRenderer
      * @param fullDocPath absolute path to the source document.
      * @param module the site module associated with the source document (determines the parser to use).
      * @param iTextFile the resulting iText xml file.
-     * @throws DocRendererException in case of a parsing problem.
+     * @throws DocumentRendererException in case of a parsing problem.
      * @throws IOException if the source and/or target document cannot be opened.
      */
     private void parse( String fullDocPath, SiteModule module, File iTextFile )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         ITextSink sink = new ITextSink( new FileWriter( iTextFile ) );
 
@@ -202,11 +202,11 @@ public class ITextPdfRenderer
      *
      * @param iTextFiles list of iText xml files.
      * @return Document.
-     * @throws DocRendererException if any.
+     * @throws DocumentRendererException if any.
      * @throws IOException if any.
      */
     private Document generateDocument( List iTextFiles )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         Document document;
 
@@ -216,7 +216,7 @@ public class ITextPdfRenderer
         }
         catch ( ParserConfigurationException e )
         {
-            throw new DocRendererException( "Error building document :" + e.getMessage() );
+            throw new DocumentRendererException( "Error building document :" + e.getMessage() );
         }
 
         document.appendChild( document.createElement( ElementTags.ITEXT ) ); // Used only to set a root
@@ -233,11 +233,11 @@ public class ITextPdfRenderer
             }
             catch ( SAXException e )
             {
-                throw new DocRendererException( "SAX Error : " + e.getMessage() );
+                throw new DocumentRendererException( "SAX Error : " + e.getMessage() );
             }
             catch ( ParserConfigurationException e )
             {
-                throw new DocRendererException( "Error parsing configuration : " + e.getMessage() );
+                throw new DocumentRendererException( "Error parsing configuration : " + e.getMessage() );
             }
 
             // Only one chapter per doc
@@ -249,7 +249,7 @@ public class ITextPdfRenderer
             }
             catch ( DOMException e )
             {
-                throw new DocRendererException( "Error appending chapter for " + iTextFile + " : " + e.getMessage() );
+                throw new DocumentRendererException( "Error appending chapter for " + iTextFile + " : " + e.getMessage() );
             }
         }
 
@@ -260,10 +260,10 @@ public class ITextPdfRenderer
      * Initialize the transformer object.
      *
      * @return an instance of a transformer object.
-     * @throws DocRendererException if any.
+     * @throws DocumentRendererException if any.
      */
     private Transformer initTransformer()
-        throws DocRendererException
+        throws DocumentRendererException
     {
         try
         {
@@ -284,12 +284,12 @@ public class ITextPdfRenderer
         }
         catch ( TransformerConfigurationException e )
         {
-            throw new DocRendererException( "Error configuring Transformer for " + XSLT_RESOURCE + ": "
+            throw new DocumentRendererException( "Error configuring Transformer for " + XSLT_RESOURCE + ": "
                 + e.getMessage() );
         }
         catch ( IllegalArgumentException e )
         {
-            throw new DocRendererException( "Error configuring Transformer for " + XSLT_RESOURCE + ": "
+            throw new DocumentRendererException( "Error configuring Transformer for " + XSLT_RESOURCE + ": "
                 + e.getMessage() );
         }
     }
@@ -351,10 +351,10 @@ public class ITextPdfRenderer
      * @param documentModel the DocumentModel to take the parameters from.
      * @param document the Document to transform.
      * @param iTextFile the resulting iText xml file.
-     * @throws DocRendererException in case of a transformation error.
+     * @throws DocumentRendererException in case of a transformation error.
      */
     private void transform( DocumentModel documentModel, Document document, File iTextFile )
-        throws DocRendererException
+        throws DocumentRendererException
     {
         Transformer transformer = initTransformer();
 
@@ -366,7 +366,7 @@ public class ITextPdfRenderer
         }
         catch ( TransformerException e )
         {
-            throw new DocRendererException( "Error transforming Document " + document + ": " + e.getMessage() );
+            throw new DocumentRendererException( "Error transforming Document " + document + ": " + e.getMessage() );
         }
     }
 }

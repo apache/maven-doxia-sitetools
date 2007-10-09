@@ -27,6 +27,7 @@ import java.io.IOException;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
+ * @deprecated Use {@link DocumentRenderer} instead.
  */
 public interface DocRenderer
 {
@@ -37,11 +38,11 @@ public interface DocRenderer
      *
      * @param siteDirectory the input directory contains files to be generated
      * @param outputDirectory the output directory where files are generated
-     * @throws DocRendererException if any
+     * @throws DocumentRendererException if any
      * @throws IOException if any
      */
     void render( File siteDirectory, File outputDirectory )
-        throws DocRendererException, IOException;
+        throws DocumentRendererException, IOException;
 
     /**
      * Render a document depending a context and a document descriptor
@@ -49,11 +50,11 @@ public interface DocRenderer
      * @param siteDirectory the input directory contains files to be generated
      * @param outputDirectory the output directory where file are generated
      * @param documentDescriptor the document descriptor
-     * @throws DocRendererException if any
+     * @throws DocumentRendererException if any
      * @throws IOException if any
      */
     void render( File siteDirectory, File outputDirectory, File documentDescriptor )
-        throws DocRendererException, IOException;
+        throws DocumentRendererException, IOException;
 
     /**
      * Get the output extension supported

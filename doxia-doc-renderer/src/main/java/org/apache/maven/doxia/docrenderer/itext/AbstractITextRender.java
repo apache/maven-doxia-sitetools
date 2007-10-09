@@ -43,7 +43,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.docrenderer.DocRenderer;
-import org.apache.maven.doxia.docrenderer.DocRendererException;
+import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.document.DocumentModel;
 import org.apache.maven.doxia.docrenderer.document.DocumentTOCItem;
 import org.apache.maven.doxia.docrenderer.document.io.xpp3.DocumentXpp3Reader;
@@ -100,7 +100,7 @@ public abstract class AbstractITextRender
      * @see org.apache.maven.doxia.docrenderer.DocRenderer#render(java.io.File, java.io.File)
      */
     public void render( File siteDirectory, File outputDirectory )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
         {
@@ -142,7 +142,7 @@ public abstract class AbstractITextRender
      * @see org.apache.maven.doxia.docrenderer.DocRenderer#render(java.io.File, java.io.File, java.io.File)
      */
     public void render( File siteDirectory, File outputDirectory, File documentDescriptor )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         if ( ( documentDescriptor == null ) || ( !documentDescriptor.exists() ) )
         {
@@ -158,11 +158,11 @@ public abstract class AbstractITextRender
         }
         catch ( XmlPullParserException e )
         {
-            throw new DocRendererException( "Error parsing document descriptor", e );
+            throw new DocumentRendererException( "Error parsing document descriptor", e );
         }
         catch ( IOException e )
         {
-            throw new DocRendererException( "Error reading document descriptor", e );
+            throw new DocumentRendererException( "Error reading document descriptor", e );
         }
 
         if ( documentModel.getOutputName() == null )
@@ -260,11 +260,11 @@ public abstract class AbstractITextRender
      *
      * @param iTextFile
      * @param iTextOutput
-     * @throws DocRendererException if any
+     * @throws DocumentRendererException if any
      * @throws IOException if any
      */
     public abstract void generateOutput( File iTextFile, File iTextOutput )
-        throws DocRendererException, IOException;
+        throws DocumentRendererException, IOException;
 
     /**
      * Parse a sink
@@ -272,11 +272,11 @@ public abstract class AbstractITextRender
      * @param fullPathDoc
      * @param module
      * @param outputITextFile
-     * @throws DocRendererException
+     * @throws DocumentRendererException
      * @throws IOException
      */
     private void parse( String fullPathDoc, SiteModule module, File outputITextFile )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         ITextSink sink = new ITextSink( new FileWriter( outputITextFile ) );
 
@@ -289,7 +289,7 @@ public abstract class AbstractITextRender
         }
         catch ( ParserNotFoundException e )
         {
-            throw new DocRendererException( "Error getting a parser for " + fullPathDoc + ": " + e.getMessage() );
+            throw new DocumentRendererException( "Error getting a parser for " + fullPathDoc + ": " + e.getMessage() );
         }
         catch ( ParseException e )
         {
@@ -308,11 +308,11 @@ public abstract class AbstractITextRender
      *
      * @param iTextFiles
      * @return a document
-     * @throws DocRendererException if any
+     * @throws DocumentRendererException if any
      * @throws IOException if any
      */
     private Document generateDocument( List iTextFiles )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         Document document;
         try
@@ -321,7 +321,7 @@ public abstract class AbstractITextRender
         }
         catch ( ParserConfigurationException e )
         {
-            throw new DocRendererException( "Error building document :" + e.getMessage() );
+            throw new DocumentRendererException( "Error building document :" + e.getMessage() );
         }
         document.appendChild( document.createElement( ElementTags.ITEXT ) ); // Used only to set a root
 
@@ -336,11 +336,11 @@ public abstract class AbstractITextRender
             }
             catch ( SAXException e )
             {
-                throw new DocRendererException( "SAX Error : " + e.getMessage() );
+                throw new DocumentRendererException( "SAX Error : " + e.getMessage() );
             }
             catch ( ParserConfigurationException e )
             {
-                throw new DocRendererException( "Error parsing configuration : " + e.getMessage() );
+                throw new DocumentRendererException( "Error parsing configuration : " + e.getMessage() );
             }
 
             // Only one chapter per doc
@@ -351,7 +351,7 @@ public abstract class AbstractITextRender
             }
             catch ( DOMException e )
             {
-                throw new DocRendererException( "Error appending chapter for " + iTextFile + " : " + e.getMessage() );
+                throw new DocumentRendererException( "Error appending chapter for " + iTextFile + " : " + e.getMessage() );
             }
         }
 
@@ -362,10 +362,10 @@ public abstract class AbstractITextRender
      * Init the transformer object
      *
      * @return an instanced transformer object
-     * @throws DocRendererException if any
+     * @throws DocumentRendererException if any
      */
     private Transformer initTransformer()
-        throws DocRendererException
+        throws DocumentRendererException
     {
         try
         {
@@ -382,12 +382,12 @@ public abstract class AbstractITextRender
         }
         catch ( TransformerConfigurationException e )
         {
-            throw new DocRendererException( "Error configuring Transformer for " + XSLT_RESOURCE + ": "
+            throw new DocumentRendererException( "Error configuring Transformer for " + XSLT_RESOURCE + ": "
                 + e.getMessage() );
         }
         catch ( IllegalArgumentException e )
         {
-            throw new DocRendererException( "Error configuring Transformer for " + XSLT_RESOURCE + ": "
+            throw new DocumentRendererException( "Error configuring Transformer for " + XSLT_RESOURCE + ": "
                 + e.getMessage() );
         }
     }
@@ -441,10 +441,10 @@ public abstract class AbstractITextRender
      * @param documentModel
      * @param document
      * @param iTextFile
-     * @throws DocRendererException
+     * @throws DocumentRendererException
      */
     private void transform( DocumentModel documentModel, Document document, File iTextFile )
-        throws DocRendererException
+        throws DocumentRendererException
     {
         Transformer transformer = initTransformer();
 
@@ -456,7 +456,7 @@ public abstract class AbstractITextRender
         }
         catch ( TransformerException e )
         {
-            throw new DocRendererException( "Error transformer Document from " + document + ": " + e.getMessage() );
+            throw new DocumentRendererException( "Error transformer Document from " + document + ": " + e.getMessage() );
         }
     }
 }

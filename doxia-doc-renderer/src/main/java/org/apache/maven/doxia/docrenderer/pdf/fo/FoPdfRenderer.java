@@ -28,7 +28,7 @@ import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 
-import org.apache.maven.doxia.docrenderer.DocRendererException;
+import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.document.DocumentModel;
 import org.apache.maven.doxia.docrenderer.document.DocumentTOCItem;
 import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
@@ -52,11 +52,11 @@ public class FoPdfRenderer
      *
      * @param foFile the FO file.
      * @param pdfFile the target PDF file.
-     * @throws DocRendererException In case of a conversion problem.
+     * @throws DocumentRendererException In case of a conversion problem.
      * @see org.apache.maven.doxia.module.fo.FoUtils#convertFO2PDF(File,File,String);
      */
     public void generatePdf( File foFile, File pdfFile )
-        throws DocRendererException
+        throws DocumentRendererException
     {
         getLogger().debug( "Generating: " + pdfFile );
 
@@ -66,14 +66,14 @@ public class FoPdfRenderer
         }
         catch ( TransformerException e )
         {
-            throw new DocRendererException( "Error creating PDF from " + foFile + ": " + e.getMessage() );
+            throw new DocumentRendererException( "Error creating PDF from " + foFile + ": " + e.getMessage() );
         }
     }
 
 
     /** {@inheritDoc} */
     public void render( Map files, File outputDirectory, DocumentModel model )
-        throws DocRendererException, IOException
+        throws DocumentRendererException, IOException
     {
         String outputName = model.getOutputName();
 

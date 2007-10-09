@@ -49,11 +49,11 @@ public interface DocumentRenderer
      *              If the model contains a TOC, only the files found in this TOC are rendered,
      *              otherwise all files from the Collection of files will be processed.
      *
-     * @throws DocRendererException if any.
+     * @throws DocumentRendererException if any.
      * @throws IOException if any.
      */
     void render( Collection files, File outputDirectory, DocumentModel documentModel )
-        throws DocRendererException, IOException;
+        throws DocumentRendererException, IOException;
 
     /**
      * Render a document from the files found in a source directory, depending on a rendering context.
@@ -67,11 +67,11 @@ public interface DocumentRenderer
      *              If the model contains a TOC, only the files found in this TOC are rendered,
      *              otherwise all files found under baseDirectory will be processed.
      *
-     * @throws DocRendererException if any
+     * @throws DocumentRendererException if any
      * @throws IOException if any
      */
     void render( File baseDirectory, File outputDirectory, DocumentModel documentModel )
-        throws DocRendererException, IOException;
+        throws DocumentRendererException, IOException;
 
     /**
      * Read a document model from a file.
@@ -80,11 +80,11 @@ public interface DocumentRenderer
      *
      * @return the document model, containing all the metadata, etc.
      *
-     * @throws DocRendererException if any
+     * @throws DocumentRendererException if any
      * @throws IOException if any
      */
     DocumentModel readDocumentModel( File documentDescriptor )
-        throws DocRendererException, IOException;
+        throws DocumentRendererException, IOException;
 
     /**
      * Get the output extension associated with this DocumentRenderer.
