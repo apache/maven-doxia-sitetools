@@ -3,7 +3,13 @@
 <model>
   <id>document</id>
   <name>Document</name>
-  <description><![CDATA[Model for Document in Doxia.]]></description>
+  <description><![CDATA[
+    <p>This is a reference for the Document model used in Doxia.</p>
+    <p>An XSD is available at:</p>
+    <ul>
+      <li><a href="http://maven.apache.org/doxia/xsd/document-1.0.0.xsd">http://maven.apache.org/doxia/xsd/document-1.0.0.xsd</a>.</li>
+    </ul>
+  ]]></description>
   <defaults>
     <default>
       <key>package</key>
@@ -18,13 +24,18 @@
       <fields>
         <field xml.attribute="true">
           <name>outputName</name>
+          <description><![CDATA[
+            The name of the generated document, without extension.
+          ]]></description>
           <version>1.0.0</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>meta</name>
-          <description>The Meta information properties.</description>
+          <description><![CDATA[
+            The Meta information properties.
+          ]]></description>
           <version>1.0.0</version>
           <association>
             <type>DocumentMeta</type>
@@ -33,7 +44,9 @@
         </field>
         <field>
           <name>toc</name>
-          <description>The TOC information properties.</description>
+          <description><![CDATA[
+            The TOC (Table of Contents) information properties.
+          ]]></description>
           <version>1.0.0</version>
           <association>
             <type>DocumentTOC</type>
@@ -51,35 +64,46 @@
         <field>
           <name>title</name>
           <version>1.0.0</version>
-          <description>Title of the document.</description>
+          <description><![CDATA[
+            Title of the document.
+          ]]></description>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>author</name>
           <version>1.0.0</version>
-          <description>The author of the document.</description>
+          <description><![CDATA[
+            The author of the document.
+          ]]></description>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>subject</name>
           <version>1.0.0</version>
-          <description>The subject of the document.</description>
+          <description><![CDATA[
+            The subject of the document.
+          ]]></description>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>keywords</name>
           <version>1.0.0</version>
-          <description>The keywords of the document</description>
+          <description><![CDATA[
+            The keywords for the document.
+          ]]></description>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>pageSize</name>
           <version>1.0.0</version>
-          <description>The pagesize of the document</description>
+          <description><![CDATA[
+            The pagesize of the document.
+            At least "US", "USLetter" and "A4" should be supported.
+          ]]></description>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -93,14 +117,18 @@
       <fields>
         <field xml.attribute="true">
           <name>name</name>
-          <description>The name to use for the menu.</description>
+          <description><![CDATA[
+            The name to use for the menu.
+          ]]></description>
           <version>1.0.0</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field xml.listStyle="flat">
           <name>items</name>
-          <description>TOC item.</description>
+          <description><![CDATA[
+            TOC item.
+          ]]></description>
           <version>1.0.0</version>
           <association>
             <type>DocumentTOCItem</type>
@@ -118,14 +146,18 @@
       <fields>
         <field xml.attribute="true">
           <name>name</name>
-          <description>The name to use for the toc.</description>
+          <description><![CDATA[
+            The name to use for the toc.
+          ]]></description>
           <version>1.0.0</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field xml.attribute="true">
           <name>ref</name>
-          <description>The ref to use for the item.</description>
+          <description><![CDATA[
+            The ref to use for the item.
+          ]]></description>
           <version>1.0.0</version>
           <type>String</type>
           <identifier>true</identifier>
