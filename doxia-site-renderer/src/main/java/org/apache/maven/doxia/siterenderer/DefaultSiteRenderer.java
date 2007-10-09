@@ -184,7 +184,7 @@ public class DefaultSiteRenderer
 
                 RenderingContext context = new RenderingContext( moduleBasedir, doc, module.getParserId() );
 
-                // DOXIA-111: we need a general filter here that knows how to alter the context
+                // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
                 if ( doc.endsWith( ".vm" ) )
                 {
                     context.setAttribute( "velocity", "true" );
@@ -295,7 +295,7 @@ public class DefaultSiteRenderer
             Reader reader = null;
             Parser parser = doxia.getParser( renderingContext.getParserId() );
 
-            // DOXIA-111: the filter used here must be checked generally.
+            // TODO: DOXIA-111: the filter used here must be checked generally.
             if ( renderingContext.getAttribute( "velocity" ) != null )
             {
                 String resource = doc.getAbsolutePath();
