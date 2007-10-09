@@ -88,7 +88,7 @@ under the License.
     <dependency>
       <groupId>htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
-      <version>1.9</version>
+      <version>1.13</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -101,14 +101,12 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-module-apt</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-module-fml</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-module-xdoc</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>

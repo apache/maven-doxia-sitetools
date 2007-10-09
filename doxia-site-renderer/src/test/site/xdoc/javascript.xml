@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<document>
+
+  <properties>
+    <title>Hello</title>
+  </properties>
+
+  <body>
+
+    <section name="Test">
+
+      <p>You should see a JavaScript alert...</p>
+
+      <script type="text/javascript">
+        <![CDATA[alert("Hello!");]]>
+      </script>
+
+    </section>
+
+  </body>
+
+</document>

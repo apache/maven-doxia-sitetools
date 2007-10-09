@@ -36,6 +36,8 @@ under the License.
     <menu name="Quick Links">
       <item name="CDC" href="/cdc.html"/>
       <item name="nestedItems" href="/nestedItems.html"/>
+      <item name="entities, cdata, comment" href="/entityTest.html"/>
+      <item name="javascript alert" href="/javascript.html"/>
     </menu>
   </body>
 </project>
