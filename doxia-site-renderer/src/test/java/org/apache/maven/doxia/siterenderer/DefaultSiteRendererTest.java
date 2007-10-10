@@ -201,12 +201,14 @@ public class DefaultSiteRendererTest
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        // No paragraph renderer
-        assertEquals( li.getFirstChild().asText().trim(), "Item 11." );
+        p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+        assertEquals( p.getFirstChild().asText().trim(), "Item 11." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        // No paragraph renderer
-        assertEquals( li.getFirstChild().asText().trim(), "Item 12." );
+        p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+        assertEquals( p.getFirstChild().asText().trim(), "Item 12." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
         assertEquals( li.getFirstChild().asText().trim(), "Item 13." );
@@ -505,7 +507,10 @@ public class DefaultSiteRendererTest
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "list1" );
+
+        p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+        assertEquals( p.getFirstChild().asText().trim(), "list1" );
 
         assertFalse( elementIterator.hasNext() );
     }
