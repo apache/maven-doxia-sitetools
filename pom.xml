@@ -30,7 +30,7 @@ under the License.
 
   <groupId>org.apache.maven.doxia</groupId>
   <artifactId>doxia-sitetools</artifactId>
-  <version>1.0-alpha-9</version>
+  <version>1.0-alpha-10-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Doxia Sitetools</name>
@@ -39,7 +39,7 @@ under the License.
 
   <properties>
     <projectVersion>${project.version}</projectVersion>
-    <doxiaVersion>1.0-alpha-9</doxiaVersion>
+    <doxiaVersion>1.0-alpha-10-SNAPSHOT</doxiaVersion>
   </properties>
 
   <mailingLists>
