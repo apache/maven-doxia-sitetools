@@ -182,7 +182,7 @@ public class DefaultSiteRenderer
             {
                 String doc = (String) k.next();
 
-                RenderingContext context = new RenderingContext( moduleBasedir, doc, module.getParserId() );
+                RenderingContext context = new RenderingContext( moduleBasedir, doc, module.getParserId(), module.getExtension() );
 
                 // DOXIA-111: we need a general filter here that knows how to alter the context
                 if ( doc.endsWith( ".vm" ) )
