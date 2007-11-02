@@ -39,7 +39,7 @@ under the License.
 
   <properties>
     <projectVersion>${project.version}</projectVersion>
-    <doxiaVersion>1.0-alpha-10-SNAPSHOT</doxiaVersion>
+    <doxiaVersion>1.0-alpha-10</doxiaVersion>
   </properties>
 
   <mailingLists>
