@@ -35,9 +35,14 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
 import com.gargoylesoftware.htmlunit.html.HtmlScript;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
+
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -120,6 +125,7 @@ public class DefaultSiteRendererTest
         verifyMacro();
         verifyEntitiesPage();
         verifyJavascriptPage();
+        verifyFaqPage();
     }
 
     /**
@@ -659,7 +665,179 @@ public class DefaultSiteRendererTest
         assertEquals( script.asText().trim(), "" );
         final List expectedAlerts = Collections.singletonList( "Hello!" );
         assertEquals( expectedAlerts, collectedAlerts );
-
     }
 
+    /**
+     * @throws Exception
+     */
+    public void verifyFaqPage()
+        throws Exception
+    {
+        File faqTest = getTestFile( "target/output/faq.html" );
+        assertNotNull( faqTest );
+        assertTrue( faqTest.exists() );
+
+        // HtmlUnit
+        WebClient webClient = new WebClient();
+        HtmlPage page = (HtmlPage) webClient.getPage( faqTest.toURL() );
+        assertNotNull( page );
+
+        HtmlElement element = page.getHtmlElementById( "contentBox" );
+        assertNotNull( element );
+        HtmlDivision division = (HtmlDivision) element;
+        assertNotNull( division );
+
+        Iterator elementIterator = division.getAllHtmlChildElements();
+
+        // ----------------------------------------------------------------------
+        //
+        // ----------------------------------------------------------------------
+
+        HtmlDivision div = (HtmlDivision) elementIterator.next();
+        assertEquals( div.getAttributeValue( "class" ), "section" );
+
+        HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
+        assertEquals( h2.asText().trim(), "Oft Asked Questions" );
+
+        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "name" ), "Oft_Asked_Questions" );
+
+        HtmlParagraph p = (HtmlParagraph) elementIterator.next();
+        element = (HtmlElement) elementIterator.next();
+        assertEquals( element.getTagName(), "b" );
+        assertEquals( element.asText().trim(), "Contributing" );
+
+        HtmlOrderedList ol = (HtmlOrderedList) elementIterator.next();
+        assertEquals( ol.getFirstChild().asText().trim(), "One stupid question & a silly answer?" );
+
+        HtmlListItem li = (HtmlListItem) elementIterator.next();
+        assertEquals( li.getFirstChild().asText().trim(), "One stupid question & a silly answer?" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "href" ), "#stupid-question" );
+
+        element = (HtmlElement) elementIterator.next();
+        assertEquals( element.getTagName(), "b" );
+        assertEquals( element.asText().trim(), "stupid" );
+
+        p = (HtmlParagraph) elementIterator.next();
+        element = (HtmlElement) elementIterator.next();
+        assertEquals( element.getTagName(), "b" );
+        assertEquals( element.asText().trim(), "Using Maven" );
+
+        ol = (HtmlOrderedList) elementIterator.next();
+        assertEquals( ol.getFirstChild().asText().trim(), "How do I disable a report on my site?" );
+
+        li = (HtmlListItem) elementIterator.next();
+        assertNotNull( li );
+        assertEquals( li.getFirstChild().asText().trim(), "How do I disable a report on my site?" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "href" ), "#disable-reports" );
+
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( div.getAttributeValue( "class" ), "section" );
+
+        h2 = (HtmlHeader2) elementIterator.next();
+        assertEquals( h2.asText().trim(), "Contributing" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "name" ), "Contributing" );
+
+        HtmlDefinitionList dl = (HtmlDefinitionList) elementIterator.next();
+
+        HtmlDefinitionTerm dt = (HtmlDefinitionTerm) elementIterator.next();
+        assertEquals( dt.getFirstChild().asText().trim(), "One stupid question & a silly answer?" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "name" ), "stupid-question" );
+
+        element = (HtmlElement) elementIterator.next();
+        assertEquals( element.getTagName(), "b" );
+        assertEquals( element.asText().trim(), "stupid" );
+
+        HtmlDefinitionDescription dd = (HtmlDefinitionDescription) elementIterator.next();
+
+        p = (HtmlParagraph) elementIterator.next();
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "href" ), "#Using_Maven" );
+        assertEquals( a.asText().trim(), "local link" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "href" ), "./cdc.html" );
+        assertEquals( a.asText().trim(), "source document" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "href" ), "http://maven.apache.org/" );
+        assertEquals( a.asText().trim(), "external link" );
+
+        element = (HtmlElement) elementIterator.next();
+        assertEquals( element.getTagName(), "i" );
+        assertEquals( element.asText().trim(), "italic" );
+
+        HtmlTable table = (HtmlTable) elementIterator.next();
+        assertEquals( table.getAttributeValue( "border" ), "0" );
+
+        element = (HtmlElement) elementIterator.next();
+        // this is a htmlunit bug
+        assertEquals( element.getTagName(), "tbody" );
+
+        HtmlTableRow tr = (HtmlTableRow) elementIterator.next();
+        HtmlTableDataCell td = (HtmlTableDataCell) elementIterator.next();
+        assertEquals( td.getAttributeValue( "align" ), "right" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "href" ), "#top" );
+        assertEquals( a.asText().trim(), "[top]" );
+
+
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( div.getAttributeValue( "class" ), "section" );
+
+        h2 = (HtmlHeader2) elementIterator.next();
+        assertEquals( h2.asText().trim(), "Using Maven" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "name" ), "Using_Maven" );
+
+        dl = (HtmlDefinitionList) elementIterator.next();
+
+        dt = (HtmlDefinitionTerm) elementIterator.next();
+        assertEquals( dt.getFirstChild().asText().trim(), "How do I disable a report on my site?" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "name" ), "disable-reports" );
+
+        dd = (HtmlDefinitionDescription) elementIterator.next();
+
+        p = (HtmlParagraph) elementIterator.next();
+
+        element = (HtmlElement) elementIterator.next();
+        assertEquals( element.getTagName(), "code" );
+        assertEquals( element.asText().trim(), "<source></source>" );
+
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( div.getAttributeValue( "class" ), "source" );
+
+        HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
+        assertEquals( pre.asText().trim(), "<source>1.5</source>" );
+
+        table = (HtmlTable) elementIterator.next();
+        assertEquals( table.getAttributeValue( "border" ), "0" );
+
+        element = (HtmlElement) elementIterator.next();
+        // this is a htmlunit bug
+        assertEquals( element.getTagName(), "tbody" );
+
+        tr = (HtmlTableRow) elementIterator.next();
+        td = (HtmlTableDataCell) elementIterator.next();
+        assertEquals( td.getAttributeValue( "align" ), "right" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "href" ), "#top" );
+        assertEquals( a.asText().trim(), "[top]" );
+
+        assertFalse( elementIterator.hasNext() );
+    }
 }
