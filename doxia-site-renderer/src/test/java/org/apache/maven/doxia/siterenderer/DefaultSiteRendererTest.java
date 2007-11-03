@@ -769,7 +769,7 @@ public class DefaultSiteRendererTest
         assertEquals( a.asText().trim(), "source document" );
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( a.getAttributeValue( "href" ), "http://maven.apache.org/" );
+        assertEquals( a.getAttributeValue( "href" ), "http://maven.apache.org/?l=a&m=b" );
         assertEquals( a.asText().trim(), "external link" );
 
         element = (HtmlElement) elementIterator.next();
@@ -814,7 +814,7 @@ public class DefaultSiteRendererTest
         p = (HtmlParagraph) elementIterator.next();
 
         element = (HtmlElement) elementIterator.next();
-        assertEquals( element.getTagName(), "code" );
+        assertEquals( element.getTagName(), "tt" );
         assertEquals( element.asText().trim(), "<source></source>" );
 
         div = (HtmlDivision) elementIterator.next();
