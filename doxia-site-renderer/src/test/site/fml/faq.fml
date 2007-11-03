@@ -30,7 +30,8 @@ under the License.
         <p>
           A paragraph with a <a href="#Using_Maven">local link</a>,
           a link to another <a href="./cdc.html">source document</a>,
-          an <a href="http://maven.apache.org/">external link</a> and an <i>italic</i> text.
+          an <a href="http://maven.apache.org/?l=a&amp;m=b">external link</a>
+          with entities, and an <i>italic</i> text.
         </p>
       </answer>
     </faq>
