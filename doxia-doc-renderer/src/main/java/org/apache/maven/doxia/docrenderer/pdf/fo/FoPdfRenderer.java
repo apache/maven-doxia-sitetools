@@ -160,8 +160,7 @@ public class FoPdfRenderer
 
                     File moduleBasedir = new File( getBaseDir(), module.getSourceDirectory() );
 
-                    // TODO: handle fml exclude more generally (via modules exclude?)
-                    if ( moduleBasedir.exists() && !"fml".equals( module.getExtension() ) )
+                    if ( moduleBasedir.exists() )
                     {
                         String doc = href + "." + module.getExtension();
 
