@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.doxia.Doxia;
-import org.apache.maven.doxia.docrenderer.document.DocumentModel;
-import org.apache.maven.doxia.docrenderer.document.io.xpp3.DocumentXpp3Reader;
+import org.apache.maven.doxia.document.DocumentModel;
+import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Reader;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;

@@ -29,29 +29,7 @@ under the License.
   <artifactId>doxia-doc-renderer</artifactId>
   <name>Doxia Document Renderer Component</name>
   <description>The Document Renderer handles the rendering of documents, in formats like PDF and RTF.</description>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.modello</groupId>
-        <artifactId>modello-maven-plugin</artifactId>
-        <version>1.0-alpha-17</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>xpp3-writer</goal>
-              <goal>java</goal>
-              <goal>xpp3-reader</goal>
-              <goal>xsd</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <version>1.0.0</version>
-          <model>src/main/mdo/document.mdo</model>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+
   <developers>
     <developer>
       <id>vsiveton</id>

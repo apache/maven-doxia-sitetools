@@ -43,7 +43,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
-import org.apache.maven.doxia.docrenderer.document.DocumentModel;
+import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
 import org.apache.maven.doxia.module.itext.ITextSink;
 import org.apache.maven.doxia.module.itext.ITextUtil;

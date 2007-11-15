@@ -29,8 +29,8 @@ import java.util.Map;
 import javax.xml.transform.TransformerException;
 
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
-import org.apache.maven.doxia.docrenderer.document.DocumentModel;
-import org.apache.maven.doxia.docrenderer.document.DocumentTOCItem;
+import org.apache.maven.doxia.document.DocumentModel;
+import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
 import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.maven.doxia.module.fo.FoAggregateSink;

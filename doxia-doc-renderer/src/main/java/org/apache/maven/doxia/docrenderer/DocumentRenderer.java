@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.apache.maven.doxia.docrenderer.document.DocumentModel;
+import org.apache.maven.doxia.document.DocumentModel;
 
 /**
  * Base interface for rendering documents from a set of input files.
