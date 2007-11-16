@@ -11,9 +11,9 @@
 #macro ( banner $banner $id )
   #if ( $banner )
     #if( $banner.href )
-      <a href="$banner.href" id="$id">
+      <a href="$banner.href" id="$id" #if( $banner.alt ) title="$banner.alt" #end >
     #else
-        <span id="$id">
+        <div id="$id">
     #end
 
     #if( $banner.src )
@@ -25,7 +25,7 @@
         #if ( $banner.alt )
             #set ( $alt = $banner.alt )
         #else
-            #set ( $alt = "" )
+            #set ( $alt = $banner.name )
         #end
         <img src="$src" alt="$alt" />
     #else
@@ -35,7 +35,7 @@
     #if( $banner.href )
         </a>
     #else
-        </span>
+        </div>
     #end
   #end
 #end
@@ -76,7 +76,7 @@
     #foreach( $subitem in $item.items )
       #set ( $subitemHref = $PathTool.calculateLink( $subitem.href, $relativePath ) )
       #set ( $subitemHref = $subitemHref.replaceAll( "\\", "/" ) )
-
+      #set ( $display = false )
       #if ( $alignedFileName == $subitemHref )
         #set ( $display = true )
       #end
@@ -187,6 +187,9 @@
     #else
       #set ( $versionPosition = "left" )
     #end
+  #else
+    #set ( $version = "" )
+    #set ( $versionPosition = "left" )
   #end
 
   #set ( $breadcrumbs = $decoration.body.breadcrumbs )
@@ -272,17 +275,33 @@
             <a href="$href" title="$name" class="poweredBy">
               #set ( $img = $PathTool.calculateLink( $img, $relativePath ) )
               #set ( $img = $img.replaceAll( "\\", "/" ) )
-              <img alt="$name" src="$img" />
+              <img  class="poweredBy"  
+                    alt="$name" 
+                    src="$img" 
+                    width="90"
+                    height="30"
+              />
             </a>
         #end
         #if( $poweredBy.isEmpty() )
           <a href="http://maven.apache.org/" title="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" class="poweredBy">
-            <img alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png"></img>
+            <img class="poweredBy" 
+                 alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" 
+                 src="$relativePath/images/logos/maven-feather.png" 
+                 width="90"
+                 height="30"
+                 border="1" />
           </a>
         #end
     #else
         <a href="http://maven.apache.org/" title="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" class="poweredBy">
-          <img alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png"></img>
+          <img class="poweredBy" 
+               alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" 
+               src="$relativePath/images/logos/maven-feather.png" 
+               width="90"
+               height="30"
+               border="1"
+               />
         </a>
     #end
 #end
