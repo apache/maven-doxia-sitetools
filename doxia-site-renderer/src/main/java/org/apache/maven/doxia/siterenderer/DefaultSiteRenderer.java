@@ -226,6 +226,8 @@ public class DefaultSiteRenderer
                     }
                 }
 
+                key = StringUtils.replace( key, "\\", "/" );
+
                 files.put( key, new DoxiaDocumentRenderer( context ) );
             }
         }
