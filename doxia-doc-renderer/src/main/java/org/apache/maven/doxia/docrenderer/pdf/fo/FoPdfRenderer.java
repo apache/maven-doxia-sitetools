@@ -130,9 +130,13 @@ public class FoPdfRenderer
                 String fullDocPath = getBaseDir() + File.separator
                             + module.getSourceDirectory() + File.separator + key;
 
+                if ( getLogger().isDebugEnabled() )
+                {
+                    getLogger().debug( "Parsing file " + fullDocPath );
+                }
+
                 parse( fullDocPath, module.getParserId(), sink );
             }
-
         }
         else
         {
@@ -168,6 +172,11 @@ public class FoPdfRenderer
 
                         if ( source.exists() )
                         {
+                            if ( getLogger().isDebugEnabled() )
+                            {
+                                getLogger().debug( "Parsing file " + source );
+                            }
+
                             sink.setDocumentName( doc );
 
                             sink.setDocumentTitle( tocItem.getName() );
