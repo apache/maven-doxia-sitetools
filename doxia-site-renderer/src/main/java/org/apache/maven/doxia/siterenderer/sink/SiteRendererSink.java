@@ -37,7 +37,7 @@ import javax.swing.text.html.HTML.Tag;
  */
 public class SiteRendererSink
     extends XhtmlSink
-    implements Sink
+    implements Sink, org.codehaus.doxia.sink.Sink
 {
     private String date = "";
 
