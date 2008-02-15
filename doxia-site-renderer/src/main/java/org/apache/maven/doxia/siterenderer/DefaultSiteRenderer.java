@@ -20,6 +20,7 @@ package org.apache.maven.doxia.siterenderer;
  */
 
 import org.apache.maven.doxia.Doxia;
+import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
@@ -340,7 +341,7 @@ public class DefaultSiteRenderer
                         reader = ReaderFactory.newReader( doc, context.getInputEncoding() );
                 }
             }
-
+            sink.enableLogging( new PlexusLoggerWrapper( getLogger() ) );
             doxia.parse( reader, renderingContext.getParserId(), sink );
 
             generateDocument( writer, sink, context );

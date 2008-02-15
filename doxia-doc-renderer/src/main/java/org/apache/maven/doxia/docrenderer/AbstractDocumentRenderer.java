@@ -34,6 +34,7 @@ import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Reader;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
+import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
 import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
 
@@ -53,14 +54,10 @@ public abstract class AbstractDocumentRenderer
     extends AbstractLogEnabled
     implements DocumentRenderer
 {
-    /**
-     * @plexus.requirement
-     */
+    /** @plexus.requirement */
     protected SiteModuleManager siteModuleManager;
 
-    /**
-     * @plexus.requirement
-     */
+    /** @plexus.requirement */
     protected Doxia doxia;
 
     /**
@@ -305,6 +302,8 @@ public abstract class AbstractDocumentRenderer
         {
             FileReader reader = new FileReader( fullDocPath );
 
+            sink.enableLogging( new PlexusLoggerWrapper( getLogger() ) );
+
             doxia.parse( reader, parserId, sink );
         }
         catch ( ParserNotFoundException e )
@@ -321,5 +320,4 @@ public abstract class AbstractDocumentRenderer
             sink.flush();
         }
     }
-
 }
