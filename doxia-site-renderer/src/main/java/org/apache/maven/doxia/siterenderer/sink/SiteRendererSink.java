@@ -32,6 +32,8 @@ import java.util.List;
 import javax.swing.text.html.HTML.Tag;
 
 /**
+ * Sink for site renderering.
+ *
  * @author <a href="mailto:evenisse@codehaus.org>Emmanuel Venisse</a>
  * @version $Id$
  */
@@ -47,11 +49,18 @@ public class SiteRendererSink
 
     private final Writer writer;
 
+    /**
+     * @param renderingContext
+     */
     public SiteRendererSink( RenderingContext renderingContext )
     {
         this( new StringWriter(), renderingContext );
     }
 
+    /**
+     * @param writer
+     * @param renderingContext
+     */
     private SiteRendererSink( StringWriter writer, RenderingContext renderingContext )
     {
         super( writer, renderingContext, null );
@@ -59,9 +68,7 @@ public class SiteRendererSink
         this.writer = writer;
     }
 
-    /**
-     * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#title_()
-     */
+    /** {@inheritDoc} */
     public void title_()
     {
         if ( getBuffer().length() > 0 )
@@ -73,10 +80,13 @@ public class SiteRendererSink
     }
 
     /**
+     * Do nothing.
+     *
      * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#title()
      */
     public void title()
     {
+        // nop
     }
 
     public String getTitle()
@@ -84,9 +94,7 @@ public class SiteRendererSink
         return title;
     }
 
-    /**
-     * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#author_()
-     */
+    /** {@inheritDoc} */
     public void author_()
     {
         if ( getBuffer().length() > 0 )
@@ -102,9 +110,7 @@ public class SiteRendererSink
         return authors;
     }
 
-    /**
-     * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#date_()
-     */
+    /** {@inheritDoc} */
     public void date_()
     {
         if ( getBuffer().length() > 0 )
@@ -121,17 +127,23 @@ public class SiteRendererSink
     }
 
     /**
+     * Do nothing.
+     *
      * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#body_()
      */
     public void body_()
     {
+        // nop
     }
 
     /**
+     * Do nothing.
+     *
      * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#body()
      */
     public void body()
     {
+        // nop
     }
 
     public String getBody()
@@ -139,17 +151,13 @@ public class SiteRendererSink
         return writer.toString();
     }
 
-    /**
-     * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#head_()
-     */
+    /** {@inheritDoc} */
     public void head_()
     {
         setHeadFlag( false );
     }
 
-    /**
-     * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#head()
-     */
+    /** {@inheritDoc} */
     public void head()
     {
         setHeadFlag( true );
@@ -157,6 +165,8 @@ public class SiteRendererSink
 
     /**
      * Sets the head flag to true so the title text is buffered until the closing tag.
+     *
+     * @see org.apache.maven.doxia.sink.XhtmlBaseSink#sectionTitle1()
      */
     public void sectionTitle1()
     {
@@ -166,6 +176,8 @@ public class SiteRendererSink
     /**
      * Writes out a sectionTitle1 block, including an anchor that is constructed from the
      * buffered title text via {@link org.apache.maven.doxia.util.HtmlTools#encodeId(String)}.
+     *
+     * @see org.apache.maven.doxia.sink.XhtmlBaseSink#sectionTitle1_()
      */
     public void sectionTitle1_()
     {
@@ -189,6 +201,8 @@ public class SiteRendererSink
 
     /**
      * Sets the head flag to true so the title text is buffered until the closing tag.
+     *
+     * @see org.apache.maven.doxia.sink.XhtmlBaseSink#sectionTitle2()
      */
     public void sectionTitle2()
     {
@@ -198,6 +212,8 @@ public class SiteRendererSink
     /**
      * Writes out a sectionTitle2 block, including an anchor that is constructed from the
      * buffered title text via {@link org.apache.maven.doxia.util.HtmlTools#encodeId(String)}.
+     *
+     * @see org.apache.maven.doxia.sink.XhtmlBaseSink#sectionTitle2_()
      */
     public void sectionTitle2_()
     {
@@ -218,5 +234,4 @@ public class SiteRendererSink
         text( sectionTitle );
         writeEndTag( Tag.H3 );
     }
-
 }
