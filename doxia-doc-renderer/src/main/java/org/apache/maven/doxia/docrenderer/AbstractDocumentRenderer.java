@@ -22,6 +22,7 @@ package org.apache.maven.doxia.docrenderer;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,6 +41,7 @@ import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
 
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -320,4 +322,61 @@ public abstract class AbstractDocumentRenderer
             sink.flush();
         }
     }
+
+    /**
+     * Copies the contents of the resource directory to an output folder.
+     *
+     * @param outputDirectory the destination folder.
+     * @throws java.io.IOException if any.
+     */
+    protected void copyResources( File outputDirectory )
+            throws IOException
+    {
+        File resourcesDirectory = new File( getBaseDir(), "resources" );
+
+        if ( resourcesDirectory.isDirectory() && outputDirectory.isDirectory() )
+        {
+            copyDirectory( resourcesDirectory, outputDirectory );
+        }
+    }
+
+    /**
+     * Copy content of a directory, excluding scm-specific files.
+     *
+     * @param source directory that contains the files and sub-directories to be copied.
+     * @param destination destination folder.
+     * @throws java.io.IOException if any.
+     */
+    protected void copyDirectory( File source, File destination )
+            throws IOException
+    {
+        if ( source.isDirectory() && destination.isDirectory() )
+        {
+            DirectoryScanner scanner = new DirectoryScanner();
+
+            String[] includedResources = {"**/**"};
+
+            scanner.setIncludes( includedResources );
+
+            scanner.addDefaultExcludes();
+
+            scanner.setBasedir( source );
+
+            scanner.scan();
+
+            List includedFiles = Arrays.asList( scanner.getIncludedFiles() );
+
+            for ( Iterator j = includedFiles.iterator(); j.hasNext(); )
+            {
+                String name = (String) j.next();
+
+                File sourceFile = new File( source, name );
+
+                File destinationFile = new File( destination, name );
+
+                FileUtils.copyFile( sourceFile, destinationFile );
+            }
+        }
+    }
+
 }

@@ -204,6 +204,9 @@ public class FoPdfRenderer
 
         sink.endDocument();
 
+        // copy resources, images, etc.
+        copyResources( outputDirectory );
+
         generatePdf( outputFOFile, pdfOutputFile );
     }
 
