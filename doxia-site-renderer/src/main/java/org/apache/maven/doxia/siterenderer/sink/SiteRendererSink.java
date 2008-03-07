@@ -19,17 +19,18 @@ package org.apache.maven.doxia.siterenderer.sink;
  * under the License.
  */
 
-import org.apache.maven.doxia.module.xhtml.XhtmlSink;
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.util.HtmlTools;
-
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.text.html.HTML.Tag;
+
+import org.apache.maven.doxia.module.xhtml.XhtmlSink;
+import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.SinkEventAttributes;
+import org.apache.maven.doxia.util.HtmlTools;
 
 /**
  * Sink for site renderering.
@@ -163,6 +164,48 @@ public class SiteRendererSink
         setHeadFlag( true );
     }
 
+
+    /** {@inheritDoc} */
+    public void sectionTitle( int level, SinkEventAttributes attributes )
+    {
+        if ( level == SECTION_LEVEL_1 || level == SECTION_LEVEL_2 )
+        {
+            setHeadFlag( true );
+        }
+        else
+        {
+            super.sectionTitle( level, attributes );
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void sectionTitle_( int level )
+    {
+        if ( level == SECTION_LEVEL_1 || level == SECTION_LEVEL_2 )
+        {
+            String sectionTitle = "";
+
+            if ( getBuffer().length() > 0 )
+            {
+                sectionTitle = getBuffer().toString();
+            }
+
+            resetBuffer();
+
+            setHeadFlag( false );
+
+            writeStartTag( level == SECTION_LEVEL_1 ? Tag.H2 : Tag.H3  );
+            anchor( HtmlTools.encodeId( sectionTitle ) );
+            anchor_();
+            text( sectionTitle );
+            writeEndTag( level == SECTION_LEVEL_1 ? Tag.H2 : Tag.H3 );
+        }
+        else
+        {
+            super.sectionTitle_( level );
+        }
+    }
+
     /**
      * Sets the head flag to true so the title text is buffered until the closing tag.
      *
@@ -170,7 +213,7 @@ public class SiteRendererSink
      */
     public void sectionTitle1()
     {
-        setHeadFlag( true );
+        sectionTitle( SECTION_LEVEL_1, null );
     }
 
     /**
@@ -181,22 +224,7 @@ public class SiteRendererSink
      */
     public void sectionTitle1_()
     {
-        String sectionTitle = "";
-
-        if ( getBuffer().length() > 0 )
-        {
-            sectionTitle = getBuffer().toString();
-        }
-
-        resetBuffer();
-
-        setHeadFlag( false );
-
-        writeStartTag( Tag.H2 );
-        anchor( HtmlTools.encodeId( sectionTitle ) );
-        anchor_();
-        text( sectionTitle );
-        writeEndTag( Tag.H2 );
+        sectionTitle_( SECTION_LEVEL_1 );
     }
 
     /**
@@ -206,7 +234,7 @@ public class SiteRendererSink
      */
     public void sectionTitle2()
     {
-        setHeadFlag( true );
+        sectionTitle( SECTION_LEVEL_2, null );
     }
 
     /**
@@ -217,21 +245,6 @@ public class SiteRendererSink
      */
     public void sectionTitle2_()
     {
-        String sectionTitle = "";
-
-        if ( getBuffer().length() > 0 )
-        {
-            sectionTitle = getBuffer().toString();
-        }
-
-        resetBuffer();
-
-        setHeadFlag( false );
-
-        writeStartTag( Tag.H3 );
-        anchor( HtmlTools.encodeId( sectionTitle ) );
-        anchor_();
-        text( sectionTitle );
-        writeEndTag( Tag.H3 );
+        sectionTitle_( SECTION_LEVEL_2 );
     }
 }

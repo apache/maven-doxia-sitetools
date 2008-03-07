@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader2;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader4;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlListItem;
 import com.gargoylesoftware.htmlunit.html.HtmlOrderedList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -36,6 +37,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
 import com.gargoylesoftware.htmlunit.html.HtmlScript;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.html.HtmlTableHeaderCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
@@ -126,6 +128,7 @@ public class DefaultSiteRendererTest
         verifyEntitiesPage();
         verifyJavascriptPage();
         verifyFaqPage();
+        verifyAttributes();
     }
 
     /**
@@ -839,5 +842,87 @@ public class DefaultSiteRendererTest
         assertEquals( a.asText().trim(), "[top]" );
 
         assertFalse( elementIterator.hasNext() );
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void verifyAttributes()
+        throws Exception
+    {
+        File attributes = getTestFile( "target/output/attributes.html" );
+        assertNotNull( attributes );
+        assertTrue( attributes.exists() );
+
+        // HtmlUnit
+        WebClient webClient = new WebClient();
+        HtmlPage page = (HtmlPage) webClient.getPage( attributes.toURL() );
+        assertNotNull( page );
+
+        HtmlElement element = page.getHtmlElementById( "contentBox" );
+        assertNotNull( element );
+        HtmlDivision division = (HtmlDivision) element;
+        assertNotNull( division );
+
+        Iterator elementIterator = division.getAllHtmlChildElements();
+
+        // ----------------------------------------------------------------------
+        //
+        // ----------------------------------------------------------------------
+
+        HtmlDivision div = (HtmlDivision) elementIterator.next();
+        assertEquals( "section", div.getAttributeValue( "class" ) );
+
+        HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
+        assertNotNull( h2 );
+        assertEquals( "section", h2.asText().trim() );
+
+        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
+        assertNotNull( a );
+        assertEquals( "section", a.getAttributeValue( "name" ) );
+
+        HtmlParagraph p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+
+        assertEquals( "ID",  p.getAttributeValue( "id" ) );
+        assertEquals( "CLASS", p.getAttributeValue( "class" ) );
+        assertEquals( "TITLE", p.getAttributeValue( "title" ) );
+        assertEquals( "STYLE", p.getAttributeValue( "style" ) );
+        assertEquals( "LANG", p.getAttributeValue( "lang" ) );
+
+        HtmlImage img = (HtmlImage) elementIterator.next();
+        assertNotNull( img );
+
+        assertEquals( "project.png", img.getAttributeValue( "src" ) );
+        assertEquals( "150", img.getAttributeValue( "width" ) );
+        assertEquals( "93", img.getAttributeValue( "height" ) );
+        assertEquals( "border: 1px solid silver", img.getAttributeValue( "style" ) );
+        assertEquals( "Project", img.getAttributeValue( "alt" ) );
+
+        // test object identity to distinguish the case ATTRIBUTE_VALUE_EMPTY
+        assertTrue( img.getAttributeValue( "dummy" ) == HtmlElement.ATTRIBUTE_NOT_DEFINED );
+
+        HtmlTable table = (HtmlTable) elementIterator.next();
+        assertEquals( "1", table.getAttributeValue( "border" ) );
+        assertEquals( "none", table.getAttributeValue( "class" ) );
+
+        element = (HtmlElement) elementIterator.next();
+        // this is a htmlunit bug
+        assertEquals( "tbody", element.getTagName() );
+
+        HtmlTableRow tr = (HtmlTableRow) elementIterator.next();
+        HtmlTableHeaderCell th = (HtmlTableHeaderCell) elementIterator.next();
+
+        th = (HtmlTableHeaderCell) elementIterator.next();
+        assertEquals( "center", th.getAttributeValue( "align" ) );
+        assertEquals( "2", th.getAttributeValue( "colspan" ) );
+        assertEquals( "50%", th.getAttributeValue( "width" ) );
+
+        tr = (HtmlTableRow) elementIterator.next();
+
+        th = (HtmlTableHeaderCell) elementIterator.next();
+        assertEquals( "left", th.getAttributeValue( "align" ) );
+        assertEquals( "2", th.getAttributeValue( "rowspan" ) );
+        assertEquals( "middle", th.getAttributeValue( "valign" ) );
     }
 }

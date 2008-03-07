@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<document>
+  <body>
+    <section name="section">
+      <p id="ID" class="CLASS" title="TITLE" lang="LANG" style="STYLE">
+        <!-- DOXIA-227 -->
+        <img src="project.png" dummy="" width="150" height="93" style="border: 1px solid silver" alt="Project" />
+      </p>
+      <!-- DOXIA-78 -->
+      <table border="1" class="none">
+        <tr>
+          <th>Name</th>
+          <th colspan="2" align="center" width="50%">Telephone</th>
+        </tr>
+        <tr>
+          <th rowspan="2" valign="middle">Telephone</th>
+          <td align="right">555 77 854</td>
+          <td align="right">555 77 855</td>
+        </tr>
+        <tr>
+          <td valign="top">555 77 854</td>
+          <td valign="bottom">555 77 855</td>
+        </tr>
+      </table>
+    </section>
+  </body>
+</document>
