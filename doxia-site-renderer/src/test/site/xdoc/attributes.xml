@@ -23,6 +23,10 @@
           <td valign="bottom">555 77 855</td>
         </tr>
       </table>
+      <p>
+        <!-- DOXIA-163, DOXIA 164 -->
+        <u>underline</u> <s>strike-through</s> <sub>subscript</sub> <sup>superscript</sup>
+      </p>
     </section>
   </body>
 </document>

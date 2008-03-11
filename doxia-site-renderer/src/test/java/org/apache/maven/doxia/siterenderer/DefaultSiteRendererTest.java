@@ -42,6 +42,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
 
+import com.gargoylesoftware.htmlunit.html.UnknownHtmlElement;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 
@@ -71,6 +72,7 @@ public class DefaultSiteRendererTest
     private Renderer renderer;
 
     /**
+     * @throws java.lang.Exception
      * @see org.codehaus.plexus.PlexusTestCase#setUp()
      */
     protected void setUp()
@@ -85,6 +87,7 @@ public class DefaultSiteRendererTest
     }
 
     /**
+     * @throws java.lang.Exception
      * @see org.codehaus.plexus.PlexusTestCase#tearDown()
      */
     protected void tearDown()
@@ -106,17 +109,17 @@ public class DefaultSiteRendererTest
         DecorationModel decoration = new DecorationXpp3Reader()
             .read( new FileReader( getTestFile( "src/test/site/site.xml" ) ) );
 
-        SiteRenderingContext context = new SiteRenderingContext();
-        context.setTemplateName( "default-site.vm" );
-        context.setTemplateClassLoader( getClassLoader() );
-        context.setUsingDefaultTemplate( true );
+        SiteRenderingContext ctxt = new SiteRenderingContext();
+        ctxt.setTemplateName( "default-site.vm" );
+        ctxt.setTemplateClassLoader( getClassLoader() );
+        ctxt.setUsingDefaultTemplate( true );
         Map templateProp = new HashMap();
         templateProp.put( "outputEncoding", "UTF-8" );
-        context.setTemplateProperties( templateProp );
-        context.setDecoration( decoration );
-        context.addSiteDirectory( getTestFile( "src/test/site" ) );
+        ctxt.setTemplateProperties( templateProp );
+        ctxt.setDecoration( decoration );
+        ctxt.addSiteDirectory( getTestFile( "src/test/site" ) );
 
-        renderer.render( renderer.locateDocumentFiles( context ).values(), context, getTestFile( OUTPUT ) );
+        renderer.render( renderer.locateDocumentFiles( ctxt ).values(), ctxt, getTestFile( OUTPUT ) );
 
         // ----------------------------------------------------------------------
         // Verify specific pages
@@ -154,7 +157,7 @@ public class DefaultSiteRendererTest
 
         // HtmlUnit
         WebClient webClient = new WebClient();
-        HtmlPage page = (HtmlPage) webClient.getPage( nestedItems.toURL() );
+        HtmlPage page = (HtmlPage) webClient.getPage( nestedItems.toURI().toURL() );
         assertNotNull( page );
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
@@ -197,59 +200,55 @@ public class DefaultSiteRendererTest
 
         HtmlUnorderedList ul = (HtmlUnorderedList) elementIterator.next();
         assertNotNull( ul );
-        // TODO: how can this be?
-        //assertEquals( ul.getFirstChild().asText().trim(), "" );
 
         HtmlListItem li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 1." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 1." );
 
         ul = (HtmlUnorderedList) elementIterator.next();
         assertNotNull( ul );
-        //assertEquals( ul.getFirstChild().asText().trim(), "" );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.getFirstChild().asText().trim(), "Item 11." );
+        assertEquals( p.getFirstDomChild().asText().trim(), "Item 11." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.getFirstChild().asText().trim(), "Item 12." );
+        assertEquals( p.getFirstDomChild().asText().trim(), "Item 12." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 13." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 13." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 14." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 14." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 2." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 2." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 3." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 3." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 4." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 4." );
 
         ul = (HtmlUnorderedList) elementIterator.next();
         assertNotNull( ul );
-        //assertEquals( ul.getFirstChild().asText().trim(), "" );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 41." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 41." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 42." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 42." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 43." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 43." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 44." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 44." );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
@@ -287,54 +286,51 @@ public class DefaultSiteRendererTest
 
         HtmlOrderedList ol = (HtmlOrderedList) elementIterator.next();
         assertNotNull( ol );
-        //assertEquals( ol.getFirstChild().asText().trim(), "" );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 1." );
-
-        ol = (HtmlOrderedList) elementIterator.next();
-        assertNotNull( ol );
-        //assertEquals( ol.getFirstChild().asText().trim(), "" );
-
-        li = (HtmlListItem) elementIterator.next();
-        assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 11." );
-        li = (HtmlListItem) elementIterator.next();
-        assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 12." );
-        li = (HtmlListItem) elementIterator.next();
-        assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 13." );
-        li = (HtmlListItem) elementIterator.next();
-        assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 14." );
-        li = (HtmlListItem) elementIterator.next();
-        assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 2." );
-        li = (HtmlListItem) elementIterator.next();
-        assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 3." );
-        li = (HtmlListItem) elementIterator.next();
-        assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 4." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 1." );
 
         ol = (HtmlOrderedList) elementIterator.next();
         assertNotNull( ol );
-        //assertEquals( ol.getFirstChild().asText().trim(), "" );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 41." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 11." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 42." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 12." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 43." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 13." );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "Item 44." );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 14." );
+        li = (HtmlListItem) elementIterator.next();
+        assertNotNull( li );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 2." );
+        li = (HtmlListItem) elementIterator.next();
+        assertNotNull( li );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 3." );
+        li = (HtmlListItem) elementIterator.next();
+        assertNotNull( li );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 4." );
+
+        ol = (HtmlOrderedList) elementIterator.next();
+        assertNotNull( ol );
+
+        li = (HtmlListItem) elementIterator.next();
+        assertNotNull( li );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 41." );
+        li = (HtmlListItem) elementIterator.next();
+        assertNotNull( li );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 42." );
+        li = (HtmlListItem) elementIterator.next();
+        assertNotNull( li );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 43." );
+        li = (HtmlListItem) elementIterator.next();
+        assertNotNull( li );
+        assertEquals( li.getFirstDomChild().asText().trim(), "Item 44." );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
@@ -372,31 +368,29 @@ public class DefaultSiteRendererTest
 
         HtmlDefinitionList dl = (HtmlDefinitionList) elementIterator.next();
         assertNotNull( dl );
-        //assertEquals( dl.getFirstChild().asText().trim(), "" );
 
         HtmlDefinitionTerm dt = (HtmlDefinitionTerm) elementIterator.next();
         assertNotNull( dt );
-        assertEquals( dt.getFirstChild().asText().trim(), "Term 1." );
+        assertEquals( dt.getFirstDomChild().asText().trim(), "Term 1." );
         HtmlDefinitionDescription dd = (HtmlDefinitionDescription) elementIterator.next();
         assertNotNull( dd );
-        assertEquals( dd.getFirstChild().asText().trim(), "Description 1." );
+        assertEquals( dd.getFirstDomChild().asText().trim(), "Description 1." );
 
         dt = (HtmlDefinitionTerm) elementIterator.next();
         assertNotNull( dt );
-        assertEquals( dt.getFirstChild().asText().trim(), "Term 2." );
+        assertEquals( dt.getFirstDomChild().asText().trim(), "Term 2." );
         dd = (HtmlDefinitionDescription) elementIterator.next();
         assertNotNull( dd );
-        assertEquals( dd.getFirstChild().asText().trim(), "Description 2." );
+        assertEquals( dd.getFirstDomChild().asText().trim(), "Description 2." );
 
         dl = (HtmlDefinitionList) elementIterator.next();
         assertNotNull( dl );
-        //assertEquals( dl.getFirstChild().asText().trim(), "" );
         dt = (HtmlDefinitionTerm) elementIterator.next();
         assertNotNull( dt );
-        assertEquals( dt.getFirstChild().asText().trim(), "Term 21." );
+        assertEquals( dt.getFirstDomChild().asText().trim(), "Term 21." );
         dd = (HtmlDefinitionDescription) elementIterator.next();
         assertNotNull( dd );
-        assertEquals( dd.getFirstChild().asText().trim(), "Description 21." );
+        assertEquals( dd.getFirstDomChild().asText().trim(), "Description 21." );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
@@ -432,7 +426,7 @@ public class DefaultSiteRendererTest
 
         // HtmlUnit
         WebClient webClient = new WebClient();
-        HtmlPage page = (HtmlPage) webClient.getPage( multipleblock.toURL() );
+        HtmlPage page = (HtmlPage) webClient.getPage( multipleblock.toURI().toURL() );
         assertNotNull( page );
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
@@ -472,11 +466,10 @@ public class DefaultSiteRendererTest
 
         HtmlUnorderedList ul = (HtmlUnorderedList) elementIterator.next();
         assertNotNull( ul );
-        //assertEquals( ul.getFirstChild().asText().trim(), "" );
 
         HtmlListItem li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "list1" );
+        assertEquals( li.getFirstDomChild().asText().trim(), "list1" );
 
         // ----------------------------------------------------------------------
         // Paragraph
@@ -492,11 +485,10 @@ public class DefaultSiteRendererTest
 
         ul = (HtmlUnorderedList) elementIterator.next();
         assertNotNull( ul );
-        //assertEquals( ul.getFirstChild().asText().trim(), "" );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "list1" );
+        assertEquals( li.getFirstDomChild().asText().trim(), "list1" );
 
         // ----------------------------------------------------------------------
         // Paragraph
@@ -512,14 +504,13 @@ public class DefaultSiteRendererTest
 
         ul = (HtmlUnorderedList) elementIterator.next();
         assertNotNull( ul );
-        //assertEquals( ul.getFirstChild().asText().trim(), "" );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.getFirstChild().asText().trim(), "list1" );
+        assertEquals( p.getFirstDomChild().asText().trim(), "list1" );
 
         assertFalse( elementIterator.hasNext() );
     }
@@ -550,7 +541,7 @@ public class DefaultSiteRendererTest
 
         // HtmlUnit
         WebClient webClient = new WebClient();
-        HtmlPage page = (HtmlPage) webClient.getPage( entityTest.toURL() );
+        HtmlPage page = (HtmlPage) webClient.getPage( entityTest.toURI().toURL() );
         assertNotNull( page );
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
@@ -632,7 +623,7 @@ public class DefaultSiteRendererTest
         final List collectedAlerts = new ArrayList();
         webClient.setAlertHandler( new CollectingAlertHandler( collectedAlerts ) );
 
-        HtmlPage page = (HtmlPage) webClient.getPage( jsTest.toURL() );
+        HtmlPage page = (HtmlPage) webClient.getPage( jsTest.toURI().toURL() );
         assertNotNull( page );
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
@@ -682,7 +673,7 @@ public class DefaultSiteRendererTest
 
         // HtmlUnit
         WebClient webClient = new WebClient();
-        HtmlPage page = (HtmlPage) webClient.getPage( faqTest.toURL() );
+        HtmlPage page = (HtmlPage) webClient.getPage( faqTest.toURI().toURL() );
         assertNotNull( page );
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
@@ -711,10 +702,10 @@ public class DefaultSiteRendererTest
         assertEquals( element.asText().trim(), "Contributing" );
 
         HtmlOrderedList ol = (HtmlOrderedList) elementIterator.next();
-        assertEquals( ol.getFirstChild().asText().trim(), "One stupid question & a silly answer?" );
+        assertEquals( ol.getFirstDomChild().asText().trim(), "One stupid question & a silly answer?" );
 
         HtmlListItem li = (HtmlListItem) elementIterator.next();
-        assertEquals( li.getFirstChild().asText().trim(), "One stupid question & a silly answer?" );
+        assertEquals( li.getFirstDomChild().asText().trim(), "One stupid question & a silly answer?" );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( a.getAttributeValue( "href" ), "#stupid-question" );
@@ -729,11 +720,11 @@ public class DefaultSiteRendererTest
         assertEquals( element.asText().trim(), "Using Maven" );
 
         ol = (HtmlOrderedList) elementIterator.next();
-        assertEquals( ol.getFirstChild().asText().trim(), "How do I disable a report on my site?" );
+        assertEquals( ol.getFirstDomChild().asText().trim(), "How do I disable a report on my site?" );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "How do I disable a report on my site?" );
+        assertEquals( li.getFirstDomChild().asText().trim(), "How do I disable a report on my site?" );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( a.getAttributeValue( "href" ), "#disable-reports" );
@@ -750,7 +741,7 @@ public class DefaultSiteRendererTest
         HtmlDefinitionList dl = (HtmlDefinitionList) elementIterator.next();
 
         HtmlDefinitionTerm dt = (HtmlDefinitionTerm) elementIterator.next();
-        assertEquals( dt.getFirstChild().asText().trim(), "One stupid question & a silly answer?" );
+        assertEquals( dt.getFirstDomChild().asText().trim(), "One stupid question & a silly answer?" );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( a.getAttributeValue( "name" ), "stupid-question" );
@@ -807,7 +798,7 @@ public class DefaultSiteRendererTest
         dl = (HtmlDefinitionList) elementIterator.next();
 
         dt = (HtmlDefinitionTerm) elementIterator.next();
-        assertEquals( dt.getFirstChild().asText().trim(), "How do I disable a report on my site?" );
+        assertEquals( dt.getFirstDomChild().asText().trim(), "How do I disable a report on my site?" );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( a.getAttributeValue( "name" ), "disable-reports" );
@@ -856,7 +847,7 @@ public class DefaultSiteRendererTest
 
         // HtmlUnit
         WebClient webClient = new WebClient();
-        HtmlPage page = (HtmlPage) webClient.getPage( attributes.toURL() );
+        HtmlPage page = (HtmlPage) webClient.getPage( attributes.toURI().toURL() );
         assertNotNull( page );
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
@@ -924,5 +915,23 @@ public class DefaultSiteRendererTest
         assertEquals( "left", th.getAttributeValue( "align" ) );
         assertEquals( "2", th.getAttributeValue( "rowspan" ) );
         assertEquals( "middle", th.getAttributeValue( "valign" ) );
+
+        HtmlTableDataCell td = (HtmlTableDataCell) elementIterator.next();
+        td = (HtmlTableDataCell) elementIterator.next();
+        tr = (HtmlTableRow) elementIterator.next();
+        td = (HtmlTableDataCell) elementIterator.next();
+        td = (HtmlTableDataCell) elementIterator.next();
+
+        p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+        
+        UnknownHtmlElement unk = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "u", unk.getTagName());
+        unk = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "s", unk.getTagName());
+        unk = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "sub", unk.getTagName());
+        unk = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "sup", unk.getTagName());
     }
 }
