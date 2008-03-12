@@ -533,7 +533,7 @@ public class DefaultSiteRenderer
             if ( zipFile.getEntry( SKIN_TEMPLATE_LOCATION ) != null )
             {
                 context.setTemplateName( SKIN_TEMPLATE_LOCATION );
-                context.setTemplateClassLoader( new URLClassLoader( new URL[]{skinFile.toURL()} ) );
+                context.setTemplateClassLoader( new URLClassLoader( new URL[]{skinFile.toURI().toURL()} ) );
             }
             else
             {

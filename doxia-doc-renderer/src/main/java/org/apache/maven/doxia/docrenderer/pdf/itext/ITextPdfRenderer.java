@@ -188,7 +188,7 @@ public class ITextPdfRenderer
     {
         ITextSink sink = new ITextSink( new FileWriter( iTextFile ) );
 
-        sink.setClassLoader( new URLClassLoader( new URL[] { iTextFile.getParentFile().toURL() } ) );
+        sink.setClassLoader( new URLClassLoader( new URL[] { iTextFile.getParentFile().toURI().toURL() } ) );
 
         parse( fullDocPath, module.getParserId(), sink );
 
