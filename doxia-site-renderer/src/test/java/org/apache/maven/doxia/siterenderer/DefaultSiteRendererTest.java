@@ -22,6 +22,7 @@ package org.apache.maven.doxia.siterenderer;
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlApplet;
 import com.gargoylesoftware.htmlunit.html.HtmlDefinitionDescription;
 import com.gargoylesoftware.htmlunit.html.HtmlDefinitionList;
 import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
@@ -34,6 +35,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlListItem;
 import com.gargoylesoftware.htmlunit.html.HtmlOrderedList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
+import com.gargoylesoftware.htmlunit.html.HtmlParameter;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
 import com.gargoylesoftware.htmlunit.html.HtmlScript;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
@@ -132,6 +134,7 @@ public class DefaultSiteRendererTest
         verifyJavascriptPage();
         verifyFaqPage();
         verifyAttributes();
+        verifyMisc();
     }
 
     /**
@@ -933,5 +936,41 @@ public class DefaultSiteRendererTest
         assertEquals( "sub", unk.getTagName());
         unk = (UnknownHtmlElement) elementIterator.next();
         assertEquals( "sup", unk.getTagName());
+    }
+
+    /**
+     * @throws Exception
+     */
+    public void verifyMisc()
+        throws Exception
+    {
+        File misc = getTestFile( "target/output/misc.html" );
+        assertNotNull( misc );
+        assertTrue( misc.exists() );
+
+        // HtmlUnit
+        WebClient webClient = new WebClient();
+        HtmlPage page = (HtmlPage) webClient.getPage( misc.toURI().toURL() );
+        assertNotNull( page );
+
+        HtmlElement element = page.getHtmlElementById( "contentBox" );
+        assertNotNull( element );
+        HtmlDivision division = (HtmlDivision) element;
+        assertNotNull( division );
+
+        Iterator elementIterator = division.getAllHtmlChildElements();
+
+        // ----------------------------------------------------------------------
+        //
+        // ----------------------------------------------------------------------
+
+        HtmlApplet applet = (HtmlApplet) elementIterator.next();
+        assertEquals( "org.micro.applet.Main", applet.getAttributeValue( "code" ) );
+        assertEquals( "micro-applet.jar", applet.getAttributeValue( "archive" ) );
+
+        HtmlParameter param = (HtmlParameter) elementIterator.next();
+        assertEquals( "midlet", param.getAttributeValue( "name" ) );
+        assertEquals( "org.micro.applet.SimpleDemoMIDlet", param.getAttributeValue( "value" ) );
+
     }
 }

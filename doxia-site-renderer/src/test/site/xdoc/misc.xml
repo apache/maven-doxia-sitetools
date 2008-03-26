@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<document>
+  <body>
+
+      <!-- DOXIA-201, note: applet is an unkown tag, should give a warning -->
+      <applet code="org.micro.applet.Main" width="600" height="400" archive="micro-applet.jar">
+          <param name="midlet" value="org.micro.applet.SimpleDemoMIDlet"/>
+      </applet>
+
+  </body>
+</document>
