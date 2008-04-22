@@ -135,6 +135,7 @@ public class DefaultSiteRendererTest
         verifyFaqPage();
         verifyAttributes();
         verifyMisc();
+        verifyDocbookPageExists();
     }
 
     /**
@@ -973,4 +974,16 @@ public class DefaultSiteRendererTest
         assertEquals( "org.micro.applet.SimpleDemoMIDlet", param.getAttributeValue( "value" ) );
 
     }
+
+    /**
+     * @throws Exception
+     */
+    public void verifyDocbookPageExists()
+        throws Exception
+    {
+        File nestedItems = getTestFile( "target/output/docbook.html" );
+        assertNotNull( nestedItems );
+        assertTrue( nestedItems.exists() );
+    }
+    
 }
