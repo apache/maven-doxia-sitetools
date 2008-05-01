@@ -35,7 +35,7 @@ import org.apache.maven.doxia.util.HtmlTools;
 /**
  * Sink for site renderering.
  *
- * @author <a href="mailto:evenisse@codehaus.org>Emmanuel Venisse</a>
+ * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  * @version $Id$
  */
 public class SiteRendererSink
