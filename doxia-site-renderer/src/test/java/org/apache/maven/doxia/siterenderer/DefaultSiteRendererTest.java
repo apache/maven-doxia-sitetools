@@ -136,6 +136,7 @@ public class DefaultSiteRendererTest
         verifyAttributes();
         verifyMisc();
         verifyDocbookPageExists();
+        verifyApt();
     }
 
     /**
@@ -581,8 +582,7 @@ public class DefaultSiteRendererTest
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        // TODO: space is not correct?
-        //assertEquals( p.asText().trim(), "'&' '<' '>' '\"' ''' ' '" );
+        assertEquals( p.asText().trim(), "'&' '<' '>' '\"' ''' ' ' ' '" );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
@@ -928,7 +928,7 @@ public class DefaultSiteRendererTest
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        
+
         UnknownHtmlElement unk = (UnknownHtmlElement) elementIterator.next();
         assertEquals( "u", unk.getTagName());
         unk = (UnknownHtmlElement) elementIterator.next();
@@ -937,6 +937,45 @@ public class DefaultSiteRendererTest
         assertEquals( "sub", unk.getTagName());
         unk = (UnknownHtmlElement) elementIterator.next();
         assertEquals( "sup", unk.getTagName());
+
+        p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+
+        unk = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "b", unk.getTagName());
+        unk = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "i", unk.getTagName());
+        unk = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "i", unk.getTagName());
+        unk = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "b", unk.getTagName());
+
+        p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+        assertEquals( "color: red; margin-left: 20px", p.getAttributeValue( "style" ) );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "Anchor", a.getAttributeValue( "name" ) );
+
+        p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "#Anchor", a.getAttributeValue( "href" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "#Anchor", a.getAttributeValue( "href" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "http://maven.apache.org/", a.getAttributeValue( "href" ) );
+        assertEquals( "externalLink", a.getAttributeValue( "class" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "./cdc.html", a.getAttributeValue( "href" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "cdc.html", a.getAttributeValue( "href" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        // TODO:
+        //assertEquals( "cdc.pdf", a.getAttributeValue( "href" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "./cdc.txt", a.getAttributeValue( "href" ) );
     }
 
     /**
@@ -985,5 +1024,66 @@ public class DefaultSiteRendererTest
         assertNotNull( nestedItems );
         assertTrue( nestedItems.exists() );
     }
-    
+
+    /**
+     * @throws Exception
+     */
+    public void verifyApt()
+        throws Exception
+    {
+        File attributes = getTestFile( "target/output/apt.html" );
+        assertNotNull( attributes );
+        assertTrue( attributes.exists() );
+
+        // HtmlUnit
+        WebClient webClient = new WebClient();
+        HtmlPage page = (HtmlPage) webClient.getPage( attributes.toURI().toURL() );
+        assertNotNull( page );
+
+        HtmlElement element = page.getHtmlElementById( "contentBox" );
+        assertNotNull( element );
+        HtmlDivision division = (HtmlDivision) element;
+        assertNotNull( division );
+
+        Iterator elementIterator = division.getAllHtmlChildElements();
+
+        // ----------------------------------------------------------------------
+        //
+        // ----------------------------------------------------------------------
+
+        HtmlDivision div = (HtmlDivision) elementIterator.next();
+        assertEquals( "section", div.getAttributeValue( "class" ) );
+
+        HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
+        assertNotNull( h2 );
+        assertEquals( "Links", h2.asText().trim() );
+
+        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "Links", a.getAttributeValue( "name" ) );
+
+        HtmlParagraph p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "Anchor", a.getAttributeValue( "name" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "cdc.html", a.getAttributeValue( "name" ) );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "#Anchor", a.getAttributeValue( "href" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "#Anchor", a.getAttributeValue( "href" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "http://maven.apache.org/", a.getAttributeValue( "href" ) );
+        assertEquals( "externalLink", a.getAttributeValue( "class" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "http://maven.apache.org/", a.getAttributeValue( "href" ) );
+        assertEquals( "externalLink", a.getAttributeValue( "class" ) );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "./cdc.html", a.getAttributeValue( "href" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        // TODO:
+        //assertEquals( "#cdc.html", a.getAttributeValue( "href" ) );
+    }
 }

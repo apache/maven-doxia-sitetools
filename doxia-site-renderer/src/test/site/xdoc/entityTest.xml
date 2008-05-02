@@ -29,7 +29,7 @@
     <section name="section name">
 
       <h4>Entities</h4>
-      <p>'&amp;' '&lt;' '&gt;' '&quot;' '&apos;' '&nbsp;'</p>
+      <p>'&amp;' '&lt;' '&gt;' '&quot;' '&apos;' '&nbsp;' '&#160;'</p>
 
       <h4>Comment</h4>
       <!-- a comment and nothing else! -->

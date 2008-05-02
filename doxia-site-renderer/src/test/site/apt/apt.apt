@@ -1,0 +1,17 @@
+ -----
+ Anchors / Links in APT
+ -----
+ Lukas Theussl
+ -----
+ May 2008
+ -----
+
+Links
+
+  {Anchor}
+  {cdc.html}
+  Link to {{Anchor}}.
+  Link to anchor {{{Anchor}showing alternate text}}.
+  Link to {{http://maven.apache.org/}}. 
+  Link to {{{http://maven.apache.org/}Maven home page}}.
+  Link to {{{./cdc.html}other document}} and within {{{cdc.html}same document}}.

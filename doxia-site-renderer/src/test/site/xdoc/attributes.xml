@@ -27,6 +27,25 @@
         <!-- DOXIA-163, DOXIA 164 -->
         <u>underline</u> <s>strike-through</s> <sub>subscript</sub> <sup>superscript</sup>
       </p>
+      <p>
+        <!-- nested text attributes -->
+        <b><i>bold-italic</i></b> <i><b>italic-bold</b></i>
+      </p>
+      <!-- multiple style attributes -->
+      <p style="color: red; margin-left: 20px"></p>
+
+      <!-- Anchors / Links -->
+      <a name="Anchor"/>
+      <p>
+        Link to <a href="#Anchor">anchor</a>.
+        Link to anchor <a href="#Anchor">showing alternate text</a>.
+        Link to <a href="http://maven.apache.org/">Maven home page</a>.
+        Link to <a href="./cdc.html">other document</a>.
+        Link to <a href="cdc.html">other document</a>.
+        Link to <a href="cdc.pdf">other document</a>.
+        Link to <a href="./cdc.txt">other document</a>.
+      </p>
     </section>
+
   </body>
 </document>
