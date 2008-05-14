@@ -72,7 +72,7 @@ void parse( Reader source, Sink sink )
 
  The <AbstractParser> class is an abstract implementation of the <Parser>. It provides a macro mechanism
  to give dynamic functionalities for the parsing. For more information on macros, read the
- {{{macros/index.html}Doxia Macro Guide}}.
+ {{{./macros/index.html}Doxia Macro Guide}}.
 
  Finally, the <SiteModule> interface is the last part of the puzzle. It provides main definitions of a
  given Doxia module and it is used by the <doxia-site-renderer> site tools.
@@ -90,7 +90,7 @@ void parse( Reader source, Sink sink )
 
  Several modules provide also a <Sink> implementation to handle a specific markup language.
 
- For more information on modules, read the {{{modules/index.html}Doxia Module Guide}}.
+ For more information on modules, read the {{{./modules/index.html}Doxia Module Guide}}.
 
 *Doxia Site Tools
 

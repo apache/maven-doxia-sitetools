@@ -21,7 +21,7 @@ under the License.
 
 <faqs title="Frequently Asked Questions">
   <part id="General">
-    <faq id="How to handle style in the APT markup language">
+    <faq id="How_to_handle_style_in_the_APT_markup_language">
       <question>How to handle style in the APT markup language?</question>
       <answer>
         <p>
@@ -29,7 +29,7 @@ under the License.
         </p>
       </answer>
     </faq>
-    <faq id="How to export in PDF">
+    <faq id="How_to_export_in_PDF">
       <question>How to export in PDF?</question>
       <answer>
         <p>
@@ -43,7 +43,7 @@ under the License.
         </p>
       </answer>
     </faq>
-    <faq id="Is it possible to create a book">
+    <faq id="Is_it_possible_to_create_a_book">
       <question>Is it possible to create a book?</question>
       <answer>
         <p>
