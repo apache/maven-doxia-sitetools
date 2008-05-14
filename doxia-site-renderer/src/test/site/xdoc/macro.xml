@@ -23,7 +23,11 @@
     <title>Test DOXIA-96</title>
     <author email="vsiveton@apache.org">Vincent Siveton</author>
   </properties>
+
   <body>
+    <!-- FIXME: DOXIA-240 -->
+    <!-- <macro name="toc"/> -->
+
     <section name="section name">
       <macro name="echo" message="hello!"/>
     </section>
