@@ -18,6 +18,10 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+<!-- START SNIPPET: macrotest -->
+      <!-- A test snippet... -->
+<!-- END SNIPPET: macrotest -->
+
 <project name="Plexus">
   <bannerLeft>
     <name>Plexus</name>

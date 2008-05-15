@@ -25,11 +25,26 @@
   </properties>
 
   <body>
-    <!-- FIXME: DOXIA-240 -->
-    <macro name="toc"/>
 
-    <section name="section name">
-      <macro name="echo" message="hello!"/>
+    <section name="TOC Macro">
+      <macro name="toc"/>
     </section>
+
+    <!-- FIXME: DOXIA-242 -->
+    <section name="Echo Macro">
+      <macro name="echo">
+        <param name="param1" value="value1"/>
+        <param name="param2" value="value2"/>
+      </macro>
+    </section>
+
+
+    <section name="Snippet Macro">
+      <macro name="snippet">
+        <param name="id" value="macrotest"/>
+        <param name="file" value="src/test/site/site.xml"/>
+      </macro>
+    </section>
+
   </body>
 </document>

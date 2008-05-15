@@ -15,3 +15,15 @@ Links
   Link to {{http://maven.apache.org/}}. 
   Link to {{{http://maven.apache.org/}Maven home page}}.
   Link to {{{./cdc.html}other document}} and within {{{cdc.html}same document}}.
+
+TOC Macro
+
+%{toc}
+
+Echo Macro
+
+%{echo|param1=value1|param2=value2}
+
+Snippet Macro
+
+%{snippet|id=macrotest|file=src/test/site/site.xml}
