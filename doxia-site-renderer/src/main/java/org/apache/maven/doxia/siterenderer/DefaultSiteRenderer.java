@@ -209,7 +209,7 @@ public class DefaultSiteRenderer
                 for ( Iterator iter = files.entrySet().iterator(); iter.hasNext(); )
                 {
                     Map.Entry entry = (Map.Entry) iter.next();
-                    if ( entry.getKey().toString().toLowerCase().equals( key.toLowerCase() ) )
+                    if ( entry.getKey().toString().equalsIgnoreCase( key ) )
                     {
                         DocumentRenderer renderer = (DocumentRenderer) files.get( entry.getKey() );
 

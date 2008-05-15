@@ -21,6 +21,7 @@ package org.apache.maven.doxia.site.decoration.inheritance;
 
 import java.io.File;
 
+import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 
 import junit.framework.TestCase;
@@ -295,7 +296,7 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
         {
             String s = StringUtils.replace( new File( base + "/" + path ).toURL().toString(), "file:", "" );
             assertEquals( "wrong path", s, desc.getPath() );
@@ -321,7 +322,7 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
         {
             String s = StringUtils.replace( new File( base + "/" + path ).toURL().toString(), "file:", "" );
             assertEquals( "wrong path", s, desc.getPath() );
@@ -347,7 +348,7 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
         {
             String s = StringUtils.replace( new File( base ).toURL().toString(), "file:", "" );
             assertEquals( "wrong path", s, desc.getPath() );
@@ -373,7 +374,7 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
         {
             String s = StringUtils.replace( new File( base ).toURL().toString(), "file:", "" );
             assertEquals( "wrong path", s, desc.getPath() );
@@ -416,7 +417,7 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
         {
             String s = StringUtils.replace( new File( base + "/" + path ).toURL().toString(), "file:", "" );
             assertEquals( "wrong path", s, desc.getPath() );
@@ -442,7 +443,7 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
         {
             String s = StringUtils.replace( new File( base + "/" + path ).toURL().toString(), "file:", "" );
             assertEquals( "wrong path", s, desc.getPath() );
@@ -468,7 +469,7 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
         {
             String s = StringUtils.replace( new File( base ).toURL().toString(), "file:", "" );
             assertEquals( "wrong path", s, desc.getPath() );
@@ -494,7 +495,7 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
         {
             String s = StringUtils.replace( new File( base ).toURL().toString(), "file:", "" );
             assertEquals( "wrong path", s, desc.getPath() );
@@ -520,7 +521,7 @@ public class PathDescriptorTest extends TestCase
         assertNotNull( desc.getPathUrl() );
         assertNotNull( desc.getPath() );
         assertNotNull( desc.getLocation() );
-        if ( System.getProperty( "os.name" ).toLowerCase().indexOf( "windows" ) != -1 )
+        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
         {
             String s = StringUtils.replace( new File( base ).toURL().toString(), "file:", "" );
             assertEquals( "wrong path", s, desc.getPath() );
