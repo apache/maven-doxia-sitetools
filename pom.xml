@@ -30,7 +30,7 @@ under the License.
 
   <groupId>org.apache.maven.doxia</groupId>
   <artifactId>doxia-sitetools</artifactId>
-  <version>1.0-alpha-11-SNAPSHOT</version>
+  <version>1.0-alpha-11</version>
   <packaging>pom</packaging>
 
   <name>Doxia Sitetools</name>
@@ -39,7 +39,7 @@ under the License.
 
   <properties>
     <projectVersion>${project.version}</projectVersion>
-    <doxiaVersion>1.0-alpha-11-SNAPSHOT</doxiaVersion>
+    <doxiaVersion>1.0-alpha-11</doxiaVersion>
   </properties>
 
   <mailingLists>
@@ -96,9 +96,9 @@ under the License.
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/branches/doxia-sitetools-1.0-alpha-x/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/branches/doxia-sitetools-1.0-alpha-x/</developerConnection>
-    <url>https://svn.apache.org/viewvc/maven/doxia/doxia-sitetools/branches/doxia-sitetools-1.0-alpha-x/</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/tags/doxia-sitetools-1.0-alpha-11</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/tags/doxia-sitetools-1.0-alpha-11</developerConnection>
+    <url>https://svn.apache.org/viewvc/maven/doxia/doxia-sitetools/tags/doxia-sitetools-1.0-alpha-11</url>
   </scm>
 
   <build>
