@@ -15,6 +15,7 @@ Links
   Link to {{http://maven.apache.org/}}. 
   Link to {{{http://maven.apache.org/}Maven home page}}.
   Link to {{{./cdc.html}other document}} and within {{{cdc.html}same document}}.
+  Link to {{{/index.html}root document}}.
 
 TOC Macro
 

@@ -975,6 +975,8 @@ public class DefaultSiteRendererTest
         assertEquals( "cdc.pdf", a.getAttributeValue( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "./cdc.txt", a.getAttributeValue( "href" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "/index.html", a.getAttributeValue( "href" ) );
     }
 
     /**
@@ -1083,5 +1085,8 @@ public class DefaultSiteRendererTest
         assertEquals( "./cdc.html", a.getAttributeValue( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#cdc.html", a.getAttributeValue( "href" ) );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "/index.html", a.getAttributeValue( "href" ) );
     }
 }

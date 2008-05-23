@@ -44,6 +44,7 @@
         Link to <a href="cdc.html">other document</a>.
         Link to <a href="cdc.pdf">other document</a>.
         Link to <a href="./cdc.txt">other document</a>.
+        Link to <a href="/index.html">root document</a>.
       </p>
     </section>
 
