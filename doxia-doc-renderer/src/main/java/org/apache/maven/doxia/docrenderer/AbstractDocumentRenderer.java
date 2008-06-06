@@ -81,8 +81,8 @@ public abstract class AbstractDocumentRenderer
      *
      * @param documentModel the document model, containing all the metadata, etc.
      *
-     * @throws DocumentRendererException if any
-     * @throws IOException if any
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
      */
     public abstract void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException;
@@ -114,8 +114,8 @@ public abstract class AbstractDocumentRenderer
      *
      * @param outputDirectory the output directory where the document should be generated.
      *
-     * @throws DocumentRendererException if any
-     * @throws IOException if any
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
      */
     public void render( File baseDirectory, File outputDirectory )
         throws DocumentRendererException, IOException
@@ -134,8 +134,8 @@ public abstract class AbstractDocumentRenderer
      * @param documentDescriptor a file containing the document model.
      *              If this file does not exist or is null, some default settings will be used.
      *
-     * @throws DocumentRendererException if any
-     * @throws IOException if any
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
      */
     public void render( File baseDirectory, File outputDirectory, File documentDescriptor )
         throws DocumentRendererException, IOException
@@ -159,7 +159,7 @@ public abstract class AbstractDocumentRenderer
      * @param baseDirectory the directory containing the source files.
      *              This should follow the standard Maven convention, ie containing all the site modules.
      * @return a Map of files to process.
-     * @throws IOException in case of a problem reading the files under baseDirectory.
+     * @throws java.io.IOException in case of a problem reading the files under baseDirectory.
      */
     public Map getFilesToProcess( File baseDirectory )
         throws IOException
@@ -294,8 +294,8 @@ public abstract class AbstractDocumentRenderer
      * @param fullDocPath absolute path to the source document.
      * @param parserId determines the parser to use.
      * @param sink the sink to receive the events.
-     * @throws DocumentRendererException in case of a parsing error.
-     * @throws IOException if the source document cannot be opened.
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException in case of a parsing error.
+     * @throws java.io.IOException if the source document cannot be opened.
      */
     protected void parse( String fullDocPath, String parserId, Sink sink )
         throws DocumentRendererException, IOException

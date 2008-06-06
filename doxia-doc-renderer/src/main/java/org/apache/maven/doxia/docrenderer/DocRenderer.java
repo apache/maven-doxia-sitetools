@@ -31,6 +31,7 @@ import java.io.IOException;
  */
 public interface DocRenderer
 {
+    /** Plexus lookup. */
     String ROLE = DocRenderer.class.getName();
 
     /**
@@ -38,8 +39,8 @@ public interface DocRenderer
      *
      * @param siteDirectory the input directory contains files to be generated
      * @param outputDirectory the output directory where files are generated
-     * @throws DocumentRendererException if any
-     * @throws IOException if any
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
      */
     void render( File siteDirectory, File outputDirectory )
         throws DocumentRendererException, IOException;
@@ -50,8 +51,8 @@ public interface DocRenderer
      * @param siteDirectory the input directory contains files to be generated
      * @param outputDirectory the output directory where file are generated
      * @param documentDescriptor the document descriptor
-     * @throws DocumentRendererException if any
-     * @throws IOException if any
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
      */
     void render( File siteDirectory, File outputDirectory, File documentDescriptor )
         throws DocumentRendererException, IOException;

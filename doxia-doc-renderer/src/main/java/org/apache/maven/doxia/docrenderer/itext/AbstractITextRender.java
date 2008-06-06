@@ -260,8 +260,8 @@ public abstract class AbstractITextRender
      *
      * @param iTextFile
      * @param iTextOutput
-     * @throws DocumentRendererException if any
-     * @throws IOException if any
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
      */
     public abstract void generateOutput( File iTextFile, File iTextOutput )
         throws DocumentRendererException, IOException;
@@ -272,8 +272,8 @@ public abstract class AbstractITextRender
      * @param fullPathDoc
      * @param module
      * @param outputITextFile
-     * @throws DocumentRendererException
-     * @throws IOException
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException
+     * @throws java.io.IOException
      */
     private void parse( String fullPathDoc, SiteModule module, File outputITextFile )
         throws DocumentRendererException, IOException
@@ -308,8 +308,8 @@ public abstract class AbstractITextRender
      *
      * @param iTextFiles
      * @return a document
-     * @throws DocumentRendererException if any
-     * @throws IOException if any
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
      */
     private Document generateDocument( List iTextFiles )
         throws DocumentRendererException, IOException
@@ -362,7 +362,7 @@ public abstract class AbstractITextRender
      * Init the transformer object
      *
      * @return an instanced transformer object
-     * @throws DocumentRendererException if any
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      */
     private Transformer initTransformer()
         throws DocumentRendererException
@@ -441,7 +441,7 @@ public abstract class AbstractITextRender
      * @param documentModel
      * @param document
      * @param iTextFile
-     * @throws DocumentRendererException
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any.
      */
     private void transform( DocumentModel documentModel, Document document, File iTextFile )
         throws DocumentRendererException

@@ -28,6 +28,9 @@ package org.apache.maven.doxia.docrenderer;
 public class DocumentRendererException
     extends Exception
 {
+    /** serialVersionUID */
+    static final long serialVersionUID = 295967936746221567L;
+
     /**
      * Default constructor.
      *

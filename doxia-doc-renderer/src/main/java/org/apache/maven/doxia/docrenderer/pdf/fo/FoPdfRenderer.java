@@ -85,23 +85,23 @@ public class FoPdfRenderer
 
 
     /** {@inheritDoc} */
-    public void render( Map files, File outputDirectory, DocumentModel model )
+    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel    )
         throws DocumentRendererException, IOException
     {
-        String outputName = model.getOutputName();
+        String outputName = documentModel.getOutputName();
 
         if ( outputName == null )
         {
             getLogger().info( "No outputName is defined in the document descriptor. Using 'target.pdf'" );
 
-            model.setOutputName( "target" );
+            documentModel.setOutputName( "target" );
         }
         else if ( outputName.lastIndexOf( "." ) != -1 )
         {
-            model.setOutputName( outputName.substring( 0, outputName.lastIndexOf( "." ) ) );
+            documentModel.setOutputName( outputName.substring( 0, outputName.lastIndexOf( "." ) ) );
         }
 
-        outputName = model.getOutputName();
+        outputName = documentModel.getOutputName();
 
         File outputFOFile = new File( outputDirectory, outputName + ".fo" );
 
@@ -119,7 +119,7 @@ public class FoPdfRenderer
 
         FoAggregateSink sink = new FoAggregateSink( new FileWriter( outputFOFile ) );
 
-        sink.setDocumentModel( model );
+        sink.setDocumentModel( documentModel  );
 
         sink.beginDocument();
 
@@ -127,15 +127,15 @@ public class FoPdfRenderer
 
         sink.toc();
 
-        if ( ( model.getToc() == null ) || ( model.getToc().getItems() == null ) )
+        if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
         {
             getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
 
-            for ( Iterator j = files.keySet().iterator(); j.hasNext(); )
+            for ( Iterator j = filesToProcess.keySet().iterator(); j.hasNext(); )
             {
                 String key = (String) j.next();
 
-                SiteModule module = (SiteModule) files.get( key );
+                SiteModule module = (SiteModule) filesToProcess.get( key );
 
                 sink.setDocumentName( key );
                 // TODO: sink.setDocumentTitle( "Title" ); ???
@@ -153,7 +153,7 @@ public class FoPdfRenderer
         }
         else
         {
-            for ( Iterator k = model.getToc().getItems().iterator(); k.hasNext(); )
+            for ( Iterator k = documentModel.getToc().getItems().iterator(); k.hasNext(); )
             {
                 DocumentTOCItem tocItem = (DocumentTOCItem) k.next();
 

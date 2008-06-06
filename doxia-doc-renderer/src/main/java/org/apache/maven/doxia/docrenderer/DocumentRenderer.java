@@ -49,8 +49,8 @@ public interface DocumentRenderer
      *              If the model contains a TOC, only the files found in this TOC are rendered,
      *              otherwise all files from the Collection of files will be processed.
      *
-     * @throws DocumentRendererException if any.
-     * @throws IOException if any.
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any.
+     * @throws java.io.IOException if any.
      */
     void render( Collection files, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException;
@@ -67,8 +67,8 @@ public interface DocumentRenderer
      *              If the model contains a TOC, only the files found in this TOC are rendered,
      *              otherwise all files found under baseDirectory will be processed.
      *
-     * @throws DocumentRendererException if any
-     * @throws IOException if any
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
      */
     void render( File baseDirectory, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException;
@@ -80,8 +80,8 @@ public interface DocumentRenderer
      *
      * @return the document model, containing all the metadata, etc.
      *
-     * @throws DocumentRendererException if any
-     * @throws IOException if any
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
      */
     DocumentModel readDocumentModel( File documentDescriptor )
         throws DocumentRendererException, IOException;
