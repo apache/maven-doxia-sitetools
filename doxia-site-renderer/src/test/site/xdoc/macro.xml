@@ -46,5 +46,29 @@
       </macro>
     </section>
 
+    <section name="TITLE 1">
+        <subsection name="SUB TITLE 1.1">bla bla... </subsection>
+        <subsection name="SUB TITLE 1.2"> bla bla...
+            <h4>SUB SUB TITLE 1.2.1</h4>
+        </subsection>
+        <subsection name="SUB TITLE 1.4"> bla bla...</subsection>
+    </section>
+
+    <section name="TITLE 2">
+        <subsection name="SUB TITLE 2.1"> bla bla... </subsection>
+        <subsection name="SUB TITLE 2.2"> bla bla...
+            <h4>SUB SUB TITLE 2.2.1</h4>
+        </subsection>
+        <subsection name="SUB TITLE 2.4"> bla bla...</subsection>
+    </section>
+
+    <section name="TITLE 3">
+        <subsection name="SUB TITLE 3.1"> bla bla... </subsection>
+        <subsection name="SUB TITLE 3.2"> bla bla...
+            <h4>SUB SUB TITLE 3.2.1</h4>
+        </subsection>
+        <subsection name="SUB TITLE 3.4"> bla bla...</subsection>
+    </section>
+
   </body>
 </document>
