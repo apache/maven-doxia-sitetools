@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader2;
+import com.gargoylesoftware.htmlunit.html.HtmlHeader3;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader4;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlListItem;
@@ -977,6 +978,36 @@ public class DefaultSiteRendererTest
         assertEquals( "./cdc.txt", a.getAttributeValue( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "/index.html", a.getAttributeValue( "href" ) );
+
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( "section", div.getAttributeValue( "class" ) );
+        h2 = (HtmlHeader2) elementIterator.next();
+        assertEquals( "Section without id", h2.asText().trim() );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "Section_without_id", a.getAttributeValue( "name" ) );
+
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( "section", div.getAttributeValue( "class" ) );
+        HtmlHeader3 h3 = (HtmlHeader3) elementIterator.next();
+        assertEquals( "Subsection without id", h3.asText().trim() );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "Subsection_without_id", a.getAttributeValue( "name" ) );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "section-id", a.getAttributeValue( "name" ) );
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( "section", div.getAttributeValue( "class" ) );
+        h2 = (HtmlHeader2) elementIterator.next();
+        assertEquals( "Section with id", h2.asText().trim() );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "subsection-id", a.getAttributeValue( "name" ) );
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( "section", div.getAttributeValue( "class" ) );
+        h3 = (HtmlHeader3) elementIterator.next();
+        assertEquals( "Subsection with id", h3.asText().trim() );
+
+        assertFalse( elementIterator.hasNext() );
     }
 
     /**

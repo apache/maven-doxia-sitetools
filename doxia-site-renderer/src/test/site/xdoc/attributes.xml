@@ -48,5 +48,16 @@
       </p>
     </section>
 
+    <!-- DOXIA-245 -->
+    <section name="Section without id">
+      <subsection name="Subsection without id">
+      </subsection>
+    </section>
+
+    <section name="Section with id" id="section-id">
+      <subsection name="Subsection with id" id="subsection-id">
+      </subsection>
+    </section>
+
   </body>
 </document>

@@ -24,6 +24,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.html.HTML.Attribute;
 import javax.swing.text.html.HTML.Tag;
 
 import org.apache.maven.doxia.module.xhtml.XhtmlSink;
@@ -47,6 +48,8 @@ public class SiteRendererSink
     private String title = "";
 
     private List authors = new ArrayList();
+
+    private boolean sectionHasID;
 
     private final Writer writer;
 
@@ -171,6 +174,8 @@ public class SiteRendererSink
         if ( level == SECTION_LEVEL_1 || level == SECTION_LEVEL_2 )
         {
             setHeadFlag( true );
+
+            sectionHasID = ( attributes != null && attributes.isDefined ( Attribute.ID.toString() ) );
         }
         else
         {
@@ -195,8 +200,17 @@ public class SiteRendererSink
             setHeadFlag( false );
 
             writeStartTag( level == SECTION_LEVEL_1 ? Tag.H2 : Tag.H3  );
-            anchor( HtmlTools.encodeId( sectionTitle ) );
-            anchor_();
+
+            if ( !sectionHasID )
+            {
+                anchor( HtmlTools.encodeId( sectionTitle ) );
+                anchor_();
+            }
+            else
+            {
+                sectionHasID = false;
+            }
+
             text( sectionTitle );
             writeEndTag( level == SECTION_LEVEL_1 ? Tag.H2 : Tag.H3 );
         }
