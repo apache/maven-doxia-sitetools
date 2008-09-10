@@ -19,11 +19,11 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
-
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+
+import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 
 /**
  * Renders a page.
@@ -32,11 +32,30 @@ import java.io.Writer;
  */
 public interface DocumentRenderer
 {
+    /**
+     * Render a document.
+     *
+     * @param writer
+     * @param renderer
+     * @param siteRenderingContext
+     * @throws org.apache.maven.doxia.siterenderer.RendererException if it bombs.
+     * @throws java.io.FileNotFoundException if it bombs.
+     * @throws java.io.UnsupportedEncodingException if it bombs.
+     */
     void renderDocument( Writer writer, Renderer renderer, SiteRenderingContext siteRenderingContext )
         throws RendererException, FileNotFoundException, UnsupportedEncodingException;
 
+    /**
+     * The name of the output document.
+     *
+     * @return the name of the output document.
+     */
     String getOutputName();
 
+    /**
+     * Return the RenderingContext.
+     * @return RenderingContext.
+     */
     RenderingContext getRenderingContext();
 
     /**

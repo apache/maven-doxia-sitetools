@@ -19,6 +19,40 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+
+import java.text.DateFormat;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
 import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
@@ -30,23 +64,23 @@ import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
 import org.apache.maven.doxia.module.site.manager.SiteModuleNotFoundException;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
+
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.util.*;
+import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.Os;
+import org.codehaus.plexus.util.PathTool;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.velocity.SiteResourceLoader;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.text.DateFormat;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
@@ -568,7 +602,7 @@ public class DefaultSiteRenderer
         SiteRenderingContext context = new SiteRenderingContext();
 
         context.setTemplateName( templateFile.getName() );
-        context.setTemplateClassLoader( new URLClassLoader( new URL[]{templateFile.getParentFile().toURL()} ) );
+        context.setTemplateClassLoader( new URLClassLoader( new URL[]{templateFile.getParentFile().toURI().toURL()} ) );
 
         context.setTemplateProperties( attributes );
         context.setLocale( locale );
@@ -593,15 +627,15 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public void copyResources( SiteRenderingContext siteContext,
+    public void copyResources( SiteRenderingContext siteRenderingContext,
                                File resourcesDirectory,
-                               File outputDirectory )
+                               File outputDirectory  )
             throws IOException
     {
-        if ( siteContext.getSkinJarFile() != null )
+        if ( siteRenderingContext.getSkinJarFile() != null )
         {
             // TODO: plexus-archiver, if it could do the excludes
-            ZipFile file = new ZipFile( siteContext.getSkinJarFile() );
+            ZipFile file = new ZipFile( siteRenderingContext.getSkinJarFile() );
             try
             {
                 for ( Enumeration e = file.entries(); e.hasMoreElements(); )
@@ -630,7 +664,7 @@ public class DefaultSiteRenderer
             }
         }
 
-        if ( siteContext.isUsingDefaultTemplate() )
+        if ( siteRenderingContext.isUsingDefaultTemplate() )
         {
             InputStream resourceList = getClass().getClassLoader()
                     .getResourceAsStream( RESOURCE_DIR + "/resources.txt" );

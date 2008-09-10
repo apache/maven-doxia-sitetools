@@ -19,14 +19,14 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
-import org.apache.maven.doxia.site.decoration.DecorationModel;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import org.apache.maven.doxia.site.decoration.DecorationModel;
 
 /**
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
