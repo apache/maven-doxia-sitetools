@@ -1105,6 +1105,12 @@ public class DefaultSiteRendererTest
         assertEquals( "#Anchor", a.getAttributeValue( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#Anchor", a.getAttributeValue( "href" ) );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "Anchor_with_space", a.getAttributeValue( "name" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "#Anchor_with_space", a.getAttributeValue( "href" ) );
+
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "http://maven.apache.org/", a.getAttributeValue( "href" ) );
         assertEquals( "externalLink", a.getAttributeValue( "class" ) );
