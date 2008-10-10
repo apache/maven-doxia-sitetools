@@ -202,22 +202,22 @@
 
   #if ( $datePosition.equalsIgnoreCase( $position ) )
     #if ( ( $datePosition.equalsIgnoreCase( "right" ) ) || ( $datePosition.equalsIgnoreCase( "bottom" ) ) )
-      $prefix $i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateToday
+      $prefix <span id="publishDate">$i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateToday</span>
       #if ( $versionPosition.equalsIgnoreCase( $position ) )
-        &nbsp;| $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
+        &nbsp;| <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
       #end
     #elseif ( ( $datePosition.equalsIgnoreCase( "navigation-bottom" ) ) || ( $datePosition.equalsIgnoreCase( "navigation-top" ) ) )
       <div id="lastPublished">
-        $i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateToday
+        <span id="publishDate">$i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateToday</span>
         #if ( $versionPosition.equalsIgnoreCase( $position ) )
-          &nbsp;| $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
+          &nbsp;| <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
         #end
       </div>
     #elseif ( $datePosition.equalsIgnoreCase("left") )
       <div class="xleft">
-        $i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateToday
+        <span id="publishDate">$i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateToday</span>
         #if ( $versionPosition.equalsIgnoreCase( $position ) )
-          &nbsp;| $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
+          &nbsp;| <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
         #end
         #if ( $breadcrumbs && $breadcrumbs.size() > 0 )
           | #breadcrumbs( $breadcrumbs )
@@ -226,14 +226,14 @@
     #end
   #elseif ( $versionPosition.equalsIgnoreCase( $position ) )
     #if ( ( $versionPosition.equalsIgnoreCase( "right" ) ) || ( $versionPosition.equalsIgnoreCase( "bottom" ) ) )
-      $prefix $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
+      $prefix <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
     #elseif ( ( $versionPosition.equalsIgnoreCase( "navigation-bottom" ) ) || ( $versionPosition.equalsIgnoreCase( "navigation-top" ) ) )
       <div id="lastPublished">
-        $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
+        <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
       </div>
     #elseif ( $versionPosition.equalsIgnoreCase("left") )
       <div class="xleft">
-        $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
+        <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
         #if ( $breadcrumbs && $breadcrumbs.size() > 0 )
           | #breadcrumbs( $breadcrumbs )
         #end
