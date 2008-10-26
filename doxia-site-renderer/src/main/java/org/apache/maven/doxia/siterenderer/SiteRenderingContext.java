@@ -30,7 +30,7 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
 
 /**
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @version $Id:DefaultSiteRenderer.java 348612 2005-11-24 12:54:19 +1100 (Thu, 24 Nov 2005) brett $
+ * @version $Id$
  */
 public class SiteRenderingContext
 {
