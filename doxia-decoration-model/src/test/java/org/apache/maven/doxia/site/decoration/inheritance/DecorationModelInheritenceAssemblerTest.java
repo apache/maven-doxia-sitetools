@@ -19,7 +19,11 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  * under the License.
  */
 
+import java.io.IOException;
+import java.io.Reader;
+
 import junit.framework.TestCase;
+
 import org.apache.maven.doxia.site.decoration.Banner;
 import org.apache.maven.doxia.site.decoration.Body;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
@@ -27,10 +31,8 @@ import org.apache.maven.doxia.site.decoration.LinkItem;
 import org.apache.maven.doxia.site.decoration.Logo;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 /**
  * Test the inheritance assembler.
@@ -509,6 +511,7 @@ public class DecorationModelInheritenceAssemblerTest
     private DecorationModel readModel( String name )
         throws IOException, XmlPullParserException
     {
-        return new DecorationXpp3Reader().read( new InputStreamReader( getClass().getResourceAsStream( "/" + name ) ) );
+        Reader reader = ReaderFactory.newReader( getClass().getResourceAsStream( "/" + name ), "UTF-8" );
+        return new DecorationXpp3Reader().read( reader );
     }
 }
