@@ -511,7 +511,7 @@ public class DecorationModelInheritenceAssemblerTest
     private DecorationModel readModel( String name )
         throws IOException, XmlPullParserException
     {
-        Reader reader = ReaderFactory.newReader( getClass().getResourceAsStream( "/" + name ), "UTF-8" );
+        Reader reader = ReaderFactory.newXmlReader( getClass().getResourceAsStream( "/" + name ) );
         return new DecorationXpp3Reader().read( reader );
     }
 }
