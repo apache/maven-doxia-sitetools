@@ -22,8 +22,8 @@ package org.apache.maven.doxia.docrenderer.pdf.itext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Date;
@@ -43,12 +43,14 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
-import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
+import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.module.itext.ITextSink;
+import org.apache.maven.doxia.module.itext.ITextSinkFactory;
 import org.apache.maven.doxia.module.itext.ITextUtil;
 import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.xml.utils.DefaultErrorHandler;
+import org.codehaus.plexus.util.WriterFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -186,7 +188,8 @@ public class ITextPdfRenderer
     private void parse( String fullDocPath, SiteModule module, File iTextFile )
         throws DocumentRendererException, IOException
     {
-        ITextSink sink = new ITextSink( new FileWriter( iTextFile ) );
+        Writer writer = WriterFactory.newWriter( iTextFile, WriterFactory.UTF_8 );
+        ITextSink sink = (ITextSink) new ITextSinkFactory().createSink( writer );
 
         sink.setClassLoader( new URLClassLoader( new URL[] { iTextFile.getParentFile().toURI().toURL() } ) );
 

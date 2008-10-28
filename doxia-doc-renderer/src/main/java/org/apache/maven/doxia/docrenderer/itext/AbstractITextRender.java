@@ -21,8 +21,8 @@ package org.apache.maven.doxia.docrenderer.itext;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Date;
@@ -48,6 +48,7 @@ import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Reader;
 import org.apache.maven.doxia.module.itext.ITextSink;
+import org.apache.maven.doxia.module.itext.ITextSinkFactory;
 import org.apache.maven.doxia.module.itext.ITextUtil;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
@@ -57,6 +58,7 @@ import org.apache.xml.utils.DefaultErrorHandler;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -278,7 +280,8 @@ public abstract class AbstractITextRender
     private void parse( String fullPathDoc, SiteModule module, File outputITextFile )
         throws DocumentRendererException, IOException
     {
-        ITextSink sink = new ITextSink( new FileWriter( outputITextFile ) );
+        Writer writer = WriterFactory.newWriter( outputITextFile, WriterFactory.UTF_8 );
+        ITextSink sink = (ITextSink) new ITextSinkFactory().createSink( writer );
 
         sink.setClassLoader( new URLClassLoader( new URL[] { outputITextFile.getParentFile().toURL() } ) );
         try
