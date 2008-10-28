@@ -327,9 +327,9 @@ public class DefaultSiteRenderer
 
         File doc = new File( renderingContext.getBasedir(), renderingContext.getInputName() );
 
+        Reader reader = null;
         try
         {
-            Reader reader = null;
             Parser parser = doxia.getParser( renderingContext.getParserId() );
 
             // TODO: DOXIA-111: the filter used here must be checked generally.
@@ -377,27 +377,29 @@ public class DefaultSiteRenderer
             }
             sink.enableLogging( new PlexusLoggerWrapper( getLogger() ) );
             doxia.parse( reader, renderingContext.getParserId(), sink );
-
-            generateDocument( writer, sink, context );
         }
         catch ( ParserNotFoundException e )
         {
-            throw new RendererException( "Error getting a parser for " + doc + ": " + e.getMessage() );
+            throw new RendererException( "Error getting a parser for '" + doc + "': " + e.getMessage(), e );
         }
         catch ( ParseException e )
         {
-            getLogger().error( "Error parsing " + doc + ": line [" + e.getLineNumber() + "] " + e.getMessage(), e );
+            throw new RendererException( "Error parsing '" + doc + "': line [" + e.getLineNumber() + "] " + e.getMessage(), e );
         }
         catch ( IOException e )
         {
-            getLogger().error( "Error parsing " + doc + " to detect encoding", e );
+            throw new RendererException( "IOException when processing '" + doc + "'", e );
         }
         finally
         {
             sink.flush();
 
             sink.close();
+
+            IOUtil.close( reader );
         }
+
+        generateDocument( writer, sink, context );
     }
 
     private Context createContext( SiteRendererSink sink,
