@@ -31,6 +31,7 @@ import org.apache.maven.doxia.site.decoration.LinkItem;
 import org.apache.maven.doxia.site.decoration.Logo;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -511,7 +512,15 @@ public class DecorationModelInheritenceAssemblerTest
     private DecorationModel readModel( String name )
         throws IOException, XmlPullParserException
     {
-        Reader reader = ReaderFactory.newXmlReader( getClass().getResourceAsStream( "/" + name ) );
-        return new DecorationXpp3Reader().read( reader );
+        Reader reader = null;
+        try
+        {
+            reader = ReaderFactory.newXmlReader( getClass().getResourceAsStream( "/" + name ) );
+            return new DecorationXpp3Reader().read( reader );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
     }
 }
