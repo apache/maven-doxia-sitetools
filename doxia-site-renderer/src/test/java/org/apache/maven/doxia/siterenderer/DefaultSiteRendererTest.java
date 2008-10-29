@@ -19,6 +19,23 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -40,27 +57,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlParameter;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
 import com.gargoylesoftware.htmlunit.html.HtmlScript;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableHeaderCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
+import com.gargoylesoftware.htmlunit.html.HtmlTableHeaderCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
-
 import com.gargoylesoftware.htmlunit.html.UnknownHtmlElement;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
-
-import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -531,8 +532,17 @@ public class DefaultSiteRendererTest
         assertNotNull( macro );
         assertTrue( macro.exists() );
 
-        String content = IOUtil.toString( new FileReader( macro ) );
-        assertEquals( content.indexOf( "</macro>" ), -1 );
+        Reader reader = null;
+        try
+        {
+            reader = ReaderFactory.newXmlReader( macro );
+            String content = IOUtil.toString( reader );
+            assertEquals( content.indexOf( "</macro>" ), -1 );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
     }
 
     /**

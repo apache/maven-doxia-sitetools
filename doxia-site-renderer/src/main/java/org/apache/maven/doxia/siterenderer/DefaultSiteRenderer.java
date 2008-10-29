@@ -22,12 +22,10 @@ package org.apache.maven.doxia.siterenderer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -78,6 +76,7 @@ import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.velocity.SiteResourceLoader;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
@@ -306,11 +305,10 @@ public class DefaultSiteRenderer
                     getLogger().debug( "Generating " + outputFile );
                 }
 
-                OutputStreamWriter writer = new OutputStreamWriter( new FileOutputStream( outputFile ),
-                        siteRenderingContext.getOutputEncoding() );
-
+                Writer writer = null;
                 try
                 {
+                    writer = WriterFactory.newWriter( outputFile, siteRenderingContext.getOutputEncoding() );
                     docRenderer.renderDocument( writer, this, siteRenderingContext );
                 }
                 finally
@@ -684,35 +682,50 @@ public class DefaultSiteRenderer
 
             if ( resourceList != null )
             {
-                LineNumberReader reader = new LineNumberReader( new InputStreamReader( resourceList ) );
-
-                String line = reader.readLine();
-
-                while ( line != null )
+                Reader r = null;
+                try
                 {
-                    InputStream is = getClass().getClassLoader().getResourceAsStream( RESOURCE_DIR + "/" + line );
+                    r = ReaderFactory.newReader( resourceList, ReaderFactory.UTF_8 );
+                    LineNumberReader reader = new LineNumberReader( r );
 
-                    if ( is == null )
+                    String line = reader.readLine();
+
+                    while ( line != null )
                     {
-                        throw new IOException( "The resource " + line + " doesn't exist." );
+                        InputStream is = getClass().getClassLoader().getResourceAsStream( RESOURCE_DIR + "/" + line );
+
+                        if ( is == null )
+                        {
+                            throw new IOException( "The resource " + line + " doesn't exist." );
+                        }
+
+                        File outputFile = new File( outputDirectory, line );
+
+                        if ( !outputFile.getParentFile().exists() )
+                        {
+                            outputFile.getParentFile().mkdirs();
+                        }
+
+                        OutputStream os = null;
+                        try
+                        {
+                            // for the images
+                            os = new FileOutputStream( outputFile );
+                            IOUtil.copy( is, os );
+                        }
+                        finally
+                        {
+                            IOUtil.close( os );
+                        }
+
+                        IOUtil.close( is );
+
+                        line = reader.readLine();
                     }
-
-                    File outputFile = new File( outputDirectory, line );
-
-                    if ( !outputFile.getParentFile().exists() )
-                    {
-                        outputFile.getParentFile().mkdirs();
-                    }
-
-                    FileOutputStream w = new FileOutputStream( outputFile );
-
-                    IOUtil.copy( is, w );
-
-                    IOUtil.close( is );
-
-                    IOUtil.close( w );
-
-                    line = reader.readLine();
+                }
+                finally
+                {
+                    IOUtil.close( r );
                 }
             }
         }
@@ -742,9 +755,17 @@ public class DefaultSiteRenderer
                 getLogger().debug(
                     "The file '" + siteCssFile.getAbsolutePath() + "' does not exists. Creating an empty file." );
             }
-            FileWriter w = new FileWriter( siteCssFile );
-            w.write( "" );
-            IOUtil.close( w );
+
+            Writer writer = null;
+            try
+            {
+                writer = WriterFactory.newWriter( siteCssFile, siteRenderingContext.getOutputEncoding() );
+                writer.write( "" );
+            }
+            finally
+            {
+                IOUtil.close( writer );
+            }
         }
     }
 
