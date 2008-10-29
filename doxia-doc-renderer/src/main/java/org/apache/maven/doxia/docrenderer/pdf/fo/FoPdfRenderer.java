@@ -20,23 +20,23 @@ package org.apache.maven.doxia.docrenderer.pdf.fo;
  */
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
+import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
 import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.document.DocumentTOCItem;
-import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
-import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.maven.doxia.module.fo.FoAggregateSink;
 import org.apache.maven.doxia.module.fo.FoUtils;
-
+import org.apache.maven.doxia.module.site.SiteModule;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 import org.xml.sax.SAXParseException;
 
 /**
@@ -117,92 +117,101 @@ public class FoPdfRenderer
             pdfOutputFile.getParentFile().mkdirs();
         }
 
-        FoAggregateSink sink = new FoAggregateSink( new FileWriter( outputFOFile ) );
-
-        sink.setDocumentModel( documentModel  );
-
-        sink.beginDocument();
-
-        sink.coverPage();
-
-        sink.toc();
-
-        if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
+        Writer writer = null;
+        try
         {
-            getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
+            writer = WriterFactory.newXmlWriter( outputFOFile );
 
-            for ( Iterator j = filesToProcess.keySet().iterator(); j.hasNext(); )
+            FoAggregateSink sink = new FoAggregateSink( writer );
+
+            sink.setDocumentModel( documentModel  );
+
+            sink.beginDocument();
+
+            sink.coverPage();
+
+            sink.toc();
+
+            if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
             {
-                String key = (String) j.next();
+                getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
 
-                SiteModule module = (SiteModule) filesToProcess.get( key );
-
-                sink.setDocumentName( key );
-                // TODO: sink.setDocumentTitle( "Title" ); ???
-
-                String fullDocPath = getBaseDir() + File.separator
-                            + module.getSourceDirectory() + File.separator + key;
-
-                if ( getLogger().isDebugEnabled() )
+                for ( Iterator j = filesToProcess.keySet().iterator(); j.hasNext(); )
                 {
-                    getLogger().debug( "Parsing file " + fullDocPath );
-                }
+                    String key = (String) j.next();
 
-                parse( fullDocPath, module.getParserId(), sink );
-            }
-        }
-        else
-        {
-            for ( Iterator k = documentModel.getToc().getItems().iterator(); k.hasNext(); )
-            {
-                DocumentTOCItem tocItem = (DocumentTOCItem) k.next();
+                    SiteModule module = (SiteModule) filesToProcess.get( key );
 
-                if ( tocItem.getRef() == null )
-                {
-                    getLogger().info( "No ref defined for tocItem " + tocItem.getName() );
+                    sink.setDocumentName( key );
+                    // TODO: sink.setDocumentTitle( "Title" ); ???
 
-                    continue;
-                }
+                    String fullDocPath = getBaseDir() + File.separator
+                                + module.getSourceDirectory() + File.separator + key;
 
-                String href = StringUtils.replace( tocItem.getRef(), "\\", "/" );
-
-                if ( href.lastIndexOf( "." ) != -1 )
-                {
-                    href = href.substring( 0, href.lastIndexOf( "." ) );
-                }
-
-                for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
-                {
-                    SiteModule module = (SiteModule) i.next();
-
-                    File moduleBasedir = new File( getBaseDir(), module.getSourceDirectory() );
-
-                    if ( moduleBasedir.exists() )
+                    if ( getLogger().isDebugEnabled() )
                     {
-                        String doc = href + "." + module.getExtension();
+                        getLogger().debug( "Parsing file " + fullDocPath );
+                    }
 
-                        File source = new File( moduleBasedir, doc );
+                    parse( fullDocPath, module.getParserId(), sink );
+                }
+            }
+            else
+            {
+                for ( Iterator k = documentModel.getToc().getItems().iterator(); k.hasNext(); )
+                {
+                    DocumentTOCItem tocItem = (DocumentTOCItem) k.next();
 
-                        if ( source.exists() )
+                    if ( tocItem.getRef() == null )
+                    {
+                        getLogger().info( "No ref defined for tocItem " + tocItem.getName() );
+
+                        continue;
+                    }
+
+                    String href = StringUtils.replace( tocItem.getRef(), "\\", "/" );
+
+                    if ( href.lastIndexOf( "." ) != -1 )
+                    {
+                        href = href.substring( 0, href.lastIndexOf( "." ) );
+                    }
+
+                    for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
+                    {
+                        SiteModule module = (SiteModule) i.next();
+
+                        File moduleBasedir = new File( getBaseDir(), module.getSourceDirectory() );
+
+                        if ( moduleBasedir.exists() )
                         {
-                            if ( getLogger().isDebugEnabled() )
+                            String doc = href + "." + module.getExtension();
+
+                            File source = new File( moduleBasedir, doc );
+
+                            if ( source.exists() )
                             {
-                                getLogger().debug( "Parsing file " + source );
+                                if ( getLogger().isDebugEnabled() )
+                                {
+                                    getLogger().debug( "Parsing file " + source );
+                                }
+
+                                sink.setDocumentName( doc );
+
+                                sink.setDocumentTitle( tocItem.getName() );
+
+                                parse( source.getPath(), module.getParserId(), sink );
                             }
-
-                            sink.setDocumentName( doc );
-
-                            sink.setDocumentTitle( tocItem.getName() );
-
-                            parse( source.getPath(), module.getParserId(), sink );
                         }
                     }
                 }
             }
 
+            sink.endDocument();
         }
-
-        sink.endDocument();
+        finally
+        {
+            IOUtil.close( writer );
+        }
 
         // copy resources, images, etc.
         copyResources( outputDirectory );

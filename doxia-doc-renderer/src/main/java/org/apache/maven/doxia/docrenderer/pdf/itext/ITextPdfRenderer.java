@@ -188,7 +188,7 @@ public class ITextPdfRenderer
     private void parse( String fullDocPath, SiteModule module, File iTextFile )
         throws DocumentRendererException, IOException
     {
-        Writer writer = WriterFactory.newWriter( iTextFile, WriterFactory.UTF_8 );
+        Writer writer = WriterFactory.newXmlWriter( iTextFile );
         ITextSink sink = (ITextSink) new ITextSinkFactory().createSink( writer );
 
         sink.setClassLoader( new URLClassLoader( new URL[] { iTextFile.getParentFile().toURI().toURL() } ) );

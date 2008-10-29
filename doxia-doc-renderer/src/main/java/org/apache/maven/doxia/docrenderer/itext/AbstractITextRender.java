@@ -20,8 +20,8 @@ package org.apache.maven.doxia.docrenderer.itext;
  */
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -50,15 +50,18 @@ import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Reader;
 import org.apache.maven.doxia.module.itext.ITextSink;
 import org.apache.maven.doxia.module.itext.ITextSinkFactory;
 import org.apache.maven.doxia.module.itext.ITextUtil;
-import org.apache.maven.doxia.parser.ParseException;
-import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
+import org.apache.maven.doxia.parser.ParseException;
+import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.xml.utils.DefaultErrorHandler;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.xml.XmlUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -154,9 +157,11 @@ public abstract class AbstractITextRender
         }
 
         DocumentModel documentModel;
+        Reader reader = null;
         try
         {
-            documentModel = new DocumentXpp3Reader().read( new FileReader( documentDescriptor ) );
+            reader = ReaderFactory.newXmlReader( documentDescriptor );
+            documentModel = new DocumentXpp3Reader().read( reader );
         }
         catch ( XmlPullParserException e )
         {
@@ -165,6 +170,10 @@ public abstract class AbstractITextRender
         catch ( IOException e )
         {
             throw new DocumentRendererException( "Error reading document descriptor", e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
         }
 
         if ( documentModel.getOutputName() == null )
@@ -280,13 +289,24 @@ public abstract class AbstractITextRender
     private void parse( String fullPathDoc, SiteModule module, File outputITextFile )
         throws DocumentRendererException, IOException
     {
-        Writer writer = WriterFactory.newWriter( outputITextFile, WriterFactory.UTF_8 );
+        Writer writer = WriterFactory.newXmlWriter( outputITextFile );
         ITextSink sink = (ITextSink) new ITextSinkFactory().createSink( writer );
 
         sink.setClassLoader( new URLClassLoader( new URL[] { outputITextFile.getParentFile().toURL() } ) );
+
+        Reader reader = null;
         try
         {
-            FileReader reader = new FileReader( fullPathDoc );
+            File f = new File( fullPathDoc );
+            if ( XmlUtil.isXml( f ) )
+            {
+                reader = ReaderFactory.newXmlReader( f );
+            }
+            else
+            {
+                // TODO Platform dependent?
+                reader = ReaderFactory.newPlatformReader( f );
+            }
 
             doxia.parse( reader, module.getParserId(), sink );
         }
@@ -300,6 +320,8 @@ public abstract class AbstractITextRender
         }
         finally
         {
+            IOUtil.close( reader );
+
             sink.flush();
 
             sink.close();

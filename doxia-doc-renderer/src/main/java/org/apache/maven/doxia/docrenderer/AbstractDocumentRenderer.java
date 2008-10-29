@@ -20,8 +20,8 @@ package org.apache.maven.doxia.docrenderer;
  */
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,6 +43,9 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.XmlUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -252,13 +255,19 @@ public abstract class AbstractDocumentRenderer
     {
         DocumentModel documentModel;
 
+        Reader reader = null;
         try
         {
-            documentModel = new DocumentXpp3Reader().read( new FileReader( documentDescriptor ) );
+            reader = ReaderFactory.newXmlReader( documentDescriptor );
+            documentModel = new DocumentXpp3Reader().read( reader );
         }
         catch ( XmlPullParserException e )
         {
             throw new DocumentRendererException( "Error parsing document descriptor", e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
         }
 
         return documentModel;
@@ -300,9 +309,19 @@ public abstract class AbstractDocumentRenderer
     protected void parse( String fullDocPath, String parserId, Sink sink )
         throws DocumentRendererException, IOException
     {
+        Reader reader = null;
         try
         {
-            FileReader reader = new FileReader( fullDocPath );
+            File f = new File( fullDocPath );
+            if ( XmlUtil.isXml( f ) )
+            {
+                reader = ReaderFactory.newXmlReader( f );
+            }
+            else
+            {
+                // TODO Platform dependent?
+                reader = ReaderFactory.newPlatformReader( f );
+            }
 
             sink.enableLogging( new PlexusLoggerWrapper( getLogger() ) );
 
@@ -319,6 +338,8 @@ public abstract class AbstractDocumentRenderer
         }
         finally
         {
+            IOUtil.close( reader );
+
             sink.flush();
         }
     }
@@ -378,5 +399,4 @@ public abstract class AbstractDocumentRenderer
             }
         }
     }
-
 }
