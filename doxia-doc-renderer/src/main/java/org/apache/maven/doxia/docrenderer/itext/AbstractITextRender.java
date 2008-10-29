@@ -320,11 +320,11 @@ public abstract class AbstractITextRender
         }
         catch ( ParserNotFoundException e )
         {
-            throw new DocumentRendererException( "Error getting a parser for " + fullPathDoc + ": " + e.getMessage() );
+            throw new DocumentRendererException( "Error getting a parser for '" + fullPathDoc + "': " + e.getMessage() );
         }
         catch ( ParseException e )
         {
-            getLogger().error( "Error parsing " + fullPathDoc + ": " + e.getMessage(), e );
+            throw new DocumentRendererException( "Error parsing '" + fullPathDoc + "': line [" + e.getLineNumber() + "] " + e.getMessage(), e );
         }
         finally
         {
