@@ -31,11 +31,7 @@ public abstract class AbstractPdfRenderer
     extends AbstractDocumentRenderer
     implements PdfRenderer
 {
-    /**
-     * Get the output extension associated with this renderer.
-     *
-     * @return the ouput extension: "pdf".
-     */
+    /** {@inheritDoc} */
     public String getOutputExtension()
     {
         return "pdf";

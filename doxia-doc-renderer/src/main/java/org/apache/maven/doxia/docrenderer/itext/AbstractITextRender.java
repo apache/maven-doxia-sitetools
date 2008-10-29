@@ -101,9 +101,7 @@ public abstract class AbstractITextRender
         TRANSFORMER_FACTORY.setErrorListener( new DefaultErrorHandler() );
     }
 
-    /**
-     * @see org.apache.maven.doxia.docrenderer.DocRenderer#render(java.io.File, java.io.File)
-     */
+    /** {@inheritDoc} */
     public void render( File siteDirectory, File outputDirectory )
         throws DocumentRendererException, IOException
     {
@@ -143,9 +141,7 @@ public abstract class AbstractITextRender
         }
     }
 
-    /**
-     * @see org.apache.maven.doxia.docrenderer.DocRenderer#render(java.io.File, java.io.File, java.io.File)
-     */
+    /** {@inheritDoc} */
     public void render( File siteDirectory, File outputDirectory, File documentDescriptor )
         throws DocumentRendererException, IOException
     {

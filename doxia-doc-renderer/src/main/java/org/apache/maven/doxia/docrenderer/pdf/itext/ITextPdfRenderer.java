@@ -82,13 +82,7 @@ public class ITextPdfRenderer
         TRANSFORMER_FACTORY.setErrorListener( new DefaultErrorHandler() );
     }
 
-    /**
-     * Converts an iText file to a PDF file using the iText framework.
-     *
-     * @param iTextFile the iText file.
-     * @param pdfFile the target PDF file.
-     * @throws DocumentRendererException In case of a conversion problem.
-     */
+    /** {@inheritDoc} */
     public void generatePdf( File iTextFile, File pdfFile )
         throws DocumentRendererException
     {

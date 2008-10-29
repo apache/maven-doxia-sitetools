@@ -49,11 +49,7 @@ public class FoPdfRenderer
     extends AbstractPdfRenderer
 {
     /**
-     * Converts a FO file to a PDF file using FOP.
-     *
-     * @param foFile the FO file.
-     * @param pdfFile the target PDF file.
-     * @throws DocumentRendererException In case of a conversion problem.
+     * {@inheritDoc}
      * @see org.apache.maven.doxia.module.fo.FoUtils#convertFO2PDF(File, File, String)
      */
     public void generatePdf( File foFile, File pdfFile )
@@ -82,7 +78,6 @@ public class FoPdfRenderer
             throw new DocumentRendererException( "Error creating PDF from " + foFile + ": " + e.getMessage() );
         }
     }
-
 
     /** {@inheritDoc} */
     public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel    )

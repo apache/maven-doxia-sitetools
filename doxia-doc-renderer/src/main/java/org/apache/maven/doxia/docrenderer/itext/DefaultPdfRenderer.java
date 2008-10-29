@@ -38,17 +38,13 @@ public class DefaultPdfRenderer
     extends AbstractITextRender
     implements PdfRenderer
 {
-    /**
-     * @see org.apache.maven.doxia.docrenderer.DocRenderer#getOutputExtension()
-     */
+    /** {@inheritDoc} */
     public String getOutputExtension()
     {
         return "pdf";
     }
 
-    /**
-     * @see org.apache.maven.doxia.docrenderer.itext.AbstractITextRender#generateOutput(java.io.File, java.io.File)
-     */
+    /** {@inheritDoc} */
     public void generateOutput( File iTextFile, File iTextOutput )
         throws DocumentRendererException, IOException
     {
