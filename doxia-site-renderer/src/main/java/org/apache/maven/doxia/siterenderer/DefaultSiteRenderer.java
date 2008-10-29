@@ -257,7 +257,12 @@ public class DefaultSiteRenderer
                                     "Files '" + doc + "' clashes with existing '" + originalDoc + "'." );
                         }
 
-                        getLogger().warn( "Files '" + doc + "' could clashes with existing '" + originalDoc + "'." );
+                        if ( getLogger().isWarnEnabled() )
+                        {
+                            getLogger().warn(
+                                              "Files '" + doc + "' could clashes with existing '" + originalDoc
+                                                  + "'." );
+                        }
                     }
                 }
 
@@ -296,7 +301,10 @@ public class DefaultSiteRenderer
                     outputFile.getParentFile().mkdirs();
                 }
 
-                getLogger().debug( "Generating " + outputFile );
+                if ( getLogger().isDebugEnabled() )
+                {
+                    getLogger().debug( "Generating " + outputFile );
+                }
 
                 OutputStreamWriter writer = new OutputStreamWriter( new FileOutputStream( outputFile ),
                         siteRenderingContext.getOutputEncoding() );
@@ -312,7 +320,10 @@ public class DefaultSiteRenderer
             }
             else
             {
-                getLogger().debug( inputFile + " unchanged, not regenerating..." );
+                if ( getLogger().isDebugEnabled() )
+                {
+                    getLogger().debug( inputFile + " unchanged, not regenerating..." );
+                }
             }
         }
     }
