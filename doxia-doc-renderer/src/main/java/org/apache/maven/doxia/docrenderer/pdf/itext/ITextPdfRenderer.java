@@ -86,7 +86,10 @@ public class ITextPdfRenderer
     public void generatePdf( File iTextFile, File pdfFile )
         throws DocumentRendererException
     {
-        getLogger().debug( "Generating : " + pdfFile );
+        if ( getLogger().isDebugEnabled() )
+        {
+            getLogger().debug( "Generating : " + pdfFile );
+        }
 
         try
         {
@@ -110,7 +113,10 @@ public class ITextPdfRenderer
 
         if ( outputName == null )
         {
-            getLogger().info( "No outputName is defined in the document descriptor. Using 'target.pdf'" );
+            if ( getLogger().isInfoEnabled() )
+            {
+                getLogger().info( "No outputName is defined in the document descriptor. Using 'target.pdf'" );
+            }
 
             documentModel.setOutputName( "target" );
         }

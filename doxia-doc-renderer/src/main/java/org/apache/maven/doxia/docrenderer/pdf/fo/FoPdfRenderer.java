@@ -55,7 +55,10 @@ public class FoPdfRenderer
     public void generatePdf( File foFile, File pdfFile )
         throws DocumentRendererException
     {
-        getLogger().debug( "Generating: " + pdfFile );
+        if ( getLogger().isDebugEnabled() )
+        {
+            getLogger().debug( "Generating: " + pdfFile );
+        }
 
         try
         {
@@ -87,7 +90,10 @@ public class FoPdfRenderer
 
         if ( outputName == null )
         {
-            getLogger().info( "No outputName is defined in the document descriptor. Using 'target.pdf'" );
+            if ( getLogger().isInfoEnabled() )
+            {
+                getLogger().info( "No outputName is defined in the document descriptor. Using 'target.pdf'" );
+            }
 
             documentModel.setOutputName( "target" );
         }
@@ -129,7 +135,10 @@ public class FoPdfRenderer
 
             if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
             {
-                getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
+                if ( getLogger().isInfoEnabled() )
+                {
+                    getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
+                }
 
                 for ( Iterator j = filesToProcess.keySet().iterator(); j.hasNext(); )
                 {
@@ -159,7 +168,10 @@ public class FoPdfRenderer
 
                     if ( tocItem.getRef() == null )
                     {
-                        getLogger().info( "No ref defined for tocItem " + tocItem.getName() );
+                        if ( getLogger().isInfoEnabled() )
+                        {
+                            getLogger().info( "No ref defined for tocItem " + tocItem.getName() );
+                        }
 
                         continue;
                     }

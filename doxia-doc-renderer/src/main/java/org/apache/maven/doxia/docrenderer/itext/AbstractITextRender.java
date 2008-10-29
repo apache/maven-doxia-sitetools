@@ -147,7 +147,10 @@ public abstract class AbstractITextRender
     {
         if ( ( documentDescriptor == null ) || ( !documentDescriptor.exists() ) )
         {
-            getLogger().info( "No documentDescriptor is found. Generate all documents." );
+            if ( getLogger().isInfoEnabled() )
+            {
+                getLogger().info( "No documentDescriptor is found. Generate all documents." );
+            }
             render( siteDirectory, outputDirectory );
             return;
         }
@@ -174,13 +177,19 @@ public abstract class AbstractITextRender
 
         if ( documentModel.getOutputName() == null )
         {
-            getLogger().info( "No outputName is defined in the document descriptor. Using 'generated_itext'" );
+            if ( getLogger().isInfoEnabled() )
+            {
+                getLogger().info( "No outputName is defined in the document descriptor. Using 'generated_itext'" );
+            }
             documentModel.setOutputName( "generated_itext" );
         }
 
         if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
         {
-            getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
+            if ( getLogger().isInfoEnabled() )
+            {
+                getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
+            }
         }
 
         List iTextFiles = new LinkedList();
@@ -221,7 +230,10 @@ public abstract class AbstractITextRender
 
                             if ( tocItem.getRef() == null )
                             {
-                                getLogger().info( "No ref defined for an tocItem in the document descriptor." );
+                                if ( getLogger().isInfoEnabled() )
+                                {
+                                    getLogger().info( "No ref defined for an tocItem in the document descriptor." );
+                                }
                                 continue;
                             }
 

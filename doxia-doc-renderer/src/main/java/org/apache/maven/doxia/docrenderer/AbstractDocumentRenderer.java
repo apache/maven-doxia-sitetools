@@ -145,7 +145,10 @@ public abstract class AbstractDocumentRenderer
     {
         if ( ( documentDescriptor == null ) || ( !documentDescriptor.exists() ) )
         {
-            getLogger().warn( "No documentDescriptor found: using default settings!" );
+            if ( getLogger().isWarnEnabled() )
+            {
+                getLogger().warn( "No documentDescriptor found: using default settings!" );
+            }
 
             render( baseDirectory, outputDirectory );
         }
@@ -169,7 +172,10 @@ public abstract class AbstractDocumentRenderer
     {
         if ( !baseDirectory.isDirectory() )
         {
-            getLogger().warn( "No files found to process!" );
+            if ( getLogger().isWarnEnabled() )
+            {
+                getLogger().warn( "No files found to process!" );
+            }
 
             return new HashMap();
         }

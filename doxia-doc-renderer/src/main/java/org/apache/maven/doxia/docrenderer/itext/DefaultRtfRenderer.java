@@ -48,7 +48,10 @@ public class DefaultRtfRenderer
     public void generateOutput( File iTextFile, File iTextOutput )
         throws DocumentRendererException, IOException
     {
-        getLogger().debug( "Writing : " + iTextOutput );
+        if ( getLogger().isDebugEnabled() )
+        {
+            getLogger().debug( "Writing : " + iTextOutput );
+        }
         try
         {
             ITextUtil.writeRtf( new FileInputStream( iTextFile ), new FileOutputStream( iTextOutput ) );
