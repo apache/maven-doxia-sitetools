@@ -21,15 +21,18 @@ under the License.
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>doxia-sitetools</artifactId>
     <groupId>org.apache.maven.doxia</groupId>
     <version>1.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
+
   <artifactId>doxia-site-renderer</artifactId>
   <name>Doxia Site Renderer Component</name>
   <description>The Site Renderer handles the rendering of sites.</description>
+
   <contributors>
     <contributor>
       <name>Vincent Siveton</name>
@@ -41,6 +44,7 @@ under the License.
       <timezone>-5</timezone>
     </contributor>
   </contributors>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
