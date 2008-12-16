@@ -194,6 +194,11 @@ under the License.
             <tagBase>https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/tags</tagBase>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-maven-plugin</artifactId>
+          <version>1.3.5</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
