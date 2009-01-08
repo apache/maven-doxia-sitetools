@@ -80,6 +80,12 @@ public abstract class PathUtils
             URL oldUrl = oldPathDescriptor.getPathUrl();
             URL newUrl = newPathDescriptor.getPathUrl();
 
+            if ( oldUrl == null || newUrl == null )
+            {
+                // One of the sites has a strange URL. no relative path possible, bail out.
+                return null;
+            }
+
             if ( ( newUrl.getProtocol().equalsIgnoreCase( oldUrl.getProtocol() ) )
                             && ( newUrl.getHost().equalsIgnoreCase( oldUrl.getHost() ) )
                             && ( newUrl.getPort() == oldUrl.getPort() ) )
