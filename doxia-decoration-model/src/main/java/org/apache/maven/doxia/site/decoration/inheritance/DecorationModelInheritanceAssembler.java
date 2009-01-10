@@ -28,10 +28,28 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
  */
 public interface DecorationModelInheritanceAssembler
 {
+    /**
+     * Plexus lookup role.
+     */
     String ROLE = DecorationModelInheritanceAssembler.class.getName();
 
+    /**
+     * Manage inheritance of the decoration model between a parent and child.
+     *
+     * @param name a name.
+     * @param child the child DecorationModel.
+     * @param parent the parent DecorationModel.
+     * @param childBaseUrl the child nase URL.
+     * @param parentBaseUrl the parent base URL.
+     */
     void assembleModelInheritance( String name, DecorationModel child, DecorationModel parent, String childBaseUrl,
                                    String parentBaseUrl );
 
+    /**
+     * Resolve relative paths for a DecorationModel given a base URL.
+     *
+     * @param decoration  the DecorationModel.
+     * @param baseUrl the base URL.
+     */
     void resolvePaths( DecorationModel decoration, String baseUrl );
 }

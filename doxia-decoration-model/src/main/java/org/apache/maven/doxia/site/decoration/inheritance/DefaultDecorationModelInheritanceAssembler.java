@@ -42,6 +42,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  */
 public class DefaultDecorationModelInheritanceAssembler implements DecorationModelInheritanceAssembler
 {
+    /** {@inheritDoc} */
     public void assembleModelInheritance( String name, DecorationModel child, DecorationModel parent,
                                           String childBaseUrl, String parentBaseUrl )
     {
@@ -86,9 +87,10 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         }
     }
 
-    public void resolvePaths( final DecorationModel decoration, final String childBaseUrl )
+    /** {@inheritDoc} */
+    public void resolvePaths( final DecorationModel decoration, final String baseUrl )
     {
-        URLContainer urlContainer = new URLContainer( null, childBaseUrl );
+        URLContainer urlContainer = new URLContainer( null, baseUrl );
 
         if ( decoration.getBannerLeft() != null )
         {
@@ -137,8 +139,7 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
      * to the oldBaseUrl, these are changed to the newBannerUrl.
      *
      * @param banner
-     * @param prefix
-     * @param baseUrl
+     * @param urlContainer
      */
     private void resolveBannerPaths( final Banner banner, final URLContainer urlContainer )
     {
@@ -149,7 +150,7 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         }
     }
 
-    private void assembleCustomInheritance( DecorationModel child, DecorationModel parent )
+    private void assembleCustomInheritance( final DecorationModel child, final DecorationModel parent )
     {
         if ( child.getCustom() == null )
         {
@@ -248,7 +249,7 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         }
     }
 
-    private void resolveLinkItemPaths( LinkItem item, final URLContainer urlContainer )
+    private void resolveLinkItemPaths( final LinkItem item, final URLContainer urlContainer )
     {
         if ( item.getHref() != null )
         {
@@ -341,6 +342,9 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         }
     }
 
+    /**
+     * Contains an old and a new path.
+     */
     public final class URLContainer
     {
 
@@ -348,17 +352,33 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
 
         private final String newPath;
 
+        /**
+         * Construct a URLContainer.
+         *
+         * @param oldPath the old path.
+         * @param newPath the new path.
+         */
         public URLContainer( final String oldPath, final String newPath )
         {
             this.oldPath = oldPath;
             this.newPath = newPath;
         }
 
+        /**
+         * Get the new path.
+         *
+         * @return the new path.
+         */
         public String getNewPath()
         {
             return this.newPath;
         }
 
+        /**
+         * Get the old path.
+         *
+         * @return the old path.
+         */
         public String getOldPath()
         {
             return this.oldPath;
