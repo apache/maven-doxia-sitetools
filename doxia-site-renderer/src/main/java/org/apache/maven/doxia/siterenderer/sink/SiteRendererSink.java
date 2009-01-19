@@ -75,12 +75,12 @@ public class SiteRendererSink
     /** {@inheritDoc} */
     public void title_()
     {
-        if ( getBuffer().length() > 0 )
+        if ( getTextBuffer().length() > 0 )
         {
-            title = getBuffer().toString();
+            title = getTextBuffer().toString();
         }
 
-        resetBuffer();
+        resetTextBuffer();
     }
 
     /**
@@ -101,12 +101,12 @@ public class SiteRendererSink
     /** {@inheritDoc} */
     public void author_()
     {
-        if ( getBuffer().length() > 0 )
+        if ( getTextBuffer().length() > 0 )
         {
-            authors.add( getBuffer().toString() );
+            authors.add( getTextBuffer().toString() );
         }
 
-        resetBuffer();
+        resetTextBuffer();
     }
 
     public List getAuthors()
@@ -117,12 +117,12 @@ public class SiteRendererSink
     /** {@inheritDoc} */
     public void date_()
     {
-        if ( getBuffer().length() > 0 )
+        if ( getTextBuffer().length() > 0 )
         {
-            date = getBuffer().toString();
+            date = getTextBuffer().toString();
         }
 
-        resetBuffer();
+        resetTextBuffer();
     }
 
     public String getDate()
@@ -190,12 +190,12 @@ public class SiteRendererSink
         {
             String sectionTitle = "";
 
-            if ( getBuffer().length() > 0 )
+            if ( getTextBuffer().length() > 0 )
             {
-                sectionTitle = getBuffer().toString();
+                sectionTitle = getTextBuffer().toString();
             }
 
-            resetBuffer();
+            resetTextBuffer();
 
             setHeadFlag( false );
 
