@@ -47,16 +47,6 @@ under the License.
     </developer>
   </developers>
 
-  <dependencyManagement>
-    <dependencies>
-      <!-- Latest Plexus -->
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-utils</artifactId>
-        <version>1.5.7-SNAPSHOT</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
