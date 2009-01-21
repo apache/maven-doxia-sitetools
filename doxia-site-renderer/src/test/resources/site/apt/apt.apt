@@ -13,7 +13,7 @@ Links
   Link to {{Anchor}}.
   Link to anchor {{{Anchor}showing alternate text}}.
   {Anchor with space} and {{{Anchor_with_space}link to it}}.
-  Link to {{http://maven.apache.org/}}. 
+  Link to {{http://maven.apache.org/}}.
   Link to {{{http://maven.apache.org/}Maven home page}}.
   Link to {{{./cdc.html}other document}} and within {{{cdc.html}same document}}.
   Link to {{{/index.html}root document}}.
@@ -28,4 +28,4 @@ Echo Macro
 
 Snippet Macro
 
-%{snippet|id=macrotest|file=src/test/site/site.xml}
+%{snippet|id=macrotest|file=src/test/resources/site/site.xml}

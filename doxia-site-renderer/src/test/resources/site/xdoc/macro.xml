@@ -41,7 +41,7 @@
     <section name="Snippet Macro">
       <macro name="snippet">
         <param name="id" value="macrotest"/>
-        <param name="file" value="src/test/site/site.xml"/>
+        <param name="file" value="src/test/resources/site/site.xml"/>
       </macro>
     </section>
 

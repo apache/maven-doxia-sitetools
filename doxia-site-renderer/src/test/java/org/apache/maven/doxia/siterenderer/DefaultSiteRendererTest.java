@@ -88,7 +88,7 @@ public class DefaultSiteRendererTest
         // Render the site
         // ----------------------------------------------------------------------
         DecorationModel decoration = new DecorationXpp3Reader()
-            .read( new FileReader( getTestFile( "src/test/site/site.xml" ) ) );
+            .read( new FileReader( getTestFile( "src/test/resources/site/site.xml" ) ) );
 
         SiteRenderingContext ctxt = new SiteRenderingContext();
         ctxt.setTemplateName( "default-site.vm" );
@@ -98,7 +98,7 @@ public class DefaultSiteRendererTest
         templateProp.put( "outputEncoding", "UTF-8" );
         ctxt.setTemplateProperties( templateProp );
         ctxt.setDecoration( decoration );
-        ctxt.addSiteDirectory( getTestFile( "src/test/site" ) );
+        ctxt.addSiteDirectory( getTestFile( "src/test/resources/site" ) );
 
         renderer.render( renderer.locateDocumentFiles( ctxt ).values(), ctxt, getTestFile( OUTPUT ) );
 
@@ -187,7 +187,7 @@ public class DefaultSiteRendererTest
      */
     public void verifyJavascriptPage()
         throws Exception
-    {        
+    {
         JavascriptVerifier verifier = new JavascriptVerifier();
         verifier.verify( "target/output/javascript.html" );
     }
