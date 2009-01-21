@@ -32,6 +32,7 @@ import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.util.HtmlTools;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Sink for site renderering.
@@ -53,8 +54,12 @@ public class SiteRendererSink
 
     private final Writer writer;
 
+    private RenderingContext renderingContext;
+
     /**
-     * @param renderingContext
+     * Construct a new SiteRendererSink.
+     *
+     * @param renderingContext the RenderingContext.
      */
     public SiteRendererSink( RenderingContext renderingContext )
     {
@@ -62,14 +67,17 @@ public class SiteRendererSink
     }
 
     /**
-     * @param writer
-     * @param renderingContext
+     * Construct a new SiteRendererSink.
+     *
+     * @param writer the writer for the sink.
+     * @param renderingContext the RenderingContext.
      */
     private SiteRendererSink( StringWriter writer, RenderingContext renderingContext )
     {
-        super( writer, renderingContext, null );
+        super( writer );
 
         this.writer = writer;
+        this.renderingContext = renderingContext;
     }
 
     /** {@inheritDoc} */
@@ -260,5 +268,33 @@ public class SiteRendererSink
     public void sectionTitle2_()
     {
         sectionTitle_( SECTION_LEVEL_2 );
+    }
+
+    /**
+     * @return the current rendering context
+     */
+    public RenderingContext getRenderingContext()
+    {
+        return renderingContext;
+    }
+
+    /** {@inheritDoc} */
+    protected void write( String text )
+    {
+        if ( renderingContext != null )
+        {
+            String relativePathToBasedir = renderingContext.getRelativePath();
+
+            if ( relativePathToBasedir == null )
+            {
+                text = StringUtils.replace( text, "$relativePath", "." );
+            }
+            else
+            {
+                text = StringUtils.replace( text, "$relativePath", relativePathToBasedir );
+            }
+        }
+
+        super.write( text );
     }
 }
