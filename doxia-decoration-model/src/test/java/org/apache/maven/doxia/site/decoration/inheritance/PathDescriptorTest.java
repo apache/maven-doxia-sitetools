@@ -30,10 +30,13 @@ import junit.framework.TestCase;
  * Test the PathDescriptor creation under various circumstances.
  *
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
+ * @version $Id$
  */
-public class PathDescriptorTest extends TestCase
+public class PathDescriptorTest
+    extends TestCase
 {
-    public void testAbsPath() throws Exception
+    public void testAbsPath()
+        throws Exception
     {
         String path = "absolutePath";
 
@@ -49,7 +52,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", path, desc.getLocation() );
     }
 
-    public void testRelPath() throws Exception
+    public void testRelPath()
+        throws Exception
     {
         String path = "relativePath";
 
@@ -65,7 +69,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", path, desc.getLocation() );
     }
 
-    public void testEmptyAbsPath() throws Exception
+    public void testEmptyAbsPath()
+        throws Exception
     {
         String path = "";
 
@@ -81,7 +86,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", path, desc.getLocation() );
     }
 
-    public void testEmptyRelPath() throws Exception
+    public void testEmptyRelPath()
+        throws Exception
     {
         String path = "";
 
@@ -97,7 +103,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", path, desc.getLocation() );
     }
 
-    public void testNullPath() throws Exception
+    public void testNullPath()
+        throws Exception
     {
         String path = null;
 
@@ -113,7 +120,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", path, desc.getLocation() );
     }
 
-    public void testNullBaseAbsPath() throws Exception
+    public void testNullBaseAbsPath()
+        throws Exception
     {
         String base = null;
         String path = "absolutePath";
@@ -130,7 +138,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", path, desc.getLocation() );
     }
 
-    public void testNullBaseRelPath() throws Exception
+    public void testNullBaseRelPath()
+        throws Exception
     {
         String base = null;
         String path = "relativePath";
@@ -147,7 +156,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", path, desc.getLocation() );
     }
 
-    public void testNullBaseEmptyAbsPath() throws Exception
+    public void testNullBaseEmptyAbsPath()
+        throws Exception
     {
         String base = null;
         String path = "";
@@ -164,7 +174,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", path, desc.getLocation() );
     }
 
-    public void testNullBaseEmptyRelPath() throws Exception
+    public void testNullBaseEmptyRelPath()
+        throws Exception
     {
         String base = null;
         String path = "";
@@ -181,7 +192,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", path, desc.getLocation() );
     }
 
-    public void testNullBaseNullPath() throws Exception
+    public void testNullBaseNullPath()
+        throws Exception
     {
         String base = null;
         String path = null;
@@ -198,7 +210,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", path, desc.getLocation() );
     }
 
-    public void testUrlBaseAbsPath() throws Exception
+    public void testUrlBaseAbsPath()
+        throws Exception
     {
         String base = "http://maven.apache.org/";
         String path = "absolutePath";
@@ -215,7 +228,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", base + path, desc.getLocation() );
     }
 
-    public void testUrlBaseRelPath() throws Exception
+    public void testUrlBaseRelPath()
+        throws Exception
     {
         String base = "http://maven.apache.org/";
         String path = "relativePath";
@@ -232,7 +246,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", base + path, desc.getLocation() );
     }
 
-    public void testUrlBaseEmptyAbsPath() throws Exception
+    public void testUrlBaseEmptyAbsPath()
+        throws Exception
     {
         String base = "http://maven.apache.org/";
         String path = "";
@@ -249,7 +264,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", base + path, desc.getLocation() );
     }
 
-    public void testUrlBaseEmptyRelPath() throws Exception
+    public void testUrlBaseEmptyRelPath()
+        throws Exception
     {
         String base = "http://maven.apache.org/";
         String path = "";
@@ -266,7 +282,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", base + path, desc.getLocation() );
     }
 
-    public void testUrlBaseNullPath() throws Exception
+    public void testUrlBaseNullPath()
+        throws Exception
     {
         String base = "http://maven.apache.org/";
         String path = null;
@@ -283,7 +300,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", base, desc.getLocation() );
     }
 
-    public void testFileBaseAbsPath() throws Exception
+    public void testFileBaseAbsPath()
+        throws Exception
     {
         String base = "/tmp/foo";
         String path = "absolutePath";
@@ -309,7 +327,8 @@ public class PathDescriptorTest extends TestCase
         }
     }
 
-    public void testFileBaseRelPath() throws Exception
+    public void testFileBaseRelPath()
+        throws Exception
     {
         String base = "/tmp/foo";
         String path = "relativePath";
@@ -335,7 +354,8 @@ public class PathDescriptorTest extends TestCase
         }
     }
 
-    public void testFileBaseEmptyAbsPath() throws Exception
+    public void testFileBaseEmptyAbsPath()
+        throws Exception
     {
         String base = "/tmp/foo";
         String path = "";
@@ -361,7 +381,8 @@ public class PathDescriptorTest extends TestCase
         }
     }
 
-    public void testFileBaseEmptyRelPath() throws Exception
+    public void testFileBaseEmptyRelPath()
+        throws Exception
     {
         String base = "/tmp/foo";
         String path = "";
@@ -387,7 +408,8 @@ public class PathDescriptorTest extends TestCase
         }
     }
 
-    public void testFileBaseNullPath() throws Exception
+    public void testFileBaseNullPath()
+        throws Exception
     {
         String base = "/tmp/foo";
         String path = null;
@@ -404,7 +426,8 @@ public class PathDescriptorTest extends TestCase
         assertEquals( "wrong location", base, desc.getLocation() );
     }
 
-    public void testPathBaseAbsPath() throws Exception
+    public void testPathBaseAbsPath()
+        throws Exception
     {
         String base = "/tmp/foo";
         String path = "absolutePath";
@@ -430,7 +453,8 @@ public class PathDescriptorTest extends TestCase
         }
     }
 
-    public void testPathBaseRelPath() throws Exception
+    public void testPathBaseRelPath()
+        throws Exception
     {
         String base = "/tmp/foo";
         String path = "relativePath";
@@ -456,7 +480,8 @@ public class PathDescriptorTest extends TestCase
         }
     }
 
-    public void testPathBaseEmptyAbsPath() throws Exception
+    public void testPathBaseEmptyAbsPath()
+        throws Exception
     {
         String base = "/tmp/foo";
         String path = "";
@@ -482,7 +507,8 @@ public class PathDescriptorTest extends TestCase
         }
     }
 
-    public void testPathBaseEmptyRelPath() throws Exception
+    public void testPathBaseEmptyRelPath()
+        throws Exception
     {
         String base = "/tmp/foo";
         String path = "";
@@ -508,7 +534,8 @@ public class PathDescriptorTest extends TestCase
         }
     }
 
-    public void testPathBaseNullPath() throws Exception
+    public void testPathBaseNullPath()
+        throws Exception
     {
         String base = "/tmp/foo";
         String path = null;

@@ -1,7 +1,5 @@
 package org.apache.maven.doxia.site.decoration.inheritance;
 
-import junit.framework.TestCase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,17 +19,20 @@ import junit.framework.TestCase;
  * under the License.
  */
 
+import junit.framework.TestCase;
+
 /**
  * Testcase for DOXIA-91 problems. All tests make sure that a passed in null will not generate any path conversion but
  * just returns the old path.
- * 
+ *
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
+ * @version $Id$
  */
-
-public class Doxia91Test extends TestCase
+public class Doxia91Test
+    extends TestCase
 {
-
-    public void testOldPathNull() throws Exception
+    public void testOldPathNull()
+        throws Exception
     {
         PathDescriptor oldPath = new PathDescriptor( null );
         PathDescriptor newPath = new PathDescriptor( "http://www.apache.org/" );
@@ -41,7 +42,8 @@ public class Doxia91Test extends TestCase
         assertEquals( diff, oldPath );
     }
 
-    public void testNewPathNull() throws Exception
+    public void testNewPathNull()
+        throws Exception
     {
         PathDescriptor oldPath = new PathDescriptor( "http://www.apache.org/", "file:///home/henning/foo" );
         PathDescriptor newPath = new PathDescriptor( null );
@@ -51,7 +53,8 @@ public class Doxia91Test extends TestCase
         assertEquals( diff, oldPath );
     }
 
-    public void testBothPathNull() throws Exception
+    public void testBothPathNull()
+        throws Exception
     {
         PathDescriptor oldPath = new PathDescriptor( null );
         PathDescriptor newPath = new PathDescriptor( null );
