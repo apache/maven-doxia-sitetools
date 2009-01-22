@@ -312,7 +312,7 @@ under the License.
         </field>
       </fields>
     </class>
-    <class>
+    <class xsd.compositor="sequence">
       <name>Body</name>
       <description><![CDATA[
         The main content decoration.
@@ -349,7 +349,6 @@ under the License.
           <association>
             <type>LinkItem</type>
             <multiplicity>*</multiplicity>
-            <identifier>true</identifier>
           </association>
           <identifier>true</identifier>
         </field>
@@ -394,7 +393,7 @@ under the License.
         </field>
       </fields>
     </class>
-    <class>
+    <class xsd.compositor="sequence">
       <name>Menu</name>
       <description><![CDATA[
         A menu in the navigation.
@@ -461,7 +460,7 @@ under the License.
         </field>
       </fields>
     </class>
-    <class>
+    <class xsd.compositor="sequence">
       <name>MenuItem</name>
       <description><![CDATA[
         A menu item.
@@ -512,7 +511,7 @@ under the License.
     <class>
       <name>Skin</name>
       <description><![CDATA[
-        An skin artifact declaratio.
+        An skin artifact declaration.
       ]]></description>
       <version>1.0.0</version>
       <fields>

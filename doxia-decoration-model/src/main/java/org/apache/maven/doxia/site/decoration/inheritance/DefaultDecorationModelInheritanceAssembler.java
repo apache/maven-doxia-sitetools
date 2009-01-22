@@ -31,6 +31,7 @@ import org.apache.maven.doxia.site.decoration.LinkItem;
 import org.apache.maven.doxia.site.decoration.Logo;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.MenuItem;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
@@ -38,6 +39,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
+ * @version $Id$
  * @plexus.component role="org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler"
  */
 public class DefaultDecorationModelInheritanceAssembler implements DecorationModelInheritanceAssembler
@@ -251,9 +253,13 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
 
     private void resolveLinkItemPaths( final LinkItem item, final URLContainer urlContainer )
     {
-        if ( item.getHref() != null )
+        if ( StringUtils.isNotEmpty( item.getHref() ) )
         {
-            item.setHref( convertPath( item.getHref(), urlContainer ) );
+            String href = convertPath( item.getHref(), urlContainer );
+            if ( StringUtils.isNotEmpty( href ) )
+            {
+                item.setHref( href );
+            }
         }
         else
         {
