@@ -19,7 +19,8 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<model>
+<model xmlns="http://modello.codehaus.org/MODELLO/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.0.0 http://modello.codehaus.org/xsd/modello-1.0.0.xsd"
+  xsd.namespace="http://maven.apache.org/DECORATION/1.0.0" xsd.target-namespace="http://maven.apache.org/DECORATION/1.0.0">
   <id>decoration</id>
   <name>Decoration</name>
   <description><![CDATA[
@@ -412,7 +413,7 @@ under the License.
         <field xml.attribute="true">
           <name>inherit</name>
           <description><![CDATA[
-            The way in which the menu is inherited.
+            The way in which the menu is inherited. Can be one of : <code>top</code>, <code>bottom</code>.
           ]]></description>
           <version>1.0.0</version>
           <type>String</type>
