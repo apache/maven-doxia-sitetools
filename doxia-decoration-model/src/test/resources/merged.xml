@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -17,7 +19,10 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project name="Child">
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 file:../../../target/generated-site/xsd/decoration-1.0.0.xsd"
+  name="Child">
   <bannerLeft>
     <name>The Jakarta Project</name>
     <src>http://jakarta.apache.org/images/jakarta-logo.gif</src>
@@ -36,15 +41,15 @@ under the License.
     <artifactId>maven-default-skin</artifactId>
   </skin>
   <body>
+    <links>
+      <item name="Bouncy Castle" href="http://www.bouncycastle.org"/>
+    </links>
     <breadcrumbs>
       <item name="Apache" href="http://www.apache.org/"/>
       <item name="Jakarta Commons" href="http://jakarta.apache.org/commons/"/>
       <item name="Sandbox" href="http://jakarta.apache.org/commons/sandbox/"/>
       <item name="Name" href="http://maven.apache.org/doxia"/>
     </breadcrumbs>
-    <links>
-      <item name="Bouncy Castle" href="http://www.bouncycastle.org"/>
-    </links>
 
     <menu name="Top Menu" inherit="top">
       <item name="Introduction" href="../indexParent.html"/>
