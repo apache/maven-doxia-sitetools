@@ -22,7 +22,10 @@ under the License.
       <!-- A test snippet... -->
 <!-- END SNIPPET: macrotest -->
 
-<project name="Plexus">
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 file:../../../../../doxia-decoration-model/target/generated-site/xsd/decoration-1.0.0.xsd"
+  name="Plexus">
   <bannerLeft>
     <name>Plexus</name>
     <src>http://plexus.codehaus.org/images/plexus-logo.png</src>

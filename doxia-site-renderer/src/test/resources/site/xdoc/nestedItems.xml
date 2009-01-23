@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -18,14 +18,16 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<document>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 file:../../../../../../../doxia/doxia-modules/doxia-module-xdoc/src/main/resources/xdoc-2.0.xsd">
     <properties>
         <title>Test List Issue</title>
     </properties>
 
     <body>
         <section name="List Section">
-            <h4>Unordered lists</h4>            
+            <h4>Unordered lists</h4>
             <p>
                Below is an unordered list, followed by six paragraphs.
             </p>
@@ -90,7 +92,7 @@ under the License.
                Paragraph 6 below list.
             </p>
 
-            <h4>Ordered lists</h4>            
+            <h4>Ordered lists</h4>
             <p>
                Below is an ordered list, followed by six paragraphs.
             </p>
@@ -154,8 +156,8 @@ under the License.
             <p>
                Paragraph 6 below list.
             </p>
-            
-            <h4>Definition lists</h4>            
+
+            <h4>Definition lists</h4>
             <p>
                Below is a definition list, followed by six paragraphs.
             </p>
