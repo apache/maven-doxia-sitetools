@@ -21,7 +21,10 @@
  */
  -->
 
-<project name="Doxia">
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 file:../../../../../doxia-decoration-model/target/generated-site/xsd/decoration-1.0.0.xsd"
+  name="Doxia">
   <bannerLeft>
     <name>Doxia</name>
     <src>images/apache-maven-project-2.png</src>
@@ -36,6 +39,15 @@
     <version>1.0.1</version>
   </skin>
   <body>
+    <head>
+      <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+      </script>
+      <script type="text/javascript">
+        _uacct = "UA-140879-1";
+        urchinTracker();
+      </script>
+    </head>
+
     <links>
       <item name="Apache" href="http://www.apache.org/"/>
       <item name="Maven 1.x" href="http://maven.apache.org/maven-1.x"/>
@@ -45,15 +57,6 @@
       <item name="JXR" href="http://maven.apache.org/jxr"/>
       <item name="Doxia" href="http://maven.apache.org/doxia"/>
     </links>
-
-    <head>
-      <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
-      </script>
-      <script type="text/javascript">
-        _uacct = "UA-140879-1";
-        urchinTracker();
-      </script>
-    </head>
 
     <menu name="About Doxia">
       <item name="What is Doxia?" href="index.html"/>

@@ -19,7 +19,10 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<faqs title="Frequently Asked Questions">
+<faqs xmlns="http://maven.apache.org/FML/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0 file:../../../../../../../doxia/doxia-modules/doxia-module-fml/src/main/resources/fml-1.0.xsd"
+  title="Frequently Asked Questions">
   <part id="General">
     <faq id="How_to_handle_style_in_the_APT_markup_language">
       <question>How to handle style in the APT markup language?</question>
