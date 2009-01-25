@@ -19,11 +19,11 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
-
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+
+import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
 
 /**
  * Renders a page with Doxia.
@@ -35,27 +35,36 @@ public class DoxiaDocumentRenderer
 {
     private RenderingContext renderingContext;
 
+    /**
+     * Constructor.
+     *
+     * @param renderingContext the RenderingContext to use.
+     */
     public DoxiaDocumentRenderer( RenderingContext renderingContext )
     {
         this.renderingContext = renderingContext;
     }
 
+    /** {@inheritDoc} */
     public void renderDocument( Writer writer, Renderer renderer, SiteRenderingContext siteRenderingContext )
         throws RendererException, FileNotFoundException, UnsupportedEncodingException
     {
         renderer.renderDocument( writer, renderingContext, siteRenderingContext );
     }
 
+    /** {@inheritDoc} */
     public String getOutputName()
     {
         return renderingContext.getOutputName();
     }
 
+    /** {@inheritDoc} */
     public RenderingContext getRenderingContext()
     {
         return renderingContext;
     }
 
+    /** {@inheritDoc} */
     public boolean isOverwrite()
     {
         return false;

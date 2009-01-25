@@ -25,11 +25,25 @@ package org.apache.maven.doxia.siterenderer;
 public class RendererException
     extends Exception
 {
+
+    private static final long serialVersionUID = 3141592653589793238L;
+
+    /**
+     * Construct a RendererException with a message.
+     *
+     * @param message a custom message.
+     */
     public RendererException( String message )
     {
         super( message );
     }
 
+    /**
+     * Construct a RendererException with a message and a cause.
+     *
+     * @param message a custom message.
+     * @param t the cause.
+     */
     public RendererException( String message, Throwable t )
     {
         super( message, t );
