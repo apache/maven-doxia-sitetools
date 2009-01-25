@@ -34,7 +34,7 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 
 /**
- * @author <a href="mailto:evenisse@codehaus.org>Emmanuel Venisse</a>
+ * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  * @version $Id:Renderer.java 348612 2005-11-24 12:54:19 +1100 (Thu, 24 Nov 2005) brett $
  */
 public interface Renderer
