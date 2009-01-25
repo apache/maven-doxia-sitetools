@@ -47,18 +47,18 @@ under the License.
     </links>
 
     <menu name="Top Menu" inherit="top">
-      <item name="Introduction" href="/index.html"/>
-      <item name="Usage" href="/usage.html"/>
+      <item name="Introduction" href="../indexParent.html"/>
+      <item name="Usage" href="../usageParent.html"/>
     </menu>
     <menu name="empty menu" inherit="top">
 
     </menu>
     <menu name="Subproject menu">
-      <item name="Introduction" href="/index.html"/>
-      <item name="Usage" href="/usage.html"/>
+      <item name="Introduction" href="/indexChild.html"/>
+      <item name="Usage" href="/usageChild.html"/>
     </menu>
     <menu name="Other Links" inherit="bottom">
-      <item name="Copyright" href="/copyright.html"/>
+      <item name="Copyright" href="../copyrightParent.html"/>
     </menu>
   </body>
 </project>

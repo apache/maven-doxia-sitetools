@@ -19,13 +19,13 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  * under the License.
  */
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.StringTokenizer;
+
+import org.codehaus.plexus.util.PathTool;
 
 /**
- * Utilitites that allow conversion of old and new pathes and URLs relative to each other.
+ * Utilities that allow conversion of old and new pathes and URLs relative to each other.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
@@ -35,8 +35,15 @@ public abstract class PathUtils
 {
     private PathUtils()
     {
+        // nop
     }
 
+    /**
+     * @param oldPath not null
+     * @param newPath not null
+     * @return a PathDescriptor converted by the new path
+     * @throws MalformedURLException if any
+     */
     public static final PathDescriptor convertPath( final PathDescriptor oldPath, final PathDescriptor newPath )
         throws MalformedURLException
     {
@@ -50,8 +57,15 @@ public abstract class PathUtils
         return new PathDescriptor( relative );
     }
 
+    /**
+     * @param oldPathDescriptor not null
+     * @param newPathDescriptor not null
+     * @return a relative path depending if PathDescriptor is a file or a web url.
+     * @see PathTool#getRelativeFilePath(String, String)
+     * @see PathTool#getRelativeWebPath(String, String)
+     */
     public static final String getRelativePath( final PathDescriptor oldPathDescriptor,
-                                                final PathDescriptor newPathDescriptor ) throws MalformedURLException
+                                                final PathDescriptor newPathDescriptor )
     {
         // Cannot convert from URL to file.
         if ( oldPathDescriptor.isFile() )
@@ -65,11 +79,9 @@ public abstract class PathUtils
                     // site into a new URL using resolvePaths()...
                     return oldPathDescriptor.getPath();
                 }
-                else
-                {
-                    // The old path is not relative. Bail out.
-                    return null;
-                }
+
+                // The old path is not relative. Bail out.
+                return null;
             }
         }
 
@@ -95,177 +107,23 @@ public abstract class PathUtils
                 String oldPath = oldPathDescriptor.getPath();
                 String newPath = newPathDescriptor.getPath();
 
-                return getRelativeWebPath( newPath, oldPath );
-            }
-            else
-            {
-                // Different sites. No relative Path possible.
-                return null;
-            }
-        }
-        else
-        {
-            // Both Descriptors point to a path. We can build a relative path.
-            String oldPath = oldPathDescriptor.getPath();
-            String newPath = newPathDescriptor.getPath();
-
-            if ( oldPath == null || newPath == null )
-            {
-                // One of the sites has a strange URL. no relative path possible, bail out.
-                return null;
+                return PathTool.getRelativeWebPath( newPath, oldPath );
             }
 
-            return getRelativeFilePath( oldPath, newPath );
-        }
-    }
-
-    /**
-     * This method can calculate the relative path between two pathes on a web site.
-     */
-    public static final String getRelativeWebPath( final String oldPath, final String newPath )
-    {
-        String resultPath = buildRelativePath( newPath, oldPath, '/' );
-
-        if ( newPath.endsWith( "/" ) && !resultPath.endsWith( "/" ) )
-        {
-            return resultPath + "/";
-        }
-        else
-        {
-            return resultPath;
-        }
-    }
-
-    /**
-     * This method can calculate the relative path between two pathes on a file system.
-     */
-    public static final String getRelativeFilePath( final String oldPath, final String newPath )
-    {
-        // normalise the path delimiters
-        String fromPath = new File( oldPath ).getPath();
-        String toPath = new File( newPath ).getPath();
-
-        // strip any leading slashes if its a windows path
-        if ( toPath.matches( "^\\[a-zA-Z]:" ) )
-        {
-            toPath = toPath.substring( 1 );
-        }
-        if ( fromPath.matches( "^\\[a-zA-Z]:" ) )
-        {
-            fromPath = fromPath.substring( 1 );
-        }
-
-        // lowercase windows drive letters.
-        if ( fromPath.startsWith( ":", 1 ) )
-        {
-            fromPath = fromPath.substring( 0, 1 ).toLowerCase() + fromPath.substring( 1 );
-        }
-        if ( toPath.startsWith( ":", 1 ) )
-        {
-            toPath = toPath.substring( 0, 1 ).toLowerCase() + toPath.substring( 1 );
-        }
-
-        // check for the presence of windows drives. No relative way of
-        // traversing from one to the other.
-        if ( ( toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) )
-                        && ( !toPath.substring( 0, 1 ).equals( fromPath.substring( 0, 1 ) ) ) )
-        {
-            // they both have drive path element but they dont match, no
-            // relative path
+            // Different sites. No relative Path possible.
             return null;
         }
 
-        if ( ( toPath.startsWith( ":", 1 ) && !fromPath.startsWith( ":", 1 ) )
-                        || ( !toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) ) )
+        // Both Descriptors point to a path. We can build a relative path.
+        String oldPath = oldPathDescriptor.getPath();
+        String newPath = newPathDescriptor.getPath();
+
+        if ( oldPath == null || newPath == null )
         {
-            // one has a drive path element and the other doesnt, no relative
-            // path.
+            // One of the sites has a strange URL. no relative path possible, bail out.
             return null;
         }
 
-        String resultPath = buildRelativePath( toPath, fromPath, File.separatorChar );
-
-        if ( newPath.endsWith( File.separator ) && !resultPath.endsWith( File.separator ) )
-        {
-            return resultPath + File.separator;
-        }
-        else
-        {
-            return resultPath;
-        }
-    }
-
-    private static final String buildRelativePath( final String toPath, final String fromPath, final char separatorChar )
-    {
-        // use tokeniser to traverse paths and for lazy checking
-        StringTokenizer toTokeniser = new StringTokenizer( toPath, String.valueOf( separatorChar ) );
-        StringTokenizer fromTokeniser = new StringTokenizer( fromPath, String.valueOf( separatorChar ) );
-
-        int count = 0;
-
-        // walk along the to path looking for divergence from the from path
-        while ( toTokeniser.hasMoreTokens() && fromTokeniser.hasMoreTokens() )
-        {
-            if ( separatorChar == '\\' )
-            {
-                if ( !fromTokeniser.nextToken().equalsIgnoreCase( toTokeniser.nextToken() ) )
-                {
-                    break;
-                }
-            }
-            else
-            {
-                if ( !fromTokeniser.nextToken().equals( toTokeniser.nextToken() ) )
-                {
-                    break;
-                }
-            }
-
-            count++;
-        }
-
-        // reinitialise the tokenisers to count positions to retrieve the
-        // gobbled token
-
-        toTokeniser = new StringTokenizer( toPath, String.valueOf( separatorChar ) );
-        fromTokeniser = new StringTokenizer( fromPath, String.valueOf( separatorChar ) );
-
-        while ( count-- > 0 )
-        {
-            fromTokeniser.nextToken();
-            toTokeniser.nextToken();
-        }
-
-        String relativePath = "";
-
-        // add back refs for the rest of from location.
-        while ( fromTokeniser.hasMoreTokens() )
-        {
-            fromTokeniser.nextToken();
-
-            relativePath += "..";
-
-            if ( fromTokeniser.hasMoreTokens() )
-            {
-                relativePath += separatorChar;
-            }
-        }
-
-        if ( relativePath.length() != 0 && toTokeniser.hasMoreTokens() )
-        {
-            relativePath += separatorChar;
-        }
-
-        // add fwd fills for whatevers left of newPath.
-        while ( toTokeniser.hasMoreTokens() )
-        {
-            relativePath += toTokeniser.nextToken();
-
-            if ( toTokeniser.hasMoreTokens() )
-            {
-                relativePath += separatorChar;
-            }
-        }
-        return relativePath;
+        return PathTool.getRelativeFilePath( oldPath, newPath );
     }
 }

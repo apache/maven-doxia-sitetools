@@ -24,8 +24,8 @@ under the License.
     </links>
 
     <menu name="Subproject menu">
-      <item name="Introduction" href="/index.html"/>
-      <item name="Usage" href="/usage.html"/>
+      <item name="Introduction" href="/indexChild.html"/>
+      <item name="Usage" href="/usageChild.html"/>
     </menu>
 
   </body>

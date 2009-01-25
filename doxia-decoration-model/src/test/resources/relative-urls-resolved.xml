@@ -30,7 +30,7 @@ under the License.
   </bannerRight>
 
   <poweredBy>
-    <logo name="Tomcat" href="/tomcat" img="tomcat/logo.gif"/>
+    <logo name="Tomcat" href="tomcat" img="tomcat/logo.gif"/>
   </poweredBy>
 
   <body>
