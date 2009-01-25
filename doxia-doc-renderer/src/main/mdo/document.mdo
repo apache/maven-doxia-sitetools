@@ -86,7 +86,7 @@
       </fields>
     </class>
 
-    <class>
+    <class xsd.compositor="sequence">
       <name>DocumentTOC</name>
       <description>A Table Of Content for the document.</description>
       <version>1.0.0</version>
