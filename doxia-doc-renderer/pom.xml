@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>doxia-doc-renderer</artifactId>
-  <name>Doxia Document Renderer Component</name>
+  <name>Doxia Sitetools :: Document Renderer Component</name>
   <description>The Document Renderer handles the rendering of documents, in formats like PDF and RTF.</description>
 
   <developers>

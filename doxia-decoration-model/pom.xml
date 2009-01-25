@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>doxia-decoration-model</artifactId>
-  <name>Doxia Decoration Model</name>
+  <name>Doxia Sitetools :: Decoration Model</name>
   <description>The Decoration Model handles the site descriptor, also known as site.xml.</description>
 
   <dependencies>
