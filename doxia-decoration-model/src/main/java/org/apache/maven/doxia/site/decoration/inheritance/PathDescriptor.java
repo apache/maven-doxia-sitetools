@@ -42,31 +42,55 @@ public class PathDescriptor
 
     private final String relativePath;
 
+    /**
+     * Construct a PathDescriptor from a path.
+     *
+     * @param path the path.
+     *
+     * @throws java.net.MalformedURLException if a URL cannot be formed from the path.
+     */
     public PathDescriptor( final String path ) throws MalformedURLException
     {
         this( (URL) null, path );
     }
 
+    /**
+     * Construct a PathDescriptor from a path and a base.
+     *
+     * @param base a base reference.
+     * @param path the path.
+     *
+     * @throws java.net.MalformedURLException if a URL cannot be formed from the path.
+     */
     public PathDescriptor( final String base, final String path ) throws MalformedURLException
     {
         this( PathDescriptor.buildBaseUrl( base ), path );
     }
 
+    /**
+     * Construct a PathDescriptor from a path and a base.
+     *
+     * @param baseUrl a base reference.
+     * @param path the path.
+     *
+     * @throws java.net.MalformedURLException if a URL cannot be formed from the path.
+     */
     public PathDescriptor( final URL baseUrl, final String path ) throws MalformedURLException
     {
         this.baseUrl = baseUrl;
 
-        URL pathUrl = null;
-        String relativePath = null;
+        URL pathURL = null;
+        String relPath = null;
+
         try
         {
-            pathUrl = new URL( path );
+            pathURL = new URL( path );
         }
         catch ( MalformedURLException e )
         {
             try
             {
-                pathUrl = buildUrl( baseUrl, path );
+                pathURL = buildUrl( baseUrl, path );
             }
             catch ( MalformedURLException e2 )
             {
@@ -75,19 +99,20 @@ public class PathDescriptor
                 // to which it has been anchored.
                 if ( path != null && path.startsWith( "/" ) )
                 {
-                    relativePath = path.substring( 1 );
+                    relPath = path.substring( 1 );
                 }
                 else
                 {
-                    relativePath = path;
+                    relPath = path;
                 }
             }
         }
-        this.pathUrl = pathUrl;
-        this.relativePath = relativePath;
+
+        this.pathUrl = pathURL;
+        this.relativePath = relPath;
     }
 
-    private static final URL buildBaseUrl( final String base ) throws MalformedURLException
+    private static URL buildBaseUrl( final String base ) throws MalformedURLException
     {
         if ( base == null )
         {
@@ -100,11 +125,11 @@ public class PathDescriptor
         }
         catch ( MalformedURLException e )
         {
-            return new File( base ).toURL();
+            return new File( base ).toURI().toURL();
         }
     }
 
-    private static final URL buildUrl( final URL baseUrl, final String path ) throws MalformedURLException
+    private static URL buildUrl( final URL baseUrl, final String path ) throws MalformedURLException
     {
         if ( baseUrl == null )
         {
@@ -118,7 +143,7 @@ public class PathDescriptor
 
         if ( baseUrl.getProtocol().equals( "file" ) )
         {
-            return new File( baseUrl.getFile(), path ).toURL();
+            return new File( baseUrl.getFile(), path ).toURI().toURL();
         }
 
         if ( path.startsWith( "/" ) && baseUrl.getPath().endsWith( "/" ) )
@@ -129,26 +154,51 @@ public class PathDescriptor
         return new URL( baseUrl, path );
     }
 
+    /**
+     * Check if this PathDescriptor decribes a file.
+     *
+     * @return true for file, false otherwise.
+     */
     public boolean isFile()
     {
         return isRelative() || pathUrl.getProtocol().equals( "file" );
     }
 
+    /**
+     * Check if this PathDescriptor decribes a relative path.
+     *
+     * @return true if {@link #getPathUrl()} returns null.
+     */
     public boolean isRelative()
     {
         return pathUrl == null;
     }
 
+    /**
+     * Get the base URL.
+     *
+     * @return the base URL.
+     */
     public URL getBaseUrl()
     {
         return baseUrl;
     }
 
+    /**
+     * Get the path as a URL.
+     *
+     * @return the path as a URL.
+     */
     public URL getPathUrl()
     {
         return pathUrl;
     }
 
+    /**
+     * Get the path.
+     *
+     * @return the path.
+     */
     public String getPath()
     {
         if ( getPathUrl() != null )
@@ -168,6 +218,11 @@ public class PathDescriptor
         }
     }
 
+    /**
+     * Get the location for files.
+     *
+     * @return the location.
+     */
     public String getLocation()
     {
         if ( isFile() )
@@ -187,6 +242,7 @@ public class PathDescriptor
         }
     }
 
+    /** {@inheritDoc} */
     public String toString()
     {
         StringBuffer res =
