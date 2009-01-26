@@ -289,6 +289,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=${outputEncoding}" />
     <title>$title</title>
     <style type="text/css" media="all">
       @import url("$relativePath/css/maven-base.css");
@@ -299,7 +300,6 @@
     #foreach( $author in $authors )
       <meta name="author" content="$author" />
     #end
-    <meta http-equiv="Content-Type" content="text/html; charset=${outputEncoding}" />
     #if ( $decoration.body.head )
       #foreach( $item in $decoration.body.head.getChildren() )
         ## Workaround for DOXIA-150 due to a non-desired behaviour in p-u
