@@ -33,9 +33,12 @@ import org.codehaus.plexus.util.PathTool;
  */
 public abstract class PathUtils
 {
+    /**
+     * Private constructor.
+     */
     private PathUtils()
     {
-        // nop
+        // do not instantiate
     }
 
     /**
@@ -102,7 +105,7 @@ public abstract class PathUtils
                             && ( newUrl.getHost().equalsIgnoreCase( oldUrl.getHost() ) )
                             && ( newUrl.getPort() == oldUrl.getPort() ) )
             {
-                // Both pathes point to the same site. So we can use relative pathes.
+                // Both paths point to the same site. So we can use relative paths.
 
                 String oldPath = oldPathDescriptor.getPath();
                 String newPath = newPathDescriptor.getPath();
