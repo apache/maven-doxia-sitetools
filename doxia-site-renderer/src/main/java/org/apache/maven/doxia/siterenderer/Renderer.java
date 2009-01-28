@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 

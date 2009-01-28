@@ -28,7 +28,7 @@ import javax.swing.text.html.HTML.Attribute;
 import javax.swing.text.html.HTML.Tag;
 
 import org.apache.maven.doxia.module.xhtml.XhtmlSink;
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.util.HtmlTools;

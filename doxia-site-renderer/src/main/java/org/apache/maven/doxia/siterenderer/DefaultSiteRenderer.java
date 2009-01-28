@@ -53,7 +53,7 @@ import java.util.zip.ZipFile;
 
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
-import org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext;
+import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
