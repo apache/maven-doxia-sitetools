@@ -23,6 +23,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader2;
+import com.gargoylesoftware.htmlunit.html.HtmlHeader3;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader4;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
@@ -30,9 +31,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
 
 import java.util.Iterator;
 
-
 /**
- * 
+ * Verify the <code>site/xdoc/entityTest.xml</code>
  *
  * @author ltheussl
  * @version $Id$
@@ -78,17 +78,41 @@ public class EntitiesVerifier
         assertNotNull( h4 );
         assertEquals( h4.asText().trim(), "Entities" );
 
+        div = (HtmlDivision) elementIterator.next();
+
+        HtmlHeader3 h3 = (HtmlHeader3) elementIterator.next();
+        assertNotNull( h3 );
+        assertEquals( h3.asText().trim(), "Generic Entities" );
+
+        a = (HtmlAnchor) elementIterator.next();
+
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "'&' '<' '>' '\"' ''' ' ' ' '" );
+        assertEquals( p.asText().trim(), "'&' '<' '>' '\"' '''" );
 
         div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
-        assertEquals( div.getAttributeValue( "class" ), "section" );
 
-        h4 = (HtmlHeader4) elementIterator.next();
-        assertNotNull( h4 );
-        assertEquals( h4.asText().trim(), "Comment" );
+        h3 = (HtmlHeader3) elementIterator.next();
+        assertNotNull( h3 );
+        assertEquals( h3.asText().trim(), "Local Entities" );
+
+        a = (HtmlAnchor) elementIterator.next();
+
+        p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+        assertEquals( p.asText().trim(), "'Α' 'Β' 'Γ'" );
+
+        div = (HtmlDivision) elementIterator.next();
+
+        h3 = (HtmlHeader3) elementIterator.next();
+        assertNotNull( h3 );
+        assertEquals( h3.asText().trim(), "DTD Entities" );
+
+        a = (HtmlAnchor) elementIterator.next();
+
+        p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+        assertEquals( p.asText().trim(), "' ' '¡' '¢'" );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
@@ -105,6 +129,17 @@ public class EntitiesVerifier
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
         assertNotNull( pre );
         assertEquals( pre.asText().trim(), "<project xmlns:ant=\"jelly:ant\">" );
+
+        p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+        assertEquals( p.asText().trim(), "'&nbsp;' '&iexcl;'" );
+
+        elementIterator.next(); // div
+        elementIterator.next(); // hr
+        elementIterator.next(); // div
+        elementIterator.next(); // div
+        elementIterator.next(); // hr
+        elementIterator.next(); // hr
 
         assertFalse( elementIterator.hasNext() );
     }
