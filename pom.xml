@@ -111,7 +111,7 @@ under the License.
 
   <properties>
     <projectVersion>${project.version}</projectVersion>
-    <doxiaVersion>1.0-SNAPSHOT</doxiaVersion>
+    <doxiaVersion>1.0</doxiaVersion>
   </properties>
 
   <dependencyManagement>
@@ -193,6 +193,11 @@ under the License.
           <configuration>
             <tagBase>https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/tags</tagBase>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.modello</groupId>
+          <artifactId>modello-maven-plugin</artifactId>
+          <version>1.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.plexus</groupId>
