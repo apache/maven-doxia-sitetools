@@ -727,7 +727,9 @@ public class DefaultSiteRenderer
                     "The file '" + siteCssFile.getAbsolutePath() + "' does not exists. Creating an empty file." );
             }
             FileWriter w = new FileWriter( siteCssFile );
-            w.write( "" );
+            
+            //put something in the file so it's not completely empty - DOXIA-290
+            w.write( "/* You can override this file with your own styles */" );
             IOUtil.close( w );
         }
     }
