@@ -21,7 +21,9 @@
  */
  -->
 
-<project>
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 file:../../target/generated-site/xsd/decoration-1.0.0.xsd">
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-stylus-skin</artifactId>
@@ -34,11 +36,12 @@
       <item name="Doxia" href="http://maven.apache.org/doxia/index.html" />
     </breadcrumbs>
 
-    <menu name="Documentation">
-      <item name="decoration descriptor" href="decoration.html" />
+    <menu name="Schema Decoration 1.0">
+      <item name="Reference of Schema Decoration" href="decoration.html"/>
+      <item name="Using Schema Decoration" href="using-decoration-xsd.html"/>
     </menu>
 
-    <menu ref="modules"/>
+    <menu ref="reports"/>
 
   </body>
 </project>
