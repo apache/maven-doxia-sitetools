@@ -755,12 +755,12 @@ public class DefaultSiteRenderer
                 getLogger().debug(
                     "The file '" + siteCssFile.getAbsolutePath() + "' does not exists. Creating an empty file." );
             }
-
             Writer writer = null;
             try
             {
                 writer = WriterFactory.newWriter( siteCssFile, siteRenderingContext.getOutputEncoding() );
-                writer.write( "" );
+                //DOXIA-290...the file should not be 0 bytes.
+                writer.write( "/* You can override this file with your own styles */"  );
             }
             finally
             {
