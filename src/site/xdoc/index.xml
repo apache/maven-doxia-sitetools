@@ -16,7 +16,7 @@
       <p>
         <!-- workaround for DOXIA-227: usemap attribute is stripped (fixed in Doxia 1.1, was 1.0-beta-1) -->
         <script type="text/javascript">
-          tag='<img src="doxia-sitetools-deps.png" width="482" height="217" border="0" usemap="#Doxia_sitetools_dependencies" />';
+          tag='<img src="images/doxia-sitetools-deps.png" width="482" height="217" border="0" usemap="#Doxia_sitetools_dependencies" />';
           tag=tag.substring(0,tag.length-2)+' usemap=\'#Doxia_sitetools_dependencies\''+tag.substring(tag.length-2);
           document.write(tag);
         </script>
