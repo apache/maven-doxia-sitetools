@@ -24,6 +24,7 @@ package org.apache.maven.doxia.docrenderer;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
+ * @since 1.1
  */
 public class DocumentRendererException
     extends Exception

@@ -26,6 +26,7 @@ import org.apache.maven.doxia.docrenderer.AbstractDocumentRenderer;
  *
  * @author ltheussl
  * @version $Id$
+ * @since 1.1
  */
 public abstract class AbstractPdfRenderer
     extends AbstractDocumentRenderer

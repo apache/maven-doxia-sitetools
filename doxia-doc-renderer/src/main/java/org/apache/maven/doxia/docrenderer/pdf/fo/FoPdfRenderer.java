@@ -44,6 +44,7 @@ import org.xml.sax.SAXParseException;
  *
  * @author ltheussl
  * @version $Id$
+ * @since 1.1
  */
 public class FoPdfRenderer
     extends AbstractPdfRenderer

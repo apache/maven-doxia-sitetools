@@ -54,6 +54,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @author ltheussl
  * @version $Id$
+ * @since 1.1
  */
 public abstract class AbstractDocumentRenderer
     extends AbstractLogEnabled
@@ -79,11 +80,8 @@ public abstract class AbstractDocumentRenderer
      *
      * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
      *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
-     *
      * @param outputDirectory the output directory where the document should be generated.
-     *
      * @param documentModel the document model, containing all the metadata, etc.
-     *
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      */
@@ -114,9 +112,7 @@ public abstract class AbstractDocumentRenderer
      *
      * @param baseDirectory the directory containing the source files.
      *              This should follow the standard Maven convention, ie containing all the site modules.
-     *
      * @param outputDirectory the output directory where the document should be generated.
-     *
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      */
@@ -131,12 +127,9 @@ public abstract class AbstractDocumentRenderer
      *
      * @param baseDirectory the directory containing the source files.
      *              This should follow the standard Maven convention, ie containing all the site modules.
-     *
      * @param outputDirectory the output directory where the document should be generated.
-     *
      * @param documentDescriptor a file containing the document model.
      *              If this file does not exist or is null, some default settings will be used.
-     *
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      */

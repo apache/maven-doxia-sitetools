@@ -64,6 +64,7 @@ import com.lowagie.text.ElementTags;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @author ltheussl
  * @version $Id$
+ * @since 1.1
  */
 public class ITextPdfRenderer
     extends AbstractPdfRenderer

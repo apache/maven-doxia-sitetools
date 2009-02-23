@@ -31,6 +31,7 @@ import org.apache.maven.doxia.document.DocumentModel;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @author ltheussl
  * @version $Id$
+ * @since 1.1
  */
 public interface DocumentRenderer
 {
@@ -42,13 +43,10 @@ public interface DocumentRenderer
      *
      * @param files the path name Strings (relative to a common base directory)
      *              of files to include in the document generation.
-     *
      * @param outputDirectory the output directory where the document should be generated.
-     *
      * @param documentModel the document model, containing all the metadata, etc.
      *              If the model contains a TOC, only the files found in this TOC are rendered,
      *              otherwise all files from the Collection of files will be processed.
-     *
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any.
      * @throws java.io.IOException if any.
      */
@@ -60,13 +58,10 @@ public interface DocumentRenderer
      *
      * @param baseDirectory the directory containing the source files.
      *              This should follow the standard Maven convention, ie containing all the site modules.
-     *
      * @param outputDirectory the output directory where the document should be generated.
-     *
      * @param documentModel the document model, containing all the metadata, etc.
      *              If the model contains a TOC, only the files found in this TOC are rendered,
      *              otherwise all files found under baseDirectory will be processed.
-     *
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      */
@@ -77,9 +72,7 @@ public interface DocumentRenderer
      * Read a document model from a file.
      *
      * @param documentDescriptor a document descriptor file that contains the document model.
-     *
      * @return the document model, containing all the metadata, etc.
-     *
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      */

@@ -29,19 +29,20 @@ import org.apache.maven.doxia.docrenderer.DocumentRendererException;
  *
  * @author ltheussl
  * @version $Id$
+ * @since 1.1
  */
 public interface PdfRenderer extends DocumentRenderer
 {
     /** Plexus lookup role. */
     String ROLE = PdfRenderer.class.getName();
 
-    /**
-     * Generate a final pdf ouput file from an intermediate format file.
-     *
+   /**
+    * Generate a final pdf ouput file from an intermediate format file.
+    *
      * @param inputFile eg a fo or an itext file.
      * @param pdfFile the pdf file to generate.
-     * @throws DocumentRendererException if any.
-     */
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any.
+    */
    void generatePdf( File inputFile, File pdfFile )
         throws DocumentRendererException;
 }
