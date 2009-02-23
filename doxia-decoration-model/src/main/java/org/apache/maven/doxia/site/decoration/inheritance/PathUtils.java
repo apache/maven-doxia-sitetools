@@ -42,10 +42,12 @@ public abstract class PathUtils
     }
 
     /**
+     * <p>convertPath</p>
+     *
      * @param oldPath not null
      * @param newPath not null
      * @return a PathDescriptor converted by the new path
-     * @throws MalformedURLException if any
+     * @throws java.net.MalformedURLException if any
      */
     public static final PathDescriptor convertPath( final PathDescriptor oldPath, final PathDescriptor newPath )
         throws MalformedURLException
@@ -61,6 +63,8 @@ public abstract class PathUtils
     }
 
     /**
+     * <p>getRelativePath</p>
+     *
      * @param oldPathDescriptor not null
      * @param newPathDescriptor not null
      * @return a relative path depending if PathDescriptor is a file or a web url.

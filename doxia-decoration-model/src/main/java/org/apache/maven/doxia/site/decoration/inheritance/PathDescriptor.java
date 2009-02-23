@@ -46,7 +46,6 @@ public class PathDescriptor
      * Construct a PathDescriptor from a path.
      *
      * @param path the path.
-     *
      * @throws java.net.MalformedURLException if a URL cannot be formed from the path.
      */
     public PathDescriptor( final String path ) throws MalformedURLException
@@ -59,7 +58,6 @@ public class PathDescriptor
      *
      * @param base a base reference.
      * @param path the path.
-     *
      * @throws java.net.MalformedURLException if a URL cannot be formed from the path.
      */
     public PathDescriptor( final String base, final String path ) throws MalformedURLException
@@ -72,7 +70,6 @@ public class PathDescriptor
      *
      * @param baseUrl a base reference.
      * @param path the path.
-     *
      * @throws java.net.MalformedURLException if a URL cannot be formed from the path.
      */
     public PathDescriptor( final URL baseUrl, final String path ) throws MalformedURLException
