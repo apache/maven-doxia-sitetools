@@ -82,6 +82,8 @@ import org.codehaus.plexus.velocity.VelocityComponent;
 
 
 /**
+ * <p>DefaultSiteRenderer class.</p>
+ *
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$

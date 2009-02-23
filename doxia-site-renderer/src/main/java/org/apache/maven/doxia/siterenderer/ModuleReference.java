@@ -38,11 +38,21 @@ class ModuleReference
         this.basedir = basedir;
     }
 
+    /**
+     * <p>Getter for the field <code>parserId</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getParserId()
     {
         return parserId;
     }
 
+    /**
+     * <p>Getter for the field <code>basedir</code>.</p>
+     *
+     * @return a {@link java.io.File} object.
+     */
     public File getBasedir()
     {
         return basedir;

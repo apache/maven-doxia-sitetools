@@ -29,6 +29,7 @@ import org.apache.maven.doxia.sink.render.RenderingContext;
  * Renders a page with Doxia.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @version $Id$
  */
 public class DoxiaDocumentRenderer
     implements DocumentRenderer
