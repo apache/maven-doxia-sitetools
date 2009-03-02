@@ -82,6 +82,10 @@ public class NestedItemsVerifier
         assertNotNull( div );
         assertEquals( div.getAttributeValue( "class" ), "section" );
 
+        div = (HtmlDivision) elementIterator.next();
+        assertNotNull( div );
+        assertEquals( div.getAttributeValue( "class" ), "section" );
+
         HtmlHeader4 h4 = (HtmlHeader4) elementIterator.next();
         assertNotNull( h4 );
         assertEquals( h4.asText().trim(), "Unordered lists" );
