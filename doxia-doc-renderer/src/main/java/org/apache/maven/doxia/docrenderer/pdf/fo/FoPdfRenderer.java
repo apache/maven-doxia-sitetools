@@ -34,9 +34,11 @@ import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.module.fo.FoAggregateSink;
 import org.apache.maven.doxia.module.fo.FoUtils;
 import org.apache.maven.doxia.module.site.SiteModule;
+
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
+
 import org.xml.sax.SAXParseException;
 
 /**
@@ -53,7 +55,7 @@ public class FoPdfRenderer
      * {@inheritDoc}
      * @see org.apache.maven.doxia.module.fo.FoUtils#convertFO2PDF(File, File, String)
      */
-    public void generatePdf( File foFile, File pdfFile )
+    public void generatePdf( File inputFile, File pdfFile )
         throws DocumentRendererException
     {
         if ( getLogger().isDebugEnabled() )
@@ -63,7 +65,7 @@ public class FoPdfRenderer
 
         try
         {
-            FoUtils.convertFO2PDF( foFile, pdfFile, null );
+            FoUtils.convertFO2PDF( inputFile, pdfFile, null );
         }
         catch ( TransformerException e )
         {
@@ -72,14 +74,14 @@ public class FoPdfRenderer
                 SAXParseException sax = (SAXParseException) e.getCause();
 
                 StringBuffer sb = new StringBuffer();
-                sb.append( "Error creating PDF from " ).append( foFile.getAbsolutePath() ).append( ":" )
+                sb.append( "Error creating PDF from " ).append( inputFile.getAbsolutePath() ).append( ":" )
                     .append( sax.getLineNumber() ).append( ":" ).append( sax.getColumnNumber() ).append( "\n" );
                 sb.append( e.getMessage() );
 
                 throw new DocumentRendererException( sb.toString() );
             }
 
-            throw new DocumentRendererException( "Error creating PDF from " + foFile + ": " + e.getMessage() );
+            throw new DocumentRendererException( "Error creating PDF from " + inputFile + ": " + e.getMessage() );
         }
     }
 
