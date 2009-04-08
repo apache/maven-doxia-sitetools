@@ -93,10 +93,7 @@ public class FoPdfRenderer
 
         if ( outputName == null )
         {
-            if ( getLogger().isInfoEnabled() )
-            {
-                getLogger().info( "No outputName is defined in the document descriptor. Using 'target.pdf'" );
-            }
+            getLogger().info( "No outputName is defined in the document descriptor. Using 'target.pdf'" );
 
             documentModel.setOutputName( "target" );
         }
@@ -121,12 +118,23 @@ public class FoPdfRenderer
             pdfOutputFile.getParentFile().mkdirs();
         }
 
+        // copy resources, images, etc.
+        copyResources( outputDirectory );
+
         Writer writer = null;
         try
         {
             writer = WriterFactory.newXmlWriter( outputFOFile );
 
             FoAggregateSink sink = new FoAggregateSink( writer );
+
+            File fOConfigFile = new File( outputDirectory, "pdf-config.xml" );
+
+            if ( fOConfigFile.exists() )
+            {
+                sink.load( fOConfigFile );
+                getLogger().debug( "Loaded pdf config file: " + fOConfigFile.getAbsolutePath() );
+            }
 
             sink.setDocumentModel( documentModel  );
 
@@ -138,10 +146,7 @@ public class FoPdfRenderer
 
             if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
             {
-                if ( getLogger().isInfoEnabled() )
-                {
-                    getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
-                }
+                getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
 
                 for ( Iterator j = filesToProcess.keySet().iterator(); j.hasNext(); )
                 {
@@ -222,9 +227,6 @@ public class FoPdfRenderer
         {
             IOUtil.close( writer );
         }
-
-        // copy resources, images, etc.
-        copyResources( outputDirectory );
 
         generatePdf( outputFOFile, pdfOutputFile );
     }
