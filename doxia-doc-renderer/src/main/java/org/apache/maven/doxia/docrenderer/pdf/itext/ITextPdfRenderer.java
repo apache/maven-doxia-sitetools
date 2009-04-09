@@ -84,7 +84,7 @@ public class ITextPdfRenderer
     }
 
     /** {@inheritDoc} */
-    public void generatePdf( File iTextFile, File pdfFile )
+    public void generatePdf( File inputFile, File pdfFile )
         throws DocumentRendererException
     {
         if ( getLogger().isDebugEnabled() )
@@ -94,15 +94,15 @@ public class ITextPdfRenderer
 
         try
         {
-            ITextUtil.writePdf( new FileInputStream( iTextFile ), new FileOutputStream( pdfFile ) );
+            ITextUtil.writePdf( new FileInputStream( inputFile ), new FileOutputStream( pdfFile ) );
         }
         catch ( IOException e )
         {
-            throw new DocumentRendererException( "Cannot create PDF from " + iTextFile + ": " + e.getMessage(), e );
+            throw new DocumentRendererException( "Cannot create PDF from " + inputFile + ": " + e.getMessage(), e );
         }
         catch ( RuntimeException e )
         {
-            throw new DocumentRendererException( "Error creating PDF from " + iTextFile + ": " + e.getMessage(), e );
+            throw new DocumentRendererException( "Error creating PDF from " + inputFile + ": " + e.getMessage(), e );
         }
     }
 
@@ -251,7 +251,8 @@ public class ITextPdfRenderer
             }
             catch ( DOMException e )
             {
-                throw new DocumentRendererException( "Error appending chapter for " + iTextFile + " : " + e.getMessage() );
+                throw new DocumentRendererException( "Error appending chapter for "
+                        + iTextFile + " : " + e.getMessage() );
             }
         }
 

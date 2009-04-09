@@ -80,7 +80,7 @@ public abstract class AbstractITextRender
     extends AbstractLogEnabled
     implements DocRenderer
 {
-    private static String XSLT_RESOURCE = "org/apache/maven/doxia/docrenderer/itext/xslt/TOC.xslt";
+    private static final String XSLT_RESOURCE = "org/apache/maven/doxia/docrenderer/itext/xslt/TOC.xslt";
 
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 
@@ -300,7 +300,7 @@ public abstract class AbstractITextRender
         Writer writer = WriterFactory.newXmlWriter( outputITextFile );
         ITextSink sink = (ITextSink) new ITextSinkFactory().createSink( writer );
 
-        sink.setClassLoader( new URLClassLoader( new URL[] { outputITextFile.getParentFile().toURL() } ) );
+        sink.setClassLoader( new URLClassLoader( new URL[] { outputITextFile.getParentFile().toURI().toURL() } ) );
 
         Reader reader = null;
         try
@@ -320,11 +320,13 @@ public abstract class AbstractITextRender
         }
         catch ( ParserNotFoundException e )
         {
-            throw new DocumentRendererException( "Error getting a parser for '" + fullPathDoc + "': " + e.getMessage() );
+            throw new DocumentRendererException( "Error getting a parser for '"
+                    + fullPathDoc + "': " + e.getMessage() );
         }
         catch ( ParseException e )
         {
-            throw new DocumentRendererException( "Error parsing '" + fullPathDoc + "': line [" + e.getLineNumber() + "] " + e.getMessage(), e );
+            throw new DocumentRendererException( "Error parsing '"
+                    + fullPathDoc + "': line [" + e.getLineNumber() + "] " + e.getMessage(), e );
         }
         finally
         {
@@ -384,7 +386,8 @@ public abstract class AbstractITextRender
             }
             catch ( DOMException e )
             {
-                throw new DocumentRendererException( "Error appending chapter for " + iTextFile + " : " + e.getMessage() );
+                throw new DocumentRendererException( "Error appending chapter for "
+                        + iTextFile + " : " + e.getMessage() );
             }
         }
 
@@ -489,7 +492,8 @@ public abstract class AbstractITextRender
         }
         catch ( TransformerException e )
         {
-            throw new DocumentRendererException( "Error transformer Document from " + document + ": " + e.getMessage() );
+            throw new DocumentRendererException( "Error transformer Document from "
+                    + document + ": " + e.getMessage() );
         }
     }
 }

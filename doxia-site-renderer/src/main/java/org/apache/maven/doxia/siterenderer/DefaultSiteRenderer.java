@@ -212,13 +212,15 @@ public class DefaultSiteRenderer
             docs.addAll( FileUtils.getFileNames( moduleBasedir, "**/*." + module.getExtension(), excludes, false ) );
 
             // download.apt.vm
-            docs.addAll( FileUtils.getFileNames( moduleBasedir, "**/*." + module.getExtension() + ".vm", excludes, false ) );
+            docs.addAll( FileUtils.getFileNames( moduleBasedir,
+                    "**/*." + module.getExtension() + ".vm", excludes, false ) );
 
             for ( Iterator k = docs.iterator(); k.hasNext(); )
             {
                 String doc = (String) k.next();
 
-                RenderingContext context = new RenderingContext( moduleBasedir, doc, module.getParserId(), module.getExtension() );
+                RenderingContext context =
+                        new RenderingContext( moduleBasedir, doc, module.getParserId(), module.getExtension() );
 
                 // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
                 if ( doc.endsWith( ".vm" ) )
@@ -395,7 +397,8 @@ public class DefaultSiteRenderer
         }
         catch ( ParseException e )
         {
-            throw new RendererException( "Error parsing '" + doc + "': line [" + e.getLineNumber() + "] " + e.getMessage(), e );
+            throw new RendererException( "Error parsing '"
+                    + doc + "': line [" + e.getLineNumber() + "] " + e.getMessage(), e );
         }
         catch ( IOException e )
         {
