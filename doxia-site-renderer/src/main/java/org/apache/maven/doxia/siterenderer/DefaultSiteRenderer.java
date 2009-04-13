@@ -449,6 +449,8 @@ public class DefaultSiteRenderer
 
         context.put( "title", title );
 
+        context.put( "headContent", sink.getHead() );
+
         context.put( "bodyContent", sink.getBody() );
 
         context.put( "decoration", siteRenderingContext.getDecoration() );
@@ -553,7 +555,7 @@ public class DefaultSiteRenderer
         }
         catch ( Exception e )
         {
-            throw new RendererException( "Could not find the template '" + templateName );
+            throw new RendererException( "Could not find the template '" + templateName, e );
         }
 
         try

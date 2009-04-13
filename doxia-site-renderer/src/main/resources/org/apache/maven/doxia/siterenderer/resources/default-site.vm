@@ -342,6 +342,7 @@
         #end
       #end
     #end
+    $headContent
   </head>
   <body class="composite">
     <div id="banner">

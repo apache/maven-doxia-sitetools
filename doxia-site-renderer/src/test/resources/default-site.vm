@@ -11,9 +11,9 @@
 #macro ( banner $banner $id )
   #if ( $banner )
     #if( $banner.href )
-      <a href="$banner.href" id="$id">
+      <a href="$banner.href" id="$id" #if( $banner.alt ) title="$banner.alt" #end >
     #else
-        <span id="$id">
+        <div id="$id">
     #end
 
     #if( $banner.src )
@@ -25,7 +25,7 @@
         #if ( $banner.alt )
             #set ( $alt = $banner.alt )
         #else
-            #set ( $alt = "" )
+            #set ( $alt = $banner.name )
         #end
         <img src="$src" alt="$alt" />
     #else
@@ -35,7 +35,7 @@
     #if( $banner.href )
         </a>
     #else
-        </span>
+        </div>
     #end
   #end
 #end
@@ -76,7 +76,6 @@
     #foreach( $subitem in $item.items )
       #set ( $subitemHref = $PathTool.calculateLink( $subitem.href, $relativePath ) )
       #set ( $subitemHref = $subitemHref.replaceAll( "\\", "/" ) )
-
       #if ( $alignedFileName == $subitemHref )
         #set ( $display = true )
       #end
@@ -150,16 +149,26 @@
 
 #macro ( copyright )
   #if ( $project )
-    #set ( $currentYear = ${currentDate.year} + 1900 )
+    #if ( ${project.organization} && ${project.organization.name} ) 
+      #set ( $period = "" )
+    #else 
+      #set ( $period = "." )
+   #end
+
+   #set ( $currentYear = ${currentDate.year} + 1900 )
 
     #if ( ${project.inceptionYear} && ( ${project.inceptionYear} != ${currentYear.toString()} ) )
-      ${project.inceptionYear}-${currentYear}
+      ${project.inceptionYear}-${currentYear}${period}
     #else
-      ${currentYear}
+      ${currentYear}${period}
     #end
 
-    #if ( ${project.organization} && ${project.organization.name} )
-      ${project.organization.name}
+    #if ( ${project.organization} )
+      #if ( ${project.organization.name} && ${project.organization.url} )
+          <a href="$project.organization.url">${project.organization.name}</a>.
+      #elseif ( ${project.organization.name} )
+        ${project.organization.name}.
+      #end
     #end
   #end
 #end
@@ -187,6 +196,9 @@
     #else
       #set ( $versionPosition = "left" )
     #end
+  #else
+    #set ( $version = "" )
+    #set ( $versionPosition = "left" )
   #end
 
   #set ( $breadcrumbs = $decoration.body.breadcrumbs )
@@ -200,22 +212,22 @@
 
   #if ( $datePosition.equalsIgnoreCase( $position ) )
     #if ( ( $datePosition.equalsIgnoreCase( "right" ) ) || ( $datePosition.equalsIgnoreCase( "bottom" ) ) )
-      $prefix $i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateToday
+      $prefix <span id="publishDate">$i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateToday</span>
       #if ( $versionPosition.equalsIgnoreCase( $position ) )
-        &nbsp;| $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
+        &nbsp;| <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
       #end
     #elseif ( ( $datePosition.equalsIgnoreCase( "navigation-bottom" ) ) || ( $datePosition.equalsIgnoreCase( "navigation-top" ) ) )
       <div id="lastPublished">
-        $i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateToday
+        <span id="publishDate">$i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateToday</span>
         #if ( $versionPosition.equalsIgnoreCase( $position ) )
-          &nbsp;| $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
+          &nbsp;| <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
         #end
       </div>
     #elseif ( $datePosition.equalsIgnoreCase("left") )
       <div class="xleft">
-        $i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateToday
+        <span id="publishDate">$i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateToday</span>
         #if ( $versionPosition.equalsIgnoreCase( $position ) )
-          &nbsp;| $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
+          &nbsp;| <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
         #end
         #if ( $breadcrumbs && $breadcrumbs.size() > 0 )
           | #breadcrumbs( $breadcrumbs )
@@ -224,14 +236,14 @@
     #end
   #elseif ( $versionPosition.equalsIgnoreCase( $position ) )
     #if ( ( $versionPosition.equalsIgnoreCase( "right" ) ) || ( $versionPosition.equalsIgnoreCase( "bottom" ) ) )
-      $prefix $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
+      $prefix <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
     #elseif ( ( $versionPosition.equalsIgnoreCase( "navigation-bottom" ) ) || ( $versionPosition.equalsIgnoreCase( "navigation-top" ) ) )
       <div id="lastPublished">
-        $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
+        <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
       </div>
     #elseif ( $versionPosition.equalsIgnoreCase("left") )
       <div class="xleft">
-        $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
+        <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
         #if ( $breadcrumbs && $breadcrumbs.size() > 0 )
           | #breadcrumbs( $breadcrumbs )
         #end
@@ -272,23 +284,40 @@
             <a href="$href" title="$name" class="poweredBy">
               #set ( $img = $PathTool.calculateLink( $img, $relativePath ) )
               #set ( $img = $img.replaceAll( "\\", "/" ) )
-              <img alt="$name" src="$img" />
+              <img  class="poweredBy"  
+                    alt="$name" 
+                    src="$img" 
+                    width="90"
+                    height="30"
+              />
             </a>
         #end
         #if( $poweredBy.isEmpty() )
           <a href="http://maven.apache.org/" title="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" class="poweredBy">
-            <img alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png"></img>
+            <img class="poweredBy" 
+                 alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" 
+                 src="$relativePath/images/logos/maven-feather.png" 
+                 width="90"
+                 height="30"
+                 border="1" />
           </a>
         #end
     #else
         <a href="http://maven.apache.org/" title="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" class="poweredBy">
-          <img alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png"></img>
+          <img class="poweredBy" 
+               alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" 
+               src="$relativePath/images/logos/maven-feather.png" 
+               width="90"
+               height="30"
+               border="1"
+               />
         </a>
     #end
 #end
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=${outputEncoding}" />
     <title>$title</title>
     <style type="text/css" media="all">
       @import url("$relativePath/css/maven-base.css");
@@ -299,16 +328,21 @@
     #foreach( $author in $authors )
       <meta name="author" content="$author" />
     #end
-    <meta http-equiv="Content-Type" content="text/html; charset=${outputEncoding}" />
     #if ( $decoration.body.head )
       #foreach( $item in $decoration.body.head.getChildren() )
+        ## Workaround for DOXIA-150 due to a non-desired behaviour in p-u
+        ## @see org.codehaus.plexus.util.xml.Xpp3Dom#toString()
+        ## @see org.codehaus.plexus.util.xml.Xpp3Dom#toUnescapedString()
+        #set ( $documentHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" )
+        #set ( $documentHeader = $documentHeader.replaceAll( "\\", "" ) )
         #if ( $item.name == "script" )
-          $item.toUnescapedString()
+          $StringUtils.replace( $item.toUnescapedString(), $documentHeader, "" )
         #else
-          $item.toString()
+          $StringUtils.replace( $item.toString(), $documentHeader, "" )
         #end
       #end
     #end
+    $headContent
   </head>
   <body class="composite">
     <div id="banner">
@@ -342,7 +376,7 @@
       <hr/>
     </div>
     <div id="footer">
-      <div class="xright">&#169;#copyright()#publishDate( "bottom" $decoration.publishDate $decoration.version )</div>
+      <div class="xright">Copyright &#169;#copyright()All Rights Reserved.#publishDate( "bottom" $decoration.publishDate $decoration.version )</div>
       <div class="clear">
         <hr/>
       </div>

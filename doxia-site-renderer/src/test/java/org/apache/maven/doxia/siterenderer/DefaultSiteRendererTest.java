@@ -105,6 +105,7 @@ public class DefaultSiteRendererTest
         // ----------------------------------------------------------------------
         // Verify specific pages
         // ----------------------------------------------------------------------
+        verifyHeadPage();
         verifyCdcPage();
         verifyNestedItemsPage();
         verifyMultipleBlock();
@@ -116,6 +117,15 @@ public class DefaultSiteRendererTest
         verifyMisc();
         verifyDocbookPageExists();
         verifyApt();
+    }
+
+    /**
+     * @throws Exception if something goes wrong.
+     */
+    public void verifyHeadPage()
+        throws Exception
+    {
+        new HeadVerifier().verify( "target/output/head.html" );
     }
 
     /**

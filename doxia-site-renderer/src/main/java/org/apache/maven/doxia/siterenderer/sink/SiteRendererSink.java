@@ -50,6 +50,8 @@ public class SiteRendererSink
 
     private List authors = new ArrayList();
 
+    private final StringWriter headWriter;
+
     private boolean sectionHasID;
 
     private final Writer writer;
@@ -77,6 +79,7 @@ public class SiteRendererSink
         super( writer );
 
         this.writer = writer;
+        this.headWriter = new StringWriter();
         this.renderingContext = renderingContext;
     }
 
@@ -184,6 +187,18 @@ public class SiteRendererSink
     public String getBody()
     {
         return writer.toString();
+    }
+
+    /**
+     * <p>getHead</p>
+     *
+     * @return a {@link java.lang.String} object.
+     *
+     * @since 1.1.1
+     */
+    public String getHead()
+    {
+        return headWriter.toString();
     }
 
     /** {@inheritDoc} */
@@ -311,6 +326,13 @@ public class SiteRendererSink
     /** {@inheritDoc} */
     protected void write( String text )
     {
+        if ( isHeadFlag() )
+        {
+            headWriter.write( unifyEOLs( text ) );
+
+            return;
+        }
+
         if ( renderingContext != null )
         {
             String relativePathToBasedir = renderingContext.getRelativePath();
