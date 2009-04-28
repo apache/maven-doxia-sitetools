@@ -32,6 +32,7 @@ import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.util.HtmlTools;
+
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -247,7 +248,7 @@ public class SiteRendererSink
 
             writeStartTag( level == SECTION_LEVEL_1 ? Tag.H2 : Tag.H3  );
 
-            if ( !sectionHasID )
+            if ( !sectionHasID && !StringUtils.isEmpty( sectionTitle ) )
             {
                 anchor( HtmlTools.encodeId( sectionTitle ) );
                 anchor_();
