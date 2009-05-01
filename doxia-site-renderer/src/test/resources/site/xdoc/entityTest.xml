@@ -25,28 +25,30 @@
 <!-- Some entities from http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent -->
 <!ENTITY Alpha    "&#913;"> <!-- greek capital letter alpha, U+0391 -->
 <!ENTITY Beta     "&#914;"> <!-- greek capital letter beta, U+0392 -->
-<!ENTITY Gamma    "&#915;"> <!-- greek capital letter gamma,
-U+0393 ISOgrk3 -->
+<!ENTITY Gamma    "&#915;"> <!-- greek capital letter gamma, U+0393 ISOgrk3 -->
+<!ENTITY tritPos  "&#x1d7ed;"> <!-- MATHEMATICAL SANS-SERIF BOLD DIGIT ONE -->
 ]>
 <document xmlns="http://maven.apache.org/XDOC/2.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 file:../../../../../../../doxia/doxia-modules/doxia-module-xdoc/src/main/resources/xdoc-2.0.xsd">
   <properties>
     <title>Test entities, cdatas and comments</title>
+    <!-- FIXME: DOXIA-309 -->
+    <author email="test@email.com">Ligature &AElig;</author>
   </properties>
 
   <body>
 
-    <section name="section name">
+    <section name="section name with entities: '&amp;' '&Alpha;' '&nbsp;'">
 
       <h4>Entities</h4>
-      <h3>Generic Entities</h3>
+      <h3>Generic Entities: '&amp;' '&lt;' '&gt;' '&quot;' '&apos;'</h3>
       <p>'&amp;' '&lt;' '&gt;' '&quot;' '&apos;'</p>
 
-      <h3>Local Entities</h3>
-      <p>'&Alpha;' '&Beta;' '&Gamma;'</p>
+      <h3>Local Entities: '&Alpha;' '&Beta;' '&Gamma;' '&tritPos;'</h3>
+      <p>'&Alpha;' '&Beta;' '&Gamma;' '&tritPos;'</p>
 
-      <h3>DTD Entities</h3>
+      <h3>DTD Entities: '&nbsp;' '&iexcl;' '&cent;'</h3>
       <p>'&nbsp;' '&iexcl;' '&cent;'</p>
 
       <h4>CDATA</h4>
