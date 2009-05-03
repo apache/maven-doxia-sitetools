@@ -33,7 +33,6 @@
   xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 file:../../../../../../../doxia/doxia-modules/doxia-module-xdoc/src/main/resources/xdoc-2.0.xsd">
   <properties>
     <title>Test entities, cdatas and comments</title>
-    <!-- FIXME: DOXIA-309 -->
     <author email="test@email.com">Ligature &AElig;</author>
   </properties>
 

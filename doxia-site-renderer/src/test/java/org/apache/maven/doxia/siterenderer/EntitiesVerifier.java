@@ -25,6 +25,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader2;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader3;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader4;
+import com.gargoylesoftware.htmlunit.html.HtmlMeta;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
@@ -46,6 +47,10 @@ public class EntitiesVerifier
     {
         HtmlPage page = htmlPage( file );
         assertNotNull( page );
+
+        HtmlMeta author = (HtmlMeta)page.getHtmlElementsByName( "author" ).get( 0 );
+        assertNotNull( author );
+        assertTrue( author.toString().indexOf( "Ligature &#198;" ) > 0 );
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
         assertNotNull( element );
