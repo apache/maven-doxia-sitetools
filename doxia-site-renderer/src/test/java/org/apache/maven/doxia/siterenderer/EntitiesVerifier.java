@@ -48,9 +48,14 @@ public class EntitiesVerifier
         HtmlPage page = htmlPage( file );
         assertNotNull( page );
 
-        HtmlMeta author = (HtmlMeta)page.getHtmlElementsByName( "author" ).get( 0 );
+        HtmlMeta author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 0 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Ligature &#198;" ) > 0 );
+
+        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 1 );
+        assertNotNull( author );
+        // FIXME! DOXIA-309
+        //assertTrue( author.toString().indexOf( "Ampersand &amp;amp;" ) > 0 );
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
         assertNotNull( element );
