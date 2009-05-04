@@ -35,6 +35,12 @@
     <title>Test entities, cdatas and comments</title>
     <author email="test@email.com">Ligature &AElig;</author>
     <author email="test@email.com">Ampersand &amp;</author>
+    <author email="test@email.com">Less than &lt;</author>
+    <author email="test@email.com">Greater than &gt;</author>
+    <author email="test@email.com">Apostrophe &apos;</author>
+    <author email="test@email.com">Quote &quot;</author>
+    <author email="test@email.com">test@email.com</author>
+    <author email="test@email.com">test&copy;email.com</author>
   </properties>
 
   <body>

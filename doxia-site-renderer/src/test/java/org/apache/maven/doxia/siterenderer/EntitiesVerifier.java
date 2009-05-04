@@ -54,8 +54,31 @@ public class EntitiesVerifier
 
         author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 1 );
         assertNotNull( author );
-        // FIXME! DOXIA-309
-        //assertTrue( author.toString().indexOf( "Ampersand &amp;amp;" ) > 0 );
+        assertTrue( author.toString().indexOf( "Ampersand &amp;" ) > 0 );
+
+        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 2 );
+        assertNotNull( author );
+        assertTrue( author.toString().indexOf( "Less than &lt;" ) > 0 );
+
+        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 3 );
+        assertNotNull( author );
+        assertTrue( author.toString().indexOf( "Greater than &gt;" ) > 0 );
+
+        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 4 );
+        assertNotNull( author );
+        assertTrue( author.getContentAttribute().equals( "Apostrophe '" ) );
+
+        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 5 );
+        assertNotNull( author );
+        assertTrue( author.toString().indexOf( "Quote &quot;" ) > 0 );
+
+        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 6 );
+        assertNotNull( author );
+        assertTrue( author.toString().indexOf( "test@email.com" ) > 0 );
+
+        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 7 );
+        assertNotNull( author );
+        assertTrue( author.toString().indexOf( "test&#169;email.com" ) > 0 );
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
         assertNotNull( element );

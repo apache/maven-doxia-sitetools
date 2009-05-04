@@ -121,7 +121,9 @@ public class SiteRendererSink
     {
         if ( getTextBuffer().length() > 0 )
         {
-            authors.add( getTextBuffer().toString() );
+            String text = HtmlTools.escapeHTML( getTextBuffer().toString() );
+            text = StringUtils.replace( text, "&amp;#", "&#" );
+            authors.add( text.trim() );
         }
 
         resetTextBuffer();
