@@ -105,7 +105,7 @@ public class EntitiesVerifier
 
         HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
         assertNotNull( h2 );
-        assertEquals( h2.asText().trim(), "section name with entities: '&' 'Α' ' '" );
+        assertEquals( h2.asText().trim(), "section name with entities: '&' '\u0391' ' '" );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -140,25 +140,25 @@ public class EntitiesVerifier
         h3 = (HtmlHeader3) elementIterator.next();
         assertNotNull( h3 );
         // DOXIA-314: FIXME!
-        //assertEquals( h3.asText().trim(), "Local Entities: 'Α' 'Β' 'Γ' 'ퟭ'" );
+        //assertEquals( h3.asText().trim(), "Local Entities: '\u0391' '\u0392' '\u0393' '\uD7ED'" );
 
         a = (HtmlAnchor) elementIterator.next();
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "'Α' 'Β' 'Γ' 'ퟭ'" );
+        assertEquals( p.asText().trim(), "'\u0391' '\u0392' '\u0393' '\uD7ED'" );
 
         div = (HtmlDivision) elementIterator.next();
 
         h3 = (HtmlHeader3) elementIterator.next();
         assertNotNull( h3 );
-        assertEquals( h3.asText().trim(), "DTD Entities: ' ' '¡' '¢'" );
+        assertEquals( h3.asText().trim(), "DTD Entities: ' ' '\u00A1' '\u00A2'" );
 
         a = (HtmlAnchor) elementIterator.next();
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "' ' '¡' '¢'" );
+        assertEquals( p.asText().trim(), "' ' '\u00A1' '\u00A2'" );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
