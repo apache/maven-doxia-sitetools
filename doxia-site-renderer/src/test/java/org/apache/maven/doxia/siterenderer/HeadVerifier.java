@@ -26,7 +26,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlStyle;
 import com.gargoylesoftware.htmlunit.html.HtmlTitle;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -79,6 +81,10 @@ public class HeadVerifier
         meta = (HtmlMeta) elementIterator.next();
         assertEquals( meta.getAttributeValue( "name" ), "author" );
         assertEquals( meta.getAttributeValue( "content" ).trim(), "John Doe" );
+
+        meta = (HtmlMeta) elementIterator.next();
+        assertEquals( meta.getAttributeValue( "name" ), "Date-Revision-yyyymmdd" );
+        assertEquals( meta.getAttributeValue( "content" ), new SimpleDateFormat( "yyyyMMdd" ).format( new Date() ) );
 
         meta = (HtmlMeta) elementIterator.next();
         assertEquals( meta.getAttributeValue( "name" ), "description" );

@@ -144,7 +144,7 @@ public class SiteRendererSink
     {
         if ( getTextBuffer().length() > 0 )
         {
-            date = getTextBuffer().toString();
+            date = getTextBuffer().toString().trim();
         }
 
         resetTextBuffer();

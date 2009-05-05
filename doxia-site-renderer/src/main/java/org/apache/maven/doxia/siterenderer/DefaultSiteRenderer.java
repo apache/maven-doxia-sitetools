@@ -37,6 +37,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -454,6 +455,21 @@ public class DefaultSiteRenderer
         context.put( "bodyContent", sink.getBody() );
 
         context.put( "decoration", siteRenderingContext.getDecoration() );
+
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyyMMdd" );
+        if ( StringUtils.isNotEmpty( sink.getDate() ) )
+        {
+            try
+            {
+                // we support only ISO-8601 date
+                context.put( "dateCreation", sdf.format( new SimpleDateFormat( "yyyy-MM-dd" ).parse( sink.getDate() ) ) );
+            }
+            catch ( Exception e )
+            {
+                // nop
+            }
+        }
+        context.put( "dateRevision", sdf.format( new Date() ) );
 
         context.put( "currentDate", new Date() );
 
