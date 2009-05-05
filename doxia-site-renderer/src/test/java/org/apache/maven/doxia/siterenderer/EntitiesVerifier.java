@@ -105,11 +105,11 @@ public class EntitiesVerifier
 
         HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
         assertNotNull( h2 );
-        assertEquals( h2.asText().trim(), "section name with entities: '&' '\u0391' ' '" );
+        assertEquals( h2.asText().trim(), "section name with entities: '&' '\u0391' ' ' '\uD7ED'" );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttributeValue( "name" ), "section_name_with_entities:___" );
+        assertEquals( a.getAttributeValue( "name" ), "section_name_with_entities:____x1d7ed" );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );

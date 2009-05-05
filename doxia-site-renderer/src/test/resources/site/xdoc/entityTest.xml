@@ -46,7 +46,7 @@
 
   <body>
 
-    <section name="section name with entities: '&amp;' '&Alpha;' '&nbsp;'">
+    <section name="section name with entities: '&amp;' '&Alpha;' '&nbsp;' '&tritPos;'">
 
       <h4>Entities</h4>
       <h3>Generic Entities: '&amp;' '&lt;' '&gt;' '&quot;' '&apos;'</h3>
