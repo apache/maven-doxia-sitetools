@@ -139,8 +139,7 @@ public class EntitiesVerifier
 
         h3 = (HtmlHeader3) elementIterator.next();
         assertNotNull( h3 );
-        // DOXIA-314: FIXME!
-        //assertEquals( h3.asText().trim(), "Local Entities: '\u0391' '\u0392' '\u0393' '\uD7ED'" );
+        assertEquals( h3.asText().trim(), "Local Entities: '\u0391' '\u0392' '\u0393' '\uD7ED'" );
 
         a = (HtmlAnchor) elementIterator.next();
 
