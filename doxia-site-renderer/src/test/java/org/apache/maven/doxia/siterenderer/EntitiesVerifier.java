@@ -97,13 +97,11 @@ public class EntitiesVerifier
 
         HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
         assertNotNull( h2 );
-        // DOXIA-311: FIXME!
-        //assertEquals( h2.asText().trim(), "section name with entities: '&' 'Α' ' '" );
+        assertEquals( h2.asText().trim(), "section name with entities: '&' 'Α' ' '" );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        // DOXIA-311: FIXME!
-        //assertEquals( a.getAttributeValue( "name" ), "section_name_with_entities:____" );
+        assertEquals( a.getAttributeValue( "name" ), "section_name_with_entities:___" );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
@@ -134,21 +132,19 @@ public class EntitiesVerifier
         h3 = (HtmlHeader3) elementIterator.next();
         assertNotNull( h3 );
         // DOXIA-311: FIXME!
-        //assertEquals( h3.asText().trim(), "Local Entities: 'Α' 'Β' 'Γ'" );
+        //assertEquals( h3.asText().trim(), "Local Entities: 'Α' 'Β' 'Γ' 'ퟭ'" );
 
         a = (HtmlAnchor) elementIterator.next();
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        // DOXIA-310: FIXME!
-        //assertEquals( p.asText().trim(), "'Α' 'Β' 'Γ'" );
+        assertEquals( p.asText().trim(), "'Α' 'Β' 'Γ' 'ퟭ'" );
 
         div = (HtmlDivision) elementIterator.next();
 
         h3 = (HtmlHeader3) elementIterator.next();
         assertNotNull( h3 );
-        // DOXIA-311: FIXME!
-        //assertEquals( h3.asText().trim(), "DTD Entities: ' ' '¡' '¢'" );
+        assertEquals( h3.asText().trim(), "DTD Entities: ' ' '¡' '¢'" );
 
         a = (HtmlAnchor) elementIterator.next();
 
