@@ -51,34 +51,43 @@ public class EntitiesVerifier
         HtmlMeta author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 0 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Ligature &#198;" ) > 0 );
+        // DOXIA-312: FIXME!
+        //assertEquals( "Ligature Æ", author.getContentAttribute() );
 
         author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 1 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Ampersand &amp;" ) > 0 );
+        assertEquals( "Ampersand &", author.getContentAttribute() );
 
         author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 2 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Less than &lt;" ) > 0 );
+        assertEquals( "Less than <", author.getContentAttribute() );
 
         author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 3 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Greater than &gt;" ) > 0 );
+        assertEquals( "Greater than >", author.getContentAttribute() );
 
         author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 4 );
         assertNotNull( author );
         assertTrue( author.getContentAttribute().equals( "Apostrophe '" ) );
+        assertEquals( "Apostrophe '", author.getContentAttribute() );
 
         author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 5 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Quote &quot;" ) > 0 );
+        assertEquals( "Quote \"", author.getContentAttribute() );
 
         author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 6 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "test@email.com" ) > 0 );
+        assertEquals( "test@email.com", author.getContentAttribute() );
 
         author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 7 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "test&#169;email.com" ) > 0 );
+        assertEquals( "test©email.com", author.getContentAttribute() );
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
         assertNotNull( element );
@@ -131,7 +140,7 @@ public class EntitiesVerifier
 
         h3 = (HtmlHeader3) elementIterator.next();
         assertNotNull( h3 );
-        // DOXIA-311: FIXME!
+        // DOXIA-314: FIXME!
         //assertEquals( h3.asText().trim(), "Local Entities: 'Α' 'Β' 'Γ' 'ퟭ'" );
 
         a = (HtmlAnchor) elementIterator.next();

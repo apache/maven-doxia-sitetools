@@ -33,6 +33,7 @@
   xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 file:../../../../../../../doxia/doxia-modules/doxia-module-xdoc/src/main/resources/xdoc-2.0.xsd">
   <properties>
     <title>Test entities, cdatas and comments</title>
+    <!-- Test comment: DOXIA-312 -->
     <author email="test@email.com">Ligature &AElig;</author>
     <author email="test@email.com">Ampersand &amp;</author>
     <author email="test@email.com">Less than &lt;</author>
