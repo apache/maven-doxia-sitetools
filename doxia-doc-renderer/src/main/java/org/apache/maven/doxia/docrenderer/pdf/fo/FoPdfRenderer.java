@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.transform.TransformerException;
@@ -97,9 +98,12 @@ public class FoPdfRenderer
 
             documentModel.setOutputName( "target" );
         }
-        else if ( outputName.lastIndexOf( "." ) != -1 )
+
+        outputName = outputName.trim();
+        if ( outputName.toLowerCase( Locale.ENGLISH ).endsWith( ".pdf" ) )
         {
-            documentModel.setOutputName( outputName.substring( 0, outputName.lastIndexOf( "." ) ) );
+            documentModel.setOutputName( outputName.substring( 0, outputName.toLowerCase( Locale.ENGLISH )
+                                                                            .lastIndexOf( ".pdf" ) ) );
         }
 
         outputName = documentModel.getOutputName();
