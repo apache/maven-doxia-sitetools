@@ -34,6 +34,7 @@ import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Reader;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.parser.ParseException;
+import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
 import org.apache.maven.doxia.module.site.SiteModule;
@@ -312,14 +313,19 @@ public abstract class AbstractDocumentRenderer
         try
         {
             File f = new File( fullDocPath );
-            if ( XmlUtil.isXml( f ) )
+
+            Parser parser = doxia.getParser( parserId );
+            switch ( parser.getType() )
             {
-                reader = ReaderFactory.newXmlReader( f );
-            }
-            else
-            {
-                // TODO Platform dependent?
-                reader = ReaderFactory.newPlatformReader( f );
+                case Parser.XML_TYPE:
+                    reader = ReaderFactory.newXmlReader( f );
+                    break;
+
+                case Parser.TXT_TYPE:
+                case Parser.UNKNOWN_TYPE:
+                default:
+                    // TODO Platform dependent?
+                    reader = ReaderFactory.newPlatformReader( f );
             }
 
             sink.enableLogging( new PlexusLoggerWrapper( getLogger() ) );
