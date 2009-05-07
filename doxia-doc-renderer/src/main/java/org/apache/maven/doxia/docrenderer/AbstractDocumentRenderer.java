@@ -26,7 +26,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.doxia.Doxia;
@@ -187,7 +189,20 @@ public abstract class AbstractDocumentRenderer
             if ( moduleBasedir.exists() )
             {
                 // TODO: handle in/excludes
-                List docs = FileUtils.getFiles( moduleBasedir, "**/*." + module.getExtension(), null, false );
+                List allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", null, false );
+
+                String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
+                List docs = new LinkedList( allFiles );
+                // Take care of extension case
+                for ( Iterator it = docs.iterator(); it.hasNext(); )
+                {
+                    String name = it.next().toString().trim();
+
+                    if ( !name.toLowerCase( Locale.ENGLISH ).endsWith( "." + lowerCaseExtension ) )
+                    {
+                        it.remove();
+                    }
+                }
 
                 for ( Iterator j = docs.iterator(); j.hasNext(); )
                 {
@@ -235,7 +250,7 @@ public abstract class AbstractDocumentRenderer
                 {
                     filesToProcess.put( file, siteModule );
                 }
-                else if ( file.endsWith( extension ) )
+                else if ( file.toLowerCase( Locale.ENGLISH ).endsWith( extension ) )
                 {
                     // don't overwrite if it's there already
                     if ( !filesToProcess.containsKey( file ) )
