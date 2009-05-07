@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -208,23 +209,43 @@ public class DefaultSiteRenderer
     {
         if ( moduleBasedir.exists() )
         {
-            List docs = new ArrayList();
+            List allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", excludes, false );
 
-            docs.addAll( FileUtils.getFileNames( moduleBasedir, "**/*." + module.getExtension(), excludes, false ) );
+            String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
+            List docs = new LinkedList( allFiles );
+            // Take care of extension case
+            for ( Iterator it = docs.iterator(); it.hasNext(); )
+            {
+                String name = it.next().toString().trim();
 
-            // download.apt.vm
-            docs.addAll( FileUtils.getFileNames( moduleBasedir,
-                    "**/*." + module.getExtension() + ".vm", excludes, false ) );
+                if ( !name.toLowerCase( Locale.ENGLISH ).endsWith( "." + lowerCaseExtension ) )
+                {
+                    it.remove();
+                }
+            }
+
+            List velocityFiles = new LinkedList( allFiles );
+            // *.xml.vm
+            for ( Iterator it = velocityFiles.iterator(); it.hasNext(); )
+            {
+                String name = it.next().toString().trim();
+
+                if ( !name.toLowerCase( Locale.ENGLISH ).endsWith( lowerCaseExtension + ".vm" ) )
+                {
+                    it.remove();
+                }
+            }
+            docs.addAll( velocityFiles );
 
             for ( Iterator k = docs.iterator(); k.hasNext(); )
             {
-                String doc = (String) k.next();
+                String doc = k.next().toString().trim();
 
                 RenderingContext context =
                         new RenderingContext( moduleBasedir, doc, module.getParserId(), module.getExtension() );
 
                 // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
-                if ( doc.endsWith( ".vm" ) )
+                if ( doc.toLowerCase( Locale.ENGLISH ).endsWith( ".vm" ) )
                 {
                     context.setAttribute( "velocity", "true" );
                 }
