@@ -251,6 +251,7 @@ public class DefaultSiteRenderer
                 }
 
                 String key = context.getOutputName();
+                key = StringUtils.replace( key, "\\", "/" );
 
                 if ( files.containsKey( key ) )
                 {
@@ -260,7 +261,8 @@ public class DefaultSiteRenderer
 
                     File originalDoc = new File( originalContext.getBasedir(), originalContext.getInputName() );
 
-                    throw new RendererException( "Files '" + doc + "' clashes with existing '" + originalDoc + "'." );
+                    throw new RendererException( "Files '" + module.getSourceDirectory() + File.separator + doc
+                        + "' clashes with existing '" + originalDoc + "'." );
                 }
                 // -----------------------------------------------------------------------
                 // Handle key without case differences
@@ -276,22 +278,20 @@ public class DefaultSiteRenderer
 
                         File originalDoc = new File( originalContext.getBasedir(), originalContext.getInputName() );
 
-                        if ( Os.isFamily( "windows" ) )
+                        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
                         {
-                            throw new RendererException(
-                                    "Files '" + doc + "' clashes with existing '" + originalDoc + "'." );
+                            throw new RendererException( "Files '" + module.getSourceDirectory() + File.separator
+                                + doc + "' clashes with existing '" + originalDoc + "'." );
                         }
 
                         if ( getLogger().isWarnEnabled() )
                         {
                             getLogger().warn(
-                                              "Files '" + doc + "' could clashes with existing '" + originalDoc
-                                                  + "'." );
+                                              "Files '" + module.getSourceDirectory() + File.separator + doc
+                                                  + "' could clashes with existing '" + originalDoc + "'." );
                         }
                     }
                 }
-
-                key = StringUtils.replace( key, "\\", "/" );
 
                 files.put( key, new DoxiaDocumentRenderer( context ) );
             }
