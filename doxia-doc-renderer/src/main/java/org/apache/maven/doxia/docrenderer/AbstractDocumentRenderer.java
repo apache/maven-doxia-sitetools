@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -162,9 +163,10 @@ public abstract class AbstractDocumentRenderer
      *              This should follow the standard Maven convention, ie containing all the site modules.
      * @return a Map of files to process.
      * @throws java.io.IOException in case of a problem reading the files under baseDirectory.
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      */
     public Map getFilesToProcess( File baseDirectory )
-        throws IOException
+        throws IOException, DocumentRendererException
     {
         if ( !baseDirectory.isDirectory() )
         {
@@ -178,7 +180,8 @@ public abstract class AbstractDocumentRenderer
 
         setBaseDir( baseDirectory.getAbsolutePath() );
 
-        Map filesToProcess = new HashMap();
+        Map filesToProcess = new LinkedHashMap();
+        Map duplicatesFiles = new LinkedHashMap();
 
         for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
         {
@@ -206,7 +209,21 @@ public abstract class AbstractDocumentRenderer
 
                 for ( Iterator j = docs.iterator(); j.hasNext(); )
                 {
-                    String filePath = ( (File) j.next() ).getPath();
+                    String filePath = j.next().toString().trim();
+
+                    if ( filePath.lastIndexOf( "." ) > 0 )
+                    {
+                        String key = filePath.substring( 0, filePath.lastIndexOf( "." ) );
+
+                        if ( duplicatesFiles.containsKey( key ) )
+                        {
+                            throw new DocumentRendererException( "Files '" + module.getSourceDirectory()
+                                + File.separator + filePath + "' clashes with existing '"
+                                + duplicatesFiles.get( key ) + "'." );
+                        }
+
+                        duplicatesFiles.put( key, module.getSourceDirectory() + File.separator + filePath );
+                    }
 
                     filesToProcess.put( filePath, module );
                 }
