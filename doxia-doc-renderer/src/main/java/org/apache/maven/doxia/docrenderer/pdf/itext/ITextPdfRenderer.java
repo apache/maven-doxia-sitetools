@@ -65,6 +65,7 @@ import com.lowagie.text.ElementTags;
  * @author ltheussl
  * @version $Id$
  * @since 1.1
+ * @plexus.component role="org.apache.maven.doxia.docrenderer.pdf.PdfRenderer" role-hint="itext"
  */
 public class ITextPdfRenderer
     extends AbstractPdfRenderer

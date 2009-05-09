@@ -48,6 +48,7 @@ import org.xml.sax.SAXParseException;
  * @author ltheussl
  * @version $Id$
  * @since 1.1
+ * @plexus.component role="org.apache.maven.doxia.docrenderer.pdf.PdfRenderer" role-hint="fo"
  */
 public class FoPdfRenderer
     extends AbstractPdfRenderer

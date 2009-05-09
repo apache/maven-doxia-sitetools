@@ -32,7 +32,7 @@ import org.apache.maven.doxia.module.itext.ITextUtil;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @plexus.component role="org.apache.maven.doxia.docrenderer.PdfRenderer"
+ * @plexus.component role="org.apache.maven.doxia.docrenderer.itext.PdfRenderer" role-hint="itext.pdf"
  */
 public class DefaultPdfRenderer
     extends AbstractITextRender
