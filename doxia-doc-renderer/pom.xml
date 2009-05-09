@@ -48,6 +48,7 @@ under the License.
   </developers>
 
   <dependencies>
+    <!-- doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-core</artifactId>
@@ -61,15 +62,6 @@ under the License.
       <artifactId>doxia-sink-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.lowagie</groupId>
-      <artifactId>itext</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-module-itext</artifactId>
       <version>${doxiaVersion}</version>
@@ -78,15 +70,6 @@ under the License.
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-module-fo</artifactId>
       <version>${doxiaVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>xalan</artifactId>
-      <version>2.7.0</version>
     </dependency>
     <!-- The modules are not in doxia core anymore so you have to state a dependency so that
          the component descriptor gets picked up. -->
@@ -105,6 +88,28 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-module-xhtml</artifactId>
+    </dependency>
+
+    <!-- plexus -->
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+    </dependency>
+
+    <!-- misc -->
+    <dependency>
+      <groupId>com.lowagie</groupId>
+      <artifactId>itext</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.0</version>
     </dependency>
     <dependency>
       <groupId>xml-apis</groupId>
