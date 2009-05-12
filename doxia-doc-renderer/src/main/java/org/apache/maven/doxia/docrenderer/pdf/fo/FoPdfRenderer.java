@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -193,7 +194,13 @@ public class FoPdfRenderer
     private void mergeSourcesFromTOC( DocumentTOC toc, FoAggregateSink sink )
             throws IOException, DocumentRendererException
     {
-        for ( Iterator k = toc.getItems().iterator(); k.hasNext(); )
+        parseTocItems( toc.getItems(), sink );
+    }
+
+    private void parseTocItems( List items, FoAggregateSink sink )
+            throws IOException, DocumentRendererException
+    {
+        for ( Iterator k = items.iterator(); k.hasNext(); )
         {
             DocumentTOCItem tocItem = (DocumentTOCItem) k.next();
 
@@ -214,28 +221,39 @@ public class FoPdfRenderer
                 href = href.substring( 0, href.lastIndexOf( "." ) );
             }
 
-            for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
+            renderModules( href, sink, tocItem );
+
+            if ( tocItem.getItems() != null )
             {
-                SiteModule module = (SiteModule) i.next();
-                File moduleBasedir = new File( getBaseDir(), module.getSourceDirectory() );
+                parseTocItems( tocItem.getItems(), sink );
+            }
+        }
+    }
 
-                if ( moduleBasedir.exists() )
+    private void renderModules( String href, FoAggregateSink sink, DocumentTOCItem tocItem )
+            throws DocumentRendererException, IOException
+    {
+        for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
+        {
+            SiteModule module = (SiteModule) i.next();
+            File moduleBasedir = new File( getBaseDir(), module.getSourceDirectory() );
+
+            if ( moduleBasedir.exists() )
+            {
+                String doc = href + "." + module.getExtension();
+                File source = new File( moduleBasedir, doc );
+
+                if ( source.exists() )
                 {
-                    String doc = href + "." + module.getExtension();
-                    File source = new File( moduleBasedir, doc );
-
-                    if ( source.exists() )
+                    if ( getLogger().isDebugEnabled() )
                     {
-                        if ( getLogger().isDebugEnabled() )
-                        {
-                            getLogger().debug( "Parsing file " + source );
-                        }
-
-                        sink.setDocumentName( doc );
-                        sink.setDocumentTitle( tocItem.getName() );
-
-                        parse( source.getPath(), module.getParserId(), sink );
+                        getLogger().debug( "Parsing file " + source );
                     }
+
+                    sink.setDocumentName( doc );
+                    sink.setDocumentTitle( tocItem.getName() );
+
+                    parse( source.getPath(), module.getParserId(), sink );
                 }
             }
         }
