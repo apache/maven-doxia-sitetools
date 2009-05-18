@@ -145,7 +145,7 @@ public class EntitiesVerifier
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "'\u0391' '\u0392' '\u0393' '\uD7ED'" );
+        assertEquals( p.asText().trim(), "'\u0391' '\u0392' '\u0393' '\uD7ED\uD7ED' '\u0159\u0159'" );
 
         div = (HtmlDivision) elementIterator.next();
 
