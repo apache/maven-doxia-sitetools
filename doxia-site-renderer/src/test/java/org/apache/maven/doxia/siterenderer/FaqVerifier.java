@@ -62,13 +62,16 @@ public class FaqVerifier
         //
         // ----------------------------------------------------------------------
 
+        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
+        assertEquals( a.getAttributeValue( "name" ), "top" );
+
         HtmlDivision div = (HtmlDivision) elementIterator.next();
         assertEquals( div.getAttributeValue( "class" ), "section" );
 
         HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
         assertEquals( h2.asText().trim(), "Oft Asked Questions" );
 
-        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
+        a = (HtmlAnchor) elementIterator.next();
         assertEquals( a.getAttributeValue( "name" ), "Oft_Asked_Questions" );
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
@@ -146,7 +149,7 @@ public class FaqVerifier
         assertEquals( element.asText().trim(), "italic" );
 
         p = (HtmlParagraph) elementIterator.next();
-        assertEquals( p.getAttributeValue( "style" ), "float:right;" );
+        assertEquals( p.getAttributeValue( "align" ), "right" );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( a.getAttributeValue( "href" ), "#top" );
@@ -185,7 +188,7 @@ public class FaqVerifier
         assertEquals( pre.asText().trim(), "<source>1.5</source>" );
 
         p = (HtmlParagraph) elementIterator.next();
-        assertEquals( p.getAttributeValue( "style" ), "float:right;" );
+        assertEquals( p.getAttributeValue( "align" ), "right" );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( a.getAttributeValue( "href" ), "#top" );
