@@ -222,6 +222,7 @@ public class SiteRendererSink
     {
         if ( level == SECTION_LEVEL_1 || level == SECTION_LEVEL_2 )
         {
+            // TODO: why are section titles written in head mode?
             setHeadFlag( true );
 
             sectionHasID = ( attributes != null && attributes.isDefined ( Attribute.ID.toString() ) );
@@ -246,6 +247,7 @@ public class SiteRendererSink
 
             resetTextBuffer();
 
+            // TODO: why are section titles written in head mode?
             setHeadFlag( false );
 
             writeStartTag( level == SECTION_LEVEL_1 ? Tag.H2 : Tag.H3  );

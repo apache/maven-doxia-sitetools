@@ -62,16 +62,13 @@ public class FaqVerifier
         //
         // ----------------------------------------------------------------------
 
-        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertEquals( a.getAttributeValue( "name" ), "top" );
-
         HtmlDivision div = (HtmlDivision) elementIterator.next();
         assertEquals( div.getAttributeValue( "class" ), "section" );
 
         HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
         assertEquals( h2.asText().trim(), "Oft Asked Questions" );
 
-        a = (HtmlAnchor) elementIterator.next();
+        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertEquals( a.getAttributeValue( "name" ), "Oft_Asked_Questions" );
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
