@@ -31,9 +31,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlOrderedList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 import java.util.Iterator;
 
@@ -148,16 +145,8 @@ public class FaqVerifier
         assertEquals( element.getTagName(), "i" );
         assertEquals( element.asText().trim(), "italic" );
 
-        HtmlTable table = (HtmlTable) elementIterator.next();
-        assertEquals( table.getAttributeValue( "border" ), "0" );
-
-        element = (HtmlElement) elementIterator.next();
-        // this is a htmlunit bug
-        assertEquals( element.getTagName(), "tbody" );
-
-        HtmlTableRow tr = (HtmlTableRow) elementIterator.next();
-        HtmlTableDataCell td = (HtmlTableDataCell) elementIterator.next();
-        assertEquals( td.getAttributeValue( "align" ), "right" );
+        p = (HtmlParagraph) elementIterator.next();
+        assertEquals( p.getAttributeValue( "style" ), "float:right;" );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( a.getAttributeValue( "href" ), "#top" );
@@ -195,16 +184,8 @@ public class FaqVerifier
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
         assertEquals( pre.asText().trim(), "<source>1.5</source>" );
 
-        table = (HtmlTable) elementIterator.next();
-        assertEquals( table.getAttributeValue( "border" ), "0" );
-
-        element = (HtmlElement) elementIterator.next();
-        // this is a htmlunit bug
-        assertEquals( element.getTagName(), "tbody" );
-
-        tr = (HtmlTableRow) elementIterator.next();
-        td = (HtmlTableDataCell) elementIterator.next();
-        assertEquals( td.getAttributeValue( "align" ), "right" );
+        p = (HtmlParagraph) elementIterator.next();
+        assertEquals( p.getAttributeValue( "style" ), "float:right;" );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( a.getAttributeValue( "href" ), "#top" );
