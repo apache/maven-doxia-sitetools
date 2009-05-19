@@ -329,10 +329,10 @@
     <meta name="author" content="$author" />
 #end
 #if ( $dateCreation )
-    <meta name="Date-Creation-yyyymmdd" content="$dateCreation">
+    <meta name="Date-Creation-yyyymmdd" content="$dateCreation" />
 #end
 #if ( $dateRevision )
-    <meta name="Date-Revision-yyyymmdd" content="$dateRevision">
+    <meta name="Date-Revision-yyyymmdd" content="$dateRevision" />
 #end
     #if ( $decoration.body.head )
       #foreach( $item in $decoration.body.head.getChildren() )
