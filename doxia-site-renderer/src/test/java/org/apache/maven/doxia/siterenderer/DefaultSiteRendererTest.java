@@ -20,7 +20,10 @@ package org.apache.maven.doxia.siterenderer;
  */
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,6 +65,21 @@ public class DefaultSiteRendererTest
         super.setUp();
 
         renderer = (Renderer) lookup( Renderer.ROLE );
+
+        // copy the default-site.vm
+        InputStream is =
+            this.getResourceAsStream( "/org/apache/maven/doxia/siterenderer/resources/default-site.vm" );
+        assertNotNull( is );
+        OutputStream os = new FileOutputStream( new File( getBasedir(), "target/test-classes/default-site.vm" ) );
+        try
+        {
+            IOUtil.copy( is, os );
+        }
+        finally
+        {
+            IOUtil.close( is );
+            IOUtil.close( os );
+        }
 
         // Safety
         FileUtils.deleteDirectory( getTestFile( OUTPUT ) );
