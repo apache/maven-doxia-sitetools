@@ -328,6 +328,12 @@
     #foreach( $author in $authors )
       <meta name="author" content="$author" />
     #end
+#if ( $dateCreation )
+    <meta name="Date-Creation-yyyymmdd" content="$dateCreation" />
+#end
+#if ( $dateRevision )
+    <meta name="Date-Revision-yyyymmdd" content="$dateRevision" />
+#end
     #if ( $decoration.body.head )
       #foreach( $item in $decoration.body.head.getChildren() )
         ## Workaround for DOXIA-150 due to a non-desired behaviour in p-u
