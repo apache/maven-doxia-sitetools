@@ -149,9 +149,9 @@
 
 #macro ( copyright )
   #if ( $project )
-    #if ( ${project.organization} && ${project.organization.name} ) 
+    #if ( ${project.organization} && ${project.organization.name} )
       #set ( $period = "" )
-    #else 
+    #else
       #set ( $period = "." )
    #end
 
@@ -284,9 +284,9 @@
             <a href="$href" title="$name" class="poweredBy">
               #set ( $img = $PathTool.calculateLink( $img, $relativePath ) )
               #set ( $img = $img.replaceAll( "\\", "/" ) )
-              <img  class="poweredBy"  
-                    alt="$name" 
-                    src="$img" 
+              <img  class="poweredBy"
+                    alt="$name"
+                    src="$img"
                     width="90"
                     height="30"
               />
@@ -294,9 +294,9 @@
         #end
         #if( $poweredBy.isEmpty() )
           <a href="http://maven.apache.org/" title="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" class="poweredBy">
-            <img class="poweredBy" 
-                 alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" 
-                 src="$relativePath/images/logos/maven-feather.png" 
+            <img class="poweredBy"
+                 alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven"
+                 src="$relativePath/images/logos/maven-feather.png"
                  width="90"
                  height="30"
                  border="1" />
@@ -304,9 +304,9 @@
         #end
     #else
         <a href="http://maven.apache.org/" title="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" class="poweredBy">
-          <img class="poweredBy" 
-               alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" 
-               src="$relativePath/images/logos/maven-feather.png" 
+          <img class="poweredBy"
+               alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven"
+               src="$relativePath/images/logos/maven-feather.png"
                width="90"
                height="30"
                border="1"
