@@ -51,7 +51,7 @@ public class EntitiesVerifier
         HtmlMeta author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 0 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Ligature &#198;" ) > 0 );
-        assertEquals( "Ligature Æ", author.getContentAttribute() );
+        assertEquals( "Ligature \u00C6", author.getContentAttribute() );
 
         author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 1 );
         assertNotNull( author );
