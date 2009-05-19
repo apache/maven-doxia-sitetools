@@ -123,6 +123,10 @@ public class EntitiesVerifier
         assertNotNull( h4 );
         assertEquals( h4.asText().trim(), "Entities" );
 
+        a = (HtmlAnchor) elementIterator.next();
+        assertNotNull( a );
+        assertEquals( a.getAttributeValue( "name" ), "Entities" );
+
         div = (HtmlDivision) elementIterator.next();
 
         HtmlHeader3 h3 = (HtmlHeader3) elementIterator.next();
@@ -166,6 +170,10 @@ public class EntitiesVerifier
         h4 = (HtmlHeader4) elementIterator.next();
         assertNotNull( h4 );
         assertEquals( h4.asText().trim(), "CDATA" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertNotNull( a );
+        assertEquals( a.getAttributeValue( "name" ), "CDATA" );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
