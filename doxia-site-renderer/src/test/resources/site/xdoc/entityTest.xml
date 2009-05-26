@@ -28,6 +28,7 @@
 <!ENTITY Gamma    "&#915;"> <!-- greek capital letter gamma, U+0393 ISOgrk3 -->
 <!ENTITY tritPos  "&#x1d7ed;"> <!-- MATHEMATICAL SANS-SERIF BOLD DIGIT ONE -->
 <!ENTITY flo "&#x159;">
+<!ENTITY myCustomEntity "&flo;">
 ]>
 <document xmlns="http://maven.apache.org/XDOC/2.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -54,7 +55,7 @@
       <p>'&amp;' '&lt;' '&gt;' '&quot;' '&apos;'</p>
 
       <h3>Local Entities: '&Alpha;' '&Beta;' '&Gamma;' '&tritPos;'</h3>
-      <p>'&Alpha;' '&Beta;' '&Gamma;' '&tritPos;&#x1d7ed;' '&flo;&#x159;'</p>
+      <p>'&Alpha;' '&Beta;' '&Gamma;' '&tritPos;&#x1d7ed;' '&flo;&#x159;' '&myCustomEntity;'</p>
 
       <h3>DTD Entities: '&nbsp;' '&iexcl;' '&cent;'</h3>
       <p>'&nbsp;' '&iexcl;' '&cent;'</p>

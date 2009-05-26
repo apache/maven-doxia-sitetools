@@ -109,7 +109,7 @@ public class EntitiesVerifier
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttributeValue( "name" ), "section_name_with_entities:____x1d7ed" );
+        assertEquals( a.getAttributeValue( "name" ), "section_name_with_entities:____" );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
@@ -149,7 +149,7 @@ public class EntitiesVerifier
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "'\u0391' '\u0392' '\u0393' '\uD7ED\uD7ED' '\u0159\u0159'" );
+        assertEquals( p.asText().trim(), "'\u0391' '\u0392' '\u0393' '\uD7ED\uD7ED' '\u0159\u0159' '\u0159'" );
 
         div = (HtmlDivision) elementIterator.next();
 
