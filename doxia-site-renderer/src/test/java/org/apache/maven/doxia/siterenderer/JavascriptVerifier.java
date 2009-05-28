@@ -37,7 +37,7 @@ import java.util.List;
 
 
 /**
- * 
+ * Verify javascript code.
  *
  * @author ltheussl
  * @version $Id$
