@@ -74,7 +74,7 @@ public class AptVerifier
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Anchor", a.getAttributeValue( "name" ) );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "cdc.html", a.getAttributeValue( "name" ) );
+        assertEquals( "cdc.html.internal", a.getAttributeValue( "name" ) );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#Anchor", a.getAttributeValue( "href" ) );
@@ -96,7 +96,7 @@ public class AptVerifier
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "./cdc.html", a.getAttributeValue( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#cdc.html", a.getAttributeValue( "href" ) );
+        assertEquals( "#cdc.html.internal", a.getAttributeValue( "href" ) );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "/index.html", a.getAttributeValue( "href" ) );

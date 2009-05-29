@@ -29,13 +29,13 @@
 Links
 
   {Anchor}
-  {cdc.html}
+  {cdc.html.internal}
   Link to {{Anchor}}.
   Link to anchor {{{Anchor}showing alternate text}}.
   {Anchor with space} and {{{Anchor_with_space}link to it}}.
   Link to {{http://maven.apache.org/}}.
   Link to {{{http://maven.apache.org/}Maven home page}}.
-  Link to {{{./cdc.html}other document}} and within {{{cdc.html}same document}}.
+  Link to {{{./cdc.html}other document}} and within {{{cdc.html.internal}same document}}.
   Link to {{{/index.html}root document}}.
 
 Section formatting: <italic> <<bold>> <<<mono>>>
