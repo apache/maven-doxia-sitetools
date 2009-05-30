@@ -71,10 +71,11 @@ public class AptVerifier
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
 
+        // Expected log: [APT Parser] Ambiguous link: 'cdc.html'. If this is a local link, prepend "./"!
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Anchor", a.getAttributeValue( "name" ) );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "cdc.html.internal", a.getAttributeValue( "name" ) );
+        assertEquals( "cdc.html", a.getAttributeValue( "name" ) );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#Anchor", a.getAttributeValue( "href" ) );
@@ -93,10 +94,11 @@ public class AptVerifier
         assertEquals( "http://maven.apache.org/", a.getAttributeValue( "href" ) );
         assertEquals( "externalLink", a.getAttributeValue( "class" ) );
 
+        // Expected log: [APT Parser] Ambiguous link: 'cdc.html'. If this is a local link, prepend "./"!
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "./cdc.html", a.getAttributeValue( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#cdc.html.internal", a.getAttributeValue( "href" ) );
+        assertEquals( "#cdc.html", a.getAttributeValue( "href" ) );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "/index.html", a.getAttributeValue( "href" ) );
