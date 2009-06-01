@@ -62,31 +62,8 @@ public class FoPdfRenderer
     public void generatePdf( File inputFile, File pdfFile )
         throws DocumentRendererException
     {
-        if ( getLogger().isDebugEnabled() )
-        {
-            getLogger().debug( "Generating: " + pdfFile );
-        }
-
-        try
-        {
-            FoUtils.convertFO2PDF( inputFile, pdfFile, null );
-        }
-        catch ( TransformerException e )
-        {
-            if ( ( e.getCause() != null ) && ( e.getCause() instanceof SAXParseException ) )
-            {
-                SAXParseException sax = (SAXParseException) e.getCause();
-
-                StringBuffer sb = new StringBuffer();
-                sb.append( "Error creating PDF from " ).append( inputFile.getAbsolutePath() ).append( ":" )
-                    .append( sax.getLineNumber() ).append( ":" ).append( sax.getColumnNumber() ).append( "\n" );
-                sb.append( e.getMessage() );
-
-                throw new DocumentRendererException( sb.toString() );
-            }
-
-            throw new DocumentRendererException( "Error creating PDF from " + inputFile + ": " + e.getMessage() );
-        }
+        // Should take care of the document model for the metadata...
+        generatePdf( inputFile, pdfFile, null );
     }
 
     /** {@inheritDoc} */
@@ -169,7 +146,7 @@ public class FoPdfRenderer
             IOUtil.close( writer );
         }
 
-        generatePdf( outputFOFile, pdfOutputFile );
+        generatePdf( outputFOFile, pdfOutputFile, documentModel );
     }
 
     private void mergeAllSources( Map filesToProcess, FoAggregateSink sink )
@@ -256,6 +233,43 @@ public class FoPdfRenderer
                     parse( source.getPath(), module.getParserId(), sink );
                 }
             }
+        }
+    }
+
+    /**
+     * @param inputFile
+     * @param pdfFile
+     * @param documentModel could be null
+     * @throws DocumentRendererException if any
+     * @since 1.1.1
+     */
+    private void generatePdf( File inputFile, File pdfFile, DocumentModel documentModel )
+        throws DocumentRendererException
+    {
+        if ( getLogger().isDebugEnabled() )
+        {
+            getLogger().debug( "Generating: " + pdfFile );
+        }
+
+        try
+        {
+            FoUtils.convertFO2PDF( inputFile, pdfFile, null, documentModel );
+        }
+        catch ( TransformerException e )
+        {
+            if ( ( e.getCause() != null ) && ( e.getCause() instanceof SAXParseException ) )
+            {
+                SAXParseException sax = (SAXParseException) e.getCause();
+
+                StringBuffer sb = new StringBuffer();
+                sb.append( "Error creating PDF from " ).append( inputFile.getAbsolutePath() ).append( ":" )
+                  .append( sax.getLineNumber() ).append( ":" ).append( sax.getColumnNumber() ).append( "\n" );
+                sb.append( e.getMessage() );
+
+                throw new DocumentRendererException( sb.toString() );
+            }
+
+            throw new DocumentRendererException( "Error creating PDF from " + inputFile + ": " + e.getMessage() );
         }
     }
 }
