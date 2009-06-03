@@ -190,14 +190,23 @@ public class ITextPdfRenderer
     private void parse( String fullDocPath, SiteModule module, File iTextFile )
         throws DocumentRendererException, IOException
     {
-        Writer writer = WriterFactory.newXmlWriter( iTextFile );
-        ITextSink sink = (ITextSink) new ITextSinkFactory().createSink( writer );
+        System.setProperty( "itext.basedir", iTextFile.getParentFile().getAbsolutePath() );
 
-        sink.setClassLoader( new URLClassLoader( new URL[] { iTextFile.getParentFile().toURI().toURL() } ) );
+        try
+        {
+            Writer writer = WriterFactory.newXmlWriter( iTextFile );
+            ITextSink sink = (ITextSink) new ITextSinkFactory().createSink( writer );
 
-        parse( fullDocPath, module.getParserId(), sink );
+            sink.setClassLoader( new URLClassLoader( new URL[] { iTextFile.getParentFile().toURI().toURL() } ) );
 
-        sink.close();
+            parse( fullDocPath, module.getParserId(), sink );
+
+            sink.close();
+        }
+        finally
+        {
+            System.getProperties().remove( "itext.basedir" );
+        }
     }
 
     /**
