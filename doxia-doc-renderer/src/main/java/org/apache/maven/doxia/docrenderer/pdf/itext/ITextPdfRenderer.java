@@ -50,6 +50,7 @@ import org.apache.maven.doxia.module.itext.ITextSinkFactory;
 import org.apache.maven.doxia.module.itext.ITextUtil;
 import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.xml.utils.DefaultErrorHandler;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -192,19 +193,25 @@ public class ITextPdfRenderer
     {
         System.setProperty( "itext.basedir", iTextFile.getParentFile().getAbsolutePath() );
 
+        Writer writer = null;
+        ITextSink sink = null;
         try
         {
-            Writer writer = WriterFactory.newXmlWriter( iTextFile );
-            ITextSink sink = (ITextSink) new ITextSinkFactory().createSink( writer );
+            writer = WriterFactory.newXmlWriter( iTextFile );
+            sink = (ITextSink) new ITextSinkFactory().createSink( writer );
 
             sink.setClassLoader( new URLClassLoader( new URL[] { iTextFile.getParentFile().toURI().toURL() } ) );
 
             parse( fullDocPath, module.getParserId(), sink );
-
-            sink.close();
         }
         finally
         {
+            if ( sink != null )
+            {
+                sink.flush();
+                sink.close();
+            }
+            IOUtil.close( writer );
             System.getProperties().remove( "itext.basedir" );
         }
     }
