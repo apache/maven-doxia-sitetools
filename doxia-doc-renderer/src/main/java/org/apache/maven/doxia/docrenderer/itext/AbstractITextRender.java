@@ -316,6 +316,8 @@ public abstract class AbstractITextRender
                 reader = ReaderFactory.newPlatformReader( f );
             }
 
+            System.setProperty( "itext.basedir", outputITextFile.getParentFile().getAbsolutePath() );
+
             doxia.parse( reader, module.getParserId(), sink );
         }
         catch ( ParserNotFoundException e )
@@ -335,6 +337,10 @@ public abstract class AbstractITextRender
             sink.flush();
 
             sink.close();
+
+            IOUtil.close( writer );
+
+            System.getProperties().remove( "itext.basedir" );
         }
     }
 
