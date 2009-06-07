@@ -28,7 +28,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,12 +47,14 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
 import org.apache.maven.doxia.document.DocumentModel;
+import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.module.itext.ITextSink;
 import org.apache.maven.doxia.module.itext.ITextSinkFactory;
 import org.apache.maven.doxia.module.itext.ITextUtil;
 import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.xml.utils.DefaultErrorHandler;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -109,70 +113,90 @@ public class ITextPdfRenderer
     }
 
     /** {@inheritDoc} */
-    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel    )
+    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
-        String outputName = documentModel.getOutputName();
+        // copy resources, images, etc.
+        copyResources( outputDirectory );
 
-        if ( outputName == null )
+        if ( documentModel == null )
         {
-            if ( getLogger().isInfoEnabled() )
-            {
-                getLogger().info( "No outputName is defined in the document descriptor. Using 'target.pdf'" );
-            }
+            getLogger().debug( "No document model, generating all documents individually." );
 
-            documentModel.setOutputName( "target" );
-        }
-        else if ( outputName.lastIndexOf( "." ) != -1 )
-        {
-            documentModel.setOutputName( outputName.substring( 0, outputName.lastIndexOf( "." ) ) );
+            renderIndividual( filesToProcess, outputDirectory );
+            return;
         }
 
-// TODO: adjust from o.a.m.d.docrenderer.itext.AbstractITextRender
-//        if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
-//        {
-//            getLogger().info( "No TOC is defined in the document descriptor. Generating all documents." );
+        String outputName = getOutputName( documentModel );
 
-            for ( Iterator j = filesToProcess.keySet().iterator(); j.hasNext(); )
-            {
-                String key = (String) j.next();
+        File outputITextFile = new File( outputDirectory, outputName + ".xml" );
+        if ( !outputITextFile.getParentFile().exists() )
+        {
+            outputITextFile.getParentFile().mkdirs();
+        }
 
-                SiteModule module = (SiteModule) filesToProcess.get( key );
+        File pdfOutputFile = new File( outputDirectory, outputName + ".pdf" );
+        if ( !pdfOutputFile.getParentFile().exists() )
+        {
+            pdfOutputFile.getParentFile().mkdirs();
+        }
 
+        List iTextFiles;
+        if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
+        {
+            getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
 
-                String fullDocPath = getBaseDir() + File.separator
-                            + module.getSourceDirectory() + File.separator + key;
-
-                String iTextFileName = key.substring( 0, key.indexOf( "." ) + 1 ) + "xml";
-
-                File iTextFile = new File( outputDirectory, iTextFileName );
-                if ( !iTextFile.getParentFile().exists() )
-                {
-                    iTextFile.getParentFile().mkdirs();
-                }
-
-                String pdfFileName = key.substring( 0, key.indexOf( "." ) + 1 ) + getOutputExtension();
-
-                File pdfFile = new File( outputDirectory, pdfFileName );
-                if ( !pdfFile.getParentFile().exists() )
-                {
-                    pdfFile.getParentFile().mkdirs();
-                }
-
-                parse( fullDocPath, module, iTextFile );
-
-                generatePdf( iTextFile, pdfFile );
-            }
-/*
+            iTextFiles = parseAllFiles( filesToProcess, outputDirectory );
         }
         else
         {
-            // TODO: adjust from o.a.m.d.docrenderer.itext.AbstractITextRender
-        }
-*/
+            getLogger().debug( "Using TOC defined in the document descriptor." );
 
+            iTextFiles = parseTOCFiles( filesToProcess, outputDirectory, documentModel );
+        }
+
+        File iTextFile = new File( outputDirectory, outputName + ".xml" );
+        File iTextOutput = new File( outputDirectory, outputName + "." + getOutputExtension() );
+        Document document = generateDocument( iTextFiles );
+        transform( documentModel, document, iTextFile );
+        generatePdf( iTextFile, iTextOutput );
     }
 
+    /** {@inheritDoc} */
+    public void renderIndividual( Map filesToProcess, File outputDirectory )
+        throws DocumentRendererException, IOException
+    {
+        for ( Iterator it = filesToProcess.keySet().iterator(); it.hasNext(); )
+        {
+            String key = (String) it.next();
+            SiteModule module = (SiteModule) filesToProcess.get( key );
+            File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
+
+            String output = key;
+            String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
+            if ( output.toLowerCase( Locale.ENGLISH ).indexOf( "." + lowerCaseExtension ) != -1 )
+            {
+                output =
+                    output.substring( 0, output.toLowerCase( Locale.ENGLISH ).indexOf( "." + lowerCaseExtension ) );
+            }
+
+            File outputITextFile = new File( outputDirectory, output + ".xml" );
+            if ( !outputITextFile.getParentFile().exists() )
+            {
+                outputITextFile.getParentFile().mkdirs();
+            }
+
+            File pdfOutputFile = new File( outputDirectory, output + ".pdf" );
+            if ( !pdfOutputFile.getParentFile().exists() )
+            {
+                pdfOutputFile.getParentFile().mkdirs();
+            }
+
+            parse( fullDoc, module, outputITextFile );
+
+            generatePdf( outputITextFile, pdfOutputFile );
+        }
+    }
 
       //--------------------------------------------
      //
@@ -182,15 +206,20 @@ public class ITextPdfRenderer
     /**
      * Parse a source document and emit results into a sink.
      *
-     * @param fullDocPath absolute path to the source document.
+     * @param fullDocPath file to the source document.
      * @param module the site module associated with the source document (determines the parser to use).
      * @param iTextFile the resulting iText xml file.
      * @throws DocumentRendererException in case of a parsing problem.
      * @throws IOException if the source and/or target document cannot be opened.
      */
-    private void parse( String fullDocPath, SiteModule module, File iTextFile )
+    private void parse( File fullDoc, SiteModule module, File iTextFile )
         throws DocumentRendererException, IOException
     {
+        if ( getLogger().isDebugEnabled() )
+        {
+            getLogger().debug( "Parsing file " + fullDoc.getAbsolutePath() );
+        }
+
         System.setProperty( "itext.basedir", iTextFile.getParentFile().getAbsolutePath() );
 
         Writer writer = null;
@@ -202,7 +231,7 @@ public class ITextPdfRenderer
 
             sink.setClassLoader( new URLClassLoader( new URL[] { iTextFile.getParentFile().toURI().toURL() } ) );
 
-            parse( fullDocPath, module.getParserId(), sink );
+            parse( fullDoc.getAbsolutePath(), module.getParserId(), sink );
         }
         finally
         {
@@ -318,10 +347,15 @@ public class ITextPdfRenderer
      * Add transformer parameters from a DocumentModel.
      *
      * @param transformer the Transformer to set the parameters.
-     * @param documentModel the DocumentModel to take the parameters from.
+     * @param documentModel the DocumentModel to take the parameters from, could be null.
      */
     private void addTransformerParameters( Transformer transformer, DocumentModel documentModel )
     {
+        if ( documentModel == null )
+        {
+            return;
+        }
+
         if ( documentModel.getMeta().getTitle() != null )
         {
             transformer.setParameter( "title", documentModel.getMeta().getTitle() );
@@ -368,7 +402,7 @@ public class ITextPdfRenderer
     /**
      * Transform a document to an iTextFile.
      *
-     * @param documentModel the DocumentModel to take the parameters from.
+     * @param documentModel the DocumentModel to take the parameters from, could be null.
      * @param document the Document to transform.
      * @param iTextFile the resulting iText xml file.
      * @throws DocumentRendererException in case of a transformation error.
@@ -388,5 +422,96 @@ public class ITextPdfRenderer
         {
             throw new DocumentRendererException( "Error transforming Document " + document + ": " + e.getMessage() );
         }
+    }
+
+    /**
+     * @param filesToProcess not null
+     * @param outputDirectory not null
+     * @return a list of all parsed files.
+     * @throws DocumentRendererException if any
+     * @throws IOException if any
+     * @since 1.1.1
+     */
+    private List parseAllFiles( Map filesToProcess, File outputDirectory )
+        throws DocumentRendererException, IOException
+    {
+        List iTextFiles = new LinkedList();
+        for ( Iterator it = filesToProcess.keySet().iterator(); it.hasNext(); )
+        {
+            String key = (String) it.next();
+            SiteModule module = (SiteModule) filesToProcess.get( key );
+            File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
+
+            String outputITextName = key.substring( 0, key.lastIndexOf( "." ) + 1 ) + "xml";
+            File outputITextFileTmp = new File( outputDirectory, outputITextName );
+            if ( !outputITextFileTmp.getParentFile().exists() )
+            {
+                outputITextFileTmp.getParentFile().mkdirs();
+            }
+
+            iTextFiles.add( outputITextFileTmp );
+            parse( fullDoc, module, outputITextFileTmp );
+        }
+
+        return iTextFiles;
+    }
+
+    /**
+     * @param filesToProcess not null
+     * @param outputDirectory not null
+     * @return a list of all parsed files.
+     * @throws DocumentRendererException if any
+     * @throws IOException if any
+     * @since 1.1.1
+     */
+    private List parseTOCFiles( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
+        throws DocumentRendererException, IOException
+    {
+        List iTextFiles = new LinkedList();
+        for ( Iterator it = documentModel.getToc().getItems().iterator(); it.hasNext(); )
+        {
+            DocumentTOCItem tocItem = (DocumentTOCItem) it.next();
+
+            if ( tocItem.getRef() == null )
+            {
+                getLogger().debug(
+                                   "No ref defined for the tocItem '" + tocItem.getName()
+                                       + "' in the document descriptor. IGNORING" );
+                continue;
+            }
+
+            String href = StringUtils.replace( tocItem.getRef(), "\\", "/" );
+            if ( href.lastIndexOf( "." ) != -1 )
+            {
+                href = href.substring( 0, href.lastIndexOf( "." ) );
+            }
+
+            for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
+            {
+                SiteModule module = (SiteModule) i.next();
+                File moduleBasedir = new File( getBaseDir(), module.getSourceDirectory() );
+
+                if ( moduleBasedir.exists() )
+                {
+                    String doc = href + "." + module.getExtension();
+                    File source = new File( moduleBasedir, doc );
+
+                    if ( source.exists() )
+                    {
+                        String outputITextName = doc.substring( 0, doc.lastIndexOf( "." ) + 1 ) + "xml";
+                        File outputITextFileTmp = new File( outputDirectory, outputITextName );
+                        if ( !outputITextFileTmp.getParentFile().exists() )
+                        {
+                            outputITextFileTmp.getParentFile().mkdirs();
+                        }
+
+                        iTextFiles.add( outputITextFileTmp );
+                        parse( source, module, outputITextFileTmp );
+                    }
+                }
+            }
+        }
+
+        return iTextFiles;
     }
 }

@@ -35,6 +35,8 @@ import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.document.DocumentTOC;
 import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.module.fo.FoAggregateSink;
+import org.apache.maven.doxia.module.fo.FoSink;
+import org.apache.maven.doxia.module.fo.FoSinkFactory;
 import org.apache.maven.doxia.module.fo.FoUtils;
 import org.apache.maven.doxia.module.site.SiteModule;
 
@@ -70,40 +72,30 @@ public class FoPdfRenderer
     public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
-        String outputName = documentModel.getOutputName();
+        // copy resources, images, etc.
+        copyResources( outputDirectory );
 
-        if ( outputName == null )
+        if ( documentModel == null )
         {
-            getLogger().info( "No outputName is defined in the document descriptor. Using 'target.pdf'" );
+            getLogger().debug( "No document model, generating all documents individually." );
 
-            documentModel.setOutputName( "target" );
+            renderIndividual( filesToProcess, outputDirectory );
+            return;
         }
 
-        outputName = outputName.trim();
-        if ( outputName.toLowerCase( Locale.ENGLISH ).endsWith( ".pdf" ) )
-        {
-            documentModel.setOutputName( outputName.substring( 0, outputName.toLowerCase( Locale.ENGLISH )
-                                                                            .lastIndexOf( ".pdf" ) ) );
-        }
-
-        outputName = documentModel.getOutputName();
+        String outputName = getOutputName( documentModel );
 
         File outputFOFile = new File( outputDirectory, outputName + ".fo" );
-
         if ( !outputFOFile.getParentFile().exists() )
         {
             outputFOFile.getParentFile().mkdirs();
         }
 
         File pdfOutputFile = new File( outputDirectory, outputName + ".pdf" );
-
         if ( !pdfOutputFile.getParentFile().exists() )
         {
             pdfOutputFile.getParentFile().mkdirs();
         }
-
-        // copy resources, images, etc.
-        copyResources( outputDirectory );
 
         Writer writer = null;
         try
@@ -136,6 +128,8 @@ public class FoPdfRenderer
             }
             else
             {
+                getLogger().debug( "Using TOC defined in the document descriptor." );
+
                 mergeSourcesFromTOC( documentModel.getToc(), sink );
             }
 
@@ -149,6 +143,47 @@ public class FoPdfRenderer
         generatePdf( outputFOFile, pdfOutputFile, documentModel );
     }
 
+    /** {@inheritDoc} */
+    public void renderIndividual( Map filesToProcess, File outputDirectory )
+        throws DocumentRendererException, IOException
+    {
+        for ( Iterator j = filesToProcess.keySet().iterator(); j.hasNext(); )
+        {
+            String key = (String) j.next();
+            SiteModule module = (SiteModule) filesToProcess.get( key );
+
+            File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
+
+            String output = key;
+            String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
+            if ( output.toLowerCase( Locale.ENGLISH ).indexOf( "." + lowerCaseExtension ) != -1 )
+            {
+                output =
+                    output.substring( 0, output.toLowerCase( Locale.ENGLISH ).indexOf( "." + lowerCaseExtension ) );
+            }
+
+            File outputFOFile = new File( outputDirectory, output + ".fo" );
+            if ( !outputFOFile.getParentFile().exists() )
+            {
+                outputFOFile.getParentFile().mkdirs();
+            }
+
+            File pdfOutputFile = new File( outputDirectory, output + ".pdf" );
+            if ( !pdfOutputFile.getParentFile().exists() )
+            {
+                pdfOutputFile.getParentFile().mkdirs();
+            }
+
+            FoSink sink =
+                (FoSink) new FoSinkFactory().createSink( outputFOFile.getParentFile(), outputFOFile.getName() );
+            sink.beginDocument();
+            parse( fullDoc.getAbsolutePath(), module.getParserId(), sink );
+            sink.endDocument();
+
+            generatePdf( outputFOFile, pdfOutputFile, null );
+        }
+    }
+
     private void mergeAllSources( Map filesToProcess, FoAggregateSink sink )
             throws DocumentRendererException, IOException
     {
@@ -157,14 +192,9 @@ public class FoPdfRenderer
             String key = (String) j.next();
             SiteModule module = (SiteModule) filesToProcess.get( key );
             sink.setDocumentName( key );
-            String fullDocPath = getBaseDir() + File.separator + module.getSourceDirectory() + File.separator + key;
+            File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
 
-            if ( getLogger().isDebugEnabled() )
-            {
-                getLogger().debug( "Parsing file " + fullDocPath );
-            }
-
-            parse( fullDocPath, module.getParserId(), sink );
+            parse( fullDoc.getAbsolutePath(), module.getParserId(), sink );
         }
     }
 
@@ -192,7 +222,6 @@ public class FoPdfRenderer
             }
 
             String href = StringUtils.replace( tocItem.getRef(), "\\", "/" );
-
             if ( href.lastIndexOf( "." ) != -1 )
             {
                 href = href.substring( 0, href.lastIndexOf( "." ) );
@@ -222,11 +251,6 @@ public class FoPdfRenderer
 
                 if ( source.exists() )
                 {
-                    if ( getLogger().isDebugEnabled() )
-                    {
-                        getLogger().debug( "Parsing file " + source );
-                    }
-
                     sink.setDocumentName( doc );
                     sink.setDocumentTitle( tocItem.getName() );
 

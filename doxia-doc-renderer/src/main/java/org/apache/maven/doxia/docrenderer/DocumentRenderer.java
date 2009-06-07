@@ -47,6 +47,7 @@ public interface DocumentRenderer
      * @param documentModel the document model, containing all the metadata, etc.
      *              If the model contains a TOC, only the files found in this TOC are rendered,
      *              otherwise all files from the Collection of files will be processed.
+     *              If the model is null, render all files individually.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any.
      * @throws java.io.IOException if any.
      */
@@ -62,6 +63,7 @@ public interface DocumentRenderer
      * @param documentModel the document model, containing all the metadata, etc.
      *              If the model contains a TOC, only the files found in this TOC are rendered,
      *              otherwise all files found under baseDirectory will be processed.
+     *              If the model is null, render all files from baseDirectory individually.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      */
