@@ -27,7 +27,7 @@ import java.io.IOException;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @deprecated Use {@link DocumentRenderer} instead.
+ * @deprecated Since 1.1, use {@link DocumentRenderer} instead.
  */
 public interface DocRenderer
 {
