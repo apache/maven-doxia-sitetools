@@ -81,7 +81,7 @@ public abstract class AbstractITextRender
     extends AbstractLogEnabled
     implements DocRenderer
 {
-    private static final String XSLT_RESOURCE = "org/apache/maven/doxia/docrenderer/itext/xslt/TOC.xslt";
+    private static final String XSLT_RESOURCE = "org/apache/maven/doxia/docrenderer/pdf/itext/TOC.xslt";
 
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 

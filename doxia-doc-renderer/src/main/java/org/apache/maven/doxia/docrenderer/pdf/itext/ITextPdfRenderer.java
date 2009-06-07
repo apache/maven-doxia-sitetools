@@ -76,7 +76,7 @@ public class ITextPdfRenderer
     extends AbstractPdfRenderer
 {
     /** The xslt style sheet used to transform a Document to an iText file. */
-    private static final String XSLT_RESOURCE = "org/apache/maven/doxia/docrenderer/itext/xslt/TOC.xslt";
+    private static final String XSLT_RESOURCE = "TOC.xslt";
 
     /** The TransformerFactory. */
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
@@ -316,8 +316,8 @@ public class ITextPdfRenderer
     {
         try
         {
-            Transformer transformer = TRANSFORMER_FACTORY.newTransformer( new StreamSource( AbstractPdfRenderer.class
-                .getResourceAsStream( "/" + XSLT_RESOURCE ) ) );
+            Transformer transformer = TRANSFORMER_FACTORY.newTransformer( new StreamSource( ITextPdfRenderer.class
+                .getResourceAsStream( XSLT_RESOURCE ) ) );
 
             transformer.setErrorListener( TRANSFORMER_FACTORY.getErrorListener() );
 
