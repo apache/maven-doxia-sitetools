@@ -24,8 +24,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -46,6 +48,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
+import org.apache.maven.doxia.document.DocumentCover;
+import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.module.itext.ITextSink;
@@ -329,6 +333,8 @@ public class ITextPdfRenderer
 
             transformer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
 
+            // No doctype since itext doctype is not up to date!
+
             return transformer;
         }
         catch ( TransformerConfigurationException e )
@@ -348,55 +354,112 @@ public class ITextPdfRenderer
      *
      * @param transformer the Transformer to set the parameters.
      * @param documentModel the DocumentModel to take the parameters from, could be null.
+     * @param iTextFile the iTextFile not null for the relative paths.
      */
-    private void addTransformerParameters( Transformer transformer, DocumentModel documentModel )
+    private void addTransformerParameters( Transformer transformer, DocumentModel documentModel, File iTextFile )
     {
         if ( documentModel == null )
         {
             return;
         }
 
-        if ( documentModel.getMeta().getTitle() != null )
+        // Meta parameters
+        boolean hasNullMeta = false;
+        if ( documentModel.getMeta() == null )
         {
-            transformer.setParameter( "title", documentModel.getMeta().getTitle() );
+            hasNullMeta = true;
+            documentModel.setMeta( new DocumentMeta() );
+        }
+        addTransformerParameter( transformer, "meta.author", documentModel.getMeta().getAllAuthorNames(),
+                                 System.getProperty( "user.name", "null" ) );
+        addTransformerParameter( transformer, "meta.creator", documentModel.getMeta().getCreator(),
+                                 System.getProperty( "user.name", "null" ) );
+        // see com.lowagie.text.Document#addCreationDate()
+        SimpleDateFormat sdf = new SimpleDateFormat( "EEE MMM dd HH:mm:ss zzz yyyy" );
+        addTransformerParameter( transformer, "meta.creationdate", documentModel.getMeta().getCreationDate_(),
+                                 sdf.format( new Date() ) );
+        addTransformerParameter( transformer, "meta.keywords", documentModel.getMeta().getAllKeyWords() );
+        addTransformerParameter( transformer, "meta.pagesize", documentModel.getMeta().getSubject(),
+                                 ITextUtil.getPageSize( ITextUtil.getDefaultPageSize() ) );
+        addTransformerParameter( transformer, "meta.producer", documentModel.getMeta().getGenerator(),
+                                 "Apache Doxia iText" );
+        addTransformerParameter( transformer, "meta.subject", documentModel.getMeta().getSubject(),
+                                 ( documentModel.getMeta().getTitle() != null ? documentModel.getMeta().getTitle()
+                                                 : "" ) );
+        addTransformerParameter( transformer, "meta.title", documentModel.getMeta().getTitle() );
+        if ( hasNullMeta )
+        {
+            documentModel.setMeta( null );
         }
 
-        if ( documentModel.getMeta().getAuthor() != null )
+        // cover parameter
+        boolean hasNullCover = false;
+        if ( documentModel.getCover() == null )
         {
-            transformer.setParameter( "author", documentModel.getMeta().getAuthor() );
+            hasNullCover = true;
+            documentModel.setCover( new DocumentCover() );
         }
-
-        transformer.setParameter( "creationdate", new Date().toString() );
-
-        if ( documentModel.getMeta().getSubject() != null )
+        addTransformerParameter( transformer, "cover.author", documentModel.getCover().getAllAuthorNames(),
+                                 System.getProperty( "user.name", "null" ) );
+        String companyLogo = getLogoURL( documentModel.getCover().getCompanyLogo(), iTextFile.getParentFile() );
+        addTransformerParameter( transformer, "cover.companyLogo", companyLogo );
+        addTransformerParameter( transformer, "cover.companyName", documentModel.getCover().getCompanyName() );
+        if ( documentModel.getCover().getCoverDate_() == null )
         {
-            transformer.setParameter( "subject", documentModel.getMeta().getSubject() );
-        }
-
-        if ( documentModel.getMeta().getKeywords() != null )
-        {
-            transformer.setParameter( "keywords", documentModel.getMeta().getKeywords() );
-        }
-
-        transformer.setParameter( "producer", "Generated with Doxia by " + System.getProperty( "user.name" ) );
-
-        if ( ITextUtil.isPageSizeSupported( documentModel.getMeta().getTitle() ) )
-        {
-            transformer.setParameter( "pagesize", documentModel.getMeta().getPageSize() );
+            documentModel.getCover().setCoverDate( new Date() );
+            addTransformerParameter( transformer, "cover.date", documentModel.getCover().getCoverDate_() );
+            documentModel.getCover().setCoverDate( null );
         }
         else
         {
-            transformer.setParameter( "pagesize", "A4" );
+            addTransformerParameter( transformer, "cover.date", documentModel.getCover().getCoverDate_() );
         }
-
-        transformer.setParameter( "frontPageHeader", "" );
-
-        if ( documentModel.getMeta().getTitle() != null )
+        addTransformerParameter( transformer, "cover.subtitle", documentModel.getCover().getCoverSubTitle() );
+        addTransformerParameter( transformer, "cover.title", documentModel.getCover().getCoverTitle() );
+        addTransformerParameter( transformer, "cover.type", documentModel.getCover().getCoverType() );
+        addTransformerParameter( transformer, "cover.version", documentModel.getCover().getCoverVersion() );
+        String projectLogo = getLogoURL( documentModel.getCover().getProjectLogo(), iTextFile.getParentFile() );
+        addTransformerParameter( transformer, "cover.projectLogo", projectLogo );
+        addTransformerParameter( transformer, "cover.projectName", documentModel.getCover().getProjectName() );
+        if ( hasNullCover )
         {
-            transformer.setParameter( "frontPageTitle", documentModel.getMeta().getTitle() );
+            documentModel.setCover( null );
+        }
+    }
+
+    /**
+     * @param transformer not null
+     * @param name not null
+     * @param value could be empty
+     * @param defaultValue could be empty
+     * @since 1.1.1
+     */
+    private void addTransformerParameter( Transformer transformer, String name, String value, String defaultValue )
+    {
+        if ( StringUtils.isEmpty( value ) )
+        {
+            addTransformerParameter( transformer, name, defaultValue );
+        }
+        else
+        {
+            addTransformerParameter( transformer, name, value );
+        }
+    }
+
+    /**
+     * @param transformer not null
+     * @param name not null
+     * @param value could be empty
+     * @since 1.1.1
+     */
+    private void addTransformerParameter( Transformer transformer, String name, String value )
+    {
+        if ( StringUtils.isEmpty( value ) )
+        {
+            return;
         }
 
-        transformer.setParameter( "frontPageFooter", "Generated date " + new Date().toString() );
+        transformer.setParameter( name, value );
     }
 
     /**
@@ -412,7 +475,7 @@ public class ITextPdfRenderer
     {
         Transformer transformer = initTransformer();
 
-        addTransformerParameters( transformer, documentModel );
+        addTransformerParameters( transformer, documentModel, iTextFile );
 
         try
         {
@@ -513,5 +576,37 @@ public class ITextPdfRenderer
         }
 
         return iTextFiles;
+    }
+
+    /**
+     * @param logo
+     * @param parentFile
+     * @return the logo url or null if unable to create it.
+     * @since 1.1.1
+     */
+    private String getLogoURL( String logo, File parentFile )
+    {
+        if ( logo == null )
+        {
+            return null;
+        }
+
+        try
+        {
+            return new URL( logo ).toString();
+        }
+        catch ( MalformedURLException e )
+        {
+            try
+            {
+                return new File(parentFile, logo ).toURL().toString();
+            }
+            catch ( MalformedURLException e1 )
+            {
+                // nope
+            }
+        }
+
+        return null;
     }
 }

@@ -21,51 +21,86 @@ under the License.
 <xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-    <!--  MetaData Parameters -->
-    <xsl:param name="title" />
-    <xsl:param name="author" />
-    <xsl:param name="creationdate" />
-    <xsl:param name="subject" />
-    <xsl:param name="keywords" />
-    <xsl:param name="producer" />
-    <xsl:param name="pagesize" />
+    <!-- MetaData Parameters -->
+    <xsl:param name="meta.author" />
+    <xsl:param name="meta.creator" />
+    <xsl:param name="meta.creationdate" />
+    <xsl:param name="meta.keywords" />
+    <xsl:param name="meta.pagesize" />
+    <xsl:param name="meta.producer" />
+    <xsl:param name="meta.subject" />
+    <xsl:param name="meta.title" />
 
     <!--  FrontPage Parameters -->
-    <xsl:param name="frontPageTitle" />
-    <xsl:param name="frontPageFooter" />
+    <xsl:param name="cover.author" />
+    <xsl:param name="cover.companyLogo" />
+    <xsl:param name="cover.companyName" />
+    <xsl:param name="cover.date" />
+    <xsl:param name="cover.subtitle" />
+    <xsl:param name="cover.title" />
+    <xsl:param name="cover.type" />
+    <xsl:param name="cover.version" />
+    <xsl:param name="cover.projectLogo" />
+    <xsl:param name="cover.projectName" />
 
     <xsl:template match="/itext">
-        <itext title="{$title}" author="{$author}" creationdate="{$creationdate}"
-            subject="{$subject}" keywords="{$keywords}" producer="{$producer}"
-            pagesize="{$pagesize}">
+      <itext
+        author="{$meta.author}"
+        creator="{$meta.creator}"
+        creationdate="{$meta.creationdate}"
+        keywords="{$meta.keywords}"
+        pagesize="{$meta.pagesize}"
+        producer="{$meta.producer}"
+        subject="{$meta.subject}"
+        title="{$meta.title}">
         <!-- Start Front page -->
         <paragraph>
             <chunk font="Helvetica" size="12.0" fontstyle="normal"
                 blue="0" green="0" red="0">
-                <table columns="1" left="false" right="false"
+                <table columns="2" left="false" right="false"
                     top="false" bottom="false" align="Center" width="100%">
                     <row>
                         <cell left="false" right="false" top="false"
                             bottom="false" horizontalalign="Left" verticalalign="middle">
-                            <image
-                                url="http://maven.apache.org/images/apache-maven-project.png"
-                                plainwidth="306.0" plainheight="27.867857" />
+                            <xsl:if test="$cover.companyLogo != ''">
+                                <image url="{$cover.companyLogo}" />
+                            </xsl:if>
+                        </cell>
+                        <cell left="false" right="false" top="false"
+                          bottom="false" horizontalalign="Left" verticalalign="middle">
+                          <xsl:if test="$cover.projectLogo != ''">
+                            <image url="{$cover.projectLogo}" />
+                          </xsl:if>
                         </cell>
                     </row>
                     <row>
                         <cell left="false" right="false" top="false"
                             bottom="false" horizontalalign="Center" verticalalign="middle"
-                            leading="330">
+                            leading="300" colspan="2">
                             <chunk font="Helvetica" size="24.0"
-                                fontstyle="bold" blue="0" green="0" red="0"><xsl:value-of select="$frontPageTitle"/></chunk>
+                              fontstyle="bold" blue="0" green="0" red="0"><xsl:value-of select="$cover.title"/></chunk>
+                        </cell>
+                    </row>
+                    <row>
+                        <cell left="false" right="false" top="false"
+                          bottom="false" horizontalalign="Center" verticalalign="middle"
+                          colspan="2">
+                          <chunk font="Helvetica" size="24.0"
+                            fontstyle="bold" blue="0" green="0" red="0"><xsl:value-of select="$cover.subtitle"/></chunk>
                         </cell>
                     </row>
                     <row>
                         <cell left="false" right="false" top="false"
                             bottom="false" horizontalalign="Left" verticalalign="middle"
-                            leading="330">
+                            leading="300">
                             <chunk font="Helvetica" size="16.0"
-                                fontstyle="bold" blue="0" green="0" red="0"><xsl:value-of select="$frontPageFooter"/></chunk>
+                              fontstyle="bold" blue="0" green="0" red="0"><xsl:value-of select="$cover.companyName"/></chunk>
+                        </cell>
+                        <cell left="false" right="false" top="false"
+                            bottom="false" horizontalalign="right" verticalalign="middle"
+                            leading="300">
+                            <chunk font="Helvetica" size="16.0"
+                              fontstyle="bold" blue="0" green="0" red="0"><xsl:value-of select="$cover.date"/></chunk>
                         </cell>
                     </row>
                 </table>
@@ -76,6 +111,7 @@ under the License.
         <!-- Start TOC -->
         <newpage />
         <paragraph align="Center">
+          <!-- TODO i18N -->
             <chunk font="Helvetica" size="24" fontstyle="bold" blue="0"
                 green="0" red="0">Table Of Contents</chunk>
         </paragraph>
