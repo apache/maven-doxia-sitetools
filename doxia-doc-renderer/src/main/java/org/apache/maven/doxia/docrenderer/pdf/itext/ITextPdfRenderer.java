@@ -599,7 +599,15 @@ public class ITextPdfRenderer
         {
             try
             {
-                return new File(parentFile, logo ).toURL().toString();
+                File f = new File( parentFile, logo );
+                if ( !f.exists() )
+                {
+                    getLogger().warn( "The logo " + f.getAbsolutePath() + " doesnt exist. IGNORING" );
+                }
+                else
+                {
+                    return new File( f.getAbsolutePath() ).toURL().toString();
+                }
             }
             catch ( MalformedURLException e1 )
             {
