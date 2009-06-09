@@ -20,11 +20,14 @@ package org.apache.maven.doxia.docrenderer;
  */
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.maven.doxia.docrenderer.pdf.PdfRenderer;
 import org.apache.maven.doxia.document.DocumentModel;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -94,21 +97,27 @@ public class DocumentRendererTest
         outputDirectory.mkdirs();
 
         docRenderer = (PdfRenderer) lookup( PdfRenderer.ROLE, implementation );
+        assertNotNull( docRenderer );
 
         docRenderer.render( siteDirectoryFile, outputDirectory, null );
 
-        assertTrue( new File( outputDirectory, "faq.pdf" ).exists() );
-        assertTrue( new File( outputDirectory, "faq.pdf" ).length() > 0 );
-        assertTrue( new File( outputDirectory, "index.pdf" ).exists() );
-        assertTrue( new File( outputDirectory, "index.pdf" ).length() > 0 );
-        assertTrue( new File( outputDirectory, "overview.pdf" ).exists() );
-        assertTrue( new File( outputDirectory, "overview.pdf" ).length() > 0 );
-        assertTrue( new File( outputDirectory, "resources.pdf" ).exists() );
-        assertTrue( new File( outputDirectory, "resources.pdf" ).length() > 0 );
-        assertTrue( new File( outputDirectory, "references" + File.separator + "fml-format.pdf" ).exists() );
-        assertTrue( new File( outputDirectory, "references" + File.separator + "fml-format.pdf" ).length() > 0 );
-        assertTrue( new File( outputDirectory, "references" + File.separator + "xdoc-format.pdf" ).exists() );
-        assertTrue( new File( outputDirectory, "references" + File.separator + "xdoc-format.pdf" ).length() > 0 );
+        List files =
+            FileUtils.getFileNames( new File( siteDirectoryFile, "apt" ), "**/*.apt",
+                                    FileUtils.getDefaultExcludesAsString(), false );
+        files.addAll( FileUtils.getFileNames( new File( siteDirectoryFile, "fml" ), "**/*.fml",
+                                              FileUtils.getDefaultExcludesAsString(), false ) );
+        files.addAll( FileUtils.getFileNames( new File( siteDirectoryFile, "xdoc" ), "**/*.xml",
+                                              FileUtils.getDefaultExcludesAsString(), false ) );
+
+        for ( Iterator it = files.iterator(); it.hasNext(); )
+        {
+            String relativeFile = it.next().toString();
+            String relativePdf = StringUtils.replace( relativeFile, FileUtils.getExtension( relativeFile ), "pdf" );
+            File pdf = new File( outputDirectory, relativePdf );
+
+            assertTrue( pdf.exists() );
+            assertTrue( pdf.length() > 0 );
+        }
     }
 
     private void renderAggregatedImpl( String implementation )
@@ -122,12 +131,16 @@ public class DocumentRendererTest
         outputDirectory.mkdirs();
 
         docRenderer = (PdfRenderer) lookup( PdfRenderer.ROLE, implementation );
+        assertNotNull( docRenderer );
 
         DocumentModel descriptor = docRenderer.readDocumentModel( new File( siteDirectoryFile, "pdf.xml" ) );
         assertNotNull( descriptor );
+
         docRenderer.render( siteDirectoryFile, outputDirectory, descriptor );
 
-        assertTrue( new File( outputDirectory, descriptor.getOutputName() + ".pdf" ).exists() );
-        assertTrue( new File( outputDirectory, descriptor.getOutputName() + ".pdf" ).length() > 0 );
+        File pdf = new File( outputDirectory, descriptor.getOutputName() + ".pdf" );
+
+        assertTrue( pdf.exists() );
+        assertTrue( pdf.length() > 0 );
     }
 }

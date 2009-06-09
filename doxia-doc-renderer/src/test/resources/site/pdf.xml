@@ -23,7 +23,7 @@
 <document xmlns="http://maven.apache.org/DOCUMENT/1.0.1"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/DOCUMENT/1.0.1 file:../../../../../../doxia/doxia-core/target/generated-site/xsd/document-1.0.1.xsd"
-  outputName="doxia">
+  outputName="doxia-1.1.1">
 
   <meta>
     <title>Apache Maven Doxia</title>
@@ -47,10 +47,11 @@
   </toc>
 
   <cover>
-    <coverTitle>Apache Maven Doxia</coverTitle>
-    <coverSubTitle>v. ${doxiaVersion}</coverSubTitle>
+    <coverTitle>Apache Maven Doxia Test</coverTitle>
+    <coverSubTitle>v. 1.1.1-SNAPSHOT</coverSubTitle>
     <coverType>User Guide</coverType>
     <companyName>The Apache Software Foundation</companyName>
+    <companyLogo>http://www.apache.org/images/asf_logo_wide.png</companyLogo>
     <projectLogo>./images/doxia-logo.png</projectLogo>
   </cover>
 </document>
