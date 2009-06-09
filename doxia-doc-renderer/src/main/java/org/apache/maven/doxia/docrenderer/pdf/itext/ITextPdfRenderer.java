@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -88,9 +89,21 @@ public class ITextPdfRenderer
     /** The DocumentBuilderFactory. */
     private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 
+    /** The DocumentBuilder. */
+    private static final DocumentBuilder DOCUMENT_BUILDER;
+
     static
     {
         TRANSFORMER_FACTORY.setErrorListener( new DefaultErrorHandler() );
+
+        try
+        {
+            DOCUMENT_BUILDER = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
+        }
+        catch ( ParserConfigurationException e )
+        {
+            throw new RuntimeException( "Error building document :" + e.getMessage() );
+        }
     }
 
     /** {@inheritDoc} */
@@ -260,17 +273,7 @@ public class ITextPdfRenderer
     private Document generateDocument( List iTextFiles )
         throws DocumentRendererException, IOException
     {
-        Document document;
-
-        try
-        {
-            document = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().newDocument();
-        }
-        catch ( ParserConfigurationException e )
-        {
-            throw new DocumentRendererException( "Error building document :" + e.getMessage() );
-        }
-
+        Document document = DOCUMENT_BUILDER.newDocument();
         document.appendChild( document.createElement( ElementTags.ITEXT ) ); // Used only to set a root
 
         for ( int i = 0; i < iTextFiles.size(); i++ )
@@ -281,15 +284,11 @@ public class ITextPdfRenderer
 
             try
             {
-                iTextDocument = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().parse( iTextFile );
+                iTextDocument = DOCUMENT_BUILDER.parse( iTextFile );
             }
             catch ( SAXException e )
             {
                 throw new DocumentRendererException( "SAX Error : " + e.getMessage() );
-            }
-            catch ( ParserConfigurationException e )
-            {
-                throw new DocumentRendererException( "Error parsing configuration : " + e.getMessage() );
             }
 
             // Only one chapter per doc
@@ -507,6 +506,7 @@ public class ITextPdfRenderer
 
             String outputITextName = key.substring( 0, key.lastIndexOf( "." ) + 1 ) + "xml";
             File outputITextFileTmp = new File( outputDirectory, outputITextName );
+            outputITextFileTmp.deleteOnExit();
             if ( !outputITextFileTmp.getParentFile().exists() )
             {
                 outputITextFileTmp.getParentFile().mkdirs();
@@ -563,6 +563,7 @@ public class ITextPdfRenderer
                     {
                         String outputITextName = doc.substring( 0, doc.lastIndexOf( "." ) + 1 ) + "xml";
                         File outputITextFileTmp = new File( outputDirectory, outputITextName );
+                        outputITextFileTmp.deleteOnExit();
                         if ( !outputITextFileTmp.getParentFile().exists() )
                         {
                             outputITextFileTmp.getParentFile().mkdirs();
@@ -606,7 +607,7 @@ public class ITextPdfRenderer
                 }
                 else
                 {
-                    return new File( f.getAbsolutePath() ).toURL().toString();
+                    return f.toURL().toString();
                 }
             }
             catch ( MalformedURLException e1 )
