@@ -38,7 +38,7 @@ public class DocumentRendererTest
 
     private File siteDirectoryFile;
 
-    /** {@inheritDoc} */
+    /** @throws java.lang.Exception */
     protected void setUp()
         throws Exception
     {
@@ -47,7 +47,7 @@ public class DocumentRendererTest
         siteDirectoryFile = getTestFile( "src/test/resources/site" );
     }
 
-    /** {@inheritDoc} */
+    /** @throws java.lang.Exception */
     protected void tearDown()
         throws Exception
     {
@@ -55,22 +55,32 @@ public class DocumentRendererTest
         super.tearDown();
     }
 
+    /** @throws java.lang.Exception */
     public void testFo()
         throws Exception
     {
         renderImpl( "fo" );
-
-        // TODO
-        // renderAggregatedImpl( "fo" );
     }
 
+    /** @throws java.lang.Exception */
+    public void testFoAggregate()
+        throws Exception
+    {
+        renderAggregatedImpl( "fo" );
+    }
+
+    /** @throws java.lang.Exception */
     public void testIText()
         throws Exception
     {
         renderImpl( "itext" );
+    }
 
-        // TODO
-        // renderAggregatedImpl( "itext" );
+    /** @throws java.lang.Exception */
+    public void testITextAggregate()
+        throws Exception
+    {
+        renderAggregatedImpl( "itext" );
     }
 
     private void renderImpl( String implementation )
