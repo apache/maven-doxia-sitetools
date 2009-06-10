@@ -91,19 +91,6 @@ public abstract class AbstractDocumentRenderer
     public abstract void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException;
 
-    /**
-     * Render documents separately for each file found in a Map.
-     *
-     * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
-     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
-     * @param outputDirectory the output directory where the documents should be generated.
-     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
-     * @throws java.io.IOException if any
-     * @since 1.1.1
-     */
-    public abstract void renderIndividual( Map filesToProcess, File outputDirectory )
-        throws DocumentRendererException, IOException;
-
       //--------------------------------------------
      //
     //--------------------------------------------
@@ -168,6 +155,22 @@ public abstract class AbstractDocumentRenderer
         {
             render( getFilesToProcess( baseDirectory ), outputDirectory, readDocumentModel( documentDescriptor ) );
         }
+    }
+
+    /**
+     * Render documents separately for each file found in a Map.
+     *
+     * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
+     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
+     * @param outputDirectory the output directory where the documents should be generated.
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
+     * @since 1.1.1
+     */
+    public void renderIndividual( Map filesToProcess, File outputDirectory )
+        throws DocumentRendererException, IOException
+    {
+        // nop
     }
 
     /**
