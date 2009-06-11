@@ -375,7 +375,7 @@ public class ITextPdfRenderer
                                  System.getProperty( "user.name", "null" ) );
         // see com.lowagie.text.Document#addCreationDate()
         SimpleDateFormat sdf = new SimpleDateFormat( "EEE MMM dd HH:mm:ss zzz yyyy" );
-        addTransformerParameter( transformer, "meta.creationdate", documentModel.getMeta().getCreationDate_(),
+        addTransformerParameter( transformer, "meta.creationdate", documentModel.getMeta().getCreationdate(),
                                  sdf.format( new Date() ) );
         addTransformerParameter( transformer, "meta.keywords", documentModel.getMeta().getAllKeyWords() );
         addTransformerParameter( transformer, "meta.pagesize", documentModel.getMeta().getSubject(),
@@ -403,15 +403,15 @@ public class ITextPdfRenderer
         String companyLogo = getLogoURL( documentModel.getCover().getCompanyLogo(), iTextFile.getParentFile() );
         addTransformerParameter( transformer, "cover.companyLogo", companyLogo );
         addTransformerParameter( transformer, "cover.companyName", documentModel.getCover().getCompanyName() );
-        if ( documentModel.getCover().getCoverDate_() == null )
+        if ( documentModel.getCover().getCoverdate() == null )
         {
             documentModel.getCover().setCoverDate( new Date() );
-            addTransformerParameter( transformer, "cover.date", documentModel.getCover().getCoverDate_() );
+            addTransformerParameter( transformer, "cover.date", documentModel.getCover().getCoverdate() );
             documentModel.getCover().setCoverDate( null );
         }
         else
         {
-            addTransformerParameter( transformer, "cover.date", documentModel.getCover().getCoverDate_() );
+            addTransformerParameter( transformer, "cover.date", documentModel.getCover().getCoverdate() );
         }
         addTransformerParameter( transformer, "cover.subtitle", documentModel.getCover().getCoverSubTitle() );
         addTransformerParameter( transformer, "cover.title", documentModel.getCover().getCoverTitle() );
