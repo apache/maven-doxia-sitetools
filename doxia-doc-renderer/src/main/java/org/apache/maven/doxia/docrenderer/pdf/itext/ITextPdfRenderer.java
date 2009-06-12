@@ -378,7 +378,7 @@ public class ITextPdfRenderer
         addTransformerParameter( transformer, "meta.creationdate", documentModel.getMeta().getCreationdate(),
                                  sdf.format( new Date() ) );
         addTransformerParameter( transformer, "meta.keywords", documentModel.getMeta().getAllKeyWords() );
-        addTransformerParameter( transformer, "meta.pagesize", documentModel.getMeta().getSubject(),
+        addTransformerParameter( transformer, "meta.pagesize", documentModel.getMeta().getPageSize(),
                                  ITextUtil.getPageSize( ITextUtil.getDefaultPageSize() ) );
         addTransformerParameter( transformer, "meta.producer", documentModel.getMeta().getGenerator(),
                                  "Apache Doxia iText" );
