@@ -90,6 +90,10 @@ public class NestedItemsVerifier
         assertNotNull( h4 );
         assertEquals( h4.asText().trim(), "Unordered lists" );
 
+        a = (HtmlAnchor) elementIterator.next();
+        assertNotNull( a );
+        assertEquals( a.getAttributeValue( "name" ), "Unordered_lists" );
+
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
         assertEquals( p.asText().trim(), "Below is an unordered list, followed by six paragraphs." );
@@ -176,6 +180,10 @@ public class NestedItemsVerifier
         assertNotNull( h4 );
         assertEquals( h4.asText().trim(), "Ordered lists" );
 
+        a = (HtmlAnchor) elementIterator.next();
+        assertNotNull( a );
+        assertEquals( a.getAttributeValue( "name" ), "Ordered_lists" );
+
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
         assertEquals( p.asText().trim(), "Below is an ordered list, followed by six paragraphs." );
@@ -257,6 +265,10 @@ public class NestedItemsVerifier
         h4 = (HtmlHeader4) elementIterator.next();
         assertNotNull( h4 );
         assertEquals( h4.asText().trim(), "Definition lists" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertNotNull( a );
+        assertEquals( a.getAttributeValue( "name" ), "Definition_lists" );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );

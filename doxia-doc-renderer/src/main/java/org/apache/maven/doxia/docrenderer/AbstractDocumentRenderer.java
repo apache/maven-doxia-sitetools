@@ -79,11 +79,11 @@ public abstract class AbstractDocumentRenderer
     //--------------------------------------------
 
     /**
-     * Render a document from the files found in a Map.
+     * Render an aggregate document from the files found in a Map.
      *
      * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
      *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
-     * @param outputDirectory the output directory where the document should be generated.
+     * @param outputDirectory the output directory where the aggregate document should be generated.
      * @param documentModel the document model, containing all the metadata, etc.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
@@ -118,11 +118,12 @@ public abstract class AbstractDocumentRenderer
      * @param outputDirectory the output directory where the document should be generated.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
+     * @see #render(File, File, DocumentModel)
      */
     public void render( File baseDirectory, File outputDirectory )
         throws DocumentRendererException, IOException
     {
-        render( baseDirectory, outputDirectory, new DocumentModel() );
+        render( baseDirectory, outputDirectory, (DocumentModel) null );
     }
 
     /**
@@ -135,6 +136,8 @@ public abstract class AbstractDocumentRenderer
      *              If this file does not exist or is null, some default settings will be used.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
+     * @see #render(File, File) if documentDescriptor does not exist or is null
+     * @see #render(Map, File, DocumentModel) otherwise
      */
     public void render( File baseDirectory, File outputDirectory, File documentDescriptor )
         throws DocumentRendererException, IOException
@@ -152,6 +155,22 @@ public abstract class AbstractDocumentRenderer
         {
             render( getFilesToProcess( baseDirectory ), outputDirectory, readDocumentModel( documentDescriptor ) );
         }
+    }
+
+    /**
+     * Render documents separately for each file found in a Map.
+     *
+     * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
+     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
+     * @param outputDirectory the output directory where the documents should be generated.
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
+     * @since 1.1.1
+     */
+    public void renderIndividual( Map filesToProcess, File outputDirectory )
+        throws DocumentRendererException, IOException
+    {
+        // nop
     }
 
     /**
@@ -340,6 +359,11 @@ public abstract class AbstractDocumentRenderer
     protected void parse( String fullDocPath, String parserId, Sink sink )
         throws DocumentRendererException, IOException
     {
+        if ( getLogger().isDebugEnabled() )
+        {
+            getLogger().debug( "Parsing file " + fullDocPath );
+        }
+
         Reader reader = null;
         try
         {
@@ -391,10 +415,17 @@ public abstract class AbstractDocumentRenderer
     {
         File resourcesDirectory = new File( getBaseDir(), "resources" );
 
-        if ( resourcesDirectory.isDirectory() && outputDirectory.isDirectory() )
+        if ( !resourcesDirectory.isDirectory() )
         {
-            copyDirectory( resourcesDirectory, outputDirectory );
+            return;
         }
+
+        if ( !outputDirectory.exists() )
+        {
+            outputDirectory.mkdirs();
+        }
+
+        copyDirectory( resourcesDirectory, outputDirectory );
     }
 
     /**
@@ -434,5 +465,35 @@ public abstract class AbstractDocumentRenderer
                 FileUtils.copyFile( sourceFile, destinationFile );
             }
         }
+    }
+
+    /**
+     * @param documentModel not null
+     * @return the output name defined in the documentModel without the output extension. If the output name is not
+     * defined, return target by default.
+     * @since 1.1.1
+     * @see org.apache.maven.doxia.document.DocumentModel#getOutputName()
+     * @see #getOutputExtension()
+     */
+    protected String getOutputName( DocumentModel documentModel )
+    {
+        String outputName = documentModel.getOutputName();
+        if ( outputName == null )
+        {
+            getLogger().info( "No outputName is defined in the document descriptor. Using 'target'" );
+
+            documentModel.setOutputName( "target" );
+        }
+
+        outputName = outputName.trim();
+        if ( outputName.toLowerCase( Locale.ENGLISH ).endsWith( "." + getOutputExtension() ) )
+        {
+            outputName =
+                outputName.substring( 0, outputName.toLowerCase( Locale.ENGLISH )
+                                                   .lastIndexOf( "." + getOutputExtension() ) );
+        }
+        documentModel.setOutputName( outputName );
+
+        return documentModel.getOutputName();
     }
 }

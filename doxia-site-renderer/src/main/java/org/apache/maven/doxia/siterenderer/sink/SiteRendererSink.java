@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.text.html.HTML.Attribute;
-import javax.swing.text.html.HTML.Tag;
 
 import org.apache.maven.doxia.module.xhtml.XhtmlSink;
 import org.apache.maven.doxia.sink.render.RenderingContext;
@@ -52,6 +51,8 @@ public class SiteRendererSink
     private List authors = new ArrayList();
 
     private final StringWriter headWriter;
+
+    private StringBuffer sectionTitleBuffer;
 
     private boolean sectionHasID;
 
@@ -183,7 +184,7 @@ public class SiteRendererSink
     }
 
     /**
-     * <p>getBody</p>
+     * <p>getBody.</p>
      *
      * @return a {@link java.lang.String} object.
      */
@@ -193,7 +194,7 @@ public class SiteRendererSink
     }
 
     /**
-     * <p>getHead</p>
+     * <p>getHead.</p>
      *
      * @return a {@link java.lang.String} object.
      *
@@ -216,103 +217,32 @@ public class SiteRendererSink
         setHeadFlag( true );
     }
 
-
     /** {@inheritDoc} */
-    public void sectionTitle( int level, SinkEventAttributes attributes )
+    protected void onSectionTitle( int depth, SinkEventAttributes attributes )
     {
-        if ( level == SECTION_LEVEL_1 || level == SECTION_LEVEL_2 )
-        {
-            setHeadFlag( true );
+        this.sectionTitleBuffer = new StringBuffer();
+        sectionHasID = ( attributes != null && attributes.isDefined ( Attribute.ID.toString() ) );
 
-            sectionHasID = ( attributes != null && attributes.isDefined ( Attribute.ID.toString() ) );
-        }
-        else
-        {
-            super.sectionTitle( level, attributes );
-        }
+        super.onSectionTitle( depth, attributes );
     }
 
     /** {@inheritDoc} */
-    public void sectionTitle_( int level )
+    protected void onSectionTitle_( int depth )
     {
-        if ( level == SECTION_LEVEL_1 || level == SECTION_LEVEL_2 )
+        String sectionTitle = sectionTitleBuffer.toString();
+        this.sectionTitleBuffer = null;
+
+        if ( !sectionHasID && !StringUtils.isEmpty( sectionTitle ) )
         {
-            String sectionTitle = "";
-
-            if ( getTextBuffer().length() > 0 )
-            {
-                sectionTitle = getTextBuffer().toString();
-            }
-
-            resetTextBuffer();
-
-            setHeadFlag( false );
-
-            writeStartTag( level == SECTION_LEVEL_1 ? Tag.H2 : Tag.H3  );
-
-            if ( !sectionHasID && !StringUtils.isEmpty( sectionTitle ) )
-            {
-                anchor( HtmlTools.encodeId( sectionTitle ) );
-                anchor_();
-            }
-            else
-            {
-                sectionHasID = false;
-            }
-
-            text( sectionTitle );
-            writeEndTag( level == SECTION_LEVEL_1 ? Tag.H2 : Tag.H3 );
+            anchor( HtmlTools.encodeId( sectionTitle ) );
+            anchor_();
         }
         else
         {
-            super.sectionTitle_( level );
+            sectionHasID = false;
         }
-    }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Sets the head flag to true so the title text is buffered until the closing tag.
-     * @see org.apache.maven.doxia.sink.XhtmlBaseSink#sectionTitle1()
-     */
-    public void sectionTitle1()
-    {
-        sectionTitle( SECTION_LEVEL_1, null );
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Writes out a sectionTitle1 block, including an anchor that is constructed from the
-     * buffered title text via {@link org.apache.maven.doxia.util.HtmlTools#encodeId(String)}.
-     * @see org.apache.maven.doxia.sink.XhtmlBaseSink#sectionTitle1_()
-     */
-    public void sectionTitle1_()
-    {
-        sectionTitle_( SECTION_LEVEL_1 );
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Sets the head flag to true so the title text is buffered until the closing tag.
-     * @see org.apache.maven.doxia.sink.XhtmlBaseSink#sectionTitle2()
-     */
-    public void sectionTitle2()
-    {
-        sectionTitle( SECTION_LEVEL_2, null );
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Writes out a sectionTitle2 block, including an anchor that is constructed from the
-     * buffered title text via {@link org.apache.maven.doxia.util.HtmlTools#encodeId(String)}.
-     * @see org.apache.maven.doxia.sink.XhtmlBaseSink#sectionTitle2_()
-     */
-    public void sectionTitle2_()
-    {
-        sectionTitle_( SECTION_LEVEL_2 );
+        super.onSectionTitle_( depth );
     }
 
     /**
@@ -324,6 +254,18 @@ public class SiteRendererSink
     public RenderingContext getRenderingContext()
     {
         return renderingContext;
+    }
+
+    /** {@inheritDoc} */
+    public void text( String text )
+    {
+        if ( sectionTitleBuffer != null )
+        {
+            // this implies we're inside a section title, collect text events for anchor generation
+            sectionTitleBuffer.append( text );
+        }
+
+        super.text( text );
     }
 
     /** {@inheritDoc} */

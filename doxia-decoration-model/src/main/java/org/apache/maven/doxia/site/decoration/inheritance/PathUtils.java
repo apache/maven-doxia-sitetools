@@ -42,7 +42,7 @@ public abstract class PathUtils
     }
 
     /**
-     * <p>convertPath</p>
+     * <p>convertPath.</p>
      *
      * @param oldPath not null
      * @param newPath not null
@@ -63,7 +63,7 @@ public abstract class PathUtils
     }
 
     /**
-     * <p>getRelativePath</p>
+     * <p>getRelativePath.</p>
      *
      * @param oldPathDescriptor not null
      * @param newPathDescriptor not null

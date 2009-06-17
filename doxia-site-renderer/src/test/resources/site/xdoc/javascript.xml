@@ -33,7 +33,9 @@
       <p>You should see a JavaScript alert...</p>
 
       <script type="text/javascript">
-        <![CDATA[alert("Hello!");]]>
+        //<![CDATA[
+        alert("Hello!");
+        //]]>
       </script>
 
     </section>

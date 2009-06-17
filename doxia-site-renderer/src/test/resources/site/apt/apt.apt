@@ -38,6 +38,12 @@ Links
   Link to {{{./cdc.html}other document}} and within {{{cdc.html}same document}}.
   Link to {{{/index.html}root document}}.
 
+Section formatting: <italic> <<bold>> <<<mono>>>
+
+* SubSection formatting: <italic> <<bold>> <<<mono>>>
+
+  <italic> <<bold>> <<<mono>>>
+
 TOC Macro
 
 %{toc}

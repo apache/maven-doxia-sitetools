@@ -139,5 +139,43 @@ under the License.
       <artifactId>commons-collections</artifactId>
       <version>3.2</version>
     </dependency>
+
+    <!-- test -->
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-core</artifactId>
+      <version>${doxiaVersion}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>reporting</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>l10n-maven-plugin</artifactId>
+            <version>1.0-alpha-2</version>
+            <configuration>
+              <locales>
+                <locale>de</locale>
+                <locale>en</locale>
+                <locale>es</locale>
+                <locale>fr</locale>
+                <locale>it</locale>
+                <locale>ja</locale>
+                <locale>nl</locale>
+                <locale>pl</locale>
+                <locale>pt_BR</locale>
+                <locale>zh_CN</locale>
+              </locales>
+            </configuration>
+          </plugin>
+        </plugins>
+      </reporting>
+    </profile>
+  </profiles>
 </project>

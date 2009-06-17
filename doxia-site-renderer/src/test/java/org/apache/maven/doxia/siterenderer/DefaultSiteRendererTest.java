@@ -20,18 +20,26 @@ package org.apache.maven.doxia.siterenderer;
  */
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.apache.maven.doxia.xsd.AbstractXmlValidatorTest;
 
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 
 
 /**
@@ -62,6 +70,21 @@ public class DefaultSiteRendererTest
         super.setUp();
 
         renderer = (Renderer) lookup( Renderer.ROLE );
+
+        // copy the default-site.vm
+        InputStream is =
+            this.getResourceAsStream( "/org/apache/maven/doxia/siterenderer/resources/default-site.vm" );
+        assertNotNull( is );
+        OutputStream os = new FileOutputStream( new File( getBasedir(), "target/test-classes/default-site.vm" ) );
+        try
+        {
+            IOUtil.copy( is, os );
+        }
+        finally
+        {
+            IOUtil.close( is );
+            IOUtil.close( os );
+        }
 
         // Safety
         FileUtils.deleteDirectory( getTestFile( OUTPUT ) );
@@ -117,6 +140,11 @@ public class DefaultSiteRendererTest
         verifyMisc();
         verifyDocbookPageExists();
         verifyApt();
+
+        // ----------------------------------------------------------------------
+        // Validate the rendering pages
+        // ----------------------------------------------------------------------
+        validatePages();
     }
 
     /**
@@ -251,5 +279,83 @@ public class DefaultSiteRendererTest
     {
         AptVerifier verifier = new AptVerifier();
         verifier.verify( "target/output/apt.html" );
+    }
+
+    /**
+     * Validate the generated pages.
+     *
+     * @throws Exception if something goes wrong.
+     * @since 1.1.1
+     */
+    public void validatePages() throws Exception
+    {
+        // Need to refactor...
+        XhtmlValidatorTest validator = new XhtmlValidatorTest();
+        validator.setUp();
+        validator.testValidateFiles();
+    }
+
+    protected static class XhtmlValidatorTest
+        extends AbstractXmlValidatorTest
+    {
+        /** {@inheritDoc} */
+        protected void setUp()
+            throws Exception
+        {
+            super.setUp();
+        }
+
+        /** {@inheritDoc} */
+        protected void tearDown()
+            throws Exception
+        {
+            super.tearDown();
+        }
+
+        /** {@inheritDoc} */
+        protected String[] getIncludes()
+        {
+            return new String[] { "**/*.html" };
+        }
+
+        /** {@inheritDoc} */
+        protected String addNamespaces( String content )
+        {
+            return content;
+        }
+
+        /** {@inheritDoc} */
+        protected Map getTestDocuments()
+            throws IOException
+        {
+            Map testDocs = new HashMap();
+
+            File dir = new File( getBasedir(), "target/output" );
+
+            List l = FileUtils.getFileNames( dir, getIncludes()[0], FileUtils.getDefaultExcludesAsString(), true );
+            for ( Iterator it = l.iterator(); it.hasNext(); )
+            {
+                String file = it.next().toString();
+                file = StringUtils.replace( file, "\\", "/" );
+
+                Reader reader = ReaderFactory.newXmlReader( new File( file ) );
+                try
+                {
+                    testDocs.put( file, IOUtil.toString( reader ) );
+                }
+                finally
+                {
+                    IOUtil.close( reader );
+                }
+            }
+
+            return testDocs;
+        }
+
+        /** {@inheritDoc} */
+        protected boolean isFailErrorMessage( String message )
+        {
+            return true;
+        }
     }
 }

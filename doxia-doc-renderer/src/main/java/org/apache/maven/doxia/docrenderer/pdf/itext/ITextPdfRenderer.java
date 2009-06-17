@@ -24,13 +24,18 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -44,12 +49,17 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
+import org.apache.maven.doxia.document.DocumentCover;
+import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
+import org.apache.maven.doxia.document.DocumentTOCItem;
 import org.apache.maven.doxia.module.itext.ITextSink;
 import org.apache.maven.doxia.module.itext.ITextSinkFactory;
 import org.apache.maven.doxia.module.itext.ITextUtil;
 import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.xml.utils.DefaultErrorHandler;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -71,7 +81,7 @@ public class ITextPdfRenderer
     extends AbstractPdfRenderer
 {
     /** The xslt style sheet used to transform a Document to an iText file. */
-    private static final String XSLT_RESOURCE = "org/apache/maven/doxia/docrenderer/itext/xslt/TOC.xslt";
+    private static final String XSLT_RESOURCE = "TOC.xslt";
 
     /** The TransformerFactory. */
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
@@ -79,9 +89,21 @@ public class ITextPdfRenderer
     /** The DocumentBuilderFactory. */
     private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 
+    /** The DocumentBuilder. */
+    private static final DocumentBuilder DOCUMENT_BUILDER;
+
     static
     {
         TRANSFORMER_FACTORY.setErrorListener( new DefaultErrorHandler() );
+
+        try
+        {
+            DOCUMENT_BUILDER = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
+        }
+        catch ( ParserConfigurationException e )
+        {
+            throw new RuntimeException( "Error building document :" + e.getMessage() );
+        }
     }
 
     /** {@inheritDoc} */
@@ -108,70 +130,90 @@ public class ITextPdfRenderer
     }
 
     /** {@inheritDoc} */
-    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel    )
+    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
-        String outputName = documentModel.getOutputName();
+        // copy resources, images, etc.
+        copyResources( outputDirectory );
 
-        if ( outputName == null )
+        if ( documentModel == null )
         {
-            if ( getLogger().isInfoEnabled() )
-            {
-                getLogger().info( "No outputName is defined in the document descriptor. Using 'target.pdf'" );
-            }
+            getLogger().debug( "No document model, generating all documents individually." );
 
-            documentModel.setOutputName( "target" );
-        }
-        else if ( outputName.lastIndexOf( "." ) != -1 )
-        {
-            documentModel.setOutputName( outputName.substring( 0, outputName.lastIndexOf( "." ) ) );
+            renderIndividual( filesToProcess, outputDirectory );
+            return;
         }
 
-// TODO: adjust from o.a.m.d.docrenderer.itext.AbstractITextRender
-//        if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
-//        {
-//            getLogger().info( "No TOC is defined in the document descriptor. Generating all documents." );
+        String outputName = getOutputName( documentModel );
 
-            for ( Iterator j = filesToProcess.keySet().iterator(); j.hasNext(); )
-            {
-                String key = (String) j.next();
+        File outputITextFile = new File( outputDirectory, outputName + ".xml" );
+        if ( !outputITextFile.getParentFile().exists() )
+        {
+            outputITextFile.getParentFile().mkdirs();
+        }
 
-                SiteModule module = (SiteModule) filesToProcess.get( key );
+        File pdfOutputFile = new File( outputDirectory, outputName + ".pdf" );
+        if ( !pdfOutputFile.getParentFile().exists() )
+        {
+            pdfOutputFile.getParentFile().mkdirs();
+        }
 
+        List iTextFiles;
+        if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
+        {
+            getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
 
-                String fullDocPath = getBaseDir() + File.separator
-                            + module.getSourceDirectory() + File.separator + key;
-
-                String iTextFileName = key.substring( 0, key.indexOf( "." ) + 1 ) + "xml";
-
-                File iTextFile = new File( outputDirectory, iTextFileName );
-                if ( !iTextFile.getParentFile().exists() )
-                {
-                    iTextFile.getParentFile().mkdirs();
-                }
-
-                String pdfFileName = key.substring( 0, key.indexOf( "." ) + 1 ) + getOutputExtension();
-
-                File pdfFile = new File( outputDirectory, pdfFileName );
-                if ( !pdfFile.getParentFile().exists() )
-                {
-                    pdfFile.getParentFile().mkdirs();
-                }
-
-                parse( fullDocPath, module, iTextFile );
-
-                generatePdf( iTextFile, pdfFile );
-            }
-/*
+            iTextFiles = parseAllFiles( filesToProcess, outputDirectory );
         }
         else
         {
-            // TODO: adjust from o.a.m.d.docrenderer.itext.AbstractITextRender
-        }
-*/
+            getLogger().debug( "Using TOC defined in the document descriptor." );
 
+            iTextFiles = parseTOCFiles( filesToProcess, outputDirectory, documentModel );
+        }
+
+        File iTextFile = new File( outputDirectory, outputName + ".xml" );
+        File iTextOutput = new File( outputDirectory, outputName + "." + getOutputExtension() );
+        Document document = generateDocument( iTextFiles );
+        transform( documentModel, document, iTextFile );
+        generatePdf( iTextFile, iTextOutput );
     }
 
+    /** {@inheritDoc} */
+    public void renderIndividual( Map filesToProcess, File outputDirectory )
+        throws DocumentRendererException, IOException
+    {
+        for ( Iterator it = filesToProcess.keySet().iterator(); it.hasNext(); )
+        {
+            String key = (String) it.next();
+            SiteModule module = (SiteModule) filesToProcess.get( key );
+            File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
+
+            String output = key;
+            String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
+            if ( output.toLowerCase( Locale.ENGLISH ).indexOf( "." + lowerCaseExtension ) != -1 )
+            {
+                output =
+                    output.substring( 0, output.toLowerCase( Locale.ENGLISH ).indexOf( "." + lowerCaseExtension ) );
+            }
+
+            File outputITextFile = new File( outputDirectory, output + ".xml" );
+            if ( !outputITextFile.getParentFile().exists() )
+            {
+                outputITextFile.getParentFile().mkdirs();
+            }
+
+            File pdfOutputFile = new File( outputDirectory, output + ".pdf" );
+            if ( !pdfOutputFile.getParentFile().exists() )
+            {
+                pdfOutputFile.getParentFile().mkdirs();
+            }
+
+            parse( fullDoc, module, outputITextFile );
+
+            generatePdf( outputITextFile, pdfOutputFile );
+        }
+    }
 
       //--------------------------------------------
      //
@@ -181,23 +223,43 @@ public class ITextPdfRenderer
     /**
      * Parse a source document and emit results into a sink.
      *
-     * @param fullDocPath absolute path to the source document.
+     * @param fullDocPath file to the source document.
      * @param module the site module associated with the source document (determines the parser to use).
      * @param iTextFile the resulting iText xml file.
      * @throws DocumentRendererException in case of a parsing problem.
      * @throws IOException if the source and/or target document cannot be opened.
      */
-    private void parse( String fullDocPath, SiteModule module, File iTextFile )
+    private void parse( File fullDoc, SiteModule module, File iTextFile )
         throws DocumentRendererException, IOException
     {
-        Writer writer = WriterFactory.newXmlWriter( iTextFile );
-        ITextSink sink = (ITextSink) new ITextSinkFactory().createSink( writer );
+        if ( getLogger().isDebugEnabled() )
+        {
+            getLogger().debug( "Parsing file " + fullDoc.getAbsolutePath() );
+        }
 
-        sink.setClassLoader( new URLClassLoader( new URL[] { iTextFile.getParentFile().toURI().toURL() } ) );
+        System.setProperty( "itext.basedir", iTextFile.getParentFile().getAbsolutePath() );
 
-        parse( fullDocPath, module.getParserId(), sink );
+        Writer writer = null;
+        ITextSink sink = null;
+        try
+        {
+            writer = WriterFactory.newXmlWriter( iTextFile );
+            sink = (ITextSink) new ITextSinkFactory().createSink( writer );
 
-        sink.close();
+            sink.setClassLoader( new URLClassLoader( new URL[] { iTextFile.getParentFile().toURI().toURL() } ) );
+
+            parse( fullDoc.getAbsolutePath(), module.getParserId(), sink );
+        }
+        finally
+        {
+            if ( sink != null )
+            {
+                sink.flush();
+                sink.close();
+            }
+            IOUtil.close( writer );
+            System.getProperties().remove( "itext.basedir" );
+        }
     }
 
     /**
@@ -211,17 +273,7 @@ public class ITextPdfRenderer
     private Document generateDocument( List iTextFiles )
         throws DocumentRendererException, IOException
     {
-        Document document;
-
-        try
-        {
-            document = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().newDocument();
-        }
-        catch ( ParserConfigurationException e )
-        {
-            throw new DocumentRendererException( "Error building document :" + e.getMessage() );
-        }
-
+        Document document = DOCUMENT_BUILDER.newDocument();
         document.appendChild( document.createElement( ElementTags.ITEXT ) ); // Used only to set a root
 
         for ( int i = 0; i < iTextFiles.size(); i++ )
@@ -232,15 +284,11 @@ public class ITextPdfRenderer
 
             try
             {
-                iTextDocument = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder().parse( iTextFile );
+                iTextDocument = DOCUMENT_BUILDER.parse( iTextFile );
             }
             catch ( SAXException e )
             {
                 throw new DocumentRendererException( "SAX Error : " + e.getMessage() );
-            }
-            catch ( ParserConfigurationException e )
-            {
-                throw new DocumentRendererException( "Error parsing configuration : " + e.getMessage() );
             }
 
             // Only one chapter per doc
@@ -271,8 +319,8 @@ public class ITextPdfRenderer
     {
         try
         {
-            Transformer transformer = TRANSFORMER_FACTORY.newTransformer( new StreamSource( AbstractPdfRenderer.class
-                .getResourceAsStream( "/" + XSLT_RESOURCE ) ) );
+            Transformer transformer = TRANSFORMER_FACTORY.newTransformer( new StreamSource( ITextPdfRenderer.class
+                .getResourceAsStream( XSLT_RESOURCE ) ) );
 
             transformer.setErrorListener( TRANSFORMER_FACTORY.getErrorListener() );
 
@@ -283,6 +331,8 @@ public class ITextPdfRenderer
             transformer.setOutputProperty( OutputKeys.METHOD, "xml" );
 
             transformer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
+
+            // No doctype since itext doctype is not up to date!
 
             return transformer;
         }
@@ -302,57 +352,119 @@ public class ITextPdfRenderer
      * Add transformer parameters from a DocumentModel.
      *
      * @param transformer the Transformer to set the parameters.
-     * @param documentModel the DocumentModel to take the parameters from.
+     * @param documentModel the DocumentModel to take the parameters from, could be null.
+     * @param iTextFile the iTextFile not null for the relative paths.
      */
-    private void addTransformerParameters( Transformer transformer, DocumentModel documentModel )
+    private void addTransformerParameters( Transformer transformer, DocumentModel documentModel, File iTextFile )
     {
-        if ( documentModel.getMeta().getTitle() != null )
+        if ( documentModel == null )
         {
-            transformer.setParameter( "title", documentModel.getMeta().getTitle() );
+            return;
         }
 
-        if ( documentModel.getMeta().getAuthor() != null )
+        // Meta parameters
+        boolean hasNullMeta = false;
+        if ( documentModel.getMeta() == null )
         {
-            transformer.setParameter( "author", documentModel.getMeta().getAuthor() );
+            hasNullMeta = true;
+            documentModel.setMeta( new DocumentMeta() );
+        }
+        addTransformerParameter( transformer, "meta.author", documentModel.getMeta().getAllAuthorNames(),
+                                 System.getProperty( "user.name", "null" ) );
+        addTransformerParameter( transformer, "meta.creator", documentModel.getMeta().getCreator(),
+                                 System.getProperty( "user.name", "null" ) );
+        // see com.lowagie.text.Document#addCreationDate()
+        SimpleDateFormat sdf = new SimpleDateFormat( "EEE MMM dd HH:mm:ss zzz yyyy" );
+        addTransformerParameter( transformer, "meta.creationdate", documentModel.getMeta().getCreationdate(),
+                                 sdf.format( new Date() ) );
+        addTransformerParameter( transformer, "meta.keywords", documentModel.getMeta().getAllKeyWords() );
+        addTransformerParameter( transformer, "meta.pagesize", documentModel.getMeta().getPageSize(),
+                                 ITextUtil.getPageSize( ITextUtil.getDefaultPageSize() ) );
+        addTransformerParameter( transformer, "meta.producer", documentModel.getMeta().getGenerator(),
+                                 "Apache Doxia iText" );
+        addTransformerParameter( transformer, "meta.subject", documentModel.getMeta().getSubject(),
+                                 ( documentModel.getMeta().getTitle() != null ? documentModel.getMeta().getTitle()
+                                                 : "" ) );
+        addTransformerParameter( transformer, "meta.title", documentModel.getMeta().getTitle() );
+        if ( hasNullMeta )
+        {
+            documentModel.setMeta( null );
         }
 
-        transformer.setParameter( "creationdate", new Date().toString() );
-
-        if ( documentModel.getMeta().getSubject() != null )
+        // cover parameter
+        boolean hasNullCover = false;
+        if ( documentModel.getCover() == null )
         {
-            transformer.setParameter( "subject", documentModel.getMeta().getSubject() );
+            hasNullCover = true;
+            documentModel.setCover( new DocumentCover() );
         }
-
-        if ( documentModel.getMeta().getKeywords() != null )
+        addTransformerParameter( transformer, "cover.author", documentModel.getCover().getAllAuthorNames(),
+                                 System.getProperty( "user.name", "null" ) );
+        String companyLogo = getLogoURL( documentModel.getCover().getCompanyLogo(), iTextFile.getParentFile() );
+        addTransformerParameter( transformer, "cover.companyLogo", companyLogo );
+        addTransformerParameter( transformer, "cover.companyName", documentModel.getCover().getCompanyName() );
+        if ( documentModel.getCover().getCoverdate() == null )
         {
-            transformer.setParameter( "keywords", documentModel.getMeta().getKeywords() );
-        }
-
-        transformer.setParameter( "producer", "Generated with Doxia by " + System.getProperty( "user.name" ) );
-
-        if ( ITextUtil.isPageSizeSupported( documentModel.getMeta().getTitle() ) )
-        {
-            transformer.setParameter( "pagesize", documentModel.getMeta().getPageSize() );
+            documentModel.getCover().setCoverDate( new Date() );
+            addTransformerParameter( transformer, "cover.date", documentModel.getCover().getCoverdate() );
+            documentModel.getCover().setCoverDate( null );
         }
         else
         {
-            transformer.setParameter( "pagesize", "A4" );
+            addTransformerParameter( transformer, "cover.date", documentModel.getCover().getCoverdate() );
         }
-
-        transformer.setParameter( "frontPageHeader", "" );
-
-        if ( documentModel.getMeta().getTitle() != null )
+        addTransformerParameter( transformer, "cover.subtitle", documentModel.getCover().getCoverSubTitle() );
+        addTransformerParameter( transformer, "cover.title", documentModel.getCover().getCoverTitle() );
+        addTransformerParameter( transformer, "cover.type", documentModel.getCover().getCoverType() );
+        addTransformerParameter( transformer, "cover.version", documentModel.getCover().getCoverVersion() );
+        String projectLogo = getLogoURL( documentModel.getCover().getProjectLogo(), iTextFile.getParentFile() );
+        addTransformerParameter( transformer, "cover.projectLogo", projectLogo );
+        addTransformerParameter( transformer, "cover.projectName", documentModel.getCover().getProjectName() );
+        if ( hasNullCover )
         {
-            transformer.setParameter( "frontPageTitle", documentModel.getMeta().getTitle() );
+            documentModel.setCover( null );
+        }
+    }
+
+    /**
+     * @param transformer not null
+     * @param name not null
+     * @param value could be empty
+     * @param defaultValue could be empty
+     * @since 1.1.1
+     */
+    private void addTransformerParameter( Transformer transformer, String name, String value, String defaultValue )
+    {
+        if ( StringUtils.isEmpty( value ) )
+        {
+            addTransformerParameter( transformer, name, defaultValue );
+        }
+        else
+        {
+            addTransformerParameter( transformer, name, value );
+        }
+    }
+
+    /**
+     * @param transformer not null
+     * @param name not null
+     * @param value could be empty
+     * @since 1.1.1
+     */
+    private void addTransformerParameter( Transformer transformer, String name, String value )
+    {
+        if ( StringUtils.isEmpty( value ) )
+        {
+            return;
         }
 
-        transformer.setParameter( "frontPageFooter", "Generated date " + new Date().toString() );
+        transformer.setParameter( name, value );
     }
 
     /**
      * Transform a document to an iTextFile.
      *
-     * @param documentModel the DocumentModel to take the parameters from.
+     * @param documentModel the DocumentModel to take the parameters from, could be null.
      * @param document the Document to transform.
      * @param iTextFile the resulting iText xml file.
      * @throws DocumentRendererException in case of a transformation error.
@@ -362,7 +474,7 @@ public class ITextPdfRenderer
     {
         Transformer transformer = initTransformer();
 
-        addTransformerParameters( transformer, documentModel );
+        addTransformerParameters( transformer, documentModel, iTextFile );
 
         try
         {
@@ -372,5 +484,138 @@ public class ITextPdfRenderer
         {
             throw new DocumentRendererException( "Error transforming Document " + document + ": " + e.getMessage() );
         }
+    }
+
+    /**
+     * @param filesToProcess not null
+     * @param outputDirectory not null
+     * @return a list of all parsed files.
+     * @throws DocumentRendererException if any
+     * @throws IOException if any
+     * @since 1.1.1
+     */
+    private List parseAllFiles( Map filesToProcess, File outputDirectory )
+        throws DocumentRendererException, IOException
+    {
+        List iTextFiles = new LinkedList();
+        for ( Iterator it = filesToProcess.keySet().iterator(); it.hasNext(); )
+        {
+            String key = (String) it.next();
+            SiteModule module = (SiteModule) filesToProcess.get( key );
+            File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
+
+            String outputITextName = key.substring( 0, key.lastIndexOf( "." ) + 1 ) + "xml";
+            File outputITextFileTmp = new File( outputDirectory, outputITextName );
+            outputITextFileTmp.deleteOnExit();
+            if ( !outputITextFileTmp.getParentFile().exists() )
+            {
+                outputITextFileTmp.getParentFile().mkdirs();
+            }
+
+            iTextFiles.add( outputITextFileTmp );
+            parse( fullDoc, module, outputITextFileTmp );
+        }
+
+        return iTextFiles;
+    }
+
+    /**
+     * @param filesToProcess not null
+     * @param outputDirectory not null
+     * @return a list of all parsed files.
+     * @throws DocumentRendererException if any
+     * @throws IOException if any
+     * @since 1.1.1
+     */
+    private List parseTOCFiles( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
+        throws DocumentRendererException, IOException
+    {
+        List iTextFiles = new LinkedList();
+        for ( Iterator it = documentModel.getToc().getItems().iterator(); it.hasNext(); )
+        {
+            DocumentTOCItem tocItem = (DocumentTOCItem) it.next();
+
+            if ( tocItem.getRef() == null )
+            {
+                getLogger().debug(
+                                   "No ref defined for the tocItem '" + tocItem.getName()
+                                       + "' in the document descriptor. IGNORING" );
+                continue;
+            }
+
+            String href = StringUtils.replace( tocItem.getRef(), "\\", "/" );
+            if ( href.lastIndexOf( "." ) != -1 )
+            {
+                href = href.substring( 0, href.lastIndexOf( "." ) );
+            }
+
+            for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
+            {
+                SiteModule module = (SiteModule) i.next();
+                File moduleBasedir = new File( getBaseDir(), module.getSourceDirectory() );
+
+                if ( moduleBasedir.exists() )
+                {
+                    String doc = href + "." + module.getExtension();
+                    File source = new File( moduleBasedir, doc );
+
+                    if ( source.exists() )
+                    {
+                        String outputITextName = doc.substring( 0, doc.lastIndexOf( "." ) + 1 ) + "xml";
+                        File outputITextFileTmp = new File( outputDirectory, outputITextName );
+                        outputITextFileTmp.deleteOnExit();
+                        if ( !outputITextFileTmp.getParentFile().exists() )
+                        {
+                            outputITextFileTmp.getParentFile().mkdirs();
+                        }
+
+                        iTextFiles.add( outputITextFileTmp );
+                        parse( source, module, outputITextFileTmp );
+                    }
+                }
+            }
+        }
+
+        return iTextFiles;
+    }
+
+    /**
+     * @param logo
+     * @param parentFile
+     * @return the logo url or null if unable to create it.
+     * @since 1.1.1
+     */
+    private String getLogoURL( String logo, File parentFile )
+    {
+        if ( logo == null )
+        {
+            return null;
+        }
+
+        try
+        {
+            return new URL( logo ).toString();
+        }
+        catch ( MalformedURLException e )
+        {
+            try
+            {
+                File f = new File( parentFile, logo );
+                if ( !f.exists() )
+                {
+                    getLogger().warn( "The logo " + f.getAbsolutePath() + " doesnt exist. IGNORING" );
+                }
+                else
+                {
+                    return f.toURL().toString();
+                }
+            }
+            catch ( MalformedURLException e1 )
+            {
+                // nope
+            }
+        }
+
+        return null;
     }
 }

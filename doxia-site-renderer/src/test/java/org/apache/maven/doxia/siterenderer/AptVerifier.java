@@ -23,14 +23,16 @@ import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader2;
+import com.gargoylesoftware.htmlunit.html.HtmlHeader3;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
+import com.gargoylesoftware.htmlunit.html.UnknownHtmlElement;
 
 import java.util.Iterator;
 
 
 /**
- * 
+ * Verifies apt transformations.
  *
  * @author ltheussl
  * @version $Id$
@@ -69,6 +71,7 @@ public class AptVerifier
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
 
+        // Expected log: [APT Parser] Ambiguous link: 'cdc.html'. If this is a local link, prepend "./"!
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Anchor", a.getAttributeValue( "name" ) );
         a = (HtmlAnchor) elementIterator.next();
@@ -91,6 +94,7 @@ public class AptVerifier
         assertEquals( "http://maven.apache.org/", a.getAttributeValue( "href" ) );
         assertEquals( "externalLink", a.getAttributeValue( "class" ) );
 
+        // Expected log: [APT Parser] Ambiguous link: 'cdc.html'. If this is a local link, prepend "./"!
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "./cdc.html", a.getAttributeValue( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
@@ -98,5 +102,64 @@ public class AptVerifier
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "/index.html", a.getAttributeValue( "href" ) );
+
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( "section", div.getAttributeValue( "class" ) );
+
+        h2 = (HtmlHeader2) elementIterator.next();
+        assertNotNull( h2 );
+        assertEquals( "Section formatting: italic bold mono", h2.asText().trim() );
+
+        UnknownHtmlElement unknown = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "i", unknown.getTagName() );
+        assertEquals( "italic", unknown.asText().trim() );
+
+        unknown = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "b", unknown.getTagName() );
+        assertEquals( "bold", unknown.asText().trim() );
+
+        unknown = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "tt", unknown.getTagName() );
+        assertEquals( "mono", unknown.asText().trim() );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "Section_formatting:_italic_bold_mono", a.getAttributeValue( "name" ) );
+
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( "section", div.getAttributeValue( "class" ) );
+
+        HtmlHeader3 h3 = (HtmlHeader3) elementIterator.next();
+        assertNotNull( h3 );
+        assertEquals( "SubSection formatting: italic bold mono", h3.asText().trim() );
+
+        unknown = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "i", unknown.getTagName() );
+        assertEquals( "italic", unknown.asText().trim() );
+
+        unknown = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "b", unknown.getTagName() );
+        assertEquals( "bold", unknown.asText().trim() );
+
+        unknown = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "tt", unknown.getTagName() );
+        assertEquals( "mono", unknown.asText().trim() );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "SubSection_formatting:_italic_bold_mono", a.getAttributeValue( "name" ) );
+
+        p = (HtmlParagraph) elementIterator.next();
+        assertNotNull( p );
+
+        unknown = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "i", unknown.getTagName() );
+        assertEquals( "italic", unknown.asText().trim() );
+
+        unknown = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "b", unknown.getTagName() );
+        assertEquals( "bold", unknown.asText().trim() );
+
+        unknown = (UnknownHtmlElement) elementIterator.next();
+        assertEquals( "tt", unknown.getTagName() );
+        assertEquals( "mono", unknown.asText().trim() );
     }
 }

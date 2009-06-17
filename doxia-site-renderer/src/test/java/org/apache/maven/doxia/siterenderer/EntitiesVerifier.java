@@ -51,7 +51,7 @@ public class EntitiesVerifier
         HtmlMeta author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 0 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Ligature &#198;" ) > 0 );
-        assertEquals( "Ligature Æ", author.getContentAttribute() );
+        assertEquals( "Ligature \u00C6", author.getContentAttribute() );
 
         author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 1 );
         assertNotNull( author );
@@ -109,7 +109,7 @@ public class EntitiesVerifier
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttributeValue( "name" ), "section_name_with_entities:____x1d7ed" );
+        assertEquals( a.getAttributeValue( "name" ), "section_name_with_entities:____" );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
@@ -122,6 +122,10 @@ public class EntitiesVerifier
         HtmlHeader4 h4 = (HtmlHeader4) elementIterator.next();
         assertNotNull( h4 );
         assertEquals( h4.asText().trim(), "Entities" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertNotNull( a );
+        assertEquals( a.getAttributeValue( "name" ), "Entities" );
 
         div = (HtmlDivision) elementIterator.next();
 
@@ -145,7 +149,7 @@ public class EntitiesVerifier
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "'\u0391' '\u0392' '\u0393' '\uD7ED'" );
+        assertEquals( p.asText().trim(), "'\u0391' '\u0392' '\u0393' '\uD7ED\uD7ED' '\u0159\u0159' '\u0159'" );
 
         div = (HtmlDivision) elementIterator.next();
 
@@ -166,6 +170,10 @@ public class EntitiesVerifier
         h4 = (HtmlHeader4) elementIterator.next();
         assertNotNull( h4 );
         assertEquals( h4.asText().trim(), "CDATA" );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertNotNull( a );
+        assertEquals( a.getAttributeValue( "name" ), "CDATA" );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );

@@ -75,12 +75,13 @@ import com.lowagie.text.ElementTags;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
+ * @deprecated since 1.1, use an implementation of {@link org.apache.maven.doxia.docrenderer.DocumentRenderer}.
  */
 public abstract class AbstractITextRender
     extends AbstractLogEnabled
     implements DocRenderer
 {
-    private static final String XSLT_RESOURCE = "org/apache/maven/doxia/docrenderer/itext/xslt/TOC.xslt";
+    private static final String XSLT_RESOURCE = "org/apache/maven/doxia/docrenderer/pdf/itext/TOC.xslt";
 
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 
@@ -316,6 +317,8 @@ public abstract class AbstractITextRender
                 reader = ReaderFactory.newPlatformReader( f );
             }
 
+            System.setProperty( "itext.basedir", outputITextFile.getParentFile().getAbsolutePath() );
+
             doxia.parse( reader, module.getParserId(), sink );
         }
         catch ( ParserNotFoundException e )
@@ -335,6 +338,10 @@ public abstract class AbstractITextRender
             sink.flush();
 
             sink.close();
+
+            IOUtil.close( writer );
+
+            System.getProperties().remove( "itext.basedir" );
         }
     }
 
