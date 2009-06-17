@@ -217,7 +217,7 @@ public class SiteRenderingContext
     }
 
     /**
-     * <p>isUsingDefaultTemplate</p>
+     * <p>isUsingDefaultTemplate.</p>
      *
      * @return a boolean.
      */
@@ -227,7 +227,7 @@ public class SiteRenderingContext
     }
 
     /**
-     * <p>addSiteDirectory</p>
+     * <p>addSiteDirectory.</p>
      *
      * @param file a {@link java.io.File} object.
      */
@@ -237,7 +237,7 @@ public class SiteRenderingContext
     }
 
     /**
-     * <p>addModuleDirectory</p>
+     * <p>addModuleDirectory.</p>
      *
      * @param file a {@link java.io.File} object.
      * @param moduleParserId a {@link java.lang.String} object.

@@ -184,7 +184,7 @@ public class SiteRendererSink
     }
 
     /**
-     * <p>getBody</p>
+     * <p>getBody.</p>
      *
      * @return a {@link java.lang.String} object.
      */
@@ -194,7 +194,7 @@ public class SiteRendererSink
     }
 
     /**
-     * <p>getHead</p>
+     * <p>getHead.</p>
      *
      * @return a {@link java.lang.String} object.
      *
