@@ -144,7 +144,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-core</artifactId>
-      <version>${project.version}</version>
+      <version>${doxiaVersion}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
