@@ -169,7 +169,7 @@ public class ITextPdfRenderer
         {
             getLogger().debug( "Using TOC defined in the document descriptor." );
 
-            iTextFiles = parseTOCFiles( filesToProcess, outputDirectory, documentModel );
+            iTextFiles = parseTOCFiles( outputDirectory, documentModel );
         }
 
         File iTextFile = new File( outputDirectory, outputName + ".xml" );
@@ -527,7 +527,7 @@ public class ITextPdfRenderer
      * @throws IOException if any
      * @since 1.1.1
      */
-    private List parseTOCFiles( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
+    private List parseTOCFiles( File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
         List iTextFiles = new LinkedList();
@@ -607,12 +607,12 @@ public class ITextPdfRenderer
                 }
                 else
                 {
-                    return f.toURL().toString();
+                    return f.toURI().toURL().toString();
                 }
             }
             catch ( MalformedURLException e1 )
             {
-                // nope
+                getLogger().debug( "Failed to convert to URL: " + logo, e1 );
             }
         }
 
