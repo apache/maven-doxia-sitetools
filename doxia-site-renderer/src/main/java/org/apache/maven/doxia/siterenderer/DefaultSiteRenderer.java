@@ -482,11 +482,12 @@ public class DefaultSiteRenderer
             try
             {
                 // we support only ISO-8601 date
-                context.put( "dateCreation", sdf.format( new SimpleDateFormat( "yyyy-MM-dd" ).parse( sink.getDate() ) ) );
+                context.put( "dateCreation",
+                        sdf.format( new SimpleDateFormat( "yyyy-MM-dd" ).parse( sink.getDate() ) ) );
             }
-            catch ( Exception e )
+            catch ( java.text.ParseException e )
             {
-                // nop
+                getLogger().debug( "Could not parse date: " + sink.getDate() + ", ignoring!", e );
             }
         }
         context.put( "dateRevision", sdf.format( new Date() ) );
