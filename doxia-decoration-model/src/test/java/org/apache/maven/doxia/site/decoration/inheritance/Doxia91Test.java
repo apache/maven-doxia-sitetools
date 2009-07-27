@@ -31,6 +31,7 @@ import junit.framework.TestCase;
 public class Doxia91Test
     extends TestCase
 {
+    /** @throws Exception */
     public void testOldPathNull()
         throws Exception
     {
@@ -42,6 +43,7 @@ public class Doxia91Test
         assertEquals( diff, oldPath );
     }
 
+    /** @throws Exception */
     public void testNewPathNull()
         throws Exception
     {
@@ -53,6 +55,7 @@ public class Doxia91Test
         assertEquals( diff, oldPath );
     }
 
+    /** @throws Exception */
     public void testBothPathNull()
         throws Exception
     {

@@ -48,6 +48,7 @@ public class DecorationModelInheritenceAssemblerTest
 
     private static final String NAME = "Name";
 
+    /** @throws Exception */
     public void testInheritence()
         throws IOException, XmlPullParserException
     {
