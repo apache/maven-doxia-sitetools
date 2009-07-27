@@ -90,6 +90,15 @@ public abstract class PathUtils
                 // The old path is not relative. Bail out.
                 return null;
             }
+            else
+            {
+                // both are files, if either of them is relative, bail out
+                // see DOXIASITETOOLS-29, MSITE-404, PLXUTILS-116
+                if ( oldPathDescriptor.isRelative() || newPathDescriptor.isRelative() )
+                {
+                    return null;
+                }
+            }
         }
 
         // Don't optimize to else. This might also be old.isFile && new.isFile ...
@@ -121,7 +130,7 @@ public abstract class PathUtils
             return null;
         }
 
-        // Both Descriptors point to a path. We can build a relative path.
+        // Both Descriptors point to an absolute path. We can build a relative path.
         String oldPath = oldPathDescriptor.getPath();
         String newPath = newPathDescriptor.getPath();
 
