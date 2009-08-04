@@ -27,6 +27,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * <p>SiteRenderingContext class.</p>
@@ -36,13 +38,9 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
  */
 public class SiteRenderingContext
 {
-    private static final String DEFAULT_INPUT_ENCODING = "UTF-8";
+    private String inputEncoding = ReaderFactory.UTF_8;
 
-    private static final String DEFAULT_OUTPUT_ENCODING = "UTF-8";
-
-    private String inputEncoding = DEFAULT_INPUT_ENCODING;
-
-    private String outputEncoding = DEFAULT_OUTPUT_ENCODING;
+    private String outputEncoding = WriterFactory.UTF_8;
 
     private String templateName;
 
