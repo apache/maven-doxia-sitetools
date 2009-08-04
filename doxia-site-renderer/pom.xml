@@ -129,12 +129,6 @@ under the License.
       <version>1.5</version>
     </dependency>
     <dependency>
-      <groupId>htmlunit</groupId>
-      <artifactId>htmlunit</artifactId>
-      <version>1.13</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
       <version>3.2</version>
@@ -146,6 +140,12 @@ under the License.
       <artifactId>doxia-core</artifactId>
       <version>${doxiaVersion}</version>
       <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>htmlunit</groupId>
+      <artifactId>htmlunit</artifactId>
+      <version>1.13</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

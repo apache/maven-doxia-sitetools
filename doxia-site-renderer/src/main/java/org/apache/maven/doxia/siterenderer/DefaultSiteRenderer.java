@@ -99,9 +99,7 @@ public class DefaultSiteRenderer
     // Requirements
     // ----------------------------------------------------------------------
 
-    /**
-     * @plexus.requirement
-     */
+    /** @plexus.requirement */
     private VelocityComponent velocity;
 
     /**
@@ -109,14 +107,10 @@ public class DefaultSiteRenderer
      */
     private SiteModuleManager siteModuleManager;
 
-    /**
-     * @plexus.requirement
-     */
+    /** @plexus.requirement */
     private Doxia doxia;
 
-    /**
-     * @plexus.requirement
-     */
+    /** @plexus.requirement */
     private I18N i18n;
 
     private static final String RESOURCE_DIR = "org/apache/maven/doxia/siterenderer/resources";
