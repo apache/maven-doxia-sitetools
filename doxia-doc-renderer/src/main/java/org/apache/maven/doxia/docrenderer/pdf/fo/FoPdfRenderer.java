@@ -29,6 +29,7 @@ import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.maven.doxia.docrenderer.DocumentRendererContext;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
 import org.apache.maven.doxia.document.DocumentModel;
@@ -72,6 +73,13 @@ public class FoPdfRenderer
     public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
+        render( filesToProcess, outputDirectory, documentModel, null );
+    }
+
+    /** {@inheritDoc} */
+    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel, DocumentRendererContext context )
+        throws DocumentRendererException, IOException
+    {
         // copy resources, images, etc.
         copyResources( outputDirectory );
 
@@ -79,7 +87,7 @@ public class FoPdfRenderer
         {
             getLogger().debug( "No document model, generating all documents individually." );
 
-            renderIndividual( filesToProcess, outputDirectory );
+            renderIndividual( filesToProcess, outputDirectory, context );
             return;
         }
 
@@ -124,13 +132,13 @@ public class FoPdfRenderer
             {
                 getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
 
-                mergeAllSources( filesToProcess, sink );
+                mergeAllSources( filesToProcess, sink, context );
             }
             else
             {
                 getLogger().debug( "Using TOC defined in the document descriptor." );
 
-                mergeSourcesFromTOC( documentModel.getToc(), sink );
+                mergeSourcesFromTOC( documentModel.getToc(), sink, context );
             }
 
             sink.endDocument();
@@ -145,6 +153,13 @@ public class FoPdfRenderer
 
     /** {@inheritDoc} */
     public void renderIndividual( Map filesToProcess, File outputDirectory )
+        throws DocumentRendererException, IOException
+    {
+        renderIndividual( filesToProcess, outputDirectory, null );
+    }
+
+    /** {@inheritDoc} */
+    public void renderIndividual( Map filesToProcess, File outputDirectory, DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
         for ( Iterator j = filesToProcess.keySet().iterator(); j.hasNext(); )
@@ -177,14 +192,14 @@ public class FoPdfRenderer
             FoSink sink =
                 (FoSink) new FoSinkFactory().createSink( outputFOFile.getParentFile(), outputFOFile.getName() );
             sink.beginDocument();
-            parse( fullDoc.getAbsolutePath(), module.getParserId(), sink );
+            parse( fullDoc.getAbsolutePath(), module.getParserId(), sink, context );
             sink.endDocument();
 
             generatePdf( outputFOFile, pdfOutputFile, null );
         }
     }
 
-    private void mergeAllSources( Map filesToProcess, FoAggregateSink sink )
+    private void mergeAllSources( Map filesToProcess, FoAggregateSink sink, DocumentRendererContext context )
             throws DocumentRendererException, IOException
     {
         for ( Iterator j = filesToProcess.keySet().iterator(); j.hasNext(); )
@@ -194,17 +209,17 @@ public class FoPdfRenderer
             sink.setDocumentName( key );
             File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
 
-            parse( fullDoc.getAbsolutePath(), module.getParserId(), sink );
+            parse( fullDoc.getAbsolutePath(), module.getParserId(), sink, context );
         }
     }
 
-    private void mergeSourcesFromTOC( DocumentTOC toc, FoAggregateSink sink )
+    private void mergeSourcesFromTOC( DocumentTOC toc, FoAggregateSink sink, DocumentRendererContext context )
             throws IOException, DocumentRendererException
     {
-        parseTocItems( toc.getItems(), sink );
+        parseTocItems( toc.getItems(), sink, context );
     }
 
-    private void parseTocItems( List items, FoAggregateSink sink )
+    private void parseTocItems( List items, FoAggregateSink sink, DocumentRendererContext context )
             throws IOException, DocumentRendererException
     {
         for ( Iterator k = items.iterator(); k.hasNext(); )
@@ -227,16 +242,16 @@ public class FoPdfRenderer
                 href = href.substring( 0, href.lastIndexOf( "." ) );
             }
 
-            renderModules( href, sink, tocItem );
+            renderModules( href, sink, tocItem, context );
 
             if ( tocItem.getItems() != null )
             {
-                parseTocItems( tocItem.getItems(), sink );
+                parseTocItems( tocItem.getItems(), sink, context );
             }
         }
     }
 
-    private void renderModules( String href, FoAggregateSink sink, DocumentTOCItem tocItem )
+    private void renderModules( String href, FoAggregateSink sink, DocumentTOCItem tocItem, DocumentRendererContext context )
             throws DocumentRendererException, IOException
     {
         for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
@@ -249,12 +264,19 @@ public class FoPdfRenderer
                 String doc = href + "." + module.getExtension();
                 File source = new File( moduleBasedir, doc );
 
+                // Velocity file?
+                if ( !source.exists() )
+                {
+                    doc = href + "." + module.getExtension() + ".vm";
+                    source = new File( moduleBasedir, doc );
+                }
+
                 if ( source.exists() )
                 {
                     sink.setDocumentName( doc );
                     sink.setDocumentTitle( tocItem.getName() );
 
-                    parse( source.getPath(), module.getParserId(), sink );
+                    parse( source.getPath(), module.getParserId(), sink, context );
                 }
             }
         }

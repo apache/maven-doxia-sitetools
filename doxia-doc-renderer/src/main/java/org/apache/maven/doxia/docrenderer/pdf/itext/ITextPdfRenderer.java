@@ -47,6 +47,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.maven.doxia.docrenderer.DocumentRendererContext;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
 import org.apache.maven.doxia.document.DocumentCover;
@@ -133,6 +134,13 @@ public class ITextPdfRenderer
     public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
+        render( filesToProcess, outputDirectory, documentModel, null );
+    }
+
+    /** {@inheritDoc} */
+    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel, DocumentRendererContext context )
+        throws DocumentRendererException, IOException
+    {
         // copy resources, images, etc.
         copyResources( outputDirectory );
 
@@ -140,7 +148,7 @@ public class ITextPdfRenderer
         {
             getLogger().debug( "No document model, generating all documents individually." );
 
-            renderIndividual( filesToProcess, outputDirectory );
+            renderIndividual( filesToProcess, outputDirectory, context );
             return;
         }
 
@@ -163,13 +171,13 @@ public class ITextPdfRenderer
         {
             getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
 
-            iTextFiles = parseAllFiles( filesToProcess, outputDirectory );
+            iTextFiles = parseAllFiles( filesToProcess, outputDirectory, context );
         }
         else
         {
             getLogger().debug( "Using TOC defined in the document descriptor." );
 
-            iTextFiles = parseTOCFiles( outputDirectory, documentModel );
+            iTextFiles = parseTOCFiles( outputDirectory, documentModel, context );
         }
 
         File iTextFile = new File( outputDirectory, outputName + ".xml" );
@@ -181,6 +189,13 @@ public class ITextPdfRenderer
 
     /** {@inheritDoc} */
     public void renderIndividual( Map filesToProcess, File outputDirectory )
+        throws DocumentRendererException, IOException
+    {
+        renderIndividual( filesToProcess, outputDirectory, null );
+    }
+
+    /** {@inheritDoc} */
+    public void renderIndividual( Map filesToProcess, File outputDirectory, DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
         for ( Iterator it = filesToProcess.keySet().iterator(); it.hasNext(); )
@@ -209,7 +224,7 @@ public class ITextPdfRenderer
                 pdfOutputFile.getParentFile().mkdirs();
             }
 
-            parse( fullDoc, module, outputITextFile );
+            parse( fullDoc, module, outputITextFile, context );
 
             generatePdf( outputITextFile, pdfOutputFile );
         }
@@ -229,7 +244,7 @@ public class ITextPdfRenderer
      * @throws DocumentRendererException in case of a parsing problem.
      * @throws IOException if the source and/or target document cannot be opened.
      */
-    private void parse( File fullDoc, SiteModule module, File iTextFile )
+    private void parse( File fullDoc, SiteModule module, File iTextFile, DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
         if ( getLogger().isDebugEnabled() )
@@ -248,7 +263,7 @@ public class ITextPdfRenderer
 
             sink.setClassLoader( new URLClassLoader( new URL[] { iTextFile.getParentFile().toURI().toURL() } ) );
 
-            parse( fullDoc.getAbsolutePath(), module.getParserId(), sink );
+            parse( fullDoc.getAbsolutePath(), module.getParserId(), sink, context );
         }
         finally
         {
@@ -494,7 +509,7 @@ public class ITextPdfRenderer
      * @throws IOException if any
      * @since 1.1.1
      */
-    private List parseAllFiles( Map filesToProcess, File outputDirectory )
+    private List parseAllFiles( Map filesToProcess, File outputDirectory, DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
         List iTextFiles = new LinkedList();
@@ -513,7 +528,7 @@ public class ITextPdfRenderer
             }
 
             iTextFiles.add( outputITextFileTmp );
-            parse( fullDoc, module, outputITextFileTmp );
+            parse( fullDoc, module, outputITextFileTmp, context );
         }
 
         return iTextFiles;
@@ -527,7 +542,7 @@ public class ITextPdfRenderer
      * @throws IOException if any
      * @since 1.1.1
      */
-    private List parseTOCFiles( File outputDirectory, DocumentModel documentModel )
+    private List parseTOCFiles( File outputDirectory, DocumentModel documentModel, DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
         List iTextFiles = new LinkedList();
@@ -559,6 +574,13 @@ public class ITextPdfRenderer
                     String doc = href + "." + module.getExtension();
                     File source = new File( moduleBasedir, doc );
 
+                    // Velocity file?
+                    if ( !source.exists() )
+                    {
+                        doc = href + "." + module.getExtension() + ".vm";
+                        source = new File( moduleBasedir, doc );
+                    }
+
                     if ( source.exists() )
                     {
                         String outputITextName = doc.substring( 0, doc.lastIndexOf( "." ) + 1 ) + "xml";
@@ -570,7 +592,7 @@ public class ITextPdfRenderer
                         }
 
                         iTextFiles.add( outputITextFileTmp );
-                        parse( source, module, outputITextFileTmp );
+                        parse( source, module, outputITextFileTmp, context );
                     }
                 }
             }

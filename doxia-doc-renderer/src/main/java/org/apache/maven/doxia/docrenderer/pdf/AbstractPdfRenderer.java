@@ -19,7 +19,14 @@ package org.apache.maven.doxia.docrenderer.pdf;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.maven.doxia.docrenderer.AbstractDocumentRenderer;
+import org.apache.maven.doxia.docrenderer.DocumentRendererContext;
+import org.apache.maven.doxia.docrenderer.DocumentRendererException;
+import org.apache.maven.doxia.document.DocumentModel;
 
 /**
  * Abstract pdf renderer, this doesn't depend on the framework.
@@ -36,5 +43,12 @@ public abstract class AbstractPdfRenderer
     public String getOutputExtension()
     {
         return "pdf";
+    }
+
+    /** {@inheritDoc} */
+    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
+        throws DocumentRendererException, IOException
+    {
+        render( filesToProcess, outputDirectory, documentModel, null );
     }
 }

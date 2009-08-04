@@ -22,6 +22,8 @@ package org.apache.maven.doxia.docrenderer;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -42,6 +44,8 @@ import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
 import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.context.Context;
 
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
@@ -49,7 +53,10 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.codehaus.plexus.velocity.SiteResourceLoader;
+import org.codehaus.plexus.velocity.VelocityComponent;
 
 /**
  * Abstract <code>document</code> renderer.
@@ -69,6 +76,9 @@ public abstract class AbstractDocumentRenderer
     /** @plexus.requirement */
     protected Doxia doxia;
 
+    /** @plexus.requirement */
+    private VelocityComponent velocity;
+
     /**
      * The common base directory of source files.
      */
@@ -87,6 +97,7 @@ public abstract class AbstractDocumentRenderer
      * @param documentModel the document model, containing all the metadata, etc.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
+     * @deprecated since 1.1.2, use {@link #render(Map, File, DocumentModel, DocumentRendererContext)}
      */
     public abstract void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException;
@@ -99,14 +110,54 @@ public abstract class AbstractDocumentRenderer
     public void render( Collection files, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
-        render( getFilesToProcess( files ), outputDirectory, documentModel );
+        render( getFilesToProcess( files ), outputDirectory, documentModel, null );
     }
 
     /** {@inheritDoc} */
     public void render( File baseDirectory, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
-        render( getFilesToProcess( baseDirectory ), outputDirectory, documentModel );
+        render( baseDirectory, outputDirectory, documentModel, null );
+    }
+
+    /**
+     * Render an aggregate document from the files found in a Map.
+     *
+     * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
+     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
+     * @param outputDirectory the output directory where the aggregate document should be generated.
+     * @param documentModel the document model, containing all the metadata, etc.
+     * @param context the rendering context when processing files.
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
+     */
+    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel,
+                        DocumentRendererContext context )
+        throws DocumentRendererException, IOException
+    {
+        // nop
+    }
+
+    /**
+     * Render a document from the files found in a source directory, depending on a rendering context.
+     *
+     * @param baseDirectory the directory containing the source files.
+     *              This should follow the standard Maven convention, ie containing all the site modules.
+     * @param outputDirectory the output directory where the document should be generated.
+     * @param documentModel the document model, containing all the metadata, etc.
+     *              If the model contains a TOC, only the files found in this TOC are rendered,
+     *              otherwise all files found under baseDirectory will be processed.
+     *              If the model is null, render all files from baseDirectory individually.
+     * @param context the rendering context when processing files.
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
+     * @since 1.1.2
+     */
+    public void render( File baseDirectory, File outputDirectory, DocumentModel documentModel,
+                        DocumentRendererContext context )
+        throws DocumentRendererException, IOException
+    {
+        render( getFilesToProcess( baseDirectory ), outputDirectory, documentModel, context );
     }
 
     /**
@@ -150,7 +201,7 @@ public abstract class AbstractDocumentRenderer
         }
         else
         {
-            render( getFilesToProcess( baseDirectory ), outputDirectory, readDocumentModel( documentDescriptor ) );
+            render( getFilesToProcess( baseDirectory ), outputDirectory, readDocumentModel( documentDescriptor ), null );
         }
     }
 
@@ -160,11 +211,30 @@ public abstract class AbstractDocumentRenderer
      * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
      *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
      * @param outputDirectory the output directory where the documents should be generated.
+     * @param context the rendering context.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      * @since 1.1.1
+     * @deprecated since 1.1.2, use {@link #renderIndividual(Map, File, DocumentRendererContext)}
      */
     public void renderIndividual( Map filesToProcess, File outputDirectory )
+        throws DocumentRendererException, IOException
+    {
+        // nop
+    }
+
+    /**
+     * Render documents separately for each file found in a Map.
+     *
+     * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
+     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
+     * @param outputDirectory the output directory where the documents should be generated.
+     * @param context the rendering context.
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+     * @throws java.io.IOException if any
+     * @since 1.1.2
+     */
+    public void renderIndividual( Map filesToProcess, File outputDirectory, DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
         // nop
@@ -218,6 +288,19 @@ public abstract class AbstractDocumentRenderer
                         it.remove();
                     }
                 }
+
+                List velocityFiles = new LinkedList( allFiles );
+                // *.xml.vm
+                for ( Iterator it = velocityFiles.iterator(); it.hasNext(); )
+                {
+                    String name = it.next().toString().trim();
+
+                    if ( !name.toLowerCase( Locale.ENGLISH ).endsWith( lowerCaseExtension + ".vm" ) )
+                    {
+                        it.remove();
+                    }
+                }
+                docs.addAll( velocityFiles );
 
                 for ( Iterator j = docs.iterator(); j.hasNext(); )
                 {
@@ -349,8 +432,25 @@ public abstract class AbstractDocumentRenderer
      * @param sink the sink to receive the events.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException in case of a parsing error.
      * @throws java.io.IOException if the source document cannot be opened.
+     * @deprecated since 1.1.2, use {@link #parse(String, String, Sink, DocumentRendererContext)}
      */
     protected void parse( String fullDocPath, String parserId, Sink sink )
+        throws DocumentRendererException, IOException
+    {
+        parse( fullDocPath, parserId, sink, null );
+    }
+
+    /**
+     * Parse a source document into a sink.
+     *
+     * @param fullDocPath absolute path to the source document.
+     * @param parserId determines the parser to use.
+     * @param sink the sink to receive the events.
+     * @param context the rendering context.
+     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException in case of a parsing error.
+     * @throws java.io.IOException if the source document cannot be opened.
+     */
+    protected void parse( String fullDocPath, String parserId, Sink sink, DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
         if ( getLogger().isDebugEnabled() )
@@ -368,13 +468,33 @@ public abstract class AbstractDocumentRenderer
             {
                 case Parser.XML_TYPE:
                     reader = ReaderFactory.newXmlReader( f );
+
+                    if ( isVelocityFile( f ) )
+                    {
+                        reader = getVelocityReader( f, ( (XmlStreamReader) reader ).getEncoding(), context );
+                    }
                     break;
 
                 case Parser.TXT_TYPE:
                 case Parser.UNKNOWN_TYPE:
                 default:
-                    // TODO Platform dependent?
-                    reader = ReaderFactory.newPlatformReader( f );
+                    if ( isVelocityFile( f ) )
+                    {
+                        reader =
+                            getVelocityReader( f, ( context == null ? ReaderFactory.FILE_ENCODING
+                                            : context.getInputEncoding() ), context );
+                    }
+                    else
+                    {
+                        if ( context == null )
+                        {
+                            reader = ReaderFactory.newPlatformReader( f );
+                        }
+                        else
+                        {
+                            reader = ReaderFactory.newReader( f, context.getInputEncoding() );
+                        }
+                    }
             }
 
             sink.enableLogging( new PlexusLoggerWrapper( getLogger() ) );
@@ -489,5 +609,55 @@ public abstract class AbstractDocumentRenderer
         documentModel.setOutputName( outputName );
 
         return documentModel.getOutputName();
+    }
+
+    /**
+     * TODO: DOXIA-111: we need a general filter here that knows how to alter the context
+     *
+     * @param f the file to process, not null
+     * @param encoding the wanted encoding, not null
+     * @param context the current render document context not null
+     * @return a reader with
+     * @throws DocumentRendererException
+     */
+    private Reader getVelocityReader( File f, String encoding, DocumentRendererContext context )
+        throws DocumentRendererException
+    {
+        SiteResourceLoader.setResource( f.getAbsolutePath() );
+
+        Context velocityContext = new VelocityContext();
+
+        if ( context.getKeys() != null )
+        {
+            for ( int i = 0; i < context.getKeys().length; i++ )
+            {
+                String key = (String) context.getKeys()[i];
+
+                velocityContext.put( key, context.get( key ) );
+            }
+        }
+
+        StringWriter sw = new StringWriter();
+
+        try
+        {
+            velocity.getEngine().mergeTemplate( f.getAbsolutePath(), encoding, velocityContext, sw );
+        }
+        catch ( Exception e )
+        {
+            throw new DocumentRendererException( "Error whenn parsing Velocity file " + f.getAbsolutePath() + ": "
+                + e.getMessage(), e );
+        }
+
+        return new StringReader( sw.toString() );
+    }
+
+    /**
+     * @param f not null
+     * @return <code>true</code> if file has a vm extension, <code>false</false> otherwise.
+     */
+    private static boolean isVelocityFile( File f )
+    {
+        return FileUtils.getExtension( f.getAbsolutePath() ).toLowerCase( Locale.ENGLISH ).endsWith( "vm" );
     }
 }

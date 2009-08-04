@@ -66,9 +66,28 @@ public interface DocumentRenderer
      *              If the model is null, render all files from baseDirectory individually.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
+//     * @deprecated since 1.1.2, use {@link #render(File, File, DocumentModel, DocumentRendererContext)}
      */
     void render( File baseDirectory, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException;
+
+//    /**
+//     * Render a document from the files found in a source directory, depending on a rendering context.
+//     *
+//     * @param baseDirectory the directory containing the source files.
+//     *              This should follow the standard Maven convention, ie containing all the site modules.
+//     * @param outputDirectory the output directory where the document should be generated.
+//     * @param documentModel the document model, containing all the metadata, etc.
+//     *              If the model contains a TOC, only the files found in this TOC are rendered,
+//     *              otherwise all files found under baseDirectory will be processed.
+//     *              If the model is null, render all files from baseDirectory individually.
+//     * @param context the rendering context when processing files.
+//     * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
+//     * @throws java.io.IOException if any
+//     * @since 1.1.2
+//     */
+//    void render( File baseDirectory, File outputDirectory, DocumentModel documentModel, DocumentRendererContext context )
+//        throws DocumentRendererException, IOException;
 
     /**
      * Read a document model from a file.
