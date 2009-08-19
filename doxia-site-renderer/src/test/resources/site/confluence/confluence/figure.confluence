@@ -1,0 +1,22 @@
+Simple paragraph.
+
+!images/build-by-maven-white.png!
+
+Simple paragraph with attempted inline !image.jpg! (should fail).
+
+DOXIA-361:
+
+!images/build-by-maven-white.png! With caption on same line
+
+!images/build-by-maven-white.png!\\
+With caption underneath and linebreak
+
+!images/build-by-maven-white.png!
+With caption underneath and no linebreak
+
+!images/build-by-maven-white.png!
+With *bold* caption underneath
+
+DOXIA-303:
+
+!images/build-by-maven-white.png|align=right, vspace=4!
