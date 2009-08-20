@@ -491,13 +491,28 @@ public class ITextPdfRenderer
 
         addTransformerParameters( transformer, documentModel, iTextFile );
 
+        // need a writer for StreamResult to prevent FileNotFoundException when iTextFile contains spaces
+        Writer writer = null;
         try
         {
-            transformer.transform( new DOMSource( document ), new StreamResult( iTextFile ) );
+            writer = WriterFactory.newXmlWriter( iTextFile );
+            transformer.transform( new DOMSource( document ), new StreamResult( writer ) );
         }
         catch ( TransformerException e )
         {
-            throw new DocumentRendererException( "Error transforming Document " + document + ": " + e.getMessage() );
+            throw new DocumentRendererException(
+                                                 "Error transforming Document " + document + ": " + e.getMessage(),
+                                                 e );
+        }
+        catch ( IOException e )
+        {
+            throw new DocumentRendererException(
+                                                 "Error transforming Document " + document + ": " + e.getMessage(),
+                                                 e );
+        }
+        finally
+        {
+            IOUtil.close( writer );
         }
     }
 
