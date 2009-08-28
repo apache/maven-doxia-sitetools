@@ -60,7 +60,7 @@ under the License.
               <models>
                 <model>src/main/mdo/decoration.mdo</model>
               </models>
-              <version>1.0.0</version>
+              <version>1.0.1</version>
             </configuration>
           </execution>
           <execution>
@@ -74,7 +74,7 @@ under the License.
               <models>
                 <model>src/main/mdo/decoration.mdo</model>
               </models>
-              <version>1.0.0</version>
+              <version>1.0.1</version>
             </configuration>
           </execution>
         </executions>

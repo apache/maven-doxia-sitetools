@@ -30,7 +30,7 @@ under the License.
     <ul>
       <li><a href="http://maven.apache.org/xsd/decoration-1.0.0.xsd">http://maven.apache.org/xsd/decoration-1.0.0.xsd</a> for Maven 2.0.</li>
     </ul>
-  ]]></description>
+    ]]></description>
   <defaults>
     <default>
       <key>package</key>
@@ -44,14 +44,14 @@ under the License.
          The <code>&lt;project&gt;</code> element is the root of the site decoration descriptor.
          The following table lists all of the possible child elements.
       ]]></description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field xml.attribute="true">
           <name>name</name>
           <description><![CDATA[
             The full name of the project.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -60,7 +60,7 @@ under the License.
           <description><![CDATA[
             Banner logo on the masthead of the site to the left.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association>
             <type>Banner</type>
           </association>
@@ -71,7 +71,7 @@ under the License.
           <description><![CDATA[
             Banner logo on the masthead of the site to the right.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association>
             <type>Banner</type>
           </association>
@@ -82,7 +82,7 @@ under the License.
           <description><![CDATA[
             Modify the date published display properties.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association>
             <type>PublishDate</type>
           </association>
@@ -93,7 +93,7 @@ under the License.
           <description><![CDATA[
             Modify the version published display properties.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association>
             <type>Version</type>
           </association>
@@ -104,7 +104,7 @@ under the License.
           <description><![CDATA[
             Powered by logos list.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association xml.tagName="logo">
             <type>Logo</type>
             <multiplicity>*</multiplicity>
@@ -116,7 +116,7 @@ under the License.
           <description><![CDATA[
             The artifact containing the skin for the site.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association>
             <type>Skin</type>
           </association>
@@ -127,7 +127,7 @@ under the License.
           <description><![CDATA[
             The main site content decoration.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association>
             <type>Body</type>
           </association>
@@ -138,14 +138,14 @@ under the License.
           <description><![CDATA[
             Custom configuration for use with customised Velocity templates.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>DOM</type>
           <identifier>true</identifier>
         </field>
       </fields>
       <codeSegments>
         <codeSegment>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <code>
             <![CDATA[
     private java.util.Map menusByRef;
@@ -210,11 +210,12 @@ under the License.
       <description><![CDATA[
         Banner logo on the masthead of the site.
       ]]></description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
+        <!-- Ideally we want attributes DOXIA-335 -->
         <field>
           <name>name</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <description><![CDATA[
             The name of the banner.
           ]]></description>
@@ -223,16 +224,16 @@ under the License.
         </field>
         <field>
           <name>src</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <description><![CDATA[
-            The location of an image for the banner.
+            The source location of an image for the banner.
           ]]></description>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>alt</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <description><![CDATA[
             The alt description for the banner image.
           ]]></description>
@@ -241,10 +242,37 @@ under the License.
         </field>
         <field>
           <name>href</name>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <description><![CDATA[
             The href of a link to be used for the banner image.
           ]]></description>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>border</name>
+          <description><![CDATA[
+            The border to use for the banner image.
+          ]]></description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>width</name>
+          <description><![CDATA[
+            The width to use for the banner image.
+          ]]></description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>height</name>
+          <description><![CDATA[
+            The height to use for the banner image.
+          ]]></description>
+          <version>1.0.1+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -255,14 +283,14 @@ under the License.
       <description><![CDATA[
         Modify display properties for date published.
       ]]></description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field xml.attribute="true">
           <name>position</name>
           <description><![CDATA[
             Where to place the date published (left, right, navigation-top, navigation-bottom, bottom).
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -271,7 +299,7 @@ under the License.
           <description><![CDATA[
             Date format to use. The default is MM/dd/yyyy.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -282,14 +310,14 @@ under the License.
       <description><![CDATA[
         Modify display properties for version published.
       ]]></description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field xml.attribute="true">
           <name>position</name>
           <description><![CDATA[
             Where to place the version published (left, right, navigation-top, navigation-bottom, bottom).
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -300,15 +328,51 @@ under the License.
       <description><![CDATA[
         Power by logo on the navigation.
       ]]></description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <superClass>LinkItem</superClass>
       <fields>
         <field xml.attribute="true">
           <name>img</name>
           <description><![CDATA[
-            The href of a link to be used for the power by image.
+            The source location of the powerBy image.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>alt</name>
+          <description><![CDATA[
+            The alt description of the powerBy image.
+          ]]></description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>border</name>
+          <description><![CDATA[
+            The border to use for the powerBy image.
+          ]]></description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>width</name>
+          <description><![CDATA[
+            The width to use for the powerBy image.
+          ]]></description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>height</name>
+          <description><![CDATA[
+            The height to use for the powerBy image.
+          ]]></description>
+          <version>1.0.1+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -319,14 +383,14 @@ under the License.
       <description><![CDATA[
         The main content decoration.
       ]]></description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field>
           <name>head</name>
           <description><![CDATA[
             Additional content (like Javascript) to include in the HEAD block of the generated pages.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>DOM</type>
           <identifier>true</identifier>
         </field>
@@ -335,7 +399,7 @@ under the License.
           <description><![CDATA[
             A list of links to display in the navigation.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association xml.tagName="item">
             <type>LinkItem</type>
             <multiplicity>*</multiplicity>
@@ -347,7 +411,7 @@ under the License.
           <description><![CDATA[
             A list of breadcrumbs to display in the navigation.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association xml.tagName="item">
             <type>LinkItem</type>
             <multiplicity>*</multiplicity>
@@ -359,7 +423,7 @@ under the License.
           <description><![CDATA[
             A list of menus to include in the navigation.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association xml.itemsStyle="flat">
             <type>Menu</type>
             <multiplicity>*</multiplicity>
@@ -373,14 +437,14 @@ under the License.
       <description><![CDATA[
         A link in the navigation.
       ]]></description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field xml.attribute="true">
           <name>name</name>
           <description><![CDATA[
             The name to display for the link.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -389,7 +453,63 @@ under the License.
           <description><![CDATA[
             The href to use for the link.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>img</name>
+          <description><![CDATA[
+            The source location of an image.
+          ]]></description>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>align</name>
+          <description><![CDATA[
+            The alignement of the image, left or right. Left will be display the image before the menu name, right after.
+          ]]></description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>left</defaultValue>
+        </field>
+        <field xml.attribute="true">
+          <name>alt</name>
+          <description><![CDATA[
+            The alt to use for the image.
+          ]]></description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>0</defaultValue>
+        </field>
+        <field xml.attribute="true">
+          <name>border</name>
+          <description><![CDATA[
+            The border to use for the image.
+          ]]></description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>width</name>
+          <description><![CDATA[
+            The width to use for the image.
+          ]]></description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>height</name>
+          <description><![CDATA[
+            The height to use for the image.
+          ]]></description>
+          <version>1.0.1+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -400,14 +520,14 @@ under the License.
       <description><![CDATA[
         A menu in the navigation.
       ]]></description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field xml.attribute="true">
           <name>name</name>
           <description><![CDATA[
             The name to display for the menu.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -416,7 +536,7 @@ under the License.
           <description><![CDATA[
             The way in which the menu is inherited. Can be one of : <code>top</code>, <code>bottom</code>.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -426,7 +546,7 @@ under the License.
             If this is a reference, setting <inheritAsRef>true</inheritAsRef> means that it will be populated
             in the project, whereas if it is false, it is populated in the parent and then inherited.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>boolean</type>
         </field>
         <field xml.attribute="true">
@@ -435,16 +555,62 @@ under the License.
             A reference to a pre-defined menu, such as a <code>reports</code>, <code>modules</code>
             or <code>parentProject</code>.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field xml.attribute="true">
           <name>img</name>
           <description><![CDATA[
-            The location of an image.
+            The source location of an menu image.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>alt</name>
+          <version>1.0.1+</version>
+          <description><![CDATA[
+            The alt description for the image.
+          ]]></description>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>align</name>
+          <description><![CDATA[
+            The alignement of the image, left or right. Left will be display the image before the menu name, right after.
+          ]]></description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>left</defaultValue>
+        </field>
+        <field xml.attribute="true">
+          <name>border</name>
+          <description><![CDATA[
+            The border to use for the menu image.
+          ]]></description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>width</name>
+          <description><![CDATA[
+            The width to use for the menu image.
+          ]]></description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>height</name>
+          <description><![CDATA[
+            The height to use for the menu image.
+          ]]></description>
+          <version>1.0.1+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -453,7 +619,7 @@ under the License.
           <description><![CDATA[
             A list of menu item.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <association xml.itemsStyle="flat">
             <type>MenuItem</type>
             <multiplicity>*</multiplicity>
@@ -467,7 +633,7 @@ under the License.
       <description><![CDATA[
         A menu item.
       ]]></description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <superClass>LinkItem</superClass>
       <fields>
         <field>
@@ -475,7 +641,7 @@ under the License.
           <description><![CDATA[
            A description of the menu item. This is used on any summary pages for a menu.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
@@ -484,7 +650,7 @@ under the License.
           <description><![CDATA[
            Whether to collapse children elements of an item menu (by default).
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>boolean</type>
           <identifier>true</identifier>
         </field>
@@ -494,14 +660,16 @@ under the License.
             A reference to a pre-defined menu item, such as a report (specified by the report goal
             name). Any elements explicitly given override those from the pre-defined reference.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
           <name>items</name>
-          <description>Menu item.</description>
-          <version>1.0.0</version>
+          <description><![CDATA[
+            A list of menu item.
+          ]]></description>
+          <version>1.0.0+</version>
           <association xml.itemsStyle="flat">
             <type>MenuItem</type>
             <multiplicity>*</multiplicity>
@@ -515,14 +683,14 @@ under the License.
       <description><![CDATA[
         An skin artifact declaration.
       ]]></description>
-      <version>1.0.0</version>
+      <version>1.0.0+</version>
       <fields>
         <field>
           <name>groupId</name>
           <description><![CDATA[
             The skin group ID.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <required>true</required>
           <identifier>true</identifier>
@@ -532,7 +700,7 @@ under the License.
           <description><![CDATA[
             The skin artifact ID.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <required>true</required>
           <identifier>true</identifier>
@@ -542,14 +710,14 @@ under the License.
           <description><![CDATA[
             The skin version.
           ]]></description>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
       </fields>
       <codeSegments>
         <codeSegment>
-          <version>1.0.0</version>
+          <version>1.0.0+</version>
           <code>
             <![CDATA[
     public static Skin getDefaultSkin()

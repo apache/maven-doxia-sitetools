@@ -8,6 +8,22 @@
   #end
 #end
 
+#macro ( linkWithImage $href $name $img $align )
+  #if ( ( $href.toLowerCase().startsWith("http") || $href.toLowerCase().startsWith("https") ) )
+    #if ( $align == "left" )
+    <a href="$href" class="externalLink">$img $name</a>
+    #else
+    <a href="$href" class="externalLink">$name $img</a>
+    #end
+  #else
+    #if ( $align == "left" )
+    <a href="$href">$img $name</a>
+    #else
+    <a href="$href">$name $img</a>
+    #end
+  #end
+#end
+
 #macro ( banner $banner $id )
   #if ( $banner )
     #if( $banner.href )
@@ -106,20 +122,66 @@
     #end
   #end
   <li class="$collapse">
-    #if ( $item.img )
-      #if ( ! ( $item.img.toLowerCase().startsWith("http") || $item.img.toLowerCase().startsWith("https") ) )
-        #set ( $src = $PathTool.calculateLink( $item.img, $relativePath ) )
-        #set ( $src = $src.replaceAll( "\\", "/" ) )
-        <img src="$src"/>
+  #if ( $item.img )
+    #if( $item.align )
+      #set ( $align = $item.align )
+    #else
+      #set ( $align = "left" )
+    #end
+
+    #if ( ! ( $item.img.toLowerCase().startsWith("http") || $item.img.toLowerCase().startsWith("https") ) )
+      #set ( $src = $PathTool.calculateLink( $item.img, $relativePath ) )
+      #set ( $src = $src.replaceAll( "\\", "/" ) )
+      #set ( $src = ' src="' + $src + '"' )
+    #else
+      #set ( $src = ' src="' + $item.img + '"' )
+    #end
+
+    #if( $item.alt )
+      #set ( $alt = ' alt="' + $item.alt + '"' )
+    #else
+      #set ( $alt = ' alt="' + $item.name + '"' )
+    #end
+
+    #if( $item.border )
+      #set ( $border = ' border="' + $item.border + '"' )
+    #else
+      #set ( $border = ' border="0"' )
+    #end
+
+    #if( $item.width )
+      #set ( $width = ' width="' + $item.width + '"' )
+    #else
+      #set ( $width = "" )
+    #end
+    #if( $item.height )
+      #set ( $height = ' height="' + $item.height + '"' )
+    #else
+      #set ( $height = "" )
+    #end
+
+    #set ( $img = '<img class="imageLink"' + $src + $alt + $border + $width + $height + "/>" )
+
+    #if ( $align == "left" )
+      #if ( $alignedFileName == $currentItemHref )
+        <strong>$img $item.name</strong>
       #else
-        <img src="$item.img" align="absbottom" style="border-width: 0"/>
+        #linkWithImage( $currentItemHref $item.name $img $align )
+      #end
+    #else
+      #if ( $alignedFileName == $currentItemHref )
+        <strong>$item.name $img</strong>
+      #else
+        #linkWithImage( $currentItemHref $item.name $img $align )
       #end
     #end
+  #else
     #if ( $alignedFileName == $currentItemHref )
       <strong>$item.name</strong>
     #else
       #link( $currentItemHref $item.name )
     #end
+  #end
   #if ( $item && $item.items && $item.items.size() > 0 )
     #if ( $collapse == "expanded" )
       <ul>
@@ -135,7 +197,54 @@
 #macro ( mainMenu $menus )
   #foreach( $menu in $menus )
     #if ( $menu.name )
-    <h5>$menu.name</h5>
+      #if ( $menu.img )
+        #if( $menu.align )
+          #set ( $align = $menu.align )
+        #else
+          #set ( $align = "left" )
+        #end
+
+        #if ( ! ( $menu.img.toLowerCase().startsWith("http") || $menu.img.toLowerCase().startsWith("https") ) )
+          #set ( $src = $PathTool.calculateLink( $menu.img, $relativePath ) )
+          #set ( $src = $src.replaceAll( "\\", "/" ) )
+          #set ( $src = ' src="' + $src + '"' )
+        #else
+          #set ( $src = ' src="' + $menu.img + '"' )
+        #end
+
+        #if( $menu.alt )
+          #set ( $alt = ' alt="' + $menu.alt + '"' )
+        #else
+          #set ( $alt = ' alt="' + $menu.name + '"' )
+        #end
+
+        #if( $menu.border )
+          #set ( $border = ' border="' + $menu.border + '"' )
+        #else
+          #set ( $border = ' border="0"' )
+        #end
+
+        #if( $menu.width )
+          #set ( $width = ' width="' + $menu.width + '"' )
+        #else
+          #set ( $width = "" )
+        #end
+        #if( $menu.height )
+          #set ( $height = ' height="' + $menu.height + '"' )
+        #else
+          #set ( $height = "" )
+        #end
+
+        #set ( $img = '<img class="imageLink"' + $src + $alt + $border + $width + $height + "/>" )
+
+        #if ( $align == "left" )
+        <h5>$img $menu.name</h5>
+        #else
+        <h5>$menu.name $img</h5>
+        #end
+      #else
+       <h5>$menu.name</h5>
+      #end
     #end
     #if ( $menu.items && $menu.items.size() > 0 )
     <ul>
@@ -281,36 +390,46 @@
                 #set ( $img = "images/logos/maven-feather.png" )
             #end
 
-            <a href="$href" title="$name" class="poweredBy">
+            #if ( ! ( $img.toLowerCase().startsWith("http") || $img.toLowerCase().startsWith("https") ) )
               #set ( $img = $PathTool.calculateLink( $img, $relativePath ) )
-              #set ( $img = $img.replaceAll( "\\", "/" ) )
-              <img  class="poweredBy"
-                    alt="$name"
-                    src="$img"
-                    width="90"
-                    height="30"
-              />
+              #set ( $img = $src.replaceAll( "\\", "/" ) )
+            #end
+
+            #if( $item.alt )
+                #set ( $alt = ' alt="' + $item.alt + '"' )
+            #else
+                #set ( $alt = ' alt="' + $name + '"' )
+            #end
+
+            #if( $item.border )
+                #set ( $border = ' border="' + $item.border + '"' )
+            #else
+                #set ( $border = "" )
+            #end
+
+            #if( $item.width )
+                #set ( $width = ' width="' + $item.width + '"' )
+            #else
+                #set ( $width = "" )
+            #end
+            #if( $item.height )
+                #set ( $height = ' height="' + $item.height + '"' )
+            #else
+                #set ( $height = "" )
+            #end
+
+            <a href="$href" title="$name" class="poweredBy">
+              <img class="poweredBy" $alt src="$img" $border $width $height />
             </a>
         #end
         #if( $poweredBy.isEmpty() )
-          <a href="http://maven.apache.org/" title="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" class="poweredBy">
-            <img class="poweredBy"
-                 alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven"
-                 src="$relativePath/images/logos/maven-feather.png"
-                 width="90"
-                 height="30"
-                 border="1" />
-          </a>
+        <a href="http://maven.apache.org/" title="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" class="poweredBy">
+          <img class="poweredBy" alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png" />
+        </a>
         #end
     #else
         <a href="http://maven.apache.org/" title="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" class="poweredBy">
-          <img class="poweredBy"
-               alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven"
-               src="$relativePath/images/logos/maven-feather.png"
-               width="90"
-               height="30"
-               border="1"
-               />
+          <img class="poweredBy" alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png" />
         </a>
     #end
 #end
