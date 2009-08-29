@@ -87,6 +87,10 @@ public class HeadVerifier
         assertEquals( meta.getAttributeValue( "content" ), new SimpleDateFormat( "yyyyMMdd" ).format( new Date() ) );
 
         meta = (HtmlMeta) elementIterator.next();
+        assertEquals( meta.getAttributeValue( "http-equiv" ), "Content-Language" );
+        assertEquals( meta.getAttributeValue( "content" ), "en" );
+
+        meta = (HtmlMeta) elementIterator.next();
         assertEquals( meta.getAttributeValue( "name" ), "description" );
         assertEquals( meta.getAttributeValue( "content" ), "Free Web tutorials" );
 

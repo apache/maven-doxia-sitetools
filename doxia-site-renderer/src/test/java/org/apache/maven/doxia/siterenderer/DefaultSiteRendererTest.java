@@ -29,6 +29,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.doxia.site.decoration.DecorationModel;
@@ -61,6 +62,11 @@ public class DefaultSiteRendererTest
     private Renderer renderer;
 
     /**
+     * The locale before executing tests.
+     */
+    private Locale oldLocale;
+
+    /**
      * @throws java.lang.Exception if something goes wrong.
      * @see org.codehaus.plexus.PlexusTestCase#setUp()
      */
@@ -88,6 +94,9 @@ public class DefaultSiteRendererTest
 
         // Safety
         FileUtils.deleteDirectory( getTestFile( OUTPUT ) );
+
+        oldLocale = Locale.getDefault();
+        Locale.setDefault( Locale.ENGLISH );
     }
 
     /**
@@ -99,6 +108,8 @@ public class DefaultSiteRendererTest
     {
         release( renderer );
         super.tearDown();
+
+        Locale.setDefault( oldLocale );
     }
 
     /**
