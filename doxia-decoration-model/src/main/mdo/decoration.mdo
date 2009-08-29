@@ -380,7 +380,6 @@ under the License.
           <version>1.0.1+</version>
           <type>String</type>
           <identifier>true</identifier>
-          <defaultValue>0</defaultValue>
         </field>
         <field xml.attribute="true">
           <name>border</name>
@@ -399,6 +398,13 @@ under the License.
         <field xml.attribute="true">
           <name>height</name>
           <description>The height to use for the image.</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>target</name>
+          <description>Where the new document will be displayed when the user follows a link, i.e. _blank opens the new document in a new window.</description>
           <version>1.0.1+</version>
           <type>String</type>
           <identifier>true</identifier>
