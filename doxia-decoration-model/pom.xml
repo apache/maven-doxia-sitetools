@@ -46,6 +46,13 @@ under the License.
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
+        <configuration>
+          <models>
+            <model>src/main/mdo/decoration.mdo</model>
+          </models>
+          <version>1.0.1</version>
+          <firstVersion>1.0.0</firstVersion>
+        </configuration>
         <executions>
           <execution>
             <id>descriptor</id>
@@ -56,12 +63,6 @@ under the License.
               <goal>xpp3-reader</goal>
               <goal>xsd</goal>
             </goals>
-            <configuration>
-              <models>
-                <model>src/main/mdo/decoration.mdo</model>
-              </models>
-              <version>1.0.1</version>
-            </configuration>
           </execution>
           <execution>
             <id>descriptor-site</id>
@@ -70,12 +71,6 @@ under the License.
               <goal>xdoc</goal>
               <goal>xsd</goal>
             </goals>
-            <configuration>
-              <models>
-                <model>src/main/mdo/decoration.mdo</model>
-              </models>
-              <version>1.0.1</version>
-            </configuration>
           </execution>
         </executions>
       </plugin>
