@@ -8,15 +8,15 @@
   #end
 #end
 ##
-#macro ( linkWithImage $href $name $img $align )
+#macro ( linkWithImage $href $name $img $position )
   #if ( ( $href.toLowerCase().startsWith("http") || $href.toLowerCase().startsWith("https") ) )
-    #if ( $align == "left" )
+    #if ( $position == "left" )
     <a href="$href" class="externalLink">$img $name</a>
     #else
     <a href="$href" class="externalLink">$name $img</a>
     #end
   #else
-    #if ( $align == "left" )
+    #if ( $position == "left" )
     <a href="$href">$img $name</a>
     #else
     <a href="$href">$name $img</a>
@@ -123,10 +123,10 @@
   #end
   <li class="$collapse">
   #if ( $item.img )
-    #if( $item.align )
-      #set ( $align = $item.align )
+    #if( $item.position )
+      #set ( $position = $item.position )
     #else
-      #set ( $align = "left" )
+      #set ( $position = "left" )
     #end
 ##
     #if ( ! ( $item.img.toLowerCase().startsWith("http") || $item.img.toLowerCase().startsWith("https") ) )
@@ -162,17 +162,17 @@
 ##
     #set ( $img = '<img class="imageLink"' + $src + $alt + $border + $width + $height + "/>" )
 ##
-    #if ( $align == "left" )
+    #if ( $position == "left" )
       #if ( $alignedFileName == $currentItemHref )
         <strong>$img $item.name</strong>
       #else
-        #linkWithImage( $currentItemHref $item.name $img $align )
+        #linkWithImage( $currentItemHref $item.name $img $position )
       #end
     #else
       #if ( $alignedFileName == $currentItemHref )
         <strong>$item.name $img</strong>
       #else
-        #linkWithImage( $currentItemHref $item.name $img $align )
+        #linkWithImage( $currentItemHref $item.name $img $position )
       #end
     #end
   #else
@@ -198,10 +198,10 @@
   #foreach( $menu in $menus )
     #if ( $menu.name )
       #if ( $menu.img )
-        #if( $menu.align )
-          #set ( $align = $menu.align )
+        #if( $menu.position )
+          #set ( $position = $menu.position )
         #else
-          #set ( $align = "left" )
+          #set ( $position = "left" )
         #end
 ##
         #if ( ! ( $menu.img.toLowerCase().startsWith("http") || $menu.img.toLowerCase().startsWith("https") ) )
@@ -237,7 +237,7 @@
 ##
         #set ( $img = '<img class="imageLink"' + $src + $alt + $border + $width + $height + "/>" )
 ##
-        #if ( $align == "left" )
+        #if ( $position == "left" )
         <h5>$img $menu.name</h5>
         #else
         <h5>$menu.name $img</h5>

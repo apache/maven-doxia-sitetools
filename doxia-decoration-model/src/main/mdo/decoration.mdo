@@ -367,8 +367,8 @@ under the License.
           <identifier>true</identifier>
         </field>
         <field xml.attribute="true">
-          <name>align</name>
-          <description>The alignement of the image, left or right. Left will be display the image before the menu name, right after.</description>
+          <name>position</name>
+          <description>Where to place the image regarding the displayed name (left or right).</description>
           <version>1.0.1+</version>
           <type>String</type>
           <identifier>true</identifier>
@@ -460,8 +460,8 @@ under the License.
           <identifier>true</identifier>
         </field>
         <field xml.attribute="true">
-          <name>align</name>
-          <description>The alignement of the image, left or right. Left will be display the image before the menu name, right after.</description>
+          <name>position</name>
+          <description>Where to place the image regarding the displayed name (left or right).</description>
           <version>1.0.1+</version>
           <type>String</type>
           <identifier>true</identifier>
