@@ -295,43 +295,6 @@ under the License.
       <description>Power by logo on the navigation.</description>
       <version>1.0.0+</version>
       <superClass>LinkItem</superClass>
-      <fields>
-        <field xml.attribute="true">
-          <name>img</name>
-          <description>The source location of the powerBy image.</description>
-          <version>1.0.0+</version>
-          <type>String</type>
-          <identifier>true</identifier>
-        </field>
-        <field xml.attribute="true">
-          <name>alt</name>
-          <description>The alt description of the powerBy image.</description>
-          <version>1.0.1+</version>
-          <type>String</type>
-          <identifier>true</identifier>
-        </field>
-        <field xml.attribute="true">
-          <name>border</name>
-          <description>The border to use for the powerBy image.</description>
-          <version>1.0.1+</version>
-          <type>String</type>
-          <identifier>true</identifier>
-        </field>
-        <field xml.attribute="true">
-          <name>width</name>
-          <description>The width to use for the powerBy image.</description>
-          <version>1.0.1+</version>
-          <type>String</type>
-          <identifier>true</identifier>
-        </field>
-        <field xml.attribute="true">
-          <name>height</name>
-          <description>The height to use for the powerBy image.</description>
-          <version>1.0.1+</version>
-          <type>String</type>
-          <identifier>true</identifier>
-        </field>
-      </fields>
     </class>
     <class xsd.compositor="sequence">
       <name>Body</name>
