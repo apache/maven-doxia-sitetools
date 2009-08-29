@@ -14,9 +14,9 @@
   #end
   #if ( $img )
     #if ( $position == "left" )
-      <a href="$href"$linkClass$linkTarget>#image($img $alt $border $width $height)$name</a>
+      <a href="$href"$linkClass$linkTarget$linkTitle>#image($img $alt $border $width $height)$name</a>
     #else
-      <a href="$href"$linkClass$linkTarget>$name #image($img $alt $border $width $height)</a>
+      <a href="$href"$linkClass$linkTarget$linkTitle>$name #image($img $alt $border $width $height)</a>
     #end
   #else
     <a href="$href"$linkClass$linkTarget$linkTitle>$name</a>
