@@ -35,7 +35,7 @@
     #if( $alt )
       #set ( $imgAlt = ' alt="' + $alt + '"' )
     #else
-      #set ( $imgAlt = "" )
+      #set ( $imgAlt = ' alt=""' )
     #end
     #if( $border )
       #set ( $imgBorder = ' border="' + $border + '"' )
