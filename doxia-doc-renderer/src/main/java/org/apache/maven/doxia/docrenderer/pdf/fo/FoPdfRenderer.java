@@ -267,7 +267,14 @@ public class FoPdfRenderer
                 // Velocity file?
                 if ( !source.exists() )
                 {
-                    doc = href + "." + module.getExtension() + ".vm";
+                    if ( href.indexOf( "." + module.getExtension() ) != -1 )
+                    {
+                        doc = href + ".vm";
+                    }
+                    else
+                    {
+                        doc = href + "." + module.getExtension() + ".vm";
+                    }
                     source = new File( moduleBasedir, doc );
                 }
 
