@@ -623,6 +623,11 @@ public abstract class AbstractDocumentRenderer
     private Reader getVelocityReader( File f, String encoding, DocumentRendererContext context )
         throws DocumentRendererException
     {
+        if ( getLogger().isDebugEnabled() )
+        {
+            getLogger().debug( "Velocity render for " + f.getAbsolutePath() );
+        }
+
         SiteResourceLoader.setResource( f.getAbsolutePath() );
 
         Context velocityContext = new VelocityContext();
@@ -638,7 +643,6 @@ public abstract class AbstractDocumentRenderer
         }
 
         StringWriter sw = new StringWriter();
-
         try
         {
             velocity.getEngine().mergeTemplate( f.getAbsolutePath(), encoding, velocityContext, sw );

@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.maven.doxia.docrenderer.AbstractDocumentRenderer;
-import org.apache.maven.doxia.docrenderer.DocumentRendererContext;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.document.DocumentModel;
 
