@@ -180,10 +180,15 @@ public class ITextPdfRenderer
             iTextFiles = parseTOCFiles( outputDirectory, documentModel, context );
         }
 
+        boolean addToc =
+            ( context != null && context.get( "includeTOC" ) != null ? ( (Boolean) context.get( "includeTOC" ) )
+                                                                                                                .booleanValue()
+                            : true );
+
         File iTextFile = new File( outputDirectory, outputName + ".xml" );
         File iTextOutput = new File( outputDirectory, outputName + "." + getOutputExtension() );
         Document document = generateDocument( iTextFiles );
-        transform( documentModel, document, iTextFile );
+        transform( documentModel, document, iTextFile, addToc );
         generatePdf( iTextFile, iTextOutput );
     }
 
@@ -369,13 +374,17 @@ public class ITextPdfRenderer
      * @param transformer the Transformer to set the parameters.
      * @param documentModel the DocumentModel to take the parameters from, could be null.
      * @param iTextFile the iTextFile not null for the relative paths.
+     * @param addToc to include or not the TOC.
      */
-    private void addTransformerParameters( Transformer transformer, DocumentModel documentModel, File iTextFile )
+    private void addTransformerParameters( Transformer transformer, DocumentModel documentModel, File iTextFile, boolean addToc )
     {
         if ( documentModel == null )
         {
             return;
         }
+
+        // TOC
+        addTransformerParameter( transformer, "toc.add", Boolean.toString( addToc ) );
 
         // Meta parameters
         boolean hasNullMeta = false;
@@ -482,14 +491,15 @@ public class ITextPdfRenderer
      * @param documentModel the DocumentModel to take the parameters from, could be null.
      * @param document the Document to transform.
      * @param iTextFile the resulting iText xml file.
+     * @param addToc to include or not the TOC.
      * @throws DocumentRendererException in case of a transformation error.
      */
-    private void transform( DocumentModel documentModel, Document document, File iTextFile )
+    private void transform( DocumentModel documentModel, Document document, File iTextFile, boolean addToc )
         throws DocumentRendererException
     {
         Transformer transformer = initTransformer();
 
-        addTransformerParameters( transformer, documentModel, iTextFile );
+        addTransformerParameters( transformer, documentModel, iTextFile, addToc );
 
         // need a writer for StreamResult to prevent FileNotFoundException when iTextFile contains spaces
         Writer writer = null;

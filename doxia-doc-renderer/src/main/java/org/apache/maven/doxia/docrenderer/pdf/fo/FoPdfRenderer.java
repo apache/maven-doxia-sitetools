@@ -120,7 +120,11 @@ public class FoPdfRenderer
                 getLogger().debug( "Loaded pdf config file: " + fOConfigFile.getAbsolutePath() );
             }
 
-            sink.setDocumentModel( documentModel  );
+            boolean addToc =
+                ( context != null && context.get( "includeTOC" ) != null ? ( (Boolean) context.get( "includeTOC" ) )
+                                                                                                                    .booleanValue()
+                                : true );
+            sink.setDocumentModel( documentModel, addToc );
 
             sink.beginDocument();
 

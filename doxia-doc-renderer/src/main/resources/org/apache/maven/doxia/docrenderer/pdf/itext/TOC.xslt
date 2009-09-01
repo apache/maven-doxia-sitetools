@@ -21,6 +21,9 @@ under the License.
 <xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+    <!-- TOC Parameters -->
+    <xsl:param name="toc.add" />
+
     <!-- MetaData Parameters -->
     <xsl:param name="meta.author" />
     <xsl:param name="meta.creator" />
@@ -109,16 +112,23 @@ under the License.
         <!-- End Front page -->
 
         <!-- Start TOC -->
-        <newpage />
-        <paragraph align="Center">
-          <!-- TODO i18N -->
-            <chunk font="Helvetica" size="24" fontstyle="bold" blue="0"
-                green="0" red="0">Table Of Contents</chunk>
-        </paragraph>
-        <paragraph align="Left" leading="24.0">
-            <newline />
-            <xsl:apply-templates select="*" mode="toc" />
-        </paragraph>
+        <xsl:choose>
+          <xsl:when test="$toc.add = 'true'">
+            <newpage />
+            <paragraph align="Center">
+              <!-- TODO i18N -->
+                <chunk font="Helvetica" size="24" fontstyle="bold" blue="0"
+                    green="0" red="0">Table Of Contents</chunk>
+            </paragraph>
+            <paragraph align="Left" leading="24.0">
+                <newline />
+                <xsl:apply-templates select="*" mode="toc" />
+            </paragraph>
+          </xsl:when>
+          <xsl:otherwise>
+            <newpage />
+          </xsl:otherwise>
+        </xsl:choose>
         <!-- End TOC -->
 
         <xsl:apply-templates select="*" mode="body" />
