@@ -22,7 +22,7 @@ under the License.
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
     <!-- TOC Parameters -->
-    <xsl:param name="toc.add" />
+    <xsl:param name="toc.position" />
 
     <!-- MetaData Parameters -->
     <xsl:param name="meta.author" />
@@ -113,7 +113,7 @@ under the License.
 
         <!-- Start TOC -->
         <xsl:choose>
-          <xsl:when test="$toc.add = 'true'">
+          <xsl:when test="$toc.position = 'start'">
             <newpage />
             <paragraph align="Center">
               <!-- TODO i18N -->
@@ -133,6 +133,25 @@ under the License.
 
         <xsl:apply-templates select="*" mode="body" />
 
+        <!-- Start TOC -->
+        <xsl:choose>
+          <xsl:when test="$toc.position = 'end'">
+            <newpage />
+            <paragraph align="Center">
+              <!-- TODO i18N -->
+              <chunk font="Helvetica" size="24" fontstyle="bold" blue="0"
+                green="0" red="0">Table Of Contents</chunk>
+            </paragraph>
+            <paragraph align="Left" leading="24.0">
+              <newline />
+              <xsl:apply-templates select="*" mode="toc" />
+            </paragraph>
+          </xsl:when>
+          <xsl:otherwise>
+            <newpage />
+          </xsl:otherwise>
+        </xsl:choose>
+        <!-- End TOC -->
         </itext>
     </xsl:template>
 

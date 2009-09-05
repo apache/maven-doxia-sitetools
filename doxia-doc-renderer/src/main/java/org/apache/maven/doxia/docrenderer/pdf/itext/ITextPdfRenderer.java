@@ -180,15 +180,14 @@ public class ITextPdfRenderer
             iTextFiles = parseTOCFiles( outputDirectory, documentModel, context );
         }
 
-        boolean addToc =
-            ( context != null && context.get( "includeTOC" ) != null ? ( (Boolean) context.get( "includeTOC" ) )
-                                                                                                                .booleanValue()
-                            : true );
+        String generateTOC =
+            ( context != null && context.get( "generateTOC" ) != null ? context.get( "generateTOC" ).toString()
+                            : "start" );
 
         File iTextFile = new File( outputDirectory, outputName + ".xml" );
         File iTextOutput = new File( outputDirectory, outputName + "." + getOutputExtension() );
         Document document = generateDocument( iTextFiles );
-        transform( documentModel, document, iTextFile, addToc );
+        transform( documentModel, document, iTextFile, generateTOC );
         generatePdf( iTextFile, iTextOutput );
     }
 
@@ -374,9 +373,10 @@ public class ITextPdfRenderer
      * @param transformer the Transformer to set the parameters.
      * @param documentModel the DocumentModel to take the parameters from, could be null.
      * @param iTextFile the iTextFile not null for the relative paths.
-     * @param addToc to include or not the TOC.
+     * @param generateTOC not null, possible values are: 'none', 'start' and 'end'.
      */
-    private void addTransformerParameters( Transformer transformer, DocumentModel documentModel, File iTextFile, boolean addToc )
+    private void addTransformerParameters( Transformer transformer, DocumentModel documentModel, File iTextFile,
+                                           String generateTOC )
     {
         if ( documentModel == null )
         {
@@ -384,7 +384,7 @@ public class ITextPdfRenderer
         }
 
         // TOC
-        addTransformerParameter( transformer, "toc.add", Boolean.toString( addToc ) );
+        addTransformerParameter( transformer, "toc.position", generateTOC );
 
         // Meta parameters
         boolean hasNullMeta = false;
@@ -491,15 +491,15 @@ public class ITextPdfRenderer
      * @param documentModel the DocumentModel to take the parameters from, could be null.
      * @param document the Document to transform.
      * @param iTextFile the resulting iText xml file.
-     * @param addToc to include or not the TOC.
+     * @param generateTOC not null, possible values are: 'none', 'start' and 'end'.
      * @throws DocumentRendererException in case of a transformation error.
      */
-    private void transform( DocumentModel documentModel, Document document, File iTextFile, boolean addToc )
+    private void transform( DocumentModel documentModel, Document document, File iTextFile, String generateTOC )
         throws DocumentRendererException
     {
         Transformer transformer = initTransformer();
 
-        addTransformerParameters( transformer, documentModel, iTextFile, addToc );
+        addTransformerParameters( transformer, documentModel, iTextFile, generateTOC );
 
         // need a writer for StreamResult to prevent FileNotFoundException when iTextFile contains spaces
         Writer writer = null;

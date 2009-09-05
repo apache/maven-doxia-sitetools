@@ -120,17 +120,32 @@ public class FoPdfRenderer
                 getLogger().debug( "Loaded pdf config file: " + fOConfigFile.getAbsolutePath() );
             }
 
-            boolean addToc =
-                ( context != null && context.get( "includeTOC" ) != null ? ( (Boolean) context.get( "includeTOC" ) )
-                                                                                                                    .booleanValue()
-                                : true );
-            sink.setDocumentModel( documentModel, addToc );
+            String generateTOC =
+                ( context != null && context.get( "generateTOC" ) != null ? context.get( "generateTOC" ).toString().trim()
+                                : "start" );
+            int tocPosition = 0;
+            if ( "start".equalsIgnoreCase( generateTOC ))
+            {
+                tocPosition = FoAggregateSink.TOC_START;
+            }
+            else if ( "end".equalsIgnoreCase( generateTOC ))
+            {
+                tocPosition = FoAggregateSink.TOC_END;
+            }
+            else
+            {
+                tocPosition = FoAggregateSink.TOC_NONE;
+            }
+            sink.setDocumentModel( documentModel, tocPosition );
 
             sink.beginDocument();
 
             sink.coverPage();
 
-            sink.toc();
+            if ( tocPosition == FoAggregateSink.TOC_START )
+            {
+                sink.toc();
+            }
 
             if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
             {
@@ -143,6 +158,11 @@ public class FoPdfRenderer
                 getLogger().debug( "Using TOC defined in the document descriptor." );
 
                 mergeSourcesFromTOC( documentModel.getToc(), sink, context );
+            }
+
+            if ( tocPosition == FoAggregateSink.TOC_END )
+            {
+                sink.toc();
             }
 
             sink.endDocument();
