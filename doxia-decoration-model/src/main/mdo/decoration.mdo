@@ -119,7 +119,7 @@ under the License.
         </field>
         <field>
           <name>custom</name>
-          <description>Custom configuration for use with customised Velocity templates.</description>
+          <description>Custom configuration for use with customized Velocity templates.</description>
           <version>1.0.0+</version>
           <type>DOM</type>
           <identifier>true</identifier>
@@ -445,7 +445,7 @@ under the License.
           <name>ref</name>
           <description><![CDATA[
             A reference to a pre-defined menu, such as a <code>reports</code>, <code>modules</code>
-            or <code>parentProject</code>.
+            or <code>parent</code>.
           ]]></description>
           <version>1.0.0+</version>
           <type>String</type>
