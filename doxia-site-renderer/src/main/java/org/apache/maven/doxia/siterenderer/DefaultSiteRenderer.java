@@ -306,11 +306,8 @@ public class DefaultSiteRenderer
 
             File inputFile = new File( renderingContext.getBasedir(), renderingContext.getInputName() );
 
-            boolean modified = false;
-            if ( !outputFile.exists() || inputFile.lastModified() > outputFile.lastModified() )
-            {
-                modified = true;
-            }
+            // TODO MSITE-436/MSITE-177: modified should be true when site.xml (current or parent) is newer than outputFile
+            boolean modified = !outputFile.exists() || ( inputFile.lastModified() > outputFile.lastModified() );
 
             if ( modified || docRenderer.isOverwrite() )
             {
