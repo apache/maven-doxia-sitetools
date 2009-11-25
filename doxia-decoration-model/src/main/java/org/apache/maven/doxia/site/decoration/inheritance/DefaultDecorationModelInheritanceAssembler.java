@@ -137,7 +137,7 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
     }
 
     /**
-     * Resolves all relative pathes between the elements in a banner. The banner element might contain relative pathes
+     * Resolves all relative paths between the elements in a banner. The banner element might contain relative paths
      * to the oldBaseUrl, these are changed to the newBannerUrl.
      *
      * @param banner
