@@ -83,6 +83,11 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
 
             child.setPoweredBy( mergePoweredByLists( child.getPoweredBy(), parent.getPoweredBy(), urlContainer ) );
 
+            if ( parent.getLastModified() > child.getLastModified() )
+            {
+                child.setLastModified( parent.getLastModified() );
+            }
+
             assembleBodyInheritance( name, child, parent, urlContainer );
 
             assembleCustomInheritance( child, parent );
