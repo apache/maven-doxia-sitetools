@@ -152,11 +152,11 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
     {
         if ( banner != null )
         {
-            if ( banner.getHref() != null )
+            if ( StringUtils.isNotEmpty( banner.getHref() ) )
             {
                 banner.setHref( convertPath( banner.getHref(), urlContainer ) );
             }
-            if ( banner.getSrc() != null )
+            if ( StringUtils.isNotEmpty( banner.getSrc() ) )
             {
                 banner.setSrc( convertPath( banner.getSrc(), urlContainer ) );
             }
