@@ -114,7 +114,6 @@ public class AttributesVerifier
         tr = (HtmlTableRow) elementIterator.next();
 
         th = (HtmlTableHeaderCell) elementIterator.next();
-        assertEquals( "left", th.getAttributeValue( "align" ) );
         assertEquals( "2", th.getAttributeValue( "rowspan" ) );
         assertEquals( "middle", th.getAttributeValue( "valign" ) );
 
