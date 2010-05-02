@@ -35,7 +35,7 @@ import org.apache.maven.doxia.util.HtmlTools;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Sink for site renderering.
+ * Sink for site rendering.
  *
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  * @version $Id$
