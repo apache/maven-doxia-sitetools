@@ -124,16 +124,11 @@ public class DefaultSiteRendererTest
         DecorationModel decoration = new DecorationXpp3Reader()
             .read( new FileReader( getTestFile( "src/test/resources/site/site.xml" ) ) );
 
-        SiteRenderingContext ctxt = new SiteRenderingContext();
-        ctxt.setTemplateName( "default-site.vm" );
-        ctxt.setTemplateClassLoader( getClassLoader() );
-        ctxt.setUsingDefaultTemplate( true );
-        Map templateProp = new HashMap();
-        templateProp.put( "outputEncoding", "UTF-8" );
-        ctxt.setTemplateProperties( templateProp );
-        ctxt.setDecoration( decoration );
-        ctxt.addSiteDirectory( getTestFile( "src/test/resources/site" ) );
+        SiteRenderingContext ctxt = getSiteRenderingContext(
+                decoration, "src/test/resources/site", false );
+        renderer.render( renderer.locateDocumentFiles( ctxt ).values(), ctxt, getTestFile( OUTPUT ) );
 
+        ctxt = getSiteRenderingContext( decoration, "src/test/resources/site-validate", true );
         renderer.render( renderer.locateDocumentFiles( ctxt ).values(), ctxt, getTestFile( OUTPUT ) );
 
         // ----------------------------------------------------------------------
@@ -156,6 +151,22 @@ public class DefaultSiteRendererTest
         // Validate the rendering pages
         // ----------------------------------------------------------------------
         validatePages();
+    }
+
+    private SiteRenderingContext getSiteRenderingContext( DecorationModel decoration, String siteDir, boolean validate )
+    {
+        SiteRenderingContext ctxt = new SiteRenderingContext();
+        ctxt.setTemplateName( "default-site.vm" );
+        ctxt.setTemplateClassLoader( getClassLoader() );
+        ctxt.setUsingDefaultTemplate( true );
+        Map templateProp = new HashMap();
+        templateProp.put( "outputEncoding", "UTF-8" );
+        ctxt.setTemplateProperties( templateProp );
+        ctxt.setDecoration( decoration );
+        ctxt.addSiteDirectory( getTestFile( siteDir ) );
+        ctxt.setValidate( validate );
+
+        return ctxt;
     }
 
     /**

@@ -19,6 +19,7 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -63,6 +64,7 @@ import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
 import org.apache.maven.doxia.module.site.manager.SiteModuleNotFoundException;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
+import org.apache.maven.doxia.util.XmlValidator;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -355,13 +357,13 @@ public class DefaultSiteRenderer
         Reader reader = null;
         try
         {
+            String resource = doc.getAbsolutePath();
+
             Parser parser = doxia.getParser( renderingContext.getParserId() );
 
             // TODO: DOXIA-111: the filter used here must be checked generally.
             if ( renderingContext.getAttribute( "velocity" ) != null )
             {
-                String resource = doc.getAbsolutePath();
-
                 try
                 {
                     SiteResourceLoader.setResource( resource );
@@ -392,6 +394,10 @@ public class DefaultSiteRenderer
                 {
                     case Parser.XML_TYPE:
                         reader = ReaderFactory.newXmlReader( doc );
+                        if ( context.isValidate() )
+                        {
+                            reader = validate( reader, resource );
+                        }
                         break;
 
                     case Parser.TXT_TYPE:
@@ -858,6 +864,25 @@ public class DefaultSiteRenderer
 
                 FileUtils.copyFile( sourceFile, destinationFile );
             }
+        }
+    }
+
+    private Reader validate( Reader source, String resource )
+            throws ParseException, IOException
+    {
+        getLogger().debug( "Validating: " + resource );
+
+        try
+        {
+            String content = IOUtil.toString( new BufferedReader( source ) );
+
+            new XmlValidator( new PlexusLoggerWrapper( getLogger() ) ).validate( content );
+
+            return new StringReader( content );
+        }
+        finally
+        {
+            IOUtil.close( source );
         }
     }
 

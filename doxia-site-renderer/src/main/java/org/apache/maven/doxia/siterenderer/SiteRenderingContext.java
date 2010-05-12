@@ -64,6 +64,31 @@ public class SiteRenderingContext
 
     private List modules = new ArrayList();
 
+    private boolean validate;
+
+    /**
+     * If input documents should be validated before parsing.
+     * By default no validation is performed.
+     *
+     * @return true if validation is switched on.
+     * @since 1.1.3
+     */
+    public boolean isValidate()
+    {
+        return validate;
+    }
+
+    /**
+     * Switch on/off validation.
+     *
+     * @param validate true to switch on validation.
+     * @since 1.1.3
+     */
+    public void setValidate( boolean validate )
+    {
+        this.validate = validate;
+    }
+
     /**
      * <p>Getter for the field <code>templateName</code>.</p>
      *
