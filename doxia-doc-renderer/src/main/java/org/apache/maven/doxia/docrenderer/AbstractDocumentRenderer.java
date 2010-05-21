@@ -19,6 +19,7 @@ package org.apache.maven.doxia.docrenderer;
  * under the License.
  */
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -44,6 +45,8 @@ import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
 import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
+import org.apache.maven.doxia.util.XmlValidator;
+
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 
@@ -211,7 +214,6 @@ public abstract class AbstractDocumentRenderer
      * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
      *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
      * @param outputDirectory the output directory where the documents should be generated.
-     * @param context the rendering context.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      * @since 1.1.1
@@ -473,6 +475,10 @@ public abstract class AbstractDocumentRenderer
                     {
                         reader = getVelocityReader( f, ( (XmlStreamReader) reader ).getEncoding(), context );
                     }
+                    if ( context != null && Boolean.TRUE.equals( (Boolean) context.get( "validate" ) ) )
+                    {
+                        reader = validate( reader, fullDocPath );
+                    }
                     break;
 
                 case Parser.TXT_TYPE:
@@ -504,7 +510,7 @@ public abstract class AbstractDocumentRenderer
         catch ( ParserNotFoundException e )
         {
             throw new DocumentRendererException( "No parser '" + parserId
-                        + "' found for " + fullDocPath + ": " + e.getMessage() );
+                        + "' found for " + fullDocPath + ": " + e.getMessage(), e );
         }
         catch ( ParseException e )
         {
@@ -663,5 +669,24 @@ public abstract class AbstractDocumentRenderer
     private static boolean isVelocityFile( File f )
     {
         return FileUtils.getExtension( f.getAbsolutePath() ).toLowerCase( Locale.ENGLISH ).endsWith( "vm" );
+    }
+
+    private Reader validate( Reader source, String resource )
+            throws ParseException, IOException
+    {
+        getLogger().debug( "Validating: " + resource );
+
+        try
+        {
+            String content = IOUtil.toString( new BufferedReader( source ) );
+
+            new XmlValidator( new PlexusLoggerWrapper( getLogger() ) ).validate( content );
+
+            return new StringReader( content );
+        }
+        finally
+        {
+            IOUtil.close( source );
+        }
     }
 }
