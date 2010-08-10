@@ -27,7 +27,7 @@
   #if( $img )
     #if ( ! ( $img.toLowerCase().startsWith("http") || $img.toLowerCase().startsWith("https") ) )
       #set ( $imgSrc = $PathTool.calculateLink( $img, $relativePath ) )
-      #set ( $imgSrc = $imgSrc.replaceAll( "\\", "/" ) )
+      #set ( $imgSrc = $imgSrc.replaceAll( '\\', '/' ) )
       #set ( $imgSrc = ' src="' + $imgSrc + '"' )
     #else
       #set ( $imgSrc = ' src="' + $img + '"' )
@@ -67,7 +67,7 @@
         #set ( $src = $banner.src )
         #if ( ! ( $src.toLowerCase().startsWith("http") || $src.toLowerCase().startsWith("https") ) )
             #set ( $src = $PathTool.calculateLink( $src, $relativePath ) )
-            #set ( $src = $src.replaceAll( "\\", "/" ) )
+            #set ( $src = $src.replaceAll( '\\', '/' ) )
         #end
         #if ( $banner.alt )
             #set ( $alt = $banner.alt )
@@ -92,7 +92,7 @@
   #foreach( $item in $links )
     #set ( $counter = $counter + 1 )
     #set ( $currentItemHref = $PathTool.calculateLink( $item.href, $relativePath ) )
-    #set ( $currentItemHref = $currentItemHref.replaceAll( "\\", "/" ) )
+    #set ( $currentItemHref = $currentItemHref.replaceAll( '\\', '/' ) )
     #link( $currentItemHref $item.name $item.target $item.img $item.position $item.alt $item.border $item.width $item.height )
     #if ( $links.size() > $counter )
       |
@@ -105,7 +105,7 @@
   #foreach( $item in $breadcrumbs )
     #set ( $counter = $counter + 1 )
     #set ( $currentItemHref = $PathTool.calculateLink( $item.href, $relativePath ) )
-    #set ( $currentItemHref = $currentItemHref.replaceAll( "\\", "/" ) )
+    #set ( $currentItemHref = $currentItemHref.replaceAll( '\\', '/' ) )
 ##
     #if ( $currentItemHref == $alignedFileName || $currentItemHref == "" )
       $item.name
@@ -122,7 +122,7 @@
   #if ( $item && $item.items && $item.items.size() > 0 )
     #foreach( $subitem in $item.items )
       #set ( $subitemHref = $PathTool.calculateLink( $subitem.href, $relativePath ) )
-      #set ( $subitemHref = $subitemHref.replaceAll( "\\", "/" ) )
+      #set ( $subitemHref = $subitemHref.replaceAll( '\\', '/' ) )
       #if ( $alignedFileName == $subitemHref )
         #set ( $display = true )
       #end
@@ -135,7 +135,7 @@
 #macro ( menuItem $item )
   #set ( $collapse = "none" )
   #set ( $currentItemHref = $PathTool.calculateLink( $item.href, $relativePath ) )
-  #set ( $currentItemHref = $currentItemHref.replaceAll( "\\", "/" ) )
+  #set ( $currentItemHref = $currentItemHref.replaceAll( '\\', '/' ) )
 ##
   #if ( $item && $item.items && $item.items.size() > 0 )
     #if ( $item.collapse == false )
@@ -198,7 +198,7 @@
 ##
         #if ( ! ( $menu.img.toLowerCase().startsWith("http") || $menu.img.toLowerCase().startsWith("https") ) )
           #set ( $src = $PathTool.calculateLink( $menu.img, $relativePath ) )
-          #set ( $src = $src.replaceAll( "\\", "/" ) )
+          #set ( $src = $src.replaceAll( '\\', '/' ) )
           #set ( $src = ' src="' + $src + '"' )
         #else
           #set ( $src = ' src="' + $menu.img + '"' )
@@ -364,7 +364,7 @@
     #foreach ($item in $poweredBy)
       #if( $item.href )
         #set ( $href = $PathTool.calculateLink( $item.href, $relativePath ) )
-        #set ( $href = $href.replaceAll( "\\", "/" ) )
+        #set ( $href = $href.replaceAll( '\\', '/' ) )
       #else
         #set ( $href="http://maven.apache.org/" )
       #end
@@ -384,7 +384,7 @@
 ##
       #if ( ! ( $img.toLowerCase().startsWith("http") || $img.toLowerCase().startsWith("https") ) )
         #set ( $img = $PathTool.calculateLink( $img, $relativePath ) )
-        #set ( $img = $src.replaceAll( "\\", "/" ) )
+        #set ( $img = $src.replaceAll( '\\', '/' ) )
       #end
 ##
       #if( $item.alt )
@@ -453,8 +453,7 @@
         ## Workaround for DOXIA-150 due to a non-desired behaviour in p-u
         ## @see org.codehaus.plexus.util.xml.Xpp3Dom#toString()
         ## @see org.codehaus.plexus.util.xml.Xpp3Dom#toUnescapedString()
-        #set ( $documentHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" )
-        #set ( $documentHeader = $documentHeader.replaceAll( "\\", "" ) )
+        #set ( $documentHeader = '<?xml version="1.0" encoding="UTF-8"?>' )
         #if ( $item.name == "script" )
           $StringUtils.replace( $item.toUnescapedString(), $documentHeader, "" )
         #else
