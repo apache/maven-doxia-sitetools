@@ -594,6 +594,7 @@ under the License.
         Skin skin = new Skin();
         skin.setGroupId( "org.apache.maven.skins" );
         skin.setArtifactId( "maven-default-skin" );
+        skin.setVersion( "1.0" );
         return skin;
     }
             ]]>
