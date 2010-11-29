@@ -426,6 +426,25 @@
   #end
 #end
 ##
+#macro ( googleAnalytics $accountId )
+  #if( $accountId && $accountId != "" )
+    <!-- Google Analytics -->
+    <script type="text/javascript">
+    
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', '$accountId']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+  #end
+#end
+##
 <html xmlns="http://www.w3.org/1999/xhtml"#if ( $locale ) xml:lang="$locale.language" lang="$locale.language"#end>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=${outputEncoding}" />
@@ -462,6 +481,7 @@
       #end
     #end
     $headContent
+    #googleAnalytics( $decoration.googleAnalyticsAccountId )
   </head>
   <body class="composite">
     <div id="banner">
