@@ -449,23 +449,7 @@ public class DefaultSiteRenderer
         // Add infos from document
         context.put( "authors", sink.getAuthors() );
 
-        String title = "";
-        if ( siteRenderingContext.getDecoration().getName() != null )
-        {
-            title = siteRenderingContext.getDecoration().getName();
-        }
-        else if ( siteRenderingContext.getDefaultWindowTitle() != null )
-        {
-            title = siteRenderingContext.getDefaultWindowTitle();
-        }
-
-        if ( title.length() > 0 )
-        {
-            title += " - ";
-        }
-        title += sink.getTitle();
-
-        context.put( "title", title );
+        context.put( "title", sink.getTitle() );
 
         context.put( "headContent", sink.getHead() );
 
