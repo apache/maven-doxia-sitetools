@@ -109,21 +109,17 @@
 #end
 ##
 #macro ( breadcrumbs $breadcrumbs )
-  #set ( $counter = 0 )
   #foreach( $item in $breadcrumbs )
-    #set ( $counter = $counter + 1 )
     #set ( $currentItemHref = $PathTool.calculateLink( $item.href, $relativePath ) )
     #set ( $currentItemHref = $currentItemHref.replaceAll( '\\', '/' ) )
+    #if ( ( $currentItemHref == '' ) )
+      #set ( $currentItemHref = './' )
+    #end
 ##
-    #if ( $currentItemHref == $alignedFileName || $currentItemHref == "" )
-      $item.name
-    #else
-      #link( $currentItemHref $item.name $item.target $item.img $item.position $item.alt $item.border $item.width $item.height )
-    #end
-    #if ( $breadcrumbs.size() > $counter )
+      #link( $currentItemHref $item.name )
       &gt;
-    #end
   #end
+  $title
 #end
 ##
 #macro ( displayTree $display $item )
@@ -131,6 +127,7 @@
     #foreach( $subitem in $item.items )
       #set ( $subitemHref = $PathTool.calculateLink( $subitem.href, $relativePath ) )
       #set ( $subitemHref = $subitemHref.replaceAll( '\\', '/' ) )
+##
       #if ( $alignedFileName == $subitemHref )
         #set ( $display = true )
       #end
