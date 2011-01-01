@@ -209,7 +209,7 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
             {
                 LinkItem breadcrumb = new LinkItem();
                 breadcrumb.setName( name );
-                breadcrumb.setHref( urlContainer.getNewPath() );
+                breadcrumb.setHref( convertPath( urlContainer.getNewPath(), urlContainer ) );
                 cBody.getBreadcrumbs().add( breadcrumb );
             }
             cBody.setBreadcrumbs( mergeLinkItemLists( cBody.getBreadcrumbs(), pBody.getBreadcrumbs(), urlContainer ) );
