@@ -33,6 +33,7 @@ under the License.
 
   <name>Doxia Sitetools :: Decoration Model</name>
   <description>The Decoration Model handles the site descriptor, also known as site.xml.</description>
+  <url>http://maven.apache.org/doxia/doxia-sitetools/doxia-decoration-model/</url>
 
   <dependencies>
     <dependency>

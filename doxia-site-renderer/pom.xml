@@ -32,6 +32,7 @@ under the License.
   <artifactId>doxia-site-renderer</artifactId>
   <name>Doxia Sitetools :: Site Renderer Component</name>
   <description>The Site Renderer handles the rendering of sites.</description>
+  <url>http://maven.apache.org/doxia/doxia-sitetools/doxia-site-renderer/</url>
 
   <contributors>
     <contributor>
