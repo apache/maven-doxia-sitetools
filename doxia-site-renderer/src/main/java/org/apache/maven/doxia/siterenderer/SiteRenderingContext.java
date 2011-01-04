@@ -50,6 +50,8 @@ public class SiteRenderingContext
 
     private Locale locale = Locale.getDefault();
 
+    private List siteLocales = new ArrayList();
+
     private DecorationModel decoration;
 
     private String defaultWindowTitle;
@@ -157,6 +159,25 @@ public class SiteRenderingContext
     public void setLocale( Locale locale )
     {
         this.locale = locale;
+    }
+
+   /**
+     * <p>Getter for the field <code>siteLocales</code> -
+     * a list of locales available for this site context.</p>
+     *
+     * @return a {@link java.util.List} object with {@link java.util.Locale} objects.
+     */
+    public List getSiteLocales() {
+        return siteLocales;
+    }
+
+   /**
+    * <p>Adds passed locales to the list of site locales.</p>
+    *
+    * @param locales List of {@link java.util.Locale} objects to add to the site locales list.
+    */
+    public void addSiteLocales( List locales ) {
+        siteLocales.addAll( locales );
     }
 
     /**
