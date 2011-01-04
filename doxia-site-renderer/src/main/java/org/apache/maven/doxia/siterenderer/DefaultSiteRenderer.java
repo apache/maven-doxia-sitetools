@@ -375,6 +375,10 @@ public class DefaultSiteRenderer
                     velocity.getEngine().mergeTemplate( resource, context.getInputEncoding(), vc, sw );
 
                     reader = new StringReader( sw.toString() );
+                    if ( parser.getType() == Parser.XML_TYPE && context.isValidate() )
+                    {
+                        reader = validate( reader, resource );
+                    }
                 }
                 catch ( Exception e )
                 {
