@@ -48,7 +48,6 @@ public class DecorationModelInheritenceAssemblerTest
 
     private static final String NAME = "Name";
 
-    /** @throws Exception */
     public void testInheritence()
         throws IOException, XmlPullParserException
     {
@@ -60,6 +59,8 @@ public class DecorationModelInheritenceAssemblerTest
         DecorationModel mergedModel = readModel( "merged.xml" );
 
         assertEquals( "Check result", mergedModel, childModel );
+
+        assertEquals( "Modified parent!", readModel( "parent.xml" ), parentModel );
     }
 
     public void testPathsResolvedWhenEmpty()
@@ -74,6 +75,8 @@ public class DecorationModelInheritenceAssemblerTest
         DecorationModel mergedModel = readModel( "empty.xml" );
 
         assertEquals( "Check result", mergedModel, childModel );
+
+        assertEquals( "Modified parent!", readModel( "empty.xml" ), parentModel );
     }
 
     public void testPathsNotResolvedForExternalUrls()
@@ -107,6 +110,8 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "http://www.apache.org/special/", menuItem.getHref() );
+
+        assertEquals( "Modified parent!", readModel( "external-urls.xml" ), parentModel );
     }
 
     public void testPathsResolvedForRelativeUrls()
@@ -137,6 +142,8 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "../special/", menuItem.getHref() );
+
+        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
 
     public void testPathsResolvedForSubsiteUrls()
@@ -167,6 +174,8 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "../special/", menuItem.getHref() );
+
+        assertEquals( "Modified parent!", readModel( "subsite-urls.xml" ), parentModel );
     }
 
     public void testPathsResolvedForRelativeUrlsDepthOfTwo()
@@ -198,6 +207,8 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "../../special/", menuItem.getHref() );
+
+        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
 
     public void testPathsResolvedForReverseRelativeUrls()
@@ -229,6 +240,8 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "doxia/special/", menuItem.getHref() );
+
+        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
 
     public void testPathsResolvedForReverseRelativeUrlsDepthOfTwo()
@@ -261,6 +274,8 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "doxia/core/special/", menuItem.getHref() );
+
+        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
 
     public void testPathsResolvedForUnrelatedRelativeUrls()
@@ -295,6 +310,8 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "http://jakarta.apache.org/special/", menuItem.getHref() );
+
+        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
 
     public void testNullParent()
@@ -320,6 +337,8 @@ public class DecorationModelInheritenceAssemblerTest
         DecorationModel mergedModel = readModel( "fully-populated-child.xml" );
 
         assertEquals( "Check result", mergedModel, childModel );
+
+        assertEquals( "Modified parent!", readModel( "fully-populated-child.xml" ), parentModel );
     }
 
     public void testFullyPopulatedParentAndEmptyChild()
@@ -333,6 +352,8 @@ public class DecorationModelInheritenceAssemblerTest
         DecorationModel mergedModel = readModel( "fully-populated-merged.xml" );
 
         assertEquals( "Check result", mergedModel, childModel );
+
+        assertEquals( "Modified parent!", readModel( "fully-populated-child.xml" ), parentModel );
     }
 
     public void testResolvingAllExternalUrls()
@@ -459,6 +480,8 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Check size", 1, model.getPoweredBy().size() );
         assertEquals( "Check item", createLogo( "Foo", "http://foo.apache.org", "http://foo.apache.org/foo.jpg" ),
                       model.getPoweredBy().get( 0 ) );
+
+        assertEquals( "Modified parent!", new DecorationModel(), parent );
     }
 
     public void testBreadcrumbWithoutHref()

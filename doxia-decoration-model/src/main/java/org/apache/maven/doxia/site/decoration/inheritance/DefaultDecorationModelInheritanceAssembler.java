@@ -31,6 +31,10 @@ import org.apache.maven.doxia.site.decoration.LinkItem;
 import org.apache.maven.doxia.site.decoration.Logo;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.MenuItem;
+import org.apache.maven.doxia.site.decoration.PublishDate;
+import org.apache.maven.doxia.site.decoration.Skin;
+import org.apache.maven.doxia.site.decoration.Version;
+
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
@@ -53,32 +57,31 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         // cannot inherit from null parent.
         if ( parent != null )
         {
-            if ( child.getBannerLeft() == null )
+            if ( child.getBannerLeft() == null && parent.getBannerLeft() != null )
             {
-                child.setBannerLeft( parent.getBannerLeft() );
+                child.setBannerLeft( (Banner) parent.getBannerLeft().clone());
                 resolveBannerPaths( child.getBannerLeft(), urlContainer );
             }
 
-            if ( child.getBannerRight() == null )
+            if ( child.getBannerRight() == null && parent.getBannerRight() != null)
             {
-                child.setBannerRight( parent.getBannerRight() );
-
+                child.setBannerRight( (Banner) parent.getBannerRight().clone());
                 resolveBannerPaths( child.getBannerRight(), urlContainer );
             }
 
-            if ( child.getPublishDate() == null )
+            if ( child.getPublishDate() == null && parent.getPublishDate() != null )
             {
-                child.setPublishDate( parent.getPublishDate() );
+                child.setPublishDate( (PublishDate) parent.getPublishDate().clone());
             }
 
-            if ( child.getVersion() == null )
+            if ( child.getVersion() == null && parent.getVersion() != null )
             {
-                child.setVersion( parent.getVersion() );
+                child.setVersion( (Version) parent.getVersion().clone());
             }
 
-            if ( child.getSkin() == null )
+            if ( child.getSkin() == null && parent.getSkin() != null )
             {
-                child.setSkin( parent.getSkin() );
+                child.setSkin( (Skin) parent.getSkin().clone());
             }
 
             child.setPoweredBy( mergePoweredByLists( child.getPoweredBy(), parent.getPoweredBy(), urlContainer ) );
@@ -220,7 +223,7 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
 
     private List mergeMenus( final List childMenus, final List parentMenus, final URLContainer urlContainer )
     {
-        List menus = new ArrayList();
+        List menus = new ArrayList( childMenus.size() + parentMenus.size() );
 
         for ( Iterator it = childMenus.iterator(); it.hasNext(); )
         {
@@ -232,7 +235,7 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         int topCounter = 0;
         for ( Iterator it = parentMenus.iterator(); it.hasNext(); )
         {
-            Menu menu = (Menu) it.next();
+            Menu menu = (Menu) ( (Menu) it.next() ).clone();
 
             if ( "top".equals( menu.getInherit() ) )
             {
@@ -286,11 +289,11 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
 
     private List mergeLinkItemLists( final List childList, final List parentList, final URLContainer urlContainer )
     {
-        List items = new ArrayList();
+        List items = new ArrayList( childList.size() + parentList.size() );
 
         for ( Iterator it = parentList.iterator(); it.hasNext(); )
         {
-            LinkItem item = (LinkItem) it.next();
+            LinkItem item = (LinkItem) ( (LinkItem) it.next() ).clone();
 
             resolveLinkItemPaths( item, urlContainer );
 
@@ -315,11 +318,11 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
 
     private List mergePoweredByLists( final List childList, final List parentList, final URLContainer urlContainer )
     {
-        List logos = new ArrayList();
+        List logos = new ArrayList( childList.size() + parentList.size() );
 
         for ( Iterator it = parentList.iterator(); it.hasNext(); )
         {
-            Logo logo = (Logo) it.next();
+            Logo logo = (Logo) ( (Logo) it.next() ).clone();
 
             if ( !logos.contains( logo ) )
             {

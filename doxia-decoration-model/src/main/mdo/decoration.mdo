@@ -38,7 +38,7 @@ under the License.
     </default>
   </defaults>
   <classes>
-    <class rootElement="true" xml.tagName="project">
+    <class rootElement="true" xml.tagName="project" java.clone="deep">
       <name>DecorationModel</name>
       <description><![CDATA[
          The <code>&lt;project&gt;</code> element is the root of the site decoration descriptor.
@@ -210,7 +210,7 @@ under the License.
         </codeSegment>
       </codeSegments>
     </class>
-    <class>
+    <class java.clone="deep">
       <name>Banner</name>
       <description>Banner logo on the masthead of the site.</description>
       <version>1.0.0+</version>
@@ -267,7 +267,7 @@ under the License.
         </field>
       </fields>
     </class>
-    <class>
+    <class java.clone="deep">
       <name>PublishDate</name>
       <description>Modify display properties for date published.</description>
       <version>1.0.0+</version>
@@ -289,7 +289,7 @@ under the License.
         </field>
       </fields>
     </class>
-    <class>
+    <class java.clone="deep">
       <name>Version</name>
       <description>Modify display properties for version published.</description>
       <version>1.0.0+</version>
@@ -303,13 +303,13 @@ under the License.
         </field>
       </fields>
     </class>
-    <class>
+    <class java.clone="deep">
       <name>Logo</name>
       <description>Power by logo on the navigation.</description>
       <version>1.0.0+</version>
       <superClass>LinkItem</superClass>
     </class>
-    <class xsd.compositor="sequence">
+    <class java.clone="deep" xsd.compositor="sequence">
       <name>Body</name>
       <description>The main content decoration.</description>
       <version>1.0.0+</version>
@@ -353,7 +353,7 @@ under the License.
         </field>
       </fields>
     </class>
-    <class>
+    <class java.clone="deep">
       <name>LinkItem</name>
       <description>A link in the navigation.</description>
       <version>1.0.0+</version>
@@ -424,7 +424,7 @@ under the License.
         </field>
       </fields>
     </class>
-    <class xsd.compositor="sequence">
+    <class java.clone="deep" xsd.compositor="sequence">
       <name>Menu</name>
       <description>A menu in the navigation.</description>
       <version>1.0.0+</version>
@@ -519,7 +519,7 @@ under the License.
         </field>
       </fields>
     </class>
-    <class xsd.compositor="sequence">
+    <class java.clone="deep" xsd.compositor="sequence">
       <name>MenuItem</name>
       <description>A menu item.</description>
       <version>1.0.0+</version>
@@ -559,7 +559,7 @@ under the License.
         </field>
       </fields>
     </class>
-    <class>
+    <class java.clone="deep">
       <name>Skin</name>
       <description>An skin artifact declaration.</description>
       <version>1.0.0+</version>
