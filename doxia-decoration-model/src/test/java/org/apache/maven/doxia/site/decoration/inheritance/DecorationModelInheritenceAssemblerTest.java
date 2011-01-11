@@ -60,6 +60,12 @@ public class DecorationModelInheritenceAssemblerTest
 
         assertEquals( "Check result", mergedModel, childModel );
 
+        // same with scp url, DOXIASITETOOLS-47
+        childModel = readModel( "child.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia",
+                                            "scp://people.apache.org" );
+        // FIXME! assertEquals( "Check scp result", mergedModel, childModel );
+
         assertEquals( "Modified parent!", readModel( "parent.xml" ), parentModel );
     }
 
@@ -76,6 +82,12 @@ public class DecorationModelInheritenceAssemblerTest
 
         assertEquals( "Check result", mergedModel, childModel );
 
+        // same with scp url, DOXIASITETOOLS-47
+        childModel = readModel( "empty.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia",
+                                            "scp://people.apache.org" );
+        assertEquals( "Check scp result", mergedModel, childModel );
+
         assertEquals( "Modified parent!", readModel( "empty.xml" ), parentModel );
     }
 
@@ -87,7 +99,19 @@ public class DecorationModelInheritenceAssemblerTest
 
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/doxia",
                                             "http://maven.apache.org" );
+        assertPathsNotResolvedForExternalUrls( childModel );
 
+        // same with scp url, DOXIASITETOOLS-47
+        childModel = readModel( "empty.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia",
+                                            "scp://people.apache.org" );
+        assertPathsNotResolvedForExternalUrls( childModel );
+
+        assertEquals( "Modified parent!", readModel( "external-urls.xml" ), parentModel );
+    }
+
+    private static void assertPathsNotResolvedForExternalUrls( final DecorationModel childModel )
+    {
         assertEquals( "check left banner href", "http://jakarta.apache.org/", childModel.getBannerLeft().getHref() );
         assertEquals( "check left banner image", "http://jakarta.apache.org/images/jakarta-logo.gif",
                       childModel.getBannerLeft().getSrc() );
@@ -110,8 +134,6 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "http://www.apache.org/special/", menuItem.getHref() );
-
-        assertEquals( "Modified parent!", readModel( "external-urls.xml" ), parentModel );
     }
 
     public void testPathsResolvedForRelativeUrls()
@@ -122,7 +144,19 @@ public class DecorationModelInheritenceAssemblerTest
 
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/doxia/",
                                             "http://maven.apache.org" );
+        assertPathsResolvedForRelativeUrls( childModel );
 
+        // same with scp url, DOXIASITETOOLS-47
+        childModel = readModel( "empty.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia",
+                                            "scp://people.apache.org" );
+        //FIXME! assertPathsResolvedForRelativeUrls( childModel );
+
+        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
+    }
+
+    private static void assertPathsResolvedForRelativeUrls( final DecorationModel childModel )
+    {
         assertEquals( "check left banner href", "../banner/left", childModel.getBannerLeft().getHref() );
         assertEquals( "check left banner image", "../images/jakarta-logo.gif", childModel.getBannerLeft().getSrc() );
 
@@ -142,8 +176,6 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "../special/", menuItem.getHref() );
-
-        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
 
     public void testPathsResolvedForSubsiteUrls()
@@ -154,7 +186,19 @@ public class DecorationModelInheritenceAssemblerTest
 
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/doxia/",
                                             "http://maven.apache.org" );
+        assertPathsResolvedForSubsiteUrls( childModel );
 
+        // same with scp url, DOXIASITETOOLS-47
+        childModel = readModel( "empty.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia",
+                                            "scp://people.apache.org" );
+        //FIXME! assertPathsResolvedForSubsiteUrls( childModel );
+
+        assertEquals( "Modified parent!", readModel( "subsite-urls.xml" ), parentModel );
+    }
+
+    private static void assertPathsResolvedForSubsiteUrls( final DecorationModel childModel )
+    {
         assertEquals( "check left banner href", "../banner/left", childModel.getBannerLeft().getHref() );
         assertEquals( "check left banner image", "../images/jakarta-logo.gif", childModel.getBannerLeft().getSrc() );
 
@@ -174,8 +218,6 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "../special/", menuItem.getHref() );
-
-        assertEquals( "Modified parent!", readModel( "subsite-urls.xml" ), parentModel );
     }
 
     public void testPathsResolvedForRelativeUrlsDepthOfTwo()
@@ -186,7 +228,19 @@ public class DecorationModelInheritenceAssemblerTest
 
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/doxia/core",
                                             "http://maven.apache.org" );
+        assertPathsResolvedForRelativeUrlsDepthOfTwo( childModel );
 
+        // same with scp url, DOXIASITETOOLS-47
+        childModel = readModel( "empty.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia/core",
+                                            "scp://people.apache.org" );
+        //FIXME! assertPathsResolvedForRelativeUrlsDepthOfTwo( childModel );
+
+        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
+    }
+
+    private static void assertPathsResolvedForRelativeUrlsDepthOfTwo( final DecorationModel childModel )
+    {
         assertEquals( "check left banner href", "../../banner/left", childModel.getBannerLeft().getHref() );
         assertEquals( "check left banner image", "../../images/jakarta-logo.gif", childModel.getBannerLeft().getSrc() );
 
@@ -207,8 +261,6 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "../../special/", menuItem.getHref() );
-
-        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
 
     public void testPathsResolvedForReverseRelativeUrls()
@@ -219,7 +271,19 @@ public class DecorationModelInheritenceAssemblerTest
 
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/",
                                             "http://maven.apache.org/doxia/" );
+        assertPathsResolvedForReverseRelativeUrls( childModel );
 
+        // same with scp url, DOXIASITETOOLS-47
+        childModel = readModel( "empty.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/",
+                                            "scp://people.apache.org/doxia/" );
+        //FIXME! assertPathsResolvedForReverseRelativeUrls( childModel );
+
+        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
+    }
+
+    private static void assertPathsResolvedForReverseRelativeUrls( final DecorationModel childModel )
+    {
         assertEquals( "check left banner href", "doxia/banner/left", childModel.getBannerLeft().getHref() );
         assertEquals( "check left banner image", "doxia/images/jakarta-logo.gif", childModel.getBannerLeft().getSrc() );
 
@@ -240,8 +304,6 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "doxia/special/", menuItem.getHref() );
-
-        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
 
     public void testPathsResolvedForReverseRelativeUrlsDepthOfTwo()
@@ -252,7 +314,19 @@ public class DecorationModelInheritenceAssemblerTest
 
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/",
                                             "http://maven.apache.org/doxia/core/" );
+        assertPathsResolvedForReverseRelativeUrlsDepthOfTwo( childModel );
 
+        // same with scp url, DOXIASITETOOLS-47
+        childModel = readModel( "empty.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/",
+                                            "scp://people.apache.org/doxia/core/" );
+        //FIXME! assertPathsResolvedForReverseRelativeUrlsDepthOfTwo( childModel );
+
+        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
+    }
+
+    private static void assertPathsResolvedForReverseRelativeUrlsDepthOfTwo( final DecorationModel childModel )
+    {
         assertEquals( "check left banner href", "doxia/core/banner/left", childModel.getBannerLeft().getHref() );
         assertEquals( "check left banner image", "doxia/core/images/jakarta-logo.gif",
                       childModel.getBannerLeft().getSrc() );
@@ -274,8 +348,6 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "doxia/core/special/", menuItem.getHref() );
-
-        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
 
     public void testPathsResolvedForUnrelatedRelativeUrls()
@@ -286,7 +358,19 @@ public class DecorationModelInheritenceAssemblerTest
 
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org",
                                             "http://jakarta.apache.org" );
+        assertPathsResolvedForUnrelatedRelativeUrls( childModel );
 
+        // same with scp url, DOXIASITETOOLS-47
+        childModel = readModel( "empty.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/",
+                                            "scp://jakarta.apache.org" );
+        //FIXME! assertPathsResolvedForUnrelatedRelativeUrls( childModel );
+
+        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
+    }
+
+    private static void assertPathsResolvedForUnrelatedRelativeUrls( final DecorationModel childModel )
+    {
         assertEquals( "check left banner href", "http://jakarta.apache.org/banner/left",
                       childModel.getBannerLeft().getHref() );
         assertEquals( "check left banner image", "http://jakarta.apache.org/images/jakarta-logo.gif",
@@ -310,8 +394,6 @@ public class DecorationModelInheritenceAssemblerTest
         Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
         assertEquals( "check menu item href", "http://jakarta.apache.org/special/", menuItem.getHref() );
-
-        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
 
     public void testNullParent()
@@ -324,6 +406,12 @@ public class DecorationModelInheritenceAssemblerTest
         DecorationModel mergedModel = readModel( "empty.xml" );
 
         assertEquals( "Check result", mergedModel, childModel );
+
+        // same with scp url, DOXIASITETOOLS-47
+        childModel = readModel( "empty.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, null, "scp://people.apache.org/doxia",
+                                            "scp://people.apache.org" );
+        assertEquals( "Check scp result", mergedModel, childModel );
     }
 
     public void testFullyPopulatedChild()
@@ -337,6 +425,12 @@ public class DecorationModelInheritenceAssemblerTest
         DecorationModel mergedModel = readModel( "fully-populated-child.xml" );
 
         assertEquals( "Check result", mergedModel, childModel );
+
+        // same with scp url, DOXIASITETOOLS-47
+        childModel = readModel( "fully-populated-child.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://foo.apache.org/doxia",
+                                            "scp://foo.apache.org" );
+        assertEquals( "Check scp result", mergedModel, childModel );
 
         assertEquals( "Modified parent!", readModel( "fully-populated-child.xml" ), parentModel );
     }
@@ -352,6 +446,12 @@ public class DecorationModelInheritenceAssemblerTest
         DecorationModel mergedModel = readModel( "fully-populated-merged.xml" );
 
         assertEquals( "Check result", mergedModel, childModel );
+
+        // same with scp url, DOXIASITETOOLS-47
+        childModel = readModel( "empty.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://maven.apache.org/doxia",
+                                            "scp://maven.apache.org" );
+        // FIXME! assertEquals( "Check scp result", mergedModel, childModel );
 
         assertEquals( "Modified parent!", readModel( "fully-populated-child.xml" ), parentModel );
     }
