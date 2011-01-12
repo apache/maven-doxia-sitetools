@@ -446,6 +446,27 @@ public class PathDescriptorTest
         assertEquals( "wrong location", base, desc.getLocation() );
     }
 
+/*
+    // FIXME! same as testUrlBaseAbsPath with scp, this fails!? DOXIASITETOOLS-47
+    public void testUriBaseAbsPath()
+        throws Exception
+    {
+        String base = "scp://people.apache.org/";
+        String path = "absolutePath";
+
+        PathDescriptor desc = new PathDescriptor( base, "/" + path );
+
+        assertFalse( desc.isFile() );
+        assertFalse( desc.isRelative() );
+        assertNotNull( desc.getBaseUrl() );
+        assertNotNull( desc.getPathUrl() );
+        assertNotNull( desc.getPath() );
+        assertNotNull( desc.getLocation() );
+        assertEquals( "wrong path", "/" + path, desc.getPath() );
+        assertEquals( "wrong location", base + path, desc.getLocation() );
+    }
+*/
+
     /** @throws Exception */
     public void testPathBaseAbsPath()
         throws Exception

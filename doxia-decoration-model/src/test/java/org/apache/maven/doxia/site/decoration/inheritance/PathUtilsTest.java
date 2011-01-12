@@ -60,4 +60,18 @@ public class PathUtilsTest
         assertEquals( ".." + SLASH + "target", PathUtils.getRelativePath( oldPath, newPath ) );
         assertEquals( ".." + SLASH + "foo", PathUtils.getRelativePath( newPath, oldPath ) );
     }
+
+    /** @throws Exception */
+    public void testRelativePathScpBase()
+            throws Exception
+    {
+        PathDescriptor oldPath = new PathDescriptor( "http://maven.apache.org/", "source" );
+        PathDescriptor newPath = new PathDescriptor( "http://maven.apache.org/", "target" );
+        assertEquals( ".." + SLASH + "source", PathUtils.getRelativePath( oldPath, newPath ) );
+
+        oldPath = new PathDescriptor( "scp://people.apache.org/", "source" );
+        newPath = new PathDescriptor( "scp://people.apache.org/", "target" );
+        // FIXME! same with scp URLs fails?! DOXIASITETOOLS-47
+        //assertEquals( ".." + SLASH + "source", PathUtils.getRelativePath( oldPath, newPath ) );
+    }
 }
