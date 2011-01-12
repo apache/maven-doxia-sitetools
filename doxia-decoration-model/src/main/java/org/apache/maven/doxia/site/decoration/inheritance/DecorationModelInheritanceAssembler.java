@@ -35,11 +35,23 @@ public interface DecorationModelInheritanceAssembler
     /**
      * Manage inheritance of the decoration model between a parent and child.
      *
+     * Any relative links in the parent model will be re-based to work from the merged child
+     * model, otherwise no content from either the parent or child model should be modifiedjav.
+     *
      * @param name a name, used for breadcrumb.
+     *      If the parent model contains breadcrumbs and the child doesn't,
+     *      a child breadcrumb will be added to the merged model with this name. Not null.
      * @param child the child DecorationModel to be merged with parent.
-     * @param parent the parent DecorationModel not null.
+     *      Not null. If parent == null, the child is unchanged, otherwise
+     *      child will contain the merged model upon exit.
+     * @param parent the parent DecorationModel. Unchanged upon exit.
+     *      May be null in which case the child is not changed.
      * @param childBaseUrl the child base URL.
+     *      May be null, in which case relative links inherited from the parent
+     *      will not be resolved in the merged child.
      * @param parentBaseUrl the parent base URL.
+     *      May be null, in which case relative links inherited from the parent
+     *      will not be resolved in the merged child.
      */
     void assembleModelInheritance( String name, DecorationModel child, DecorationModel parent,
                                    String childBaseUrl, String parentBaseUrl );
@@ -47,8 +59,15 @@ public interface DecorationModelInheritanceAssembler
     /**
      * Resolve relative paths for a DecorationModel given a base URL.
      *
+     * Note that 'resolve' here means 'relativize' in the sense of
+     * {@link java.net.URI#relativize(java.net.URI)}, ie if any link in the decoration model
+     * has a base URL that is equal to the given baseUrl, it is replaced by a relative link
+     * with respect to that base.
+     *
      * @param decoration  the DecorationModel.
+     *      Not null.
      * @param baseUrl the base URL.
+     *      May be null in which case the decoration model is unchanged.
      */
     void resolvePaths( DecorationModel decoration, String baseUrl );
 }
