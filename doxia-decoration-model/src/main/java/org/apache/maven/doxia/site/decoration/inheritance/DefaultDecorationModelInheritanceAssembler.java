@@ -19,7 +19,8 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  * under the License.
  */
 
-import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -60,13 +61,13 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
             if ( child.getBannerLeft() == null && parent.getBannerLeft() != null )
             {
                 child.setBannerLeft( (Banner) parent.getBannerLeft().clone());
-                resolveBannerPaths( child.getBannerLeft(), urlContainer );
+                rebaseBannerPaths( child.getBannerLeft(), urlContainer );
             }
 
             if ( child.getBannerRight() == null && parent.getBannerRight() != null)
             {
                 child.setBannerRight( (Banner) parent.getBannerRight().clone());
-                resolveBannerPaths( child.getBannerRight(), urlContainer );
+                rebaseBannerPaths( child.getBannerRight(), urlContainer );
             }
 
             if ( child.getPublishDate() == null && parent.getPublishDate() != null )
@@ -100,23 +101,21 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
     /** {@inheritDoc} */
     public void resolvePaths( final DecorationModel decoration, final String baseUrl )
     {
-        URLContainer urlContainer = new URLContainer( null, baseUrl );
-
         if ( decoration.getBannerLeft() != null )
         {
-            resolveBannerPaths( decoration.getBannerLeft(), urlContainer );
+            relativizeBannerPaths( decoration.getBannerLeft(), baseUrl );
         }
 
         if ( decoration.getBannerRight() != null )
         {
-            resolveBannerPaths( decoration.getBannerRight(), urlContainer );
+            relativizeBannerPaths( decoration.getBannerRight(), baseUrl );
         }
 
         for ( Iterator i = decoration.getPoweredBy().iterator(); i.hasNext(); )
         {
             Logo logo = (Logo) i.next();
 
-            resolveLogoPaths( logo, urlContainer );
+            relativizeLogoPaths( logo, baseUrl );
         }
 
         if ( decoration.getBody() != null )
@@ -125,21 +124,21 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
             {
                 LinkItem linkItem = (LinkItem) i.next();
 
-                resolveLinkItemPaths( linkItem, urlContainer );
+                relativizeLinkItemPaths( linkItem, baseUrl );
             }
 
             for ( Iterator i = decoration.getBody().getBreadcrumbs().iterator(); i.hasNext(); )
             {
                 LinkItem linkItem = (LinkItem) i.next();
 
-                resolveLinkItemPaths( linkItem, urlContainer );
+                relativizeLinkItemPaths( linkItem, baseUrl );
             }
 
             for ( Iterator i = decoration.getBody().getMenus().iterator(); i.hasNext(); )
             {
                 Menu menu = (Menu) i.next();
 
-                resolveMenuPaths( menu.getItems(), urlContainer );
+                relativizeMenuPaths( menu.getItems(), baseUrl );
             }
         }
     }
@@ -149,20 +148,33 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
      * to the oldBaseUrl, these are changed to the newBannerUrl.
      *
      * @param banner
-     * @param urlContainer
+     * @param baseUrl
      */
-    private void resolveBannerPaths( final Banner banner, final URLContainer urlContainer )
+    private void relativizeBannerPaths( final Banner banner, final String baseUrl )
     {
         if ( banner != null )
         {
             if ( StringUtils.isNotEmpty( banner.getHref() ) )
             {
-                banner.setHref( convertPath( banner.getHref(), urlContainer ) );
+                banner.setHref( relativizeLink( banner.getHref(), baseUrl ) );
             }
             if ( StringUtils.isNotEmpty( banner.getSrc() ) )
             {
-                banner.setSrc( convertPath( banner.getSrc(), urlContainer ) );
+                banner.setSrc( relativizeLink( banner.getSrc(), baseUrl ) );
             }
+        }
+    }
+
+    private void rebaseBannerPaths( final Banner banner, final URLContainer urlContainer )
+    {
+        if ( banner.getHref() != null ) // it may be empty
+        {
+            banner.setHref( rebaseLink( banner.getHref(), urlContainer ) );
+        }
+
+        if ( banner.getSrc() != null )
+        {
+            banner.setSrc( rebaseLink( banner.getSrc(), urlContainer ) );
         }
     }
 
@@ -212,7 +224,7 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
             {
                 LinkItem breadcrumb = new LinkItem();
                 breadcrumb.setName( name );
-                breadcrumb.setHref( convertPath( urlContainer.getNewPath(), urlContainer ) );
+                breadcrumb.setHref( "" );
                 cBody.getBreadcrumbs().add( breadcrumb );
             }
             cBody.setBreadcrumbs( mergeLinkItemLists( cBody.getBreadcrumbs(), pBody.getBreadcrumbs(), urlContainer ) );
@@ -242,34 +254,44 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
                 menus.add( topCounter, menu );
                 topCounter++;
 
-                resolveMenuPaths( menu.getItems(), urlContainer );
+                rebaseMenuPaths( menu.getItems(), urlContainer );
             }
             else if ( "bottom".equals( menu.getInherit() ) )
             {
                 menus.add( menu );
 
-                resolveMenuPaths( menu.getItems(), urlContainer );
+                rebaseMenuPaths( menu.getItems(), urlContainer );
             }
         }
 
         return menus;
     }
 
-    private void resolveMenuPaths( final List items, final URLContainer urlContainer )
+    private void relativizeMenuPaths( final List items, final String baseUrl )
     {
         for ( Iterator i = items.iterator(); i.hasNext(); )
         {
             MenuItem item = (MenuItem) i.next();
-            resolveLinkItemPaths( item, urlContainer );
-            resolveMenuPaths( item.getItems(), urlContainer );
+            relativizeLinkItemPaths( item, baseUrl );
+            relativizeMenuPaths( item.getItems(), baseUrl );
         }
     }
 
-    private void resolveLinkItemPaths( final LinkItem item, final URLContainer urlContainer )
+    private void rebaseMenuPaths( final List items, final URLContainer urlContainer )
+    {
+        for ( Iterator i = items.iterator(); i.hasNext(); )
+        {
+            MenuItem item = (MenuItem) i.next();
+            rebaseLinkItemPaths( item, urlContainer );
+            rebaseMenuPaths( item.getItems(), urlContainer );
+        }
+    }
+
+    private void relativizeLinkItemPaths( final LinkItem item, final String baseUrl )
     {
         if ( StringUtils.isNotEmpty( item.getHref() ) )
         {
-            String href = convertPath( item.getHref(), urlContainer );
+            String href = relativizeLink( item.getHref(), baseUrl );
             if ( StringUtils.isNotEmpty( href ) )
             {
                 item.setHref( href );
@@ -277,14 +299,25 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         }
         else
         {
-            item.setHref( convertPath( "", urlContainer ) );
+            item.setHref( relativizeLink( "", baseUrl ) );
         }
     }
 
-    private void resolveLogoPaths( final Logo logo, final URLContainer urlContainer )
+    private void rebaseLinkItemPaths( final LinkItem item, final URLContainer urlContainer )
     {
-        logo.setImg( convertPath( logo.getImg(), urlContainer ) );
-        resolveLinkItemPaths( logo, urlContainer );
+        item.setHref( rebaseLink( item.getHref(), urlContainer ) );
+   }
+
+    private void relativizeLogoPaths( final Logo logo, final String baseUrl )
+    {
+        logo.setImg( relativizeLink( logo.getImg(), baseUrl ) );
+        relativizeLinkItemPaths( logo, baseUrl );
+    }
+
+    private void rebaseLogoPaths( final Logo logo, final URLContainer urlContainer )
+    {
+        logo.setImg( rebaseLink( logo.getImg(), urlContainer ) );
+        rebaseLinkItemPaths( logo, urlContainer );
     }
 
     private List mergeLinkItemLists( final List childList, final List parentList, final URLContainer urlContainer )
@@ -295,7 +328,7 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         {
             LinkItem item = (LinkItem) ( (LinkItem) it.next() ).clone();
 
-            resolveLinkItemPaths( item, urlContainer );
+            rebaseLinkItemPaths( item, urlContainer );
 
             if ( !items.contains( item ) )
             {
@@ -329,7 +362,7 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
                 logos.add( logo );
             }
 
-            resolveLogoPaths( logo, urlContainer );
+            rebaseLogoPaths( logo, urlContainer );
         }
 
         for ( Iterator it = childList.iterator(); it.hasNext(); )
@@ -345,20 +378,48 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         return logos;
     }
 
-    private String convertPath( final String relativePath, final URLContainer urlContainer )
+    // rebase only affects relative links, a relative link wrt an old base gets translated,
+    // so it points to the same location as viewed from a new base
+    private String rebaseLink( final String link, final URLContainer urlContainer )
     {
+        if ( link == null || urlContainer.getOldPath() == null )
+        {
+            return link;
+        }
+
         try
         {
-            PathDescriptor oldPathDescriptor = new PathDescriptor( urlContainer.getOldPath(), relativePath );
-            PathDescriptor newPathDescriptor = new PathDescriptor( urlContainer.getNewPath(), "" );
+            final URIPathDescriptor oldPath = new URIPathDescriptor( urlContainer.getOldPath(), link );
 
-            PathDescriptor relativePathDescriptor = PathUtils.convertPath( oldPathDescriptor, newPathDescriptor );
-
-            return relativePathDescriptor.getLocation();
+            return oldPath.rebaseLink( urlContainer.getNewPath() ).toString();
         }
-        catch ( MalformedURLException mue )
+        catch ( URISyntaxException ex )
         {
-            throw new RuntimeException( "While converting Pathes:", mue );
+            throw new RuntimeException( "Bad URI syntax of either: " + link
+                    + ", and/or " + urlContainer.getOldPath()
+                    + ", and/or " + urlContainer.getNewPath(), ex );
+        }
+    }
+
+    // relativize only affects absolute links, if the link has the same scheme, host and port
+    // as the base, it is made into a relative link as viewed from the base
+    private String relativizeLink( final String link, final String baseUri )
+    {
+        if ( link == null || baseUri == null )
+        {
+            return link;
+        }
+
+        try
+        {
+            final URIPathDescriptor path = new URIPathDescriptor( baseUri, link );
+
+            return path.relativizeLink().toString();
+        }
+        catch ( URISyntaxException ex )
+        {
+            throw new RuntimeException( "Bad URI syntax of either: " + link
+                    + ", and/or " + baseUri, ex );
         }
     }
 

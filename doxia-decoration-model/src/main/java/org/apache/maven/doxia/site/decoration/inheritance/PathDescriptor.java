@@ -31,6 +31,7 @@ import org.codehaus.plexus.util.StringUtils;
  * anchor.
  *
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
+ * @deprecated use {@link URIPathDescriptor} instead.
  * @version $Id$
  */
 

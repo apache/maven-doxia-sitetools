@@ -64,7 +64,7 @@ public class DecorationModelInheritenceAssemblerTest
         childModel = readModel( "child.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia",
                                             "scp://people.apache.org" );
-        // FIXME! assertEquals( "Check scp result", mergedModel, childModel );
+        assertEquals( "Check scp result", mergedModel, childModel );
 
         assertEquals( "Modified parent!", readModel( "parent.xml" ), parentModel );
     }
@@ -150,7 +150,7 @@ public class DecorationModelInheritenceAssemblerTest
         childModel = readModel( "empty.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia",
                                             "scp://people.apache.org" );
-        //FIXME! assertPathsResolvedForRelativeUrls( childModel );
+        assertPathsResolvedForRelativeUrls( childModel );
 
         assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
@@ -186,13 +186,16 @@ public class DecorationModelInheritenceAssemblerTest
 
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/doxia/",
                                             "http://maven.apache.org" );
+        assembler.resolvePaths( childModel, "http://maven.apache.org/doxia" );
+
         assertPathsResolvedForSubsiteUrls( childModel );
 
         // same with scp url, DOXIASITETOOLS-47
         childModel = readModel( "empty.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia",
                                             "scp://people.apache.org" );
-        //FIXME! assertPathsResolvedForSubsiteUrls( childModel );
+        assembler.resolvePaths( childModel, "http://maven.apache.org/doxia" );
+        assertPathsResolvedForSubsiteUrls( childModel );
 
         assertEquals( "Modified parent!", readModel( "subsite-urls.xml" ), parentModel );
     }
@@ -234,7 +237,7 @@ public class DecorationModelInheritenceAssemblerTest
         childModel = readModel( "empty.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia/core",
                                             "scp://people.apache.org" );
-        //FIXME! assertPathsResolvedForRelativeUrlsDepthOfTwo( childModel );
+        assertPathsResolvedForRelativeUrlsDepthOfTwo( childModel );
 
         assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
@@ -277,7 +280,7 @@ public class DecorationModelInheritenceAssemblerTest
         childModel = readModel( "empty.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/",
                                             "scp://people.apache.org/doxia/" );
-        //FIXME! assertPathsResolvedForReverseRelativeUrls( childModel );
+        assertPathsResolvedForReverseRelativeUrls( childModel );
 
         assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
@@ -320,7 +323,7 @@ public class DecorationModelInheritenceAssemblerTest
         childModel = readModel( "empty.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/",
                                             "scp://people.apache.org/doxia/core/" );
-        //FIXME! assertPathsResolvedForReverseRelativeUrlsDepthOfTwo( childModel );
+        assertPathsResolvedForReverseRelativeUrlsDepthOfTwo( childModel );
 
         assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
@@ -363,8 +366,8 @@ public class DecorationModelInheritenceAssemblerTest
         // same with scp url, DOXIASITETOOLS-47
         childModel = readModel( "empty.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/",
-                                            "scp://jakarta.apache.org" );
-        //FIXME! assertPathsResolvedForUnrelatedRelativeUrls( childModel );
+                                            "http://jakarta.apache.org" );
+        assertPathsResolvedForUnrelatedRelativeUrls( childModel );
 
         assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
     }
@@ -443,6 +446,11 @@ public class DecorationModelInheritenceAssemblerTest
 
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/doxia",
                                             "http://maven.apache.org" );
+
+        DecorationModel unresolvedModel = readModel( "fully-populated-unresolved.xml" );
+        assertEquals( "Check result", unresolvedModel, childModel );
+
+        assembler.resolvePaths( childModel, "http://maven.apache.org/doxia" );
         DecorationModel mergedModel = readModel( "fully-populated-merged.xml" );
 
         assertEquals( "Check result", mergedModel, childModel );
@@ -451,7 +459,8 @@ public class DecorationModelInheritenceAssemblerTest
         childModel = readModel( "empty.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://maven.apache.org/doxia",
                                             "scp://maven.apache.org" );
-        // FIXME! assertEquals( "Check scp result", mergedModel, childModel );
+        assembler.resolvePaths( childModel, "http://maven.apache.org/doxia" );
+        assertEquals( "Check scp result", mergedModel, childModel );
 
         assertEquals( "Modified parent!", readModel( "fully-populated-child.xml" ), parentModel );
     }
