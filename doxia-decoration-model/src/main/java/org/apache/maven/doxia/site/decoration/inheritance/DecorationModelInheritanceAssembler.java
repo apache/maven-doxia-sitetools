@@ -36,7 +36,7 @@ public interface DecorationModelInheritanceAssembler
      * Manage inheritance of the decoration model between a parent and child.
      *
      * Any relative links in the parent model will be re-based to work from the merged child
-     * model, otherwise no content from either the parent or child model should be modifiedjav.
+     * model, otherwise no content from either the parent or child model should be modified.
      *
      * @param name a name, used for breadcrumb.
      *      If the parent model contains breadcrumbs and the child doesn't,
@@ -64,7 +64,7 @@ public interface DecorationModelInheritanceAssembler
      * has a base URL that is equal to the given baseUrl, it is replaced by a relative link
      * with respect to that base.
      *
-     * @param decoration  the DecorationModel.
+     * @param decoration the DecorationModel.
      *      Not null.
      * @param baseUrl the base URL.
      *      May be null in which case the decoration model is unchanged.
