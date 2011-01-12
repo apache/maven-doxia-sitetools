@@ -176,6 +176,7 @@ under the License.
                 <locale>nl</locale>
                 <locale>pl</locale>
                 <locale>pt_BR</locale>
+                <locale>sv</locale>
                 <locale>zh_CN</locale>
               </locales>
             </configuration>
