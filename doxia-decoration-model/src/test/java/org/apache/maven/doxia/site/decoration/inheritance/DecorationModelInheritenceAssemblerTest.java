@@ -22,6 +22,8 @@ package org.apache.maven.doxia.site.decoration.inheritance;
 import java.io.IOException;
 import java.io.Reader;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.apache.maven.doxia.site.decoration.Banner;
@@ -601,6 +603,74 @@ public class DecorationModelInheritenceAssemblerTest
         assembler.resolvePaths( model, "http://foo.apache.org" );
         assertEquals( "Check size", 1, model.getBody().getBreadcrumbs().size() );
         assertEquals( "Check item", createLinkItem( "Foo", "" ), model.getBody().getBreadcrumbs().get( 0 ) );
+    }
+
+    public void testBreadcrumbs()
+    {
+        String parentHref = "http://parent.com/index.html";
+
+        final DecorationModel parent = new DecorationModel();
+        parent.setBody( new Body() );
+        parent.getBody().addBreadcrumb( createLinkItem( "Parent", parentHref ) );
+
+        DecorationModel child = new DecorationModel();
+        assembler.assembleModelInheritance( "childName", child, parent,
+                "http://parent.com/child", "http://parent.com" );
+        assertBreadcrumbsCorrect( child.getBody().getBreadcrumbs(), "childName", parentHref );
+
+
+        // same with trailing slash
+        child = new DecorationModel();
+        assembler.assembleModelInheritance( "childName", child, parent,
+                "http://parent.com/child/", "http://parent.com/" );
+        assertBreadcrumbsCorrect( child.getBody().getBreadcrumbs(), "childName", parentHref );
+
+        // now mixed
+        child = new DecorationModel();
+        assembler.assembleModelInheritance( "childName", child, parent,
+                "http://parent.com/child/", "http://parent.com" );
+        assertBreadcrumbsCorrect( child.getBody().getBreadcrumbs(), "childName", parentHref );
+
+        // and other way round
+        child = new DecorationModel();
+        assembler.assembleModelInheritance( "childName", child, parent,
+                "http://parent.com/child", "http://parent.com/" );
+        assertBreadcrumbsCorrect( child.getBody().getBreadcrumbs(), "childName", parentHref );
+
+
+        // now with child breadcrumb
+        child = new DecorationModel();
+        child.setBody( new Body() );
+        child.getBody().addBreadcrumb( createLinkItem( "Child", "" ) );
+        assembler.assembleModelInheritance( "childName", child, parent,
+                "http://parent.com/child/", "http://parent.com/" );
+        assertBreadcrumbsCorrect( child.getBody().getBreadcrumbs(), "Child", parentHref );
+
+
+        // now with file url
+        parentHref = "file://parent.com/index.html";
+        ( (LinkItem) parent.getBody().getBreadcrumbs().get( 0 ) ).setHref( parentHref );
+        child = new DecorationModel();
+        assembler.assembleModelInheritance( "childName", child, parent,
+                "file://parent.com/child/", "file://parent.com/" );
+        assertBreadcrumbsCorrect( child.getBody().getBreadcrumbs(), "childName", parentHref );
+
+
+        // now with scp url
+        parentHref = "scp://parent.com/index.html";
+        ( (LinkItem) parent.getBody().getBreadcrumbs().get( 0 ) ).setHref( parentHref );
+        child = new DecorationModel();
+        assembler.assembleModelInheritance( "childName", child, parent,
+                "scp://parent.com/child/", "scp://parent.com/" );
+        assertBreadcrumbsCorrect( child.getBody().getBreadcrumbs(), "childName", parentHref );
+    }
+
+    private static void assertBreadcrumbsCorrect( final List breadcrumbs, final String childName,
+            final String parentHref )
+    {
+        assertEquals( "Check size", 2, breadcrumbs.size() );
+        assertEquals( "Check parent item", createLinkItem( "Parent", parentHref ), breadcrumbs.get( 0 ) );
+        assertEquals( "Check child item", createLinkItem( childName, "" ), breadcrumbs.get( 1 ) );
     }
 
     public void testBannerWithoutHref()
