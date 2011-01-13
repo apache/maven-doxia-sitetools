@@ -200,21 +200,27 @@ public class URIPathDescriptor
      * Check if this URIPathDescriptor lives on the same site as the given URI.
      *
      * @param uri a URI to compare with.
+     *      May be null, in which case false is returned.
      *
      * @return true if {@link #getBaseURI()} shares the same scheme, host and port with the given URI
      *      where null values are allowed.
      */
     public boolean sameSite( final URI uri )
     {
+        if ( uri == null )
+        {
+            return false;
+        }
+
         return sameSite( this.baseURI, uri );
     }
 
     private static boolean sameSite( final URI baseURI, final URI newBaseURI )
     {
         final boolean equalScheme = ( baseURI.getScheme() == null ? newBaseURI.getScheme() == null
-                : baseURI.getScheme().equals( newBaseURI.getScheme() ) );
+                : baseURI.getScheme().equalsIgnoreCase( newBaseURI.getScheme() ) );
         final boolean equalHost = ( baseURI.getHost() == null ? newBaseURI.getHost() == null
-                : baseURI.getHost().equals( newBaseURI.getHost() ) );
+                : baseURI.getHost().equalsIgnoreCase( newBaseURI.getHost() ) );
         final boolean equalPort = ( baseURI.getPort() == newBaseURI.getPort() );
 
         return ( equalScheme && equalPort && equalHost );

@@ -20,6 +20,8 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  * under the License.
  */
 
+import java.net.URI;
+
 import junit.framework.TestCase;
 
 /**
@@ -91,5 +93,27 @@ public class URIPathDescriptorTest
 
         path = new URIPathDescriptor( "http://maven.apache.org/doxia", "http://maven.apache.org/source" );
         assertEquals( "../source", path.relativizeLink().toString() );
+    }
+
+    /**
+     * Test of sameSite method, of class URIPathDescriptor.
+     *
+     * @throws Exception
+     */
+    public void testSameSite()
+            throws Exception
+    {
+        final URIPathDescriptor path = new URIPathDescriptor( "http://maven.apache.org/", "doxia" );
+
+        assertTrue( path.sameSite( new URI( "http://maven.apache.org/" ) ) );
+        assertTrue( path.sameSite( new URI( "http://maven.apache.org" ) ) );
+        assertTrue( path.sameSite( new URI( "HTTP://maven.apache.org/" ) ) );
+        assertTrue( path.sameSite( new URI( "http://MAVEN.apache.org/" ) ) );
+        assertTrue( path.sameSite( new URI( "http://maven.apache.org/wagon/index.html" ) ) );
+
+        assertFalse( path.sameSite( null ) );
+        assertFalse( path.sameSite( new URI( "https://maven.apache.org/" ) ) );
+        assertFalse( path.sameSite( new URI( "http://ant.apache.org/" ) ) );
+        assertFalse( path.sameSite( new URI( "http://maven.apache.org:80" ) ) );
     }
 }
