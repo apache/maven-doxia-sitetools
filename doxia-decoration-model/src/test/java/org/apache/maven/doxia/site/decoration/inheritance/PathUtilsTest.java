@@ -67,11 +67,11 @@ public class PathUtilsTest
     {
         PathDescriptor oldPath = new PathDescriptor( "http://maven.apache.org/", "source" );
         PathDescriptor newPath = new PathDescriptor( "http://maven.apache.org/", "target" );
-        assertEquals( ".." + SLASH + "source", PathUtils.getRelativePath( oldPath, newPath ) );
+        assertEquals( "../source", PathUtils.getRelativePath( oldPath, newPath ) );
 
         oldPath = new PathDescriptor( "scp://people.apache.org/", "source" );
         newPath = new PathDescriptor( "scp://people.apache.org/", "target" );
         // same with scp URLs fails?! DOXIASITETOOLS-47
-        //assertEquals( ".." + SLASH + "source", PathUtils.getRelativePath( oldPath, newPath ) );
+        //assertEquals( "../source", PathUtils.getRelativePath( oldPath, newPath ) );
     }
 }

@@ -133,7 +133,7 @@ public class URIPathDescriptor
             return link;
         }
 
-        final String relativePath = PathTool.getRelativeFilePath( newBaseURI.getPath(), link.getPath() );
+        final String relativePath = PathTool.getRelativeWebPath( newBaseURI.getPath(), link.getPath() );
 
         try
         {
@@ -184,7 +184,7 @@ public class URIPathDescriptor
             return resolveLink();
         }
 
-        final String relativeBasePath = PathTool.getRelativeFilePath( newBaseURI.getPath(), baseURI.getPath() );
+        final String relativeBasePath = PathTool.getRelativeWebPath( newBaseURI.getPath(), baseURI.getPath() );
 
         try
         {
