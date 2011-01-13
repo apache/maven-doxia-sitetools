@@ -447,7 +447,7 @@ public class PathDescriptorTest
     }
 
 /*
-    // FIXME! same as testUrlBaseAbsPath with scp, this fails!? DOXIASITETOOLS-47
+    // same as testUrlBaseAbsPath with scp, this fails!? DOXIASITETOOLS-47
     public void testUriBaseAbsPath()
         throws Exception
     {
