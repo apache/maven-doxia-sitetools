@@ -21,6 +21,7 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  */
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import junit.framework.TestCase;
 
@@ -32,6 +33,39 @@ import junit.framework.TestCase;
 public class URIPathDescriptorTest
         extends TestCase
 {
+    /**
+     * Test of constructor, of class URIPathDescriptor.
+     *
+     * @throws Exception
+     */
+    public void testConstructor()
+            throws Exception
+    {
+        final String expected = "http://maven.apache.org/doxia";
+
+        final URIPathDescriptor path = new URIPathDescriptor( "http://maven.apache.org/", "doxia" );
+        assertEquals( expected, path.toString() );
+
+        URIPathDescriptor compare = new URIPathDescriptor( "http://maven.apache.org", "/doxia" );
+        assertEquals( expected, compare.toString() );
+
+        compare = new URIPathDescriptor( "http://maven.apache.org/./doxia/../", "/sub/./sub/../../doxia" );
+        assertEquals( expected, compare.toString() );
+
+        compare = new URIPathDescriptor( "http://maven.apache.org/doxia", "" );
+        assertEquals( expected + "/", compare.toString() );
+
+        try
+        {
+            compare = new URIPathDescriptor( "/doxia", "http://maven.apache.org" );
+            fail();
+        }
+        catch ( URISyntaxException ex )
+        {
+            assertNotNull( ex );
+        }
+    }
+
     /**
      * Test of resolveLink method, of class URIPathDescriptor.
      *

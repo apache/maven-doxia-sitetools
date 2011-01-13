@@ -225,4 +225,16 @@ public class URIPathDescriptor
 
         return ( equalScheme && equalPort && equalHost );
     }
+
+    /**
+     * Construct a string representation of this URIPathDescriptor.
+     * This is equivalent to calling {@link #resolveLink()}.toString().
+     *
+     * @return this URIPathDescriptor as a String.
+     */
+    public String toString()
+    {
+        return resolveLink().toString();
+    }
+
 }
