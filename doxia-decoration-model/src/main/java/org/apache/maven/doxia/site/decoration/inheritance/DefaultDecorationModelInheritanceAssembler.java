@@ -53,54 +53,61 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
     public void assembleModelInheritance( String name, DecorationModel child, DecorationModel parent,
                                           String childBaseUrl, String parentBaseUrl )
     {
+        // cannot inherit from null parent.
+        if ( parent == null )
+        {
+            return;
+        }
+
         URLContainer urlContainer = new URLContainer( parentBaseUrl, childBaseUrl );
 
-        // cannot inherit from null parent.
-        if ( parent != null )
+        if ( child.getBannerLeft() == null && parent.getBannerLeft() != null )
         {
-            if ( child.getBannerLeft() == null && parent.getBannerLeft() != null )
-            {
-                child.setBannerLeft( (Banner) parent.getBannerLeft().clone());
-                rebaseBannerPaths( child.getBannerLeft(), urlContainer );
-            }
-
-            if ( child.getBannerRight() == null && parent.getBannerRight() != null)
-            {
-                child.setBannerRight( (Banner) parent.getBannerRight().clone());
-                rebaseBannerPaths( child.getBannerRight(), urlContainer );
-            }
-
-            if ( child.getPublishDate() == null && parent.getPublishDate() != null )
-            {
-                child.setPublishDate( (PublishDate) parent.getPublishDate().clone());
-            }
-
-            if ( child.getVersion() == null && parent.getVersion() != null )
-            {
-                child.setVersion( (Version) parent.getVersion().clone());
-            }
-
-            if ( child.getSkin() == null && parent.getSkin() != null )
-            {
-                child.setSkin( (Skin) parent.getSkin().clone());
-            }
-
-            child.setPoweredBy( mergePoweredByLists( child.getPoweredBy(), parent.getPoweredBy(), urlContainer ) );
-
-            if ( parent.getLastModified() > child.getLastModified() )
-            {
-                child.setLastModified( parent.getLastModified() );
-            }
-
-            assembleBodyInheritance( name, child, parent, urlContainer );
-
-            assembleCustomInheritance( child, parent );
+            child.setBannerLeft( (Banner) parent.getBannerLeft().clone());
+            rebaseBannerPaths( child.getBannerLeft(), urlContainer );
         }
+
+        if ( child.getBannerRight() == null && parent.getBannerRight() != null)
+        {
+            child.setBannerRight( (Banner) parent.getBannerRight().clone());
+            rebaseBannerPaths( child.getBannerRight(), urlContainer );
+        }
+
+        if ( child.getPublishDate() == null && parent.getPublishDate() != null )
+        {
+            child.setPublishDate( (PublishDate) parent.getPublishDate().clone());
+        }
+
+        if ( child.getVersion() == null && parent.getVersion() != null )
+        {
+            child.setVersion( (Version) parent.getVersion().clone());
+        }
+
+        if ( child.getSkin() == null && parent.getSkin() != null )
+        {
+            child.setSkin( (Skin) parent.getSkin().clone());
+        }
+
+        child.setPoweredBy( mergePoweredByLists( child.getPoweredBy(), parent.getPoweredBy(), urlContainer ) );
+
+        if ( parent.getLastModified() > child.getLastModified() )
+        {
+            child.setLastModified( parent.getLastModified() );
+        }
+
+        assembleBodyInheritance( name, child, parent, urlContainer );
+
+        assembleCustomInheritance( child, parent );
     }
 
     /** {@inheritDoc} */
     public void resolvePaths( final DecorationModel decoration, final String baseUrl )
     {
+        if ( baseUrl == null )
+        {
+            return;
+        }
+
         if ( decoration.getBannerLeft() != null )
         {
             relativizeBannerPaths( decoration.getBannerLeft(), baseUrl );
