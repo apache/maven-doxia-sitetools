@@ -40,6 +40,12 @@ public class URIPathDescriptor
      * Both arguments to this constructor have to be parsable to URIs.
      * The baseURI parameter has to be absolute in the sense of {@link URI#isAbsolute()}.
      *
+     * Before being parsed to {@link URI}s, the arguments are modified to catch
+     * some common bad practices: first all Windows-style backslashes '\' are replaced by
+     * forward slashes '/'.
+     * If the baseURI does not end with '/', a slash is appended.
+     * If the link starts with a '/', the first character is stripped.
+     *
      * @param baseURI The base URI. Has to be a valid absolute URI.
      *      In addition, the path of the URI should not have any file part,
      *      ie <code>http://maven.apache.org/</code> is valid,
@@ -53,8 +59,8 @@ public class URIPathDescriptor
     public URIPathDescriptor( final String baseURI, final String link )
             throws URISyntaxException
     {
-        final String llink = link.startsWith( "/" ) ? link.substring( 1 ) : link;
-        final String bbase = baseURI.endsWith( "/" ) ? baseURI : baseURI + "/";
+        final String llink = sanitizeLink( link );
+        final String bbase = sanitizeBase( baseURI );
 
         this.baseURI = new URI( bbase ).normalize();
         this.link = new URI( llink ).normalize();
@@ -237,4 +243,27 @@ public class URIPathDescriptor
         return resolveLink().toString();
     }
 
+    private static String sanitizeBase( final String base )
+    {
+        String sane = base.replace( '\\', '/' );
+
+        if ( !sane.endsWith( "/" ) )
+        {
+            sane += "/";
+        }
+
+        return sane;
+    }
+
+    private static String sanitizeLink( final String link )
+    {
+        String sane = link.replace( '\\', '/' );
+
+        if ( sane.startsWith( "/" ) )
+        {
+            sane = sane.substring( 1 );
+        }
+
+        return sane;
+    }
 }
