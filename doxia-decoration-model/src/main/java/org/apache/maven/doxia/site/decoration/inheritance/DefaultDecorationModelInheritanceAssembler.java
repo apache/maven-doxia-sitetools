@@ -19,8 +19,6 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  * under the License.
  */
 
-import java.net.URISyntaxException;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -394,18 +392,9 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
             return link;
         }
 
-        try
-        {
-            final URIPathDescriptor oldPath = new URIPathDescriptor( urlContainer.getOldPath(), link );
+        final URIPathDescriptor oldPath = new URIPathDescriptor( urlContainer.getOldPath(), link );
 
-            return oldPath.rebaseLink( urlContainer.getNewPath() ).toString();
-        }
-        catch ( URISyntaxException ex )
-        {
-            throw new RuntimeException( "Bad URI syntax of either: " + link
-                    + ", and/or " + urlContainer.getOldPath()
-                    + ", and/or " + urlContainer.getNewPath(), ex );
-        }
+        return oldPath.rebaseLink( urlContainer.getNewPath() ).toString();
     }
 
     // relativize only affects absolute links, if the link has the same scheme, host and port
@@ -417,17 +406,9 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
             return link;
         }
 
-        try
-        {
-            final URIPathDescriptor path = new URIPathDescriptor( baseUri, link );
+        final URIPathDescriptor path = new URIPathDescriptor( baseUri, link );
 
-            return path.relativizeLink().toString();
-        }
-        catch ( URISyntaxException ex )
-        {
-            throw new RuntimeException( "Bad URI syntax of either: " + link
-                    + ", and/or " + baseUri, ex );
-        }
+        return path.relativizeLink().toString();
     }
 
     /**

@@ -50,31 +50,34 @@ public class URIPathDescriptor
      *      In addition, the path of the URI should not have any file part,
      *      ie <code>http://maven.apache.org/</code> is valid,
      *      <code>http://maven.apache.org/index.html</code> is not.
+     *      Even though the latter form is accepted without warning,
+     *      the methods in this class will not return what is probably expected,
+     *      because a slash is appended during construction, as noted above.
      * @param link the link. This may be a relative link or an absolute link.
      *      Note that URIs that start with a "/", ie don't specify a scheme, are considered relative.
      *
-     * @throws URISyntaxException if either argument is not parsable as a URI,
+     * @throws IllegalArgumentException if either argument is not parsable as a URI,
      *      or if baseURI is not absolute.
      */
     public URIPathDescriptor( final String baseURI, final String link )
-            throws URISyntaxException
     {
         final String llink = sanitizeLink( link );
         final String bbase = sanitizeBase( baseURI );
 
-        this.baseURI = new URI( bbase ).normalize();
-        this.link = new URI( llink ).normalize();
+        this.baseURI = URI.create( bbase ).normalize();
+        this.link = URI.create( llink ).normalize();
 
         if ( !this.baseURI.isAbsolute() )
         {
-            throw new URISyntaxException( baseURI, "Base must be an absolute URI!" );
+            throw new IllegalArgumentException( "Base URI is not absolute: " + baseURI );
         }
     }
 
     /**
      * Return the base of this URIPathDescriptor as a URI.
+     * This is always {@link URI#normalize() normalized}.
      *
-     * @return the base URI.
+     * @return the normalized base URI.
      */
     public URI getBaseURI()
     {
@@ -83,8 +86,9 @@ public class URIPathDescriptor
 
     /**
      * Return the link of this URIPathDescriptor as a URI.
+     * This is always {@link URI#normalize() normalized}.
      *
-     * @return the link URI.
+     * @return the normalized link URI.
      */
     public URI getLink()
     {
@@ -116,6 +120,8 @@ public class URIPathDescriptor
         return relativizeLink( baseURI.toString(), link );
     }
 
+    // NOTE: URI.relativize does not work as expected, see
+    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6226081
     private static URI relativizeLink( final String base, final URI link )
     {
         if ( !link.isAbsolute() )
@@ -123,16 +129,7 @@ public class URIPathDescriptor
             return link;
         }
 
-        final URI newBaseURI;
-
-        try
-        {
-            newBaseURI = new URI( base );
-        }
-        catch ( URISyntaxException ex )
-        {
-            return link;
-        }
+        final URI newBaseURI = URI.create( base );
 
         if ( !sameSite( link, newBaseURI ) )
         {
@@ -141,14 +138,7 @@ public class URIPathDescriptor
 
         final String relativePath = PathTool.getRelativeWebPath( newBaseURI.getPath(), link.getPath() );
 
-        try
-        {
-            return new URI( relativePath );
-        }
-        catch ( URISyntaxException ex )
-        {
-            return link;
-        }
+        return URI.create( relativePath );
     }
 
     /**
@@ -163,7 +153,7 @@ public class URIPathDescriptor
      * @param newBase the new base URI. Has to be parsable as a URI.
      *.
      * @return a new relative link or the original link {@link #resolveLink() resolved},
-     * i.e. as an absolute link, if the link cannot be re-based.
+     *      i.e. as an absolute link, if the link cannot be re-based.
      */
     public URI rebaseLink( final String newBase )
     {
@@ -195,14 +185,7 @@ public class URIPathDescriptor
 
         final String relativeBasePath = PathTool.getRelativeWebPath( newBaseURI.getPath(), baseURI.getPath() );
 
-        try
-        {
-            return new URI( relativeBasePath ).resolve( link );
-        }
-        catch ( URISyntaxException ex )
-        {
-            return resolveLink();
-        }
+        return URI.create( relativeBasePath ).resolve( link );
     }
 
     /**

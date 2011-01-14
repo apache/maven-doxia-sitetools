@@ -21,7 +21,6 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  */
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import junit.framework.TestCase;
 
@@ -60,7 +59,7 @@ public class URIPathDescriptorTest
             compare = new URIPathDescriptor( "/doxia", "http://maven.apache.org" );
             fail();
         }
-        catch ( URISyntaxException ex )
+        catch ( IllegalArgumentException ex )
         {
             assertNotNull( ex );
         }
