@@ -154,13 +154,16 @@ public class URIPathDescriptor
     /**
      * Calculate the link as viewed from a different base.
      * This returns the original link if link is absolute.
-     * This returns {@link #resolveLink()} if
-     *      newBase == null
-     *      or newBase is not parsable as a URI.
+     * This returns {@link #resolveLink()} if either
+     *      newBase == null,
+     *      or newBase is not parsable as a URI,
+     *      or newBase and this {@link #getBaseURI()} do not share the
+     *      {@link #sameSite(java.net.URI) same site}.
      *
      * @param newBase the new base URI. Has to be parsable as a URI.
      *.
-     * @return a new relative link.
+     * @return a new relative link or the original link {@link #resolveLink() resolved},
+     * i.e. as an absolute link, if the link cannot be re-based.
      */
     public URI rebaseLink( final String newBase )
     {
