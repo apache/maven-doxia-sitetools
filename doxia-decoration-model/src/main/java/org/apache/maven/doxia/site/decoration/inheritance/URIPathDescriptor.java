@@ -208,8 +208,7 @@ public class URIPathDescriptor
     }
 
     private static boolean sameSite( final URI baseURI, final URI newBaseURI )
-    {
-        final boolean equalScheme = ( baseURI.getScheme() == null ? newBaseURI.getScheme() == null
+    {final boolean equalScheme = ( newBaseURI.getScheme() == null ? false
                 : baseURI.getScheme().equalsIgnoreCase( newBaseURI.getScheme() ) );
         final boolean equalHost = ( baseURI.getHost() == null ? newBaseURI.getHost() == null
                 : baseURI.getHost().equalsIgnoreCase( newBaseURI.getHost() ) );
