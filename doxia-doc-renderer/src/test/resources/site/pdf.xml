@@ -51,7 +51,7 @@
     <coverSubTitle>v. 1.1.1-SNAPSHOT</coverSubTitle>
     <coverType>User Guide</coverType>
     <companyName>The Apache Software Foundation</companyName>
-    <companyLogo>http://www.apache.org/images/asf_logo_wide.png</companyLogo>
+    <companyLogo>./images/asf_logo_wide.png</companyLogo>
     <projectLogo>./images/doxia-logo.png</projectLogo>
   </cover>
 </document>
