@@ -34,7 +34,7 @@ import java.util.Map;
 
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
-import org.apache.maven.doxia.xsd.AbstractXmlValidatorTest;
+import org.apache.maven.doxia.xsd.AbstractXmlValidator;
 
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
@@ -42,6 +42,7 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
+import org.xml.sax.EntityResolver;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -318,7 +319,7 @@ public class DefaultSiteRendererTest
     }
 
     protected static class XhtmlValidatorTest
-        extends AbstractXmlValidatorTest
+        extends AbstractXmlValidator
     {
         /** {@inheritDoc} */
         protected void setUp()
@@ -344,6 +345,12 @@ public class DefaultSiteRendererTest
         protected String addNamespaces( String content )
         {
             return content;
+        }
+
+        /** {@inheritDoc} */
+        protected EntityResolver getEntityResolver()
+        {
+            return new XhtmlEntityResolver();
         }
 
         /** {@inheritDoc} */
