@@ -312,31 +312,26 @@ public class DefaultSiteRendererTest
      */
     public void validatePages() throws Exception
     {
-        // Need to refactor...
-        XhtmlValidatorTest validator = new XhtmlValidatorTest();
-        validator.setUp();
-        validator.testValidateFiles();
+        new XhtmlValidatorTest().validateGeneratedPages();
     }
 
     protected static class XhtmlValidatorTest
         extends AbstractXmlValidator
     {
-        /** {@inheritDoc} */
-        protected void setUp()
+        /**
+         * Validate the generated documents.
+         *
+         * @throws Exception
+         */
+        public void validateGeneratedPages()
             throws Exception
         {
-            super.setUp();
+            setUp();
+            testValidateFiles();
+            tearDown();
         }
 
-        /** {@inheritDoc} */
-        protected void tearDown()
-            throws Exception
-        {
-            super.tearDown();
-        }
-
-        /** {@inheritDoc} */
-        protected String[] getIncludes()
+        private static String[] getIncludes()
         {
             return new String[] { "**/*.html" };
         }
