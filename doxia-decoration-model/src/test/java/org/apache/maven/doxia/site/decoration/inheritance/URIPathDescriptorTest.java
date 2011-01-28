@@ -92,6 +92,12 @@ public class URIPathDescriptorTest
 
         oldPath = new URIPathDescriptor( "http://maven.apache.org", "source" );
         assertEquals( expected, oldPath.resolveLink().toString() );
+
+        oldPath = new URIPathDescriptor( maven, "source/index.html" );
+        assertEquals( expected + "/index.html", oldPath.resolveLink().toString() );
+
+        oldPath = new URIPathDescriptor( maven, "source/index.html?var=foo&amp;var2=bar" );
+        assertEquals( expected + "/index.html?var=foo&amp;var2=bar", oldPath.resolveLink().toString() );
     }
 
     /**
@@ -106,6 +112,13 @@ public class URIPathDescriptorTest
         assertEquals( "../source", oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
         assertEquals( "http://maven.apache.org/source", oldPath.rebaseLink( null ).toString() );
         assertEquals( "http://maven.apache.org/source", oldPath.rebaseLink( "C:/Documents and Settings/" ).toString() );
+
+        oldPath = new URIPathDescriptor( maven, "source/index.html" );
+        assertEquals( "../source/index.html", oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
+
+        oldPath = new URIPathDescriptor( maven, "source/index.html?var=foo&amp;var2=bar" );
+        assertEquals( "../source/index.html?var=foo&amp;var2=bar",
+            oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
 
         oldPath = new URIPathDescriptor( "scp://people.apache.org/", "source" );
         assertEquals( "../source", oldPath.rebaseLink( "scp://people.apache.org/doxia" ).toString() );
@@ -136,6 +149,12 @@ public class URIPathDescriptorTest
 
         path = new URIPathDescriptor( "http://maven.apache.org/doxia", "http://maven.apache.org/source" );
         assertEquals( "../source", path.relativizeLink().toString() );
+
+        path = new URIPathDescriptor( maven, "http://maven.apache.org/index.html" );
+        assertEquals( "index.html", path.relativizeLink().toString() );
+
+        path = new URIPathDescriptor( maven, "http://maven.apache.org/index.html?var=foo&amp;var2=bar" );
+        assertEquals( "index.html?var=foo&amp;var2=bar", path.relativizeLink().toString() );
     }
 
     /**

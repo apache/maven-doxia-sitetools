@@ -38,7 +38,7 @@ under the License.
   <version position="right" />
 
   <poweredBy>
-    <logo name="Maven" href="http://maven.apache.org" img="../images/maven-feather.png"/>
+    <logo name="Maven" href=".." img="../images/maven-feather.png"/>
   </poweredBy>
 
   <skin>

@@ -136,7 +136,7 @@ public class URIPathDescriptor
             return link;
         }
 
-        final String relativePath = PathTool.getRelativeWebPath( newBaseURI.getPath(), link.getPath() );
+       final String relativePath = PathTool.getRelativeWebPath( newBaseURI.toString(), link.toString() );
 
         return URI.create( relativePath );
     }
