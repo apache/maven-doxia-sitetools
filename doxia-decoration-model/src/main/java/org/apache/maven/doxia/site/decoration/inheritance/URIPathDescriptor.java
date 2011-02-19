@@ -199,22 +199,19 @@ public class URIPathDescriptor
      */
     public boolean sameSite( final URI uri )
     {
-        if ( uri == null )
-        {
-            return false;
-        }
-
-        return sameSite( this.baseURI, uri );
+        return ( uri != null ) && sameSite( this.baseURI, uri );
     }
 
     private static boolean sameSite( final URI baseURI, final URI newBaseURI )
-    {final boolean equalScheme = ( newBaseURI.getScheme() == null ? false
-                : baseURI.getScheme().equalsIgnoreCase( newBaseURI.getScheme() ) );
-        final boolean equalHost = ( baseURI.getHost() == null ? newBaseURI.getHost() == null
-                : baseURI.getHost().equalsIgnoreCase( newBaseURI.getHost() ) );
-        final boolean equalPort = ( baseURI.getPort() == newBaseURI.getPort() );
+    {
+        final boolean sameScheme =
+            ( newBaseURI.getScheme() == null ? false : baseURI.getScheme().equalsIgnoreCase( newBaseURI.getScheme() ) );
+        final boolean sameHost =
+            ( baseURI.getHost() == null ? newBaseURI.getHost() == null
+                            : baseURI.getHost().equalsIgnoreCase( newBaseURI.getHost() ) );
+        final boolean samePort = ( baseURI.getPort() == newBaseURI.getPort() );
 
-        return ( equalScheme && equalPort && equalHost );
+        return ( sameScheme && samePort && sameHost );
     }
 
     /**
