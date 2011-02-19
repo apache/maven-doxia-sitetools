@@ -61,29 +61,29 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
 
         if ( child.getBannerLeft() == null && parent.getBannerLeft() != null )
         {
-            child.setBannerLeft( (Banner) parent.getBannerLeft().clone());
+            child.setBannerLeft( (Banner) parent.getBannerLeft().clone() );
             rebaseBannerPaths( child.getBannerLeft(), urlContainer );
         }
 
         if ( child.getBannerRight() == null && parent.getBannerRight() != null)
         {
-            child.setBannerRight( (Banner) parent.getBannerRight().clone());
+            child.setBannerRight( (Banner) parent.getBannerRight().clone() );
             rebaseBannerPaths( child.getBannerRight(), urlContainer );
         }
 
         if ( child.getPublishDate() == null && parent.getPublishDate() != null )
         {
-            child.setPublishDate( (PublishDate) parent.getPublishDate().clone());
+            child.setPublishDate( (PublishDate) parent.getPublishDate().clone() );
         }
 
         if ( child.getVersion() == null && parent.getVersion() != null )
         {
-            child.setVersion( (Version) parent.getVersion().clone());
+            child.setVersion( (Version) parent.getVersion().clone() );
         }
 
         if ( child.getSkin() == null && parent.getSkin() != null )
         {
-            child.setSkin( (Skin) parent.getSkin().clone());
+            child.setSkin( (Skin) parent.getSkin().clone() );
         }
 
         child.setPoweredBy( mergePoweredByLists( child.getPoweredBy(), parent.getPoweredBy(), urlContainer ) );

@@ -77,7 +77,8 @@ public class FoPdfRenderer
     }
 
     /** {@inheritDoc} */
-    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel, DocumentRendererContext context )
+    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel,
+                        DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
         // copy resources, images, etc.
@@ -124,11 +125,11 @@ public class FoPdfRenderer
                 ( context != null && context.get( "generateTOC" ) != null ? context.get( "generateTOC" ).toString().trim()
                                 : "start" );
             int tocPosition = 0;
-            if ( "start".equalsIgnoreCase( generateTOC ))
+            if ( "start".equalsIgnoreCase( generateTOC ) )
             {
                 tocPosition = FoAggregateSink.TOC_START;
             }
-            else if ( "end".equalsIgnoreCase( generateTOC ))
+            else if ( "end".equalsIgnoreCase( generateTOC ) )
             {
                 tocPosition = FoAggregateSink.TOC_END;
             }
@@ -275,8 +276,9 @@ public class FoPdfRenderer
         }
     }
 
-    private void renderModules( String href, FoAggregateSink sink, DocumentTOCItem tocItem, DocumentRendererContext context )
-            throws DocumentRendererException, IOException
+    private void renderModules( String href, FoAggregateSink sink, DocumentTOCItem tocItem,
+                                DocumentRendererContext context )
+        throws DocumentRendererException, IOException
     {
         for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
         {

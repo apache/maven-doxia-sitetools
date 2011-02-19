@@ -62,5 +62,5 @@ public interface DocRenderer
      *
      * @return the ouput extension supported
      */
-    public String getOutputExtension();
+    String getOutputExtension();
 }

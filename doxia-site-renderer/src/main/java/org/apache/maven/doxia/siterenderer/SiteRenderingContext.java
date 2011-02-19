@@ -167,7 +167,8 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.List} object with {@link java.util.Locale} objects.
      */
-    public List getSiteLocales() {
+    public List getSiteLocales()
+    {
         return siteLocales;
     }
 
@@ -176,7 +177,8 @@ public class SiteRenderingContext
     *
     * @param locales List of {@link java.util.Locale} objects to add to the site locales list.
     */
-    public void addSiteLocales( List locales ) {
+    public void addSiteLocales( List locales )
+    {
         siteLocales.addAll( locales );
     }
 
