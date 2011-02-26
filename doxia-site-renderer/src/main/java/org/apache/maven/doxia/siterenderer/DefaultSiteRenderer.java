@@ -127,10 +127,9 @@ public class DefaultSiteRenderer
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public void render( Collection documents,
-                        SiteRenderingContext siteRenderingContext,
+    public void render( Collection/*DocumentRenderer*/ documents, SiteRenderingContext siteRenderingContext,
                         File outputDirectory )
-            throws RendererException, IOException
+        throws RendererException, IOException
     {
         renderModule( documents, siteRenderingContext, outputDirectory );
 
@@ -142,11 +141,11 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public Map locateDocumentFiles( SiteRenderingContext siteRenderingContext )
+    public Map/*String, DocumentRenderer*/ locateDocumentFiles( SiteRenderingContext siteRenderingContext )
             throws IOException, RendererException
     {
-        Map files = new LinkedHashMap();
-        Map moduleExcludes = siteRenderingContext.getModuleExcludes();
+        Map/*String, DocumentRenderer*/ files = new LinkedHashMap/*String, DocumentRenderer*/();
+        Map/*String, String*/ moduleExcludes = siteRenderingContext.getModuleExcludes();
 
         for ( Iterator i = siteRenderingContext.getSiteDirectories().iterator(); i.hasNext(); )
         {
@@ -197,10 +196,8 @@ public class DefaultSiteRenderer
         return files;
     }
 
-    private void addModuleFiles( File moduleBasedir,
-                                 SiteModule module,
-                                 String excludes,
-                                 Map files )
+    private void addModuleFiles( File moduleBasedir, SiteModule module, String excludes,
+                                 Map/*String, DocumentRenderer*/ files )
             throws IOException, RendererException
     {
         if ( moduleBasedir.exists() )
@@ -268,7 +265,7 @@ public class DefaultSiteRenderer
                     Map.Entry entry = (Map.Entry) iter.next();
                     if ( entry.getKey().toString().equalsIgnoreCase( key ) )
                     {
-                        DocumentRenderer renderer = (DocumentRenderer) files.get( entry.getKey() );
+                        DocumentRenderer renderer = (DocumentRenderer) entry.getValue();
 
                         RenderingContext originalContext = renderer.getRenderingContext();
 
@@ -294,8 +291,7 @@ public class DefaultSiteRenderer
         }
     }
 
-    private void renderModule( Collection docs,
-                               SiteRenderingContext siteRenderingContext,
+    private void renderModule( Collection/*DocumentRenderer*/ docs, SiteRenderingContext siteRenderingContext,
                                File outputDirectory )
             throws IOException, RendererException
     {
@@ -346,9 +342,7 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public void renderDocument( Writer writer,
-                                RenderingContext renderingContext,
-                                SiteRenderingContext context )
+    public void renderDocument( Writer writer, RenderingContext renderingContext, SiteRenderingContext context )
             throws RendererException, FileNotFoundException, UnsupportedEncodingException
     {
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
@@ -439,8 +433,7 @@ public class DefaultSiteRenderer
         generateDocument( writer, sink, context );
     }
 
-    private Context createContext( SiteRendererSink sink,
-                                   SiteRenderingContext siteRenderingContext )
+    private Context createContext( SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
     {
         VelocityContext context = new VelocityContext();
 
@@ -520,9 +513,7 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public void generateDocument( Writer writer,
-                                  SiteRendererSink sink,
-                                  SiteRenderingContext siteRenderingContext )
+    public void generateDocument( Writer writer, SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
             throws RendererException
     {
         Context context = createContext( sink, siteRenderingContext );
@@ -530,9 +521,7 @@ public class DefaultSiteRenderer
         writeTemplate( writer, context, siteRenderingContext );
     }
 
-    private void writeTemplate( Writer writer,
-                                Context context,
-                                SiteRenderingContext siteContext )
+    private void writeTemplate( Writer writer, Context context, SiteRenderingContext siteContext )
             throws RendererException
     {
         ClassLoader old = null;
@@ -566,9 +555,7 @@ public class DefaultSiteRenderer
     /**
      * @noinspection OverlyBroadCatchBlock,UnusedCatchParameter
      */
-    private void processTemplate( String templateName,
-                                  Context context,
-                                  Writer writer )
+    private void processTemplate( String templateName, Context context, Writer writer )
             throws RendererException
     {
         Template template;
@@ -593,11 +580,8 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public SiteRenderingContext createContextForSkin( File skinFile,
-                                                      Map attributes,
-                                                      DecorationModel decoration,
-                                                      String defaultWindowTitle,
-                                                      Locale locale )
+    public SiteRenderingContext createContextForSkin( File skinFile, Map attributes, DecorationModel decoration,
+                                                      String defaultWindowTitle, Locale locale )
             throws IOException
     {
         SiteRenderingContext context = new SiteRenderingContext();
@@ -633,11 +617,8 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public SiteRenderingContext createContextForTemplate( File templateFile,
-                                                          File skinFile,
-                                                          Map attributes,
-                                                          DecorationModel decoration,
-                                                          String defaultWindowTitle,
+    public SiteRenderingContext createContextForTemplate( File templateFile, File skinFile, Map attributes,
+                                                          DecorationModel decoration, String defaultWindowTitle,
                                                           Locale locale )
             throws MalformedURLException
     {
@@ -669,9 +650,7 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public void copyResources( SiteRenderingContext siteRenderingContext,
-                               File resourcesDirectory,
-                               File outputDirectory  )
+    public void copyResources( SiteRenderingContext siteRenderingContext, File resourcesDirectory, File outputDirectory )
             throws IOException
     {
         if ( siteRenderingContext.getSkinJarFile() != null )
@@ -800,9 +779,7 @@ public class DefaultSiteRenderer
         }
     }
 
-    private void copyFileFromZip( ZipFile file,
-                                  ZipEntry entry,
-                                  File destFile )
+    private void copyFileFromZip( ZipFile file, ZipEntry entry, File destFile )
             throws IOException
     {
         FileOutputStream fos = new FileOutputStream( destFile );
@@ -824,8 +801,7 @@ public class DefaultSiteRenderer
      * @param destination destination file
      * @throws java.io.IOException if any
      */
-    protected void copyDirectory( File source,
-                                  File destination )
+    protected void copyDirectory( File source, File destination )
             throws IOException
     {
         if ( source.exists() )

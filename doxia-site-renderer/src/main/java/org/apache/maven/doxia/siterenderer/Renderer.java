@@ -55,7 +55,8 @@ public interface Renderer
      * @throws org.apache.maven.doxia.siterenderer.RendererException if it bombs.
      * @throws java.io.IOException if it bombs.
      */
-    void render( Collection documents, SiteRenderingContext siteRenderingContext, File outputDirectory )
+    void render( Collection/*DocumentRenderer*/ documents, SiteRenderingContext siteRenderingContext,
+                 File outputDirectory )
         throws RendererException, IOException;
 
     /**
@@ -120,18 +121,18 @@ public interface Renderer
      * @throws java.io.IOException if it bombs.
      * @throws org.apache.maven.doxia.siterenderer.RendererException if it bombs.
      */
-    Map locateDocumentFiles( SiteRenderingContext siteRenderingContext )
+    Map/*String, DocumentRenderer*/ locateDocumentFiles( SiteRenderingContext siteRenderingContext )
         throws IOException, RendererException;
 
     /**
      * Render a document.
      *
-     * @param writer
-     * @param renderingContext
-     * @param context
-     * @throws org.apache.maven.doxia.siterenderer.RendererException if it bombs.
-     * @throws java.io.FileNotFoundException if it bombs.
-     * @throws java.io.UnsupportedEncodingException if it bombs.
+     * @param writer the writer to render the document to.
+     * @param renderingContext the document's rendering context
+     * @param context the site's rendering context
+     * @throws RendererException if it bombs.
+     * @throws FileNotFoundException if it bombs.
+     * @throws UnsupportedEncodingException if it bombs.
      */
     void renderDocument( Writer writer, RenderingContext renderingContext, SiteRenderingContext context )
         throws RendererException, FileNotFoundException, UnsupportedEncodingException;

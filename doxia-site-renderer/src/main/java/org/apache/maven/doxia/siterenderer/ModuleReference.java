@@ -51,7 +51,7 @@ class ModuleReference
     /**
      * <p>Getter for the field <code>basedir</code>.</p>
      *
-     * @return a {@link java.io.File} object.
+     * @return The base directory for module's source files.
      */
     public File getBasedir()
     {

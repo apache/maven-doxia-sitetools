@@ -31,7 +31,7 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
 
 /**
- * <p>SiteRenderingContext class.</p>
+ * Context for a site rendering.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
@@ -50,7 +50,7 @@ public class SiteRenderingContext
 
     private Locale locale = Locale.getDefault();
 
-    private List siteLocales = new ArrayList();
+    private List/*Locale*/ siteLocales = new ArrayList/*Locale*/();
 
     private DecorationModel decoration;
 
@@ -60,11 +60,11 @@ public class SiteRenderingContext
 
     private boolean usingDefaultTemplate;
 
-    private List siteDirectories = new ArrayList();
+    private List/*File*/ siteDirectories = new ArrayList/*File*/();
 
-    private Map moduleExcludes;
+    private Map/*String, String*/ moduleExcludes;
 
-    private List modules = new ArrayList();
+    private List/*ModuleReference*/ modules = new ArrayList/*ModuleReference*/();
 
     private boolean validate;
 
@@ -167,7 +167,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.List} object with {@link java.util.Locale} objects.
      */
-    public List getSiteLocales()
+    public List/*Locale*/ getSiteLocales()
     {
         return siteLocales;
     }
@@ -177,7 +177,7 @@ public class SiteRenderingContext
     *
     * @param locales List of {@link java.util.Locale} objects to add to the site locales list.
     */
-    public void addSiteLocales( List locales )
+    public void addSiteLocales( List/*Locale*/ locales )
     {
         siteLocales.addAll( locales );
     }
@@ -283,22 +283,22 @@ public class SiteRenderingContext
     }
 
     /**
-     * <p>addModuleDirectory.</p>
+     * Add a module source directory.
      *
-     * @param file a {@link java.io.File} object.
+     * @param moduleBasedir The base directory for module's source files.
      * @param moduleParserId a {@link java.lang.String} object.
      */
-    public void addModuleDirectory( File file, String moduleParserId )
+    public void addModuleDirectory( File moduleBasedir, String moduleParserId )
     {
-        this.modules.add( new ModuleReference( moduleParserId, file ) );
+        this.modules.add( new ModuleReference( moduleParserId, moduleBasedir ) );
     }
 
     /**
      * <p>Getter for the field <code>siteDirectories</code>.</p>
      *
-     * @return a {@link java.util.List} object.
+     * @return List of site directories files.
      */
-    public List getSiteDirectories()
+    public List/*File*/ getSiteDirectories()
     {
         return siteDirectories;
     }
@@ -308,7 +308,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.List} object.
      */
-    public List getModules()
+    public List/*ModuleReference*/ getModules()
     {
         return modules;
     }
@@ -316,9 +316,9 @@ public class SiteRenderingContext
     /**
      * <p>Getter for the field <code>moduleExcludes</code>.</p>
      *
-     * @return a {@link java.util.Map} object.
+     * @return a map defining exclude patterns (comma separated) by parser id.
      */
-    public Map getModuleExcludes()
+    public Map/*String, String*/ getModuleExcludes()
     {
         return moduleExcludes;
     }
@@ -328,7 +328,7 @@ public class SiteRenderingContext
      *
      * @param moduleExcludes a {@link java.util.Map} object.
      */
-    public void setModuleExcludes( Map moduleExcludes )
+    public void setModuleExcludes( Map/*String, String*/ moduleExcludes )
     {
         this.moduleExcludes = moduleExcludes;
     }
