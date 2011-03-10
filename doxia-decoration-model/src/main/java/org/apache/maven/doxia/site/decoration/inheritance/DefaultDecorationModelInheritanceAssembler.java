@@ -406,9 +406,17 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
             return link;
         }
 
-        final URIPathDescriptor path = new URIPathDescriptor( baseUri, link );
+        // this shouldn't be necessary, just to swallow mal-formed hrefs
+        try
+        {
+            final URIPathDescriptor path = new URIPathDescriptor( baseUri, link );
 
-        return path.relativizeLink().toString();
+            return path.relativizeLink().toString();
+        }
+        catch ( IllegalArgumentException e )
+        {
+            return link;
+        }
     }
 
     /**

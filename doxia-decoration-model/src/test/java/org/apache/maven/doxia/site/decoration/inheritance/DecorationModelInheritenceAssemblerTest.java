@@ -595,6 +595,17 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Modified parent!", new DecorationModel(), parent );
     }
 
+    public void testBadHref()
+    {
+        final DecorationModel model = new DecorationModel();
+        model.setBody( new Body() );
+        model.getBody().addBreadcrumb( createLinkItem( "Foo", "http://foo.apache.org/${property}" ) );
+        assembler.resolvePaths( model, "http://foo.apache.org" );
+        assertEquals( "Check size", 1, model.getBody().getBreadcrumbs().size() );
+        assertEquals( "Check item", createLinkItem( "Foo", "http://foo.apache.org/${property}" ),
+            model.getBody().getBreadcrumbs().get( 0 ) );
+    }
+
     public void testBreadcrumbWithoutHref()
     {
         DecorationModel model = new DecorationModel();
