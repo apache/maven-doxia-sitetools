@@ -59,10 +59,22 @@ public class URIPathDescriptorTest
         assertEquals( expected + "/", compare.toString() );
 
         compare = new URIPathDescriptor( "file:///C:\\Foo\\bar1", "" );
+        assertEquals( "file:///C:/Foo/bar1/", compare.getBaseURI().toString() );
+        // toString() calls resolve() which removes two slashes because authority is empty
         assertEquals( "file:/C:/Foo/bar1/", compare.toString() );
 
         compare = new URIPathDescriptor( "file:///C:/Documents%20and%20Settings/foo/", "bar" );
         assertEquals( "file:/C:/Documents%20and%20Settings/foo/bar", compare.toString() );
+
+        compare = new URIPathDescriptor( "file:/C:/Documents%20and%20Settings/foo/", "bar" );
+        assertEquals( "file:/C:/Documents%20and%20Settings/foo/bar", compare.toString() );
+
+        compare = new URIPathDescriptor( "file://C:/Documents%20and%20Settings/foo/", "bar" );
+        // toString() calls resolve() which removes the colon if port is empty, C is the host here!
+        assertEquals( "file://C/Documents%20and%20Settings/foo/bar", compare.toString() );
+
+        compare = new URIPathDescriptor( "file://C:8080/Documents%20and%20Settings/foo/", "bar" );
+        assertEquals( "file://C:8080/Documents%20and%20Settings/foo/bar", compare.toString() );
 
         compare = new URIPathDescriptor( "C:\\Foo\\bar", "bar" );
         assertEquals( "C:/Foo/bar/bar", compare.toString() ); // NOTE: C: is the scheme here!
@@ -98,6 +110,17 @@ public class URIPathDescriptorTest
 
         oldPath = new URIPathDescriptor( maven, "source/index.html?var=foo&amp;var2=bar" );
         assertEquals( expected + "/index.html?var=foo&amp;var2=bar", oldPath.resolveLink().toString() );
+
+        oldPath = new URIPathDescriptor( "file:///C:/Documents%20and%20Settings/", "source" );
+        // resolve() removes two slashes because authority is empty
+        assertEquals( "file:/C:/Documents%20and%20Settings/source", oldPath.resolveLink().toString() );
+
+        oldPath = new URIPathDescriptor( "file://C:/Documents%20and%20Settings/", "source" );
+        // resolve() removes the colon if port is empty
+        assertEquals( "file://C/Documents%20and%20Settings/source", oldPath.resolveLink().toString() );
+
+        oldPath = new URIPathDescriptor( "file:/C:/Documents%20and%20Settings/", "source" );
+        assertEquals( "file:/C:/Documents%20and%20Settings/source", oldPath.resolveLink().toString() );
     }
 
     /**
@@ -126,8 +149,21 @@ public class URIPathDescriptorTest
         oldPath = new URIPathDescriptor( maven, "banner/left" );
         assertEquals( "../banner/left", oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
 
+        oldPath = new URIPathDescriptor( maven, "index.html?var=foo&amp;var2=bar" );
+        assertEquals( "../index.html?var=foo&amp;var2=bar",
+            oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
+
         oldPath = new URIPathDescriptor( "http://jakarta.apache.org/", "banner/left" );
         assertEquals( "http://jakarta.apache.org/banner/left", oldPath.rebaseLink( maven ).toString() );
+
+        oldPath = new URIPathDescriptor( "file:///C:/Documents%20and%20Settings/", "source" );
+        assertEquals( "../source", oldPath.rebaseLink( "file:///C:/Documents%20and%20Settings/target" ).toString() );
+
+        oldPath = new URIPathDescriptor( "file://C:/Documents%20and%20Settings/", "source" );
+        assertEquals( "../source", oldPath.rebaseLink( "file://C:/Documents%20and%20Settings/target" ).toString() );
+
+        oldPath = new URIPathDescriptor( "file:/C:/Documents%20and%20Settings/", "source" );
+        assertEquals( "../source", oldPath.rebaseLink( "file:/C:/Documents%20and%20Settings/target" ).toString() );
     }
 
     /**
@@ -155,6 +191,15 @@ public class URIPathDescriptorTest
 
         path = new URIPathDescriptor( maven, "http://maven.apache.org/index.html?var=foo&amp;var2=bar" );
         assertEquals( "index.html?var=foo&amp;var2=bar", path.relativizeLink().toString() );
+
+        path = new URIPathDescriptor( "file:///C:/Documents%20and%20Settings/", "index.html" );
+        assertEquals( "index.html", path.relativizeLink().toString() );
+
+        path = new URIPathDescriptor( "file://C:/Documents%20and%20Settings/", "index.html" );
+        assertEquals( "index.html", path.relativizeLink().toString() );
+
+        path = new URIPathDescriptor( "file:/C:/Documents%20and%20Settings/", "index.html" );
+        assertEquals( "index.html", path.relativizeLink().toString() );
     }
 
     /**
@@ -183,6 +228,12 @@ public class URIPathDescriptorTest
         final URIPathDescriptor nullHost = new URIPathDescriptor( "http:///maven.apache.org/", "doxia" );
         assertTrue( nullHost.sameSite( new URI( "http:///maven.apache.org/" ) ) );
         assertFalse( nullHost.sameSite( new URI( "http://maven.apache.org/" ) ) );
+
+        URIPathDescriptor newPath = new URIPathDescriptor( "file:///C:/Documents%20and%20Settings/", "source" );
+        assertTrue( newPath.sameSite( new URI( "file:///C:/Documents%20and%20Settings/" ) ) );
+        assertFalse( newPath.sameSite( new URI( "file://C:/Documents%20and%20Settings/" ) ) );
+        // authority is empty
+        assertTrue( newPath.sameSite( new URI( "file:/C:/Documents%20and%20Settings/" ) ) );
     }
 
     private static void assertFailure( final String base, final String link )
