@@ -66,6 +66,9 @@ public class URIPathDescriptorTest
         compare = new URIPathDescriptor( "file:///C:/Documents%20and%20Settings/foo/", "bar" );
         assertEquals( "file:/C:/Documents%20and%20Settings/foo/bar", compare.toString() );
 
+        compare = new URIPathDescriptor( "file:////Users/", "user" );
+        assertEquals( "file:/Users/user", compare.toString() );
+
         compare = new URIPathDescriptor( "file:/C:/Documents%20and%20Settings/foo/", "bar" );
         assertEquals( "file:/C:/Documents%20and%20Settings/foo/bar", compare.toString() );
 
@@ -110,6 +113,9 @@ public class URIPathDescriptorTest
 
         oldPath = new URIPathDescriptor( maven, "source/index.html?var=foo&amp;var2=bar" );
         assertEquals( expected + "/index.html?var=foo&amp;var2=bar", oldPath.resolveLink().toString() );
+
+        oldPath = new URIPathDescriptor( "file:////Users/", "user" );
+        assertEquals( "file:/Users/user", oldPath.resolveLink().toString() );
 
         oldPath = new URIPathDescriptor( "file:///C:/Documents%20and%20Settings/", "source" );
         // resolve() removes two slashes because authority is empty
@@ -156,6 +162,10 @@ public class URIPathDescriptorTest
         oldPath = new URIPathDescriptor( "http://jakarta.apache.org/", "banner/left" );
         assertEquals( "http://jakarta.apache.org/banner/left", oldPath.rebaseLink( maven ).toString() );
 
+        oldPath = new URIPathDescriptor( "file:////Users/", "user" );
+        assertEquals( "../user", oldPath.rebaseLink( "file:////Users/target" ).toString() );
+        assertEquals( "../user", oldPath.rebaseLink( "file:/Users/target" ).toString() );
+
         oldPath = new URIPathDescriptor( "file:///C:/Documents%20and%20Settings/", "source" );
         assertEquals( "../source", oldPath.rebaseLink( "file:///C:/Documents%20and%20Settings/target" ).toString() );
 
@@ -191,6 +201,9 @@ public class URIPathDescriptorTest
 
         path = new URIPathDescriptor( maven, "http://maven.apache.org/index.html?var=foo&amp;var2=bar" );
         assertEquals( "index.html?var=foo&amp;var2=bar", path.relativizeLink().toString() );
+
+        path = new URIPathDescriptor( "file:////Users/", "index.html" );
+        assertEquals( "index.html", path.relativizeLink().toString() );
 
         path = new URIPathDescriptor( "file:///C:/Documents%20and%20Settings/", "index.html" );
         assertEquals( "index.html", path.relativizeLink().toString() );
