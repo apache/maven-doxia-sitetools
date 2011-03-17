@@ -34,7 +34,6 @@ import org.apache.maven.doxia.site.decoration.PublishDate;
 import org.apache.maven.doxia.site.decoration.Skin;
 import org.apache.maven.doxia.site.decoration.Version;
 
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
@@ -157,17 +156,9 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
      */
     private void relativizeBannerPaths( final Banner banner, final String baseUrl )
     {
-        if ( banner != null )
-        {
-            if ( StringUtils.isNotEmpty( banner.getHref() ) )
-            {
-                banner.setHref( relativizeLink( banner.getHref(), baseUrl ) );
-            }
-            if ( StringUtils.isNotEmpty( banner.getSrc() ) )
-            {
-                banner.setSrc( relativizeLink( banner.getSrc(), baseUrl ) );
-            }
-        }
+        // banner has been checked to be not null, both href and src may be empty or null
+        banner.setHref( relativizeLink( banner.getHref(), baseUrl ) );
+        banner.setSrc( relativizeLink( banner.getSrc(), baseUrl ) );
     }
 
     private void rebaseBannerPaths( final Banner banner, final URLContainer urlContainer )
@@ -294,24 +285,13 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
 
     private void relativizeLinkItemPaths( final LinkItem item, final String baseUrl )
     {
-        if ( StringUtils.isNotEmpty( item.getHref() ) )
-        {
-            String href = relativizeLink( item.getHref(), baseUrl );
-            if ( StringUtils.isNotEmpty( href ) )
-            {
-                item.setHref( href );
-            }
-        }
-        else
-        {
-            item.setHref( relativizeLink( "", baseUrl ) );
-        }
+        item.setHref( relativizeLink( item.getHref(), baseUrl ) );
     }
 
     private void rebaseLinkItemPaths( final LinkItem item, final URLContainer urlContainer )
     {
         item.setHref( rebaseLink( item.getHref(), urlContainer ) );
-   }
+    }
 
     private void relativizeLogoPaths( final Logo logo, final String baseUrl )
     {

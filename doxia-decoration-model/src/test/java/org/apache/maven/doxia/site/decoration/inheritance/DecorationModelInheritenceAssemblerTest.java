@@ -613,7 +613,7 @@ public class DecorationModelInheritenceAssemblerTest
         model.getBody().addBreadcrumb( createLinkItem( "Foo", null ) );
         assembler.resolvePaths( model, "http://foo.apache.org" );
         assertEquals( "Check size", 1, model.getBody().getBreadcrumbs().size() );
-        assertEquals( "Check item", createLinkItem( "Foo", "" ), model.getBody().getBreadcrumbs().get( 0 ) );
+        assertEquals( "Check item", createLinkItem( "Foo", null ), model.getBody().getBreadcrumbs().get( 0 ) );
     }
 
     public void testBreadcrumbs()
@@ -706,7 +706,7 @@ public class DecorationModelInheritenceAssemblerTest
         model.addPoweredBy( createLogo( "Foo", "http://foo.apache.org", null ) );
         assembler.resolvePaths( model, "http://foo.apache.org" );
         assertEquals( "Check size", 1, model.getPoweredBy().size() );
-        assertEquals( "Check item", createLogo( "Foo", "http://foo.apache.org", null ), model.getPoweredBy().get( 0 ) );
+        assertEquals( "Check item", createLogo( "Foo", "", null ), model.getPoweredBy().get( 0 ) );
     }
 
     private static Banner createBanner( String name, String href, String src, String alt )
