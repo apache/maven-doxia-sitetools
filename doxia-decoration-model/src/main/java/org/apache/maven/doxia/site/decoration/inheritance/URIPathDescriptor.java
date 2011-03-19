@@ -138,7 +138,7 @@ public class URIPathDescriptor
 
         final String relativePath = PathTool.getRelativeWebPath( newBaseURI.toString(), link.toString() );
 
-        return URI.create( relativePath );
+        return URI.create( "/".equals( relativePath ) ? "./" : relativePath );
     }
 
     /**
@@ -185,7 +185,7 @@ public class URIPathDescriptor
 
         final String relativeBasePath = PathTool.getRelativeWebPath( newBaseURI.getPath(), baseURI.getPath() );
 
-        return URI.create( relativeBasePath ).resolve( link );
+        return URI.create( "/".equals( relativeBasePath ) ? "./" : relativeBasePath ).resolve( link );
     }
 
     /**

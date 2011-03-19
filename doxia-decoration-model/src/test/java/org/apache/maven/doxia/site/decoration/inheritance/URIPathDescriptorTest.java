@@ -142,6 +142,12 @@ public class URIPathDescriptorTest
         assertEquals( "http://maven.apache.org/source", oldPath.rebaseLink( null ).toString() );
         assertEquals( "http://maven.apache.org/source", oldPath.rebaseLink( "C:/Documents and Settings/" ).toString() );
 
+        oldPath = new URIPathDescriptor( maven, "./" );
+        assertEquals( "", oldPath.rebaseLink( "http://maven.apache.org/" ).toString() );
+
+        oldPath = new URIPathDescriptor( maven, "" );
+        assertEquals( "", oldPath.rebaseLink( "http://maven.apache.org/" ).toString() );
+
         oldPath = new URIPathDescriptor( maven, "source/index.html" );
         assertEquals( "../source/index.html", oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
 
@@ -189,6 +195,9 @@ public class URIPathDescriptorTest
 
         path = new URIPathDescriptor( maven, "http://maven.apache.org/source" );
         assertEquals( "source", path.relativizeLink().toString() );
+
+        path = new URIPathDescriptor( maven, "http://maven.apache.org/" );
+        assertEquals( "./", path.relativizeLink().toString() );
 
         path = new URIPathDescriptor( "http://maven.apache.org/doxia/", "http://maven.apache.org/source/" );
         assertEquals( "../source/", path.relativizeLink().toString() );
