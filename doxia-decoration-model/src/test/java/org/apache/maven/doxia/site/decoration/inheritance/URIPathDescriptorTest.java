@@ -199,6 +199,15 @@ public class URIPathDescriptorTest
         path = new URIPathDescriptor( maven, "http://maven.apache.org/" );
         assertEquals( "./", path.relativizeLink().toString() );
 
+        path = new URIPathDescriptor( maven, "http://maven.apache.org" );
+        assertEquals( "./", path.relativizeLink().toString() );
+
+        path = new URIPathDescriptor( "http://maven.apache.org", maven );
+        assertEquals( "./", path.relativizeLink().toString() );
+
+        path = new URIPathDescriptor( "http://maven.apache.org", "http://maven.apache.org" );
+        assertEquals( "./", path.relativizeLink().toString() );
+
         path = new URIPathDescriptor( "http://maven.apache.org/doxia/", "http://maven.apache.org/source/" );
         assertEquals( "../source/", path.relativizeLink().toString() );
 

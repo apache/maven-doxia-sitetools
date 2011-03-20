@@ -706,7 +706,7 @@ public class DecorationModelInheritenceAssemblerTest
         model.addPoweredBy( createLogo( "Foo", "http://foo.apache.org", null ) );
         assembler.resolvePaths( model, "http://foo.apache.org" );
         assertEquals( "Check size", 1, model.getPoweredBy().size() );
-        assertEquals( "Check item", createLogo( "Foo", "", null ), model.getPoweredBy().get( 0 ) );
+        assertEquals( "Check item", createLogo( "Foo", "./", null ), model.getPoweredBy().get( 0 ) );
     }
 
     private static Banner createBanner( String name, String href, String src, String alt )
