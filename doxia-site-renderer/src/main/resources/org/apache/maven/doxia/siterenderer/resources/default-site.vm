@@ -532,7 +532,13 @@
       <hr/>
     </div>
     <div id="footer">
-      <div class="xright">Copyright &#169;#copyright()All Rights Reserved.#publishDate( "bottom" $decoration.publishDate $decoration.version )</div>
+      <div class="xright">
+      #if($decoration.body.footer)
+        $decoration.body.footer
+      #else
+        Copyright &#169;#copyright()All Rights Reserved.#publishDate( "bottom" $decoration.publishDate $decoration.version )
+      #end
+      </div>
       <div class="clear">
         <hr/>
       </div>

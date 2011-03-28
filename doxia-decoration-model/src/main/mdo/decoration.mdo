@@ -351,6 +351,13 @@ under the License.
           </association>
           <identifier>true</identifier>
         </field>
+        <field>
+          <name>footer</name>
+          <description>If present, the contained text will be used instead of the generated copyright text.</description>
+          <version>1.1.0+</version>
+          <type>DOM</type>
+          <identifier>true</identifier>
+        </field>
       </fields>
     </class>
     <class java.clone="deep">
