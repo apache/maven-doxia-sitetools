@@ -28,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -131,14 +132,15 @@ public class ITextPdfRenderer
     }
 
     /** {@inheritDoc} */
-    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
+    public void render( Map<String, SiteModule> filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
         render( filesToProcess, outputDirectory, documentModel, null );
     }
 
     /** {@inheritDoc} */
-    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel, DocumentRendererContext context )
+    public void render( Map<String, SiteModule> filesToProcess, File outputDirectory, DocumentModel documentModel,
+                        DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
         // copy resources, images, etc.
@@ -166,7 +168,7 @@ public class ITextPdfRenderer
             pdfOutputFile.getParentFile().mkdirs();
         }
 
-        List iTextFiles;
+        List<File> iTextFiles;
         if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
         {
             getLogger().info( "No TOC is defined in the document descriptor. Merging all documents." );
@@ -192,20 +194,21 @@ public class ITextPdfRenderer
     }
 
     /** {@inheritDoc} */
-    public void renderIndividual( Map filesToProcess, File outputDirectory )
+    public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory )
         throws DocumentRendererException, IOException
     {
         renderIndividual( filesToProcess, outputDirectory, null );
     }
 
     /** {@inheritDoc} */
-    public void renderIndividual( Map filesToProcess, File outputDirectory, DocumentRendererContext context )
+    public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory,
+                                  DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
-        for ( Iterator it = filesToProcess.keySet().iterator(); it.hasNext(); )
+        for ( Map.Entry<String, SiteModule> entry : filesToProcess.entrySet() )
         {
-            String key = (String) it.next();
-            SiteModule module = (SiteModule) filesToProcess.get( key );
+            String key = entry.getKey();
+            SiteModule module = entry.getValue();
             File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
 
             String output = key;
@@ -289,16 +292,14 @@ public class ITextPdfRenderer
      * @throws DocumentRendererException if any.
      * @throws IOException if any.
      */
-    private Document generateDocument( List iTextFiles )
+    private Document generateDocument( List<File> iTextFiles )
         throws DocumentRendererException, IOException
     {
         Document document = DOCUMENT_BUILDER.newDocument();
         document.appendChild( document.createElement( ElementTags.ITEXT ) ); // Used only to set a root
 
-        for ( int i = 0; i < iTextFiles.size(); i++ )
+        for ( File iTextFile : iTextFiles )
         {
-            File iTextFile = (File) iTextFiles.get( i );
-
             Document iTextDocument;
 
             try
@@ -534,14 +535,15 @@ public class ITextPdfRenderer
      * @throws IOException if any
      * @since 1.1.1
      */
-    private List parseAllFiles( Map filesToProcess, File outputDirectory, DocumentRendererContext context )
+    private List<File> parseAllFiles( Map<String, SiteModule> filesToProcess, File outputDirectory,
+                                      DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
-        List iTextFiles = new LinkedList();
-        for ( Iterator it = filesToProcess.keySet().iterator(); it.hasNext(); )
+        List<File> iTextFiles = new LinkedList<File>();
+        for ( Map.Entry<String, SiteModule> entry : filesToProcess.entrySet() )
         {
-            String key = (String) it.next();
-            SiteModule module = (SiteModule) filesToProcess.get( key );
+            String key = entry.getKey();
+            SiteModule module = entry.getValue();
             File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
 
             String outputITextName = key.substring( 0, key.lastIndexOf( "." ) + 1 ) + "xml";
@@ -567,13 +569,13 @@ public class ITextPdfRenderer
      * @throws IOException if any
      * @since 1.1.1
      */
-    private List parseTOCFiles( File outputDirectory, DocumentModel documentModel, DocumentRendererContext context )
+    private List<File> parseTOCFiles( File outputDirectory, DocumentModel documentModel, DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
-        List iTextFiles = new LinkedList();
-        for ( Iterator it = documentModel.getToc().getItems().iterator(); it.hasNext(); )
+        List<File> iTextFiles = new LinkedList<File>();
+        for ( Iterator<DocumentTOCItem> it = documentModel.getToc().getItems().iterator(); it.hasNext(); )
         {
-            DocumentTOCItem tocItem = (DocumentTOCItem) it.next();
+            DocumentTOCItem tocItem = it.next();
 
             if ( tocItem.getRef() == null )
             {
@@ -589,9 +591,9 @@ public class ITextPdfRenderer
                 href = href.substring( 0, href.lastIndexOf( "." ) );
             }
 
-            for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
+            Collection<SiteModule> modules = siteModuleManager.getSiteModules();
+            for ( SiteModule module : modules )
             {
-                SiteModule module = (SiteModule) i.next();
                 File moduleBasedir = new File( getBaseDir(), module.getSourceDirectory() );
 
                 if ( moduleBasedir.exists() )

@@ -50,7 +50,7 @@ public class SiteRendererSink
 
     private String title = "";
 
-    private List authors = new ArrayList();
+    private List<String> authors = new ArrayList<String>();
 
     private final StringWriter headWriter;
 
@@ -60,7 +60,7 @@ public class SiteRendererSink
 
     private boolean sectionTitle;
 
-    private Set anchorsInSectionTitle;
+    private Set<String> anchorsInSectionTitle;
 
     private final Writer writer;
 
@@ -141,7 +141,7 @@ public class SiteRendererSink
      *
      * @return a {@link java.util.List} object.
      */
-    public List getAuthors()
+    public List<String> getAuthors()
     {
         return authors;
     }
@@ -231,7 +231,7 @@ public class SiteRendererSink
         {
             if ( anchorsInSectionTitle == null )
             {
-                anchorsInSectionTitle = new HashSet();
+                anchorsInSectionTitle = new HashSet<String>();
             }
             anchorsInSectionTitle.add( name );
         }

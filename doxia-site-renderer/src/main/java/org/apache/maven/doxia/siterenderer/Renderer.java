@@ -55,7 +55,7 @@ public interface Renderer
      * @throws org.apache.maven.doxia.siterenderer.RendererException if it bombs.
      * @throws java.io.IOException if it bombs.
      */
-    void render( Collection/*DocumentRenderer*/ documents, SiteRenderingContext siteRenderingContext,
+    void render( Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext,
                  File outputDirectory )
         throws RendererException, IOException;
 
@@ -81,7 +81,7 @@ public interface Renderer
      * @return a SiteRenderingContext.
      * @throws java.io.IOException if it bombs.
      */
-    SiteRenderingContext createContextForSkin( File skinFile, Map attributes, DecorationModel decoration,
+    SiteRenderingContext createContextForSkin( File skinFile, Map<String, ?> attributes, DecorationModel decoration,
                                                String defaultWindowTitle, Locale locale )
         throws IOException;
 
@@ -97,7 +97,7 @@ public interface Renderer
      * @return a SiteRenderingContext.
      * @throws java.net.MalformedURLException if it bombs.
      */
-    SiteRenderingContext createContextForTemplate( File templateFile, File skinFile, Map attributes,
+    SiteRenderingContext createContextForTemplate( File templateFile, File skinFile, Map<String, ?> attributes,
                                                    DecorationModel decoration, String defaultWindowTitle,
                                                    Locale locale )
         throws MalformedURLException;
@@ -121,7 +121,7 @@ public interface Renderer
      * @throws java.io.IOException if it bombs.
      * @throws org.apache.maven.doxia.siterenderer.RendererException if it bombs.
      */
-    Map/*String, DocumentRenderer*/ locateDocumentFiles( SiteRenderingContext siteRenderingContext )
+    Map<String, DocumentRenderer> locateDocumentFiles( SiteRenderingContext siteRenderingContext )
         throws IOException, RendererException;
 
     /**

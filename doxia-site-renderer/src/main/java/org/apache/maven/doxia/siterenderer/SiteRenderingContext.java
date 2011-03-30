@@ -46,11 +46,11 @@ public class SiteRenderingContext
 
     private ClassLoader templateClassLoader;
 
-    private Map templateProperties;
+    private Map<String, ?> templateProperties;
 
     private Locale locale = Locale.getDefault();
 
-    private List/*Locale*/ siteLocales = new ArrayList/*Locale*/();
+    private List<Locale> siteLocales = new ArrayList<Locale>();
 
     private DecorationModel decoration;
 
@@ -60,11 +60,11 @@ public class SiteRenderingContext
 
     private boolean usingDefaultTemplate;
 
-    private List/*File*/ siteDirectories = new ArrayList/*File*/();
+    private List<File> siteDirectories = new ArrayList<File>();
 
-    private Map/*String, String*/ moduleExcludes;
+    private Map<String, String> moduleExcludes;
 
-    private List/*ModuleReference*/ modules = new ArrayList/*ModuleReference*/();
+    private List<ModuleReference> modules = new ArrayList<ModuleReference>();
 
     private boolean validate;
 
@@ -126,7 +126,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.Map} object.
      */
-    public Map getTemplateProperties()
+    public Map<String, ?> getTemplateProperties()
     {
         return templateProperties;
     }
@@ -136,7 +136,7 @@ public class SiteRenderingContext
      *
      * @param templateProperties a {@link java.util.Map} object.
      */
-    public void setTemplateProperties( Map templateProperties )
+    public void setTemplateProperties( Map<String, ?> templateProperties )
     {
         this.templateProperties = Collections.unmodifiableMap( templateProperties );
     }
@@ -167,7 +167,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.List} object with {@link java.util.Locale} objects.
      */
-    public List/*Locale*/ getSiteLocales()
+    public List<Locale> getSiteLocales()
     {
         return siteLocales;
     }
@@ -177,7 +177,7 @@ public class SiteRenderingContext
     *
     * @param locales List of {@link java.util.Locale} objects to add to the site locales list.
     */
-    public void addSiteLocales( List/*Locale*/ locales )
+    public void addSiteLocales( List<Locale> locales )
     {
         siteLocales.addAll( locales );
     }
@@ -298,7 +298,7 @@ public class SiteRenderingContext
      *
      * @return List of site directories files.
      */
-    public List/*File*/ getSiteDirectories()
+    public List<File> getSiteDirectories()
     {
         return siteDirectories;
     }
@@ -308,7 +308,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.List} object.
      */
-    public List/*ModuleReference*/ getModules()
+    public List<ModuleReference> getModules()
     {
         return modules;
     }
@@ -318,7 +318,7 @@ public class SiteRenderingContext
      *
      * @return a map defining exclude patterns (comma separated) by parser id.
      */
-    public Map/*String, String*/ getModuleExcludes()
+    public Map<String, String> getModuleExcludes()
     {
         return moduleExcludes;
     }
@@ -328,7 +328,7 @@ public class SiteRenderingContext
      *
      * @param moduleExcludes a {@link java.util.Map} object.
      */
-    public void setModuleExcludes( Map/*String, String*/ moduleExcludes )
+    public void setModuleExcludes( Map<String, String> moduleExcludes )
     {
         this.moduleExcludes = moduleExcludes;
     }

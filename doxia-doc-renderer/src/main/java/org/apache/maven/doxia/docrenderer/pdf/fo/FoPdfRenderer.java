@@ -22,7 +22,7 @@ package org.apache.maven.doxia.docrenderer.pdf.fo;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -70,14 +70,14 @@ public class FoPdfRenderer
     }
 
     /** {@inheritDoc} */
-    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
+    public void render( Map<String, SiteModule> filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
         render( filesToProcess, outputDirectory, documentModel, null );
     }
 
     /** {@inheritDoc} */
-    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel,
+    public void render( Map<String, SiteModule> filesToProcess, File outputDirectory, DocumentModel documentModel,
                         DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
@@ -177,20 +177,21 @@ public class FoPdfRenderer
     }
 
     /** {@inheritDoc} */
-    public void renderIndividual( Map filesToProcess, File outputDirectory )
+    public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory )
         throws DocumentRendererException, IOException
     {
         renderIndividual( filesToProcess, outputDirectory, null );
     }
 
     /** {@inheritDoc} */
-    public void renderIndividual( Map filesToProcess, File outputDirectory, DocumentRendererContext context )
+    public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory,
+                                  DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
-        for ( Iterator j = filesToProcess.keySet().iterator(); j.hasNext(); )
+        for ( Map.Entry<String, SiteModule> entry : filesToProcess.entrySet() )
         {
-            String key = (String) j.next();
-            SiteModule module = (SiteModule) filesToProcess.get( key );
+            String key = entry.getKey();
+            SiteModule module = entry.getValue();
 
             File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
 
@@ -224,13 +225,14 @@ public class FoPdfRenderer
         }
     }
 
-    private void mergeAllSources( Map filesToProcess, FoAggregateSink sink, DocumentRendererContext context )
-            throws DocumentRendererException, IOException
+    private void mergeAllSources( Map<String, SiteModule> filesToProcess, FoAggregateSink sink,
+                                  DocumentRendererContext context )
+        throws DocumentRendererException, IOException
     {
-        for ( Iterator j = filesToProcess.keySet().iterator(); j.hasNext(); )
+        for ( Map.Entry<String, SiteModule> entry : filesToProcess.entrySet() )
         {
-            String key = (String) j.next();
-            SiteModule module = (SiteModule) filesToProcess.get( key );
+            String key = entry.getKey();
+            SiteModule module = entry.getValue();
             sink.setDocumentName( key );
             File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
 
@@ -239,18 +241,16 @@ public class FoPdfRenderer
     }
 
     private void mergeSourcesFromTOC( DocumentTOC toc, FoAggregateSink sink, DocumentRendererContext context )
-            throws IOException, DocumentRendererException
+        throws IOException, DocumentRendererException
     {
         parseTocItems( toc.getItems(), sink, context );
     }
 
-    private void parseTocItems( List items, FoAggregateSink sink, DocumentRendererContext context )
-            throws IOException, DocumentRendererException
+    private void parseTocItems( List<DocumentTOCItem> items, FoAggregateSink sink, DocumentRendererContext context )
+        throws IOException, DocumentRendererException
     {
-        for ( Iterator k = items.iterator(); k.hasNext(); )
+        for ( DocumentTOCItem tocItem : items )
         {
-            DocumentTOCItem tocItem = (DocumentTOCItem) k.next();
-
             if ( tocItem.getRef() == null )
             {
                 if ( getLogger().isInfoEnabled() )
@@ -280,9 +280,9 @@ public class FoPdfRenderer
                                 DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
-        for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
+        Collection<SiteModule> modules = siteModuleManager.getSiteModules();
+        for ( SiteModule module : modules )
         {
-            SiteModule module = (SiteModule) i.next();
             File moduleBasedir = new File( getBaseDir(), module.getSourceDirectory() );
 
             if ( moduleBasedir.exists() )

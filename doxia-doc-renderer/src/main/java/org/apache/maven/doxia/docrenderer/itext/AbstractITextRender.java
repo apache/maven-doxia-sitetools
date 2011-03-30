@@ -25,6 +25,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -106,19 +107,18 @@ public abstract class AbstractITextRender
     public void render( File siteDirectory, File outputDirectory )
         throws DocumentRendererException, IOException
     {
-        for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
+        Collection<SiteModule> modules = siteModuleManager.getSiteModules();
+        for ( SiteModule module : modules )
         {
-            SiteModule module = (SiteModule) i.next();
-
             File moduleBasedir = new File( siteDirectory, module.getSourceDirectory() );
 
             if ( moduleBasedir.exists() )
             {
-                List docs = FileUtils.getFileNames( moduleBasedir, "**/*." + module.getExtension(), null, false );
+                List<String> docs =
+                    FileUtils.getFileNames( moduleBasedir, "**/*." + module.getExtension(), null, false );
 
-                for ( Iterator j = docs.iterator(); j.hasNext(); )
+                for ( String doc : docs )
                 {
-                    String doc = (String) j.next();
                     String fullPathDoc = new File( moduleBasedir, doc ).getPath();
 
                     String outputITextName = doc.substring( 0, doc.indexOf( "." ) + 1 ) + "xml";
@@ -193,20 +193,19 @@ public abstract class AbstractITextRender
             }
         }
 
-        List iTextFiles = new LinkedList();
-        for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
+        List<File> iTextFiles = new LinkedList<File>();
+        Collection<SiteModule> modules = siteModuleManager.getSiteModules();
+        for ( SiteModule module : modules )
         {
-            SiteModule module = (SiteModule) i.next();
-
             File moduleBasedir = new File( siteDirectory, module.getSourceDirectory() );
 
             if ( moduleBasedir.exists() )
             {
-                List docs = FileUtils.getFileNames( moduleBasedir, "**/*." + module.getExtension(), null, false );
+                List<String> docs =
+                    FileUtils.getFileNames( moduleBasedir, "**/*." + module.getExtension(), null, false );
 
-                for ( Iterator j = docs.iterator(); j.hasNext(); )
+                for ( String doc : docs )
                 {
-                    String doc = (String) j.next();
                     String fullPathDoc = new File( moduleBasedir, doc ).getPath();
 
                     String outputITextName = doc.substring( 0, doc.lastIndexOf( "." ) + 1 ) + "xml";
@@ -225,9 +224,9 @@ public abstract class AbstractITextRender
                     }
                     else
                     {
-                        for ( Iterator k = documentModel.getToc().getItems().iterator(); k.hasNext(); )
+                        for ( Iterator<DocumentTOCItem> k = documentModel.getToc().getItems().iterator(); k.hasNext(); )
                         {
-                            DocumentTOCItem tocItem = (DocumentTOCItem) k.next();
+                            DocumentTOCItem tocItem = k.next();
 
                             if ( tocItem.getRef() == null )
                             {
@@ -353,7 +352,7 @@ public abstract class AbstractITextRender
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      */
-    private Document generateDocument( List iTextFiles )
+    private Document generateDocument( List<File> iTextFiles )
         throws DocumentRendererException, IOException
     {
         Document document;
@@ -367,10 +366,8 @@ public abstract class AbstractITextRender
         }
         document.appendChild( document.createElement( ElementTags.ITEXT ) ); // Used only to set a root
 
-        for ( int i = 0; i < iTextFiles.size(); i++ )
+        for ( File iTextFile : iTextFiles )
         {
-            File iTextFile = (File) iTextFiles.get( i );
-
             Document iTextDocument;
             try
             {

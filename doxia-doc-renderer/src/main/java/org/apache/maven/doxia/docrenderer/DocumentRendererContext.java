@@ -38,14 +38,14 @@ public class DocumentRendererContext
     /**
      *  Storage for key/value pairs.
      */
-    private final Map context;
+    private final Map<String, Object> context;
 
     /**
      *  Default constructor.
      */
     public DocumentRendererContext()
     {
-        context = new HashMap();
+        context = new HashMap<String, Object>();
     }
 
     /**

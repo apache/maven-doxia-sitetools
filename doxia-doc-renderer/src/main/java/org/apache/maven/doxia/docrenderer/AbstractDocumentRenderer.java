@@ -102,7 +102,8 @@ public abstract class AbstractDocumentRenderer
      * @throws java.io.IOException if any
      * @deprecated since 1.1.2, use {@link #render(Map, File, DocumentModel, DocumentRendererContext)}
      */
-    public abstract void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel )
+    public abstract void render( Map<String, SiteModule> filesToProcess, File outputDirectory,
+                                 DocumentModel documentModel )
         throws DocumentRendererException, IOException;
 
       //--------------------------------------------
@@ -110,7 +111,7 @@ public abstract class AbstractDocumentRenderer
     //--------------------------------------------
 
     /** {@inheritDoc} */
-    public void render( Collection files, File outputDirectory, DocumentModel documentModel )
+    public void render( Collection<String> files, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
         render( getFilesToProcess( files ), outputDirectory, documentModel, null );
@@ -134,7 +135,7 @@ public abstract class AbstractDocumentRenderer
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      */
-    public void render( Map filesToProcess, File outputDirectory, DocumentModel documentModel,
+    public void render( Map<String, SiteModule> filesToProcess, File outputDirectory, DocumentModel documentModel,
                         DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
@@ -219,7 +220,7 @@ public abstract class AbstractDocumentRenderer
      * @since 1.1.1
      * @deprecated since 1.1.2, use {@link #renderIndividual(Map, File, DocumentRendererContext)}
      */
-    public void renderIndividual( Map filesToProcess, File outputDirectory )
+    public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory )
         throws DocumentRendererException, IOException
     {
         // nop
@@ -236,7 +237,8 @@ public abstract class AbstractDocumentRenderer
      * @throws java.io.IOException if any
      * @since 1.1.2
      */
-    public void renderIndividual( Map filesToProcess, File outputDirectory, DocumentRendererContext context )
+    public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory,
+                                  DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
         // nop
@@ -252,38 +254,37 @@ public abstract class AbstractDocumentRenderer
      * @throws java.io.IOException in case of a problem reading the files under baseDirectory.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      */
-    public Map getFilesToProcess( File baseDirectory )
+    public Map<String, SiteModule> getFilesToProcess( File baseDirectory )
         throws IOException, DocumentRendererException
     {
         if ( !baseDirectory.isDirectory() )
         {
             getLogger().warn( "No files found to process!" );
 
-            return new HashMap();
+            return new HashMap<String, SiteModule>();
         }
 
         setBaseDir( baseDirectory.getAbsolutePath() );
 
-        Map filesToProcess = new LinkedHashMap();
-        Map duplicatesFiles = new LinkedHashMap();
+        Map<String, SiteModule> filesToProcess = new LinkedHashMap<String, SiteModule>();
+        Map<String, String> duplicatesFiles = new LinkedHashMap<String, String>();
 
-        for ( Iterator i = siteModuleManager.getSiteModules().iterator(); i.hasNext(); )
+        Collection<SiteModule> modules = siteModuleManager.getSiteModules();
+        for ( SiteModule module : modules )
         {
-            SiteModule module = (SiteModule) i.next();
-
             File moduleBasedir = new File( baseDirectory, module.getSourceDirectory() );
 
             if ( moduleBasedir.exists() )
             {
                 // TODO: handle in/excludes
-                List allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", null, false );
+                List<String> allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", null, false );
 
                 String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
-                List docs = new LinkedList( allFiles );
+                List<String> docs = new LinkedList<String>( allFiles );
                 // Take care of extension case
-                for ( Iterator it = docs.iterator(); it.hasNext(); )
+                for ( Iterator<String> it = docs.iterator(); it.hasNext(); )
                 {
-                    String name = it.next().toString().trim();
+                    String name = it.next().trim();
 
                     if ( !name.toLowerCase( Locale.ENGLISH ).endsWith( "." + lowerCaseExtension ) )
                     {
@@ -291,11 +292,11 @@ public abstract class AbstractDocumentRenderer
                     }
                 }
 
-                List velocityFiles = new LinkedList( allFiles );
+                List<String> velocityFiles = new LinkedList<String>( allFiles );
                 // *.xml.vm
-                for ( Iterator it = velocityFiles.iterator(); it.hasNext(); )
+                for ( Iterator<String> it = velocityFiles.iterator(); it.hasNext(); )
                 {
-                    String name = it.next().toString().trim();
+                    String name = it.next().trim();
 
                     if ( !name.toLowerCase( Locale.ENGLISH ).endsWith( lowerCaseExtension + ".vm" ) )
                     {
@@ -304,9 +305,9 @@ public abstract class AbstractDocumentRenderer
                 }
                 docs.addAll( velocityFiles );
 
-                for ( Iterator j = docs.iterator(); j.hasNext(); )
+                for ( String filePath : docs )
                 {
-                    String filePath = j.next().toString().trim();
+                    filePath = filePath.trim();
 
                     if ( filePath.lastIndexOf( "." ) > 0 )
                     {
@@ -337,26 +338,23 @@ public abstract class AbstractDocumentRenderer
      * @param files The Collection of source files.
      * @return a Map of files to process.
      */
-    public Map getFilesToProcess( Collection files )
+    public Map<String, SiteModule> getFilesToProcess( Collection<String> files )
     {
         // ----------------------------------------------------------------------
         // Map all the file names to parser ids
         // ----------------------------------------------------------------------
 
-        Map filesToProcess = new HashMap();
+        Map<String, SiteModule> filesToProcess = new HashMap<String, SiteModule>();
 
-        for ( Iterator it = siteModuleManager.getSiteModules().iterator(); it.hasNext(); )
+        Collection<SiteModule> modules = siteModuleManager.getSiteModules();
+        for ( SiteModule siteModule : modules )
         {
-            SiteModule siteModule = (SiteModule) it.next();
-
             String extension = "." + siteModule.getExtension();
 
             String sourceDirectory = File.separator + siteModule.getSourceDirectory() + File.separator;
 
-            for ( Iterator j = files.iterator(); j.hasNext(); )
+            for ( String file : files )
             {
-                String file = (String) j.next();
-
                 // first check if the file path contains one of the recognized source dir identifiers
                 // (there's trouble if a pathname contains 2 identifiers), then match file extensions (not unique).
 
@@ -572,12 +570,10 @@ public abstract class AbstractDocumentRenderer
 
             scanner.scan();
 
-            List includedFiles = Arrays.asList( scanner.getIncludedFiles() );
+            List<String> includedFiles = Arrays.asList( scanner.getIncludedFiles() );
 
-            for ( Iterator j = includedFiles.iterator(); j.hasNext(); )
+            for ( String name : includedFiles )
             {
-                String name = (String) j.next();
-
                 File sourceFile = new File( source, name );
 
                 File destinationFile = new File( destination, name );

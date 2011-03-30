@@ -127,35 +127,32 @@ public class DefaultSiteRenderer
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public void render( Collection/*DocumentRenderer*/ documents, SiteRenderingContext siteRenderingContext,
+    public void render( Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext,
                         File outputDirectory )
         throws RendererException, IOException
     {
         renderModule( documents, siteRenderingContext, outputDirectory );
 
-        for ( Iterator i = siteRenderingContext.getSiteDirectories().iterator(); i.hasNext(); )
+        for ( File siteDirectory : siteRenderingContext.getSiteDirectories() )
         {
-            File siteDirectory = (File) i.next();
             copyResources( siteRenderingContext, new File( siteDirectory, "resources" ), outputDirectory );
         }
     }
 
     /** {@inheritDoc} */
-    public Map/*String, DocumentRenderer*/ locateDocumentFiles( SiteRenderingContext siteRenderingContext )
+    public Map<String, DocumentRenderer> locateDocumentFiles( SiteRenderingContext siteRenderingContext )
             throws IOException, RendererException
     {
-        Map/*String, DocumentRenderer*/ files = new LinkedHashMap/*String, DocumentRenderer*/();
-        Map/*String, String*/ moduleExcludes = siteRenderingContext.getModuleExcludes();
+        Map<String, DocumentRenderer> files = new LinkedHashMap<String, DocumentRenderer>();
+        Map<String, String> moduleExcludes = siteRenderingContext.getModuleExcludes();
 
-        for ( Iterator i = siteRenderingContext.getSiteDirectories().iterator(); i.hasNext(); )
+        for ( File siteDirectory : siteRenderingContext.getSiteDirectories() )
         {
-            File siteDirectory = (File) i.next();
             if ( siteDirectory.exists() )
             {
-                for ( Iterator j = siteModuleManager.getSiteModules().iterator(); j.hasNext(); )
+                Collection<SiteModule> modules = siteModuleManager.getSiteModules();
+                for ( SiteModule module : modules )
                 {
-                    SiteModule module = (SiteModule) j.next();
-
                     File moduleBasedir = new File( siteDirectory, module.getSourceDirectory() );
 
                     if ( moduleExcludes != null && moduleExcludes.containsKey( module.getParserId() ) )
@@ -171,10 +168,8 @@ public class DefaultSiteRenderer
             }
         }
 
-        for ( Iterator i = siteRenderingContext.getModules().iterator(); i.hasNext(); )
+        for ( ModuleReference module : siteRenderingContext.getModules() )
         {
-            ModuleReference module = (ModuleReference) i.next();
-
             try
             {
                 if ( moduleExcludes != null && moduleExcludes.containsKey( module.getParserId() ) )
@@ -197,19 +192,19 @@ public class DefaultSiteRenderer
     }
 
     private void addModuleFiles( File moduleBasedir, SiteModule module, String excludes,
-                                 Map/*String, DocumentRenderer*/ files )
+                                 Map<String, DocumentRenderer> files )
             throws IOException, RendererException
     {
         if ( moduleBasedir.exists() )
         {
-            List allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", excludes, false );
+            List<String> allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", excludes, false );
 
             String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
-            List docs = new LinkedList( allFiles );
+            List<String> docs = new LinkedList<String>( allFiles );
             // Take care of extension case
-            for ( Iterator it = docs.iterator(); it.hasNext(); )
+            for ( Iterator<String> it = docs.iterator(); it.hasNext(); )
             {
-                String name = it.next().toString().trim();
+                String name = it.next().trim();
 
                 if ( !name.toLowerCase( Locale.ENGLISH ).endsWith( "." + lowerCaseExtension ) )
                 {
@@ -217,11 +212,11 @@ public class DefaultSiteRenderer
                 }
             }
 
-            List velocityFiles = new LinkedList( allFiles );
+            List<String> velocityFiles = new LinkedList<String>( allFiles );
             // *.xml.vm
-            for ( Iterator it = velocityFiles.iterator(); it.hasNext(); )
+            for ( Iterator<String> it = velocityFiles.iterator(); it.hasNext(); )
             {
-                String name = it.next().toString().trim();
+                String name = it.next().trim();
 
                 if ( !name.toLowerCase( Locale.ENGLISH ).endsWith( lowerCaseExtension + ".vm" ) )
                 {
@@ -230,9 +225,9 @@ public class DefaultSiteRenderer
             }
             docs.addAll( velocityFiles );
 
-            for ( Iterator k = docs.iterator(); k.hasNext(); )
+            for ( String doc : docs )
             {
-                String doc = k.next().toString().trim();
+                doc = doc.trim();
 
                 RenderingContext context =
                         new RenderingContext( moduleBasedir, doc, module.getParserId(), module.getExtension() );
@@ -260,14 +255,11 @@ public class DefaultSiteRenderer
                 // -----------------------------------------------------------------------
                 // Handle key without case differences
                 // -----------------------------------------------------------------------
-                for ( Iterator iter = files.entrySet().iterator(); iter.hasNext(); )
+                for ( Map.Entry<String, DocumentRenderer> entry : files.entrySet() )
                 {
-                    Map.Entry entry = (Map.Entry) iter.next();
-                    if ( entry.getKey().toString().equalsIgnoreCase( key ) )
+                    if ( entry.getKey().equalsIgnoreCase( key ) )
                     {
-                        DocumentRenderer renderer = (DocumentRenderer) entry.getValue();
-
-                        RenderingContext originalContext = renderer.getRenderingContext();
+                        RenderingContext originalContext = entry.getValue().getRenderingContext();
 
                         File originalDoc = new File( originalContext.getBasedir(), originalContext.getInputName() );
 
@@ -291,14 +283,12 @@ public class DefaultSiteRenderer
         }
     }
 
-    private void renderModule( Collection/*DocumentRenderer*/ docs, SiteRenderingContext siteRenderingContext,
+    private void renderModule( Collection<DocumentRenderer> docs, SiteRenderingContext siteRenderingContext,
                                File outputDirectory )
             throws IOException, RendererException
     {
-        for ( Iterator i = docs.iterator(); i.hasNext(); )
+        for ( DocumentRenderer docRenderer : docs )
         {
-            DocumentRenderer docRenderer = (DocumentRenderer) i.next();
-
             RenderingContext renderingContext = docRenderer.getRenderingContext();
 
             File outputFile = new File( outputDirectory, docRenderer.getOutputName() );
@@ -485,15 +475,13 @@ public class DefaultSiteRenderer
         context.put( "supportedLocales", Collections.unmodifiableList( siteRenderingContext.getSiteLocales() ) );
                                         
         // Add user properties
-        Map templateProperties = siteRenderingContext.getTemplateProperties();
+        Map<String, ?> templateProperties = siteRenderingContext.getTemplateProperties();
 
         if ( templateProperties != null )
         {
-            for ( Iterator i = templateProperties.keySet().iterator(); i.hasNext(); )
+            for ( Map.Entry<String, ?> entry : templateProperties.entrySet() )
             {
-                String key = (String) i.next();
-
-                context.put( key, templateProperties.get( key ) );
+                context.put( entry.getKey(), entry.getValue() );
             }
         }
 
@@ -580,7 +568,7 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public SiteRenderingContext createContextForSkin( File skinFile, Map attributes, DecorationModel decoration,
+    public SiteRenderingContext createContextForSkin( File skinFile, Map<String, ?> attributes, DecorationModel decoration,
                                                       String defaultWindowTitle, Locale locale )
             throws IOException
     {
@@ -617,7 +605,7 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public SiteRenderingContext createContextForTemplate( File templateFile, File skinFile, Map attributes,
+    public SiteRenderingContext createContextForTemplate( File templateFile, File skinFile, Map<String, ?> attributes,
                                                           DecorationModel decoration, String defaultWindowTitle,
                                                           Locale locale )
             throws MalformedURLException
@@ -659,9 +647,9 @@ public class DefaultSiteRenderer
             ZipFile file = new ZipFile( siteRenderingContext.getSkinJarFile() );
             try
             {
-                for ( Enumeration e = file.entries(); e.hasMoreElements(); )
+                for ( Enumeration<? extends ZipEntry> e = file.entries(); e.hasMoreElements(); )
                 {
-                    ZipEntry entry = (ZipEntry) e.nextElement();
+                    ZipEntry entry = e.nextElement();
 
                     if ( !entry.getName().startsWith( "META-INF/" ) )
                     {
@@ -818,12 +806,10 @@ public class DefaultSiteRenderer
 
             scanner.scan();
 
-            List includedFiles = Arrays.asList( scanner.getIncludedFiles() );
+            List<String> includedFiles = Arrays.asList( scanner.getIncludedFiles() );
 
-            for ( Iterator j = includedFiles.iterator(); j.hasNext(); )
+            for ( String name : includedFiles )
             {
-                String name = (String) j.next();
-
                 File sourceFile = new File( source, name );
 
                 File destinationFile = new File( destination, name );

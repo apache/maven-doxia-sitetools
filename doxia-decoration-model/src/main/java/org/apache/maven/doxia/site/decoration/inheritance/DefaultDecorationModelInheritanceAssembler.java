@@ -20,7 +20,6 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  */
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.doxia.site.decoration.Banner;
@@ -44,7 +43,8 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @version $Id$
  * @plexus.component role="org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler"
  */
-public class DefaultDecorationModelInheritanceAssembler implements DecorationModelInheritanceAssembler
+public class DefaultDecorationModelInheritanceAssembler
+    implements DecorationModelInheritanceAssembler
 {
     /** {@inheritDoc} */
     public void assembleModelInheritance( String name, DecorationModel child, DecorationModel parent,
@@ -115,33 +115,25 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
             relativizeBannerPaths( decoration.getBannerRight(), baseUrl );
         }
 
-        for ( Iterator i = decoration.getPoweredBy().iterator(); i.hasNext(); )
+        for ( Logo logo : decoration.getPoweredBy() )
         {
-            Logo logo = (Logo) i.next();
-
             relativizeLogoPaths( logo, baseUrl );
         }
 
         if ( decoration.getBody() != null )
         {
-            for ( Iterator i = decoration.getBody().getLinks().iterator(); i.hasNext(); )
+            for ( LinkItem linkItem : decoration.getBody().getLinks() )
             {
-                LinkItem linkItem = (LinkItem) i.next();
-
                 relativizeLinkItemPaths( linkItem, baseUrl );
             }
 
-            for ( Iterator i = decoration.getBody().getBreadcrumbs().iterator(); i.hasNext(); )
+            for ( LinkItem linkItem : decoration.getBody().getBreadcrumbs() )
             {
-                LinkItem linkItem = (LinkItem) i.next();
-
                 relativizeLinkItemPaths( linkItem, baseUrl );
             }
 
-            for ( Iterator i = decoration.getBody().getMenus().iterator(); i.hasNext(); )
+            for ( Menu menu : decoration.getBody().getMenus() )
             {
-                Menu menu = (Menu) i.next();
-
                 relativizeMenuPaths( menu.getItems(), baseUrl );
             }
         }
@@ -229,21 +221,20 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         }
     }
 
-    private List mergeMenus( final List childMenus, final List parentMenus, final URLContainer urlContainer )
+    private List<Menu> mergeMenus( final List<Menu> childMenus, final List<Menu> parentMenus,
+                                   final URLContainer urlContainer )
     {
-        List menus = new ArrayList( childMenus.size() + parentMenus.size() );
+        List<Menu> menus = new ArrayList<Menu>( childMenus.size() + parentMenus.size() );
 
-        for ( Iterator it = childMenus.iterator(); it.hasNext(); )
+        for ( Menu menu : childMenus )
         {
-            Menu menu = (Menu) it.next();
-
             menus.add( menu );
         }
 
         int topCounter = 0;
-        for ( Iterator it = parentMenus.iterator(); it.hasNext(); )
+        for ( Menu menu : parentMenus )
         {
-            Menu menu = (Menu) ( (Menu) it.next() ).clone();
+            menu = menu.clone();
 
             if ( "top".equals( menu.getInherit() ) )
             {
@@ -263,21 +254,19 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         return menus;
     }
 
-    private void relativizeMenuPaths( final List items, final String baseUrl )
+    private void relativizeMenuPaths( final List<MenuItem> items, final String baseUrl )
     {
-        for ( Iterator i = items.iterator(); i.hasNext(); )
+        for ( MenuItem item : items )
         {
-            MenuItem item = (MenuItem) i.next();
             relativizeLinkItemPaths( item, baseUrl );
             relativizeMenuPaths( item.getItems(), baseUrl );
         }
     }
 
-    private void rebaseMenuPaths( final List items, final URLContainer urlContainer )
+    private void rebaseMenuPaths( final List<MenuItem> items, final URLContainer urlContainer )
     {
-        for ( Iterator i = items.iterator(); i.hasNext(); )
+        for ( MenuItem item : items )
         {
-            MenuItem item = (MenuItem) i.next();
             rebaseLinkItemPaths( item, urlContainer );
             rebaseMenuPaths( item.getItems(), urlContainer );
         }
@@ -305,13 +294,14 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         rebaseLinkItemPaths( logo, urlContainer );
     }
 
-    private List mergeLinkItemLists( final List childList, final List parentList, final URLContainer urlContainer )
+    private List<LinkItem> mergeLinkItemLists( final List<LinkItem> childList, final List<LinkItem> parentList,
+                                               final URLContainer urlContainer )
     {
-        List items = new ArrayList( childList.size() + parentList.size() );
+        List<LinkItem> items = new ArrayList<LinkItem>( childList.size() + parentList.size() );
 
-        for ( Iterator it = parentList.iterator(); it.hasNext(); )
+        for ( LinkItem item : parentList )
         {
-            LinkItem item = (LinkItem) ( (LinkItem) it.next() ).clone();
+            item = item.clone();
 
             rebaseLinkItemPaths( item, urlContainer );
 
@@ -321,10 +311,8 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
             }
         }
 
-        for ( Iterator it = childList.iterator(); it.hasNext(); )
+        for ( LinkItem item : childList )
         {
-            LinkItem item = (LinkItem) it.next();
-
             if ( !items.contains( item ) )
             {
                 items.add( item );
@@ -334,13 +322,14 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
         return items;
     }
 
-    private List mergePoweredByLists( final List childList, final List parentList, final URLContainer urlContainer )
+    private List<Logo> mergePoweredByLists( final List<Logo> childList, final List<Logo> parentList,
+                                            final URLContainer urlContainer )
     {
-        List logos = new ArrayList( childList.size() + parentList.size() );
+        List<Logo> logos = new ArrayList<Logo>( childList.size() + parentList.size() );
 
-        for ( Iterator it = parentList.iterator(); it.hasNext(); )
+        for ( Logo logo : parentList )
         {
-            Logo logo = (Logo) ( (Logo) it.next() ).clone();
+            logo = logo.clone();
 
             if ( !logos.contains( logo ) )
             {
@@ -350,10 +339,8 @@ public class DefaultDecorationModelInheritanceAssembler implements DecorationMod
             rebaseLogoPaths( logo, urlContainer );
         }
 
-        for ( Iterator it = childList.iterator(); it.hasNext(); )
+        for ( Logo logo : childList )
         {
-            Logo logo = (Logo) it.next();
-
             if ( !logos.contains( logo ) )
             {
                 logos.add( logo );

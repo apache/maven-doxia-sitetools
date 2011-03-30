@@ -51,7 +51,7 @@ public interface DocumentRenderer
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any.
      * @throws java.io.IOException if any.
      */
-    void render( Collection files, File outputDirectory, DocumentModel documentModel )
+    void render( Collection<String> files, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException;
 
     /**

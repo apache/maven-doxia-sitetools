@@ -676,7 +676,7 @@ public class DecorationModelInheritenceAssemblerTest
         assertBreadcrumbsCorrect( child.getBody().getBreadcrumbs(), "childName", parentHref );
     }
 
-    private static void assertBreadcrumbsCorrect( final List breadcrumbs, final String childName,
+    private static void assertBreadcrumbsCorrect( final List<LinkItem> breadcrumbs, final String childName,
             final String parentHref )
     {
         assertEquals( "Check size", 2, breadcrumbs.size() );

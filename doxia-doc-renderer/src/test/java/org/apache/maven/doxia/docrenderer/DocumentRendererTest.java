@@ -20,7 +20,6 @@ package org.apache.maven.doxia.docrenderer;
  */
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.doxia.docrenderer.pdf.PdfRenderer;
@@ -101,7 +100,7 @@ public class DocumentRendererTest
 
         docRenderer.render( siteDirectoryFile, outputDirectory, null );
 
-        List files =
+        List<String> files =
             FileUtils.getFileNames( new File( siteDirectoryFile, "apt" ), "**/*.apt",
                                     FileUtils.getDefaultExcludesAsString(), false );
         files.addAll( FileUtils.getFileNames( new File( siteDirectoryFile, "fml" ), "**/*.fml",
@@ -109,9 +108,8 @@ public class DocumentRendererTest
         files.addAll( FileUtils.getFileNames( new File( siteDirectoryFile, "xdoc" ), "**/*.xml",
                                               FileUtils.getDefaultExcludesAsString(), false ) );
 
-        for ( Iterator it = files.iterator(); it.hasNext(); )
+        for ( String relativeFile : files )
         {
-            String relativeFile = it.next().toString();
             String relativePdf = StringUtils.replace( relativeFile, FileUtils.getExtension( relativeFile ), "pdf" );
             File pdf = new File( outputDirectory, relativePdf );
 
