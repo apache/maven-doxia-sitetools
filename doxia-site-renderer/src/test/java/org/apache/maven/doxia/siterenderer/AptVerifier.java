@@ -161,5 +161,17 @@ public class AptVerifier
         unknown = (UnknownHtmlElement) elementIterator.next();
         assertEquals( "tt", unknown.getTagName() );
         assertEquals( "mono", unknown.asText().trim() );
+
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( "section", div.getAttributeValue( "class" ) );
+
+        h2 = (HtmlHeader2) elementIterator.next();
+        assertNotNull( h2 );
+        assertEquals( "No Default Anchor in Section Title with Explicit Anchor", h2.asText().trim() );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "No_Default_Anchor_in_Section_Title_with_Explicit_Anchor", a.getAttributeValue( "name" ) );
+
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( "section", div.getAttributeValue( "class" ) );
     }
 }

@@ -44,6 +44,8 @@ Section formatting: <italic> <<bold>> <<<mono>>>
 
   <italic> <<bold>> <<<mono>>>
 
+{No Default Anchor in Section Title with Explicit Anchor}
+
 TOC Macro
 
 %{toc}

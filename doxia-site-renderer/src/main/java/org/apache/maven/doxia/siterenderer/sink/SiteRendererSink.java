@@ -22,7 +22,9 @@ package org.apache.maven.doxia.siterenderer.sink;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.text.html.HTML.Attribute;
 
@@ -55,6 +57,10 @@ public class SiteRendererSink
     private StringBuffer sectionTitleBuffer;
 
     private boolean sectionHasID;
+
+    private boolean sectionTitle;
+
+    private Set anchorsInSectionTitle;
 
     private final Writer writer;
 
@@ -218,10 +224,25 @@ public class SiteRendererSink
     }
 
     /** {@inheritDoc} */
+    public void anchor( String name, SinkEventAttributes attributes )
+    {
+        super.anchor( name, attributes );
+        if ( sectionTitle )
+        {
+            if ( anchorsInSectionTitle == null )
+            {
+                anchorsInSectionTitle = new HashSet();
+            }
+            anchorsInSectionTitle.add( name );
+        }
+    }
+    
+    /** {@inheritDoc} */
     protected void onSectionTitle( int depth, SinkEventAttributes attributes )
     {
         this.sectionTitleBuffer = new StringBuffer();
         sectionHasID = ( attributes != null && attributes.isDefined ( Attribute.ID.toString() ) );
+        sectionTitle = true;
 
         super.onSectionTitle( depth, attributes );
     }
@@ -234,14 +255,20 @@ public class SiteRendererSink
 
         if ( !sectionHasID && !StringUtils.isEmpty( sectionTitle ) )
         {
-            anchor( HtmlTools.encodeId( sectionTitle ) );
-            anchor_();
+            String id = HtmlTools.encodeId( sectionTitle );
+            if ( ( anchorsInSectionTitle == null ) || (! anchorsInSectionTitle.contains( id ) ) )
+            {
+                anchor( id );
+                anchor_();
+            }
         }
         else
         {
             sectionHasID = false;
         }
 
+        this.sectionTitle = false;
+        anchorsInSectionTitle = null;
         super.onSectionTitle_( depth );
     }
 
