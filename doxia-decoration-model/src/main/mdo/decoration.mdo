@@ -143,7 +143,7 @@ under the License.
           <version>1.0.0+</version>
           <code>
             <![CDATA[
-    private java.util.Map menusByRef;
+    private java.util.Map<String, Menu> menusByRef;
 
     /**
      * @param key not null
@@ -153,14 +153,12 @@ under the License.
     {
         if ( menusByRef == null )
         {
-            menusByRef = new java.util.HashMap();
+            menusByRef = new java.util.HashMap<String, Menu>();
 
             if ( body != null )
             {
-                for ( java.util.Iterator i = body.getMenus().iterator(); i.hasNext(); )
+                for ( Menu menu : body.getMenus() )
                 {
-                    Menu menu = (Menu) i.next();
-
                     if ( menu.getRef() != null )
                     {
                         menusByRef.put( menu.getRef(), menu );
@@ -168,7 +166,7 @@ under the License.
                 }
             }
         }
-        return (Menu) menusByRef.get( key );
+        return menusByRef.get( key );
     }
 
     /**
@@ -178,9 +176,9 @@ under the License.
     {
         if ( body != null )
         {
-            for ( java.util.Iterator i = body.getMenus().iterator(); i.hasNext(); )
+            for ( java.util.Iterator<Menu> i = body.getMenus().iterator(); i.hasNext(); )
             {
-                Menu menu = (Menu) i.next();
+                Menu menu = i.next();
                 if ( key.equals( menu.getRef() ) )
                 {
                     i.remove();
@@ -192,7 +190,7 @@ under the License.
     /**
      * @return the menus list or EMPTY_LIST.
      */
-    public java.util.List getMenus()
+    public java.util.List<Menu> getMenus()
     {
         java.util.List menus;
         if ( body != null && body.getMenus() != null )
@@ -201,7 +199,7 @@ under the License.
         }
         else
         {
-            menus = java.util.Collections.EMPTY_LIST;
+            menus = java.util.Collections.emptyList();
         }
         return menus;
     }
