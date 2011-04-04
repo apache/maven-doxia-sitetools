@@ -157,7 +157,7 @@ public class DefaultSiteRenderer
 
                     if ( moduleExcludes != null && moduleExcludes.containsKey( module.getParserId() ) )
                     {
-                        addModuleFiles( moduleBasedir, module, (String) moduleExcludes.get( module.getParserId() ),
+                        addModuleFiles( moduleBasedir, module, moduleExcludes.get( module.getParserId() ),
                                 files );
                     }
                     else
@@ -175,7 +175,7 @@ public class DefaultSiteRenderer
                 if ( moduleExcludes != null && moduleExcludes.containsKey( module.getParserId() ) )
                 {
                     addModuleFiles( module.getBasedir(), siteModuleManager.getSiteModule( module.getParserId() ),
-                            (String) moduleExcludes.get( module.getParserId() ), files );
+                        moduleExcludes.get( module.getParserId() ), files );
                 }
                 else
                 {
@@ -243,7 +243,7 @@ public class DefaultSiteRenderer
 
                 if ( files.containsKey( key ) )
                 {
-                    DocumentRenderer renderer = (DocumentRenderer) files.get( key );
+                    DocumentRenderer renderer = files.get( key );
 
                     RenderingContext originalContext = renderer.getRenderingContext();
 
