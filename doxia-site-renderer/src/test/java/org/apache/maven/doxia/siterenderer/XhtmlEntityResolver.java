@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
  *
  * @author ltheussl
  *
- * @since 1.1.5
+ * @since 1.2
  */
 public class XhtmlEntityResolver
         implements EntityResolver

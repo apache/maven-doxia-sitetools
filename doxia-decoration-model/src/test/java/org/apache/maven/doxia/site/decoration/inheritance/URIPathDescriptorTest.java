@@ -27,7 +27,8 @@ import junit.framework.TestCase;
 /**
  *
  * @author ltheussl
- * @since 1.1.5
+ *
+ * @since 1.2
  */
 public class URIPathDescriptorTest
         extends TestCase

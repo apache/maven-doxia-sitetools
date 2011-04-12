@@ -28,7 +28,8 @@ import org.codehaus.plexus.util.PathTool;
  * Describes a link that may be absolute or relative, and that is anchored to an absolute URI.
  *
  * @author ltheussl
- * @since 1.1.5
+ *
+ * @since 1.2
  */
 public class URIPathDescriptor
 {
