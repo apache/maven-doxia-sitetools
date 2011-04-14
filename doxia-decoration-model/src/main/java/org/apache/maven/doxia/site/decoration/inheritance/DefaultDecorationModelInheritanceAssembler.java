@@ -231,20 +231,22 @@ public class DefaultDecorationModelInheritanceAssembler
         int topCounter = 0;
         for ( Menu menu : parentMenus )
         {
-            menu = menu.clone();
-
             if ( "top".equals( menu.getInherit() ) )
             {
-                menus.add( topCounter, menu );
-                topCounter++;
+                final Menu clone = menu.clone();
 
-                rebaseMenuPaths( menu.getItems(), urlContainer );
+                rebaseMenuPaths( clone.getItems(), urlContainer );
+
+                menus.add( topCounter, clone );
+                topCounter++;
             }
             else if ( "bottom".equals( menu.getInherit() ) )
             {
-                menus.add( menu );
+                final Menu clone = menu.clone();
 
-                rebaseMenuPaths( menu.getItems(), urlContainer );
+                rebaseMenuPaths( clone.getItems(), urlContainer );
+
+                menus.add( clone );
             }
         }
 
@@ -298,13 +300,13 @@ public class DefaultDecorationModelInheritanceAssembler
 
         for ( LinkItem item : parentList )
         {
-            item = item.clone();
-
-            rebaseLinkItemPaths( item, urlContainer );
-
             if ( !items.contains( item ) )
             {
-                items.add( item );
+                final LinkItem clone = item.clone();
+
+                rebaseLinkItemPaths( clone, urlContainer );
+
+                items.add( clone );
             }
         }
 
@@ -326,14 +328,14 @@ public class DefaultDecorationModelInheritanceAssembler
 
         for ( Logo logo : parentList )
         {
-            logo = logo.clone();
-
             if ( !logos.contains( logo ) )
             {
-                logos.add( logo );
-            }
+                final Logo clone = logo.clone();
 
-            rebaseLogoPaths( logo, urlContainer );
+                rebaseLogoPaths( clone, urlContainer );
+
+                logos.add( clone );
+            }
         }
 
         for ( Logo logo : childList )
