@@ -31,7 +31,7 @@ under the License.
 
   <groupId>org.apache.maven.doxia</groupId>
   <artifactId>doxia-sitetools</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
   <packaging>pom</packaging>
 
   <name>Doxia Sitetools</name>
@@ -98,9 +98,9 @@ under the License.
   </modules>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/trunk</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/doxia/doxia-sitetools/trunk</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/tags/doxia-sitetools-1.2</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/tags/doxia-sitetools-1.2</developerConnection>
+    <url>http://svn.apache.org/viewcvs.cgi/maven/doxia/doxia-sitetools/tags/doxia-sitetools-1.2</url>
   </scm>
 
   <issueManagement>
