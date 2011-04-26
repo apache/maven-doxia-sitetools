@@ -122,7 +122,7 @@ under the License.
 
   <properties>
     <projectVersion>${project.version}</projectVersion>
-    <doxiaVersion>1.2-SNAPSHOT</doxiaVersion>
+    <doxiaVersion>1.2</doxiaVersion>
   </properties>
 
   <dependencyManagement>
