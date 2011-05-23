@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.apache.maven.doxia.Doxia;
@@ -574,8 +575,8 @@ public class DefaultSiteRenderer
     {
         SiteRenderingContext context = new SiteRenderingContext();
 
-        // TODO: plexus-archiver, if it could do the excludes
-        ZipFile zipFile = new ZipFile( skinFile );
+        ZipFile zipFile = getZipFile( skinFile );
+
         try
         {
             if ( zipFile.getEntry( SKIN_TEMPLATE_LOCATION ) != null )
@@ -604,6 +605,25 @@ public class DefaultSiteRenderer
         return context;
     }
 
+    private static ZipFile getZipFile( File file )
+        throws IOException
+    {
+        if ( file == null )
+        {
+            throw new IOException( "Error opening ZipFile: null" );
+        }
+
+        try
+        {
+            // TODO: plexus-archiver, if it could do the excludes
+            return new ZipFile( file );
+        }
+        catch ( ZipException ex )
+        {
+            throw new IOException( "Error opening ZipFile: " + file.getAbsolutePath(), ex );
+        }
+    }
+
     /** {@inheritDoc} */
     public SiteRenderingContext createContextForTemplate( File templateFile, File skinFile, Map<String, ?> attributes,
                                                           DecorationModel decoration, String defaultWindowTitle,
@@ -624,7 +644,7 @@ public class DefaultSiteRenderer
         return context;
     }
 
-    private void closeZipFile( ZipFile zipFile )
+    private static void closeZipFile( ZipFile zipFile )
     {
         // TODO: move to plexus utils
         try
@@ -643,8 +663,8 @@ public class DefaultSiteRenderer
     {
         if ( siteRenderingContext.getSkinJarFile() != null )
         {
-            // TODO: plexus-archiver, if it could do the excludes
-            ZipFile file = new ZipFile( siteRenderingContext.getSkinJarFile() );
+            ZipFile file = getZipFile( siteRenderingContext.getSkinJarFile() );
+
             try
             {
                 for ( Enumeration<? extends ZipEntry> e = file.entries(); e.hasMoreElements(); )
@@ -669,7 +689,7 @@ public class DefaultSiteRenderer
             }
             finally
             {
-                file.close();
+                closeZipFile( file );
             }
         }
 
@@ -767,7 +787,7 @@ public class DefaultSiteRenderer
         }
     }
 
-    private void copyFileFromZip( ZipFile file, ZipEntry entry, File destFile )
+    private static void copyFileFromZip( ZipFile file, ZipEntry entry, File destFile )
             throws IOException
     {
         FileOutputStream fos = new FileOutputStream( destFile );
