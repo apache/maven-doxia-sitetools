@@ -620,7 +620,9 @@ public class DefaultSiteRenderer
         }
         catch ( ZipException ex )
         {
-            throw new IOException( "Error opening ZipFile: " + file.getAbsolutePath(), ex );
+            IOException ioe = new IOException( "Error opening ZipFile: " + file.getAbsolutePath() );
+            ioe.initCause( ex );
+            throw ioe;
         }
     }
 
