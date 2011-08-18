@@ -29,8 +29,8 @@
 
     <menu ref="parent"/>
 
-    <menu name="Schema Decoration 1.0">
-      <item name="Reference of Schema Decoration" href="decoration.html"/>
+    <menu name="Documentation">
+      <item name="Decoration Model Reference" href="decoration.html"/>
     </menu>
 
     <menu ref="reports"/>
