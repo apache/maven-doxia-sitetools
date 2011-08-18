@@ -124,7 +124,7 @@ under the License.
           </association>
           <identifier>true</identifier>
         </field>
-        <field>
+        <field xdoc.separator="blank">
           <name>custom</name>
           <description>Custom configuration for use with customized Velocity templates.</description>
           <version>1.0.0+</version>
