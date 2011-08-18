@@ -1,0 +1,21 @@
+ -----
+ Doxia Sitetool Decoration Model
+ -----
+ Hervé Boutemy
+ -----
+ 2011-08-18
+ -----
+
+Doxia Sitetool Decoration Model
+
+ This is strictly the model for Doxia Sitetool Decoration Model, used in maven-site-plugin as <<<site.xml>>>.
+
+ The following are generated from this model:
+
+   * {{{./apidocs/index.html}Java sources}} with Reader and Writers for the Xpp3 XML parser
+
+   * A {{{./decoration.html}Descriptor Reference}}
+
+   * An XSD referenced in the {{{./decoration.html}Descriptor Reference}}.
+
+ Inheritance algorithm is added to merge the decoration between a parent and a child.
