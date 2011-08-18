@@ -31,7 +31,6 @@
 
     <menu name="Schema Decoration 1.0">
       <item name="Reference of Schema Decoration" href="decoration.html"/>
-      <item name="Using Schema Decoration" href="using-decoration-xsd.html"/>
     </menu>
 
     <menu ref="reports"/>
