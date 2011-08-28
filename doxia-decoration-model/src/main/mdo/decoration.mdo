@@ -599,7 +599,7 @@ under the License.
           <code>
             <![CDATA[
     /**
-     * @return the default skin <code>org.apache.maven.skins:maven-default-skin</code>.
+     * @return the default skin <code>org.apache.maven.skins:maven-default-skin:1.0</code>.
      */
     public static Skin getDefaultSkin()
     {
