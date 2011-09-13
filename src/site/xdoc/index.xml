@@ -36,7 +36,7 @@
       <p>In addition, files with extra <code>.vm</code> extension are processed with <a href="http://velocity.apache.org/">Velocity</a>.</p>
 
       <p>
-        <img src="images/doxia-sitetools-deps.png" width="482" height="217" border="0" usemap="#Doxia_sitetools_dependencies" alt="Doxia Sitetools Dependencies"/>
+        <img src="images/doxia-sitetools-deps.png" width="603" height="201" border="0" usemap="#Doxia_sitetools_dependencies" alt="Doxia Sitetools Dependencies"/>
         <map name="Doxia_sitetools_dependencies" id="Doxia_sitetools_dependencies">
           <area shape="rect" coords="113,0,240,32"   href="doxia-site-renderer/"       alt="Doxia Site Renderer"/>
           <area shape="rect" coords="416,0,539,32"   href="doxia-doc-renderer/"        alt="Doxia Document Renderer"/>
