@@ -65,6 +65,11 @@
         Link to <a href="./cdc.txt">other document</a>.
         Link to <a href="/index.html">root document</a>.
       </p>
+
+      <!-- DOXIA-446 -->
+      <source class="pretty">some source</source>
+      <source id="pretty">some source</source>
+
     </section>
 
     <!-- DOXIA-245 -->

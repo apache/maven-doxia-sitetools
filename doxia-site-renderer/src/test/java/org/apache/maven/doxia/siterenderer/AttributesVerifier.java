@@ -27,6 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlHeader3;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
+import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableHeaderCell;
@@ -37,7 +38,7 @@ import java.util.Iterator;
 
 
 /**
- * 
+ *
  *
  * @author ltheussl
  * @version $Id$
@@ -174,6 +175,17 @@ public class AttributesVerifier
         assertEquals( "./cdc.txt", a.getAttributeValue( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "/index.html", a.getAttributeValue( "href" ) );
+
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( "source", div.getAttributeValue( "class" ) );
+        HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
+        assertEquals( "pretty", pre.getAttributeValue( "class" ) );
+
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( "source", div.getAttributeValue( "class" ) );
+        assertEquals( "", div.getAttributeValue( "id" ) );
+        pre = (HtmlPreformattedText) elementIterator.next();
+        assertEquals( "pretty", pre.getAttributeValue( "id" ) );
 
         div = (HtmlDivision) elementIterator.next();
         assertEquals( "section", div.getAttributeValue( "class" ) );
