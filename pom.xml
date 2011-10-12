@@ -185,7 +185,7 @@ under the License.
 
   <properties>
     <projectVersion>${project.version}</projectVersion>
-    <doxiaVersion>1.2</doxiaVersion>
+    <doxiaVersion>1.3-SNAPSHOT</doxiaVersion>
   </properties>
 
   <dependencyManagement>
