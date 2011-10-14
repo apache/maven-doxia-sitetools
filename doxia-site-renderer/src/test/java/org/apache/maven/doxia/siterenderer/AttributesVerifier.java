@@ -20,19 +20,24 @@ package org.apache.maven.doxia.siterenderer;
  */
 
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlBold;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlHeader2;
-import com.gargoylesoftware.htmlunit.html.HtmlHeader3;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading3;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
+import com.gargoylesoftware.htmlunit.html.HtmlItalic;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
+import com.gargoylesoftware.htmlunit.html.HtmlS;
+import com.gargoylesoftware.htmlunit.html.HtmlSubscript;
+import com.gargoylesoftware.htmlunit.html.HtmlSuperscript;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableHeaderCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
-import com.gargoylesoftware.htmlunit.html.UnknownHtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlUnderlined;
 
 import java.util.Iterator;
 
@@ -58,49 +63,49 @@ public class AttributesVerifier
         HtmlDivision division = (HtmlDivision) element;
         assertNotNull( division );
 
-        Iterator elementIterator = division.getAllHtmlChildElements();
+        Iterator<HtmlElement> elementIterator = division.getAllHtmlChildElements().iterator();
 
         // ----------------------------------------------------------------------
         //
         // ----------------------------------------------------------------------
 
         HtmlDivision div = (HtmlDivision) elementIterator.next();
-        assertEquals( "section", div.getAttributeValue( "class" ) );
+        assertEquals( "section", div.getAttribute( "class" ) );
 
-        HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
+        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
         assertEquals( "section", h2.asText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( "section", a.getAttributeValue( "name" ) );
+        assertEquals( "section", a.getAttribute( "name" ) );
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
 
-        assertEquals( "ID",  p.getAttributeValue( "id" ) );
-        assertEquals( "CLASS", p.getAttributeValue( "class" ) );
-        assertEquals( "TITLE", p.getAttributeValue( "title" ) );
-        assertEquals( "STYLE", p.getAttributeValue( "style" ) );
-        assertEquals( "LANG", p.getAttributeValue( "lang" ) );
+        assertEquals( "ID",  p.getAttribute( "id" ) );
+        assertEquals( "CLASS", p.getAttribute( "class" ) );
+        assertEquals( "TITLE", p.getAttribute( "title" ) );
+        assertEquals( "STYLE", p.getAttribute( "style" ) );
+        assertEquals( "LANG", p.getAttribute( "lang" ) );
 
         HtmlImage img = (HtmlImage) elementIterator.next();
         assertNotNull( img );
 
-        assertEquals( "project.png", img.getAttributeValue( "src" ) );
-        assertEquals( "150", img.getAttributeValue( "width" ) );
-        assertEquals( "93", img.getAttributeValue( "height" ) );
-        assertEquals( "border: 1px solid silver", img.getAttributeValue( "style" ) );
-        assertEquals( "Project", img.getAttributeValue( "alt" ) );
+        assertEquals( "project.png", img.getAttribute( "src" ) );
+        assertEquals( "150", img.getAttribute( "width" ) );
+        assertEquals( "93", img.getAttribute( "height" ) );
+        assertEquals( "border: 1px solid silver", img.getAttribute( "style" ) );
+        assertEquals( "Project", img.getAttribute( "alt" ) );
 
         // test object identity to distinguish the case ATTRIBUTE_VALUE_EMPTY
-        assertTrue( img.getAttributeValue( "dummy" ) == HtmlElement.ATTRIBUTE_NOT_DEFINED );
+        assertTrue( img.getAttribute( "dummy" ) == HtmlElement.ATTRIBUTE_NOT_DEFINED );
 
         HtmlTable table = (HtmlTable) elementIterator.next();
-        assertEquals( "1", table.getAttributeValue( "border" ) );
-        assertEquals( "none", table.getAttributeValue( "class" ) );
+        assertEquals( "1", table.getAttribute( "border" ) );
+        assertEquals( "none", table.getAttribute( "class" ) );
 
-        element = (HtmlElement) elementIterator.next();
+        element = elementIterator.next();
         // this is a htmlunit bug
         assertEquals( "tbody", element.getTagName() );
 
@@ -108,15 +113,15 @@ public class AttributesVerifier
         HtmlTableHeaderCell th = (HtmlTableHeaderCell) elementIterator.next();
 
         th = (HtmlTableHeaderCell) elementIterator.next();
-        assertEquals( "center", th.getAttributeValue( "align" ) );
-        assertEquals( "2", th.getAttributeValue( "colspan" ) );
-        assertEquals( "50%", th.getAttributeValue( "width" ) );
+        assertEquals( "center", th.getAttribute( "align" ) );
+        assertEquals( "2", th.getAttribute( "colspan" ) );
+        assertEquals( "50%", th.getAttribute( "width" ) );
 
         tr = (HtmlTableRow) elementIterator.next();
 
         th = (HtmlTableHeaderCell) elementIterator.next();
-        assertEquals( "2", th.getAttributeValue( "rowspan" ) );
-        assertEquals( "middle", th.getAttributeValue( "valign" ) );
+        assertEquals( "2", th.getAttribute( "rowspan" ) );
+        assertEquals( "middle", th.getAttribute( "valign" ) );
 
         HtmlTableDataCell td = (HtmlTableDataCell) elementIterator.next();
         td = (HtmlTableDataCell) elementIterator.next();
@@ -127,92 +132,92 @@ public class AttributesVerifier
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
 
-        UnknownHtmlElement unk = (UnknownHtmlElement) elementIterator.next();
-        assertEquals( "u", unk.getTagName() );
-        unk = (UnknownHtmlElement) elementIterator.next();
-        assertEquals( "s", unk.getTagName() );
-        unk = (UnknownHtmlElement) elementIterator.next();
-        assertEquals( "sub", unk.getTagName() );
-        unk = (UnknownHtmlElement) elementIterator.next();
-        assertEquals( "sup", unk.getTagName() );
+        HtmlUnderlined u = (HtmlUnderlined) elementIterator.next();
+        assertEquals( "u", u.getTagName() );
+        HtmlS s = (HtmlS) elementIterator.next();
+        assertEquals( "s", s.getTagName() );
+        HtmlSubscript sub = (HtmlSubscript) elementIterator.next();
+        assertEquals( "sub", sub.getTagName() );
+        HtmlSuperscript sup = (HtmlSuperscript) elementIterator.next();
+        assertEquals( "sup", sup.getTagName() );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
 
-        unk = (UnknownHtmlElement) elementIterator.next();
-        assertEquals( "b", unk.getTagName() );
-        unk = (UnknownHtmlElement) elementIterator.next();
-        assertEquals( "i", unk.getTagName() );
-        unk = (UnknownHtmlElement) elementIterator.next();
-        assertEquals( "i", unk.getTagName() );
-        unk = (UnknownHtmlElement) elementIterator.next();
-        assertEquals( "b", unk.getTagName() );
+        HtmlBold b = (HtmlBold) elementIterator.next();
+        assertEquals( "b", b.getTagName() );
+        HtmlItalic i = (HtmlItalic) elementIterator.next();
+        assertEquals( "i", i.getTagName() );
+        i = (HtmlItalic) elementIterator.next();
+        assertEquals( "i", i.getTagName() );
+        b = (HtmlBold) elementIterator.next();
+        assertEquals( "b", b.getTagName() );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "color: red; margin-left: 20px", p.getAttributeValue( "style" ) );
+        assertEquals( "color: red; margin-left: 20px", p.getAttribute( "style" ) );
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "Anchor", a.getAttributeValue( "name" ) );
+        assertEquals( "Anchor", a.getAttribute( "name" ) );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#Anchor", a.getAttributeValue( "href" ) );
+        assertEquals( "#Anchor", a.getAttribute( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#Anchor", a.getAttributeValue( "href" ) );
+        assertEquals( "#Anchor", a.getAttribute( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "http://maven.apache.org/", a.getAttributeValue( "href" ) );
-        assertEquals( "externalLink", a.getAttributeValue( "class" ) );
+        assertEquals( "http://maven.apache.org/", a.getAttribute( "href" ) );
+        assertEquals( "externalLink", a.getAttribute( "class" ) );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "./cdc.html", a.getAttributeValue( "href" ) );
+        assertEquals( "./cdc.html", a.getAttribute( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "cdc.html", a.getAttributeValue( "href" ) );
+        assertEquals( "cdc.html", a.getAttribute( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "cdc.pdf", a.getAttributeValue( "href" ) );
+        assertEquals( "cdc.pdf", a.getAttribute( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "./cdc.txt", a.getAttributeValue( "href" ) );
+        assertEquals( "./cdc.txt", a.getAttribute( "href" ) );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "/index.html", a.getAttributeValue( "href" ) );
+        assertEquals( "/index.html", a.getAttribute( "href" ) );
 
         div = (HtmlDivision) elementIterator.next();
-        assertEquals( "source", div.getAttributeValue( "class" ) );
+        assertEquals( "source", div.getAttribute( "class" ) );
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
-        assertEquals( "pretty", pre.getAttributeValue( "class" ) );
+        assertEquals( "pretty", pre.getAttribute( "class" ) );
 
         div = (HtmlDivision) elementIterator.next();
-        assertEquals( "source", div.getAttributeValue( "class" ) );
-        assertEquals( "", div.getAttributeValue( "id" ) );
+        assertEquals( "source", div.getAttribute( "class" ) );
+        assertEquals( "", div.getAttribute( "id" ) );
         pre = (HtmlPreformattedText) elementIterator.next();
-        assertEquals( "pretty", pre.getAttributeValue( "id" ) );
+        assertEquals( "pretty", pre.getAttribute( "id" ) );
 
         div = (HtmlDivision) elementIterator.next();
-        assertEquals( "section", div.getAttributeValue( "class" ) );
-        h2 = (HtmlHeader2) elementIterator.next();
+        assertEquals( "section", div.getAttribute( "class" ) );
+        h2 = (HtmlHeading2) elementIterator.next();
         assertEquals( "Section without id", h2.asText().trim() );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "Section_without_id", a.getAttributeValue( "name" ) );
+        assertEquals( "Section_without_id", a.getAttribute( "name" ) );
 
         div = (HtmlDivision) elementIterator.next();
-        assertEquals( "section", div.getAttributeValue( "class" ) );
-        HtmlHeader3 h3 = (HtmlHeader3) elementIterator.next();
+        assertEquals( "section", div.getAttribute( "class" ) );
+        HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
         assertEquals( "Subsection without id", h3.asText().trim() );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "Subsection_without_id", a.getAttributeValue( "name" ) );
+        assertEquals( "Subsection_without_id", a.getAttribute( "name" ) );
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "section-id", a.getAttributeValue( "name" ) );
+        assertEquals( "section-id", a.getAttribute( "name" ) );
         div = (HtmlDivision) elementIterator.next();
-        assertEquals( "section", div.getAttributeValue( "class" ) );
-        h2 = (HtmlHeader2) elementIterator.next();
+        assertEquals( "section", div.getAttribute( "class" ) );
+        h2 = (HtmlHeading2) elementIterator.next();
         assertEquals( "Section with id", h2.asText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "subsection-id", a.getAttributeValue( "name" ) );
+        assertEquals( "subsection-id", a.getAttribute( "name" ) );
         div = (HtmlDivision) elementIterator.next();
-        assertEquals( "section", div.getAttributeValue( "class" ) );
-        h3 = (HtmlHeader3) elementIterator.next();
+        assertEquals( "section", div.getAttribute( "class" ) );
+        h3 = (HtmlHeading3) elementIterator.next();
         assertEquals( "Subsection with id", h3.asText().trim() );
 
         assertFalse( elementIterator.hasNext() );

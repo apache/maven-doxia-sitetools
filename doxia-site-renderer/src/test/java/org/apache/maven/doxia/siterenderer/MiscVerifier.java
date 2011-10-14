@@ -29,7 +29,6 @@ import java.util.Iterator;
 
 
 /**
- * 
  *
  * @author ltheussl
  * @version $Id$
@@ -49,18 +48,18 @@ public class MiscVerifier
         HtmlDivision division = (HtmlDivision) element;
         assertNotNull( division );
 
-        Iterator elementIterator = division.getAllHtmlChildElements();
+        Iterator<HtmlElement> elementIterator = division.getAllHtmlChildElements().iterator();
 
         // ----------------------------------------------------------------------
         //
         // ----------------------------------------------------------------------
 
         HtmlApplet applet = (HtmlApplet) elementIterator.next();
-        assertEquals( "org.micro.applet.Main", applet.getAttributeValue( "code" ) );
-        assertEquals( "micro-applet.jar", applet.getAttributeValue( "archive" ) );
+        assertEquals( "org.micro.applet.Main", applet.getAttribute( "code" ) );
+        assertEquals( "micro-applet.jar", applet.getAttribute( "archive" ) );
 
         HtmlParameter param = (HtmlParameter) elementIterator.next();
-        assertEquals( "midlet", param.getAttributeValue( "name" ) );
-        assertEquals( "org.micro.applet.SimpleDemoMIDlet", param.getAttributeValue( "value" ) );
+        assertEquals( "midlet", param.getAttribute( "name" ) );
+        assertEquals( "org.micro.applet.SimpleDemoMIDlet", param.getAttribute( "value" ) );
     }
 }

@@ -49,25 +49,25 @@ public class HeadVerifier
         HtmlPage page = htmlPage( file );
         assertNotNull( page );
 
-        HtmlElement html = page.getDocumentHtmlElement();
+        HtmlElement html = page.getDocumentElement();
         assertNotNull( html );
 
-        List tagNames = new ArrayList();
+        List<String> tagNames = new ArrayList<String>( 2 );
         tagNames.add( "head" );
-        List heads = html.getHtmlElementsByTagNames( tagNames );
+        List<HtmlElement> heads = html.getHtmlElementsByTagNames( tagNames );
         assertEquals( 1, heads.size() );
-        HtmlElement head = (HtmlElement) heads.get( 0 );
+        HtmlElement head = heads.get( 0 );
         assertNotNull( head );
 
-        Iterator elementIterator = head.getAllHtmlChildElements();
+        Iterator<HtmlElement> elementIterator = head.getAllHtmlChildElements().iterator();
 
         // ----------------------------------------------------------------------
         //
         // ----------------------------------------------------------------------
 
         HtmlMeta meta = (HtmlMeta) elementIterator.next();
-        assertEquals( meta.getAttributeValue( "http-equiv" ), "Content-Type" );
-        assertEquals( meta.getAttributeValue( "content" ), "text/html; charset=UTF-8" );
+        assertEquals( meta.getAttribute( "http-equiv" ), "Content-Type" );
+        assertEquals( meta.getAttribute( "content" ), "text/html; charset=UTF-8" );
 
         HtmlTitle title = (HtmlTitle) elementIterator.next();
         assertNotNull( title );
@@ -79,23 +79,23 @@ public class HeadVerifier
         assertNotNull( link );
 
         meta = (HtmlMeta) elementIterator.next();
-        assertEquals( meta.getAttributeValue( "name" ), "author" );
-        assertEquals( meta.getAttributeValue( "content" ).trim(), "John Doe" );
+        assertEquals( meta.getAttribute( "name" ), "author" );
+        assertEquals( meta.getAttribute( "content" ).trim(), "John Doe" );
 
         meta = (HtmlMeta) elementIterator.next();
-        assertEquals( meta.getAttributeValue( "name" ), "Date-Revision-yyyymmdd" );
-        assertEquals( meta.getAttributeValue( "content" ), new SimpleDateFormat( "yyyyMMdd" ).format( new Date() ) );
+        assertEquals( meta.getAttribute( "name" ), "Date-Revision-yyyymmdd" );
+        assertEquals( meta.getAttribute( "content" ), new SimpleDateFormat( "yyyyMMdd" ).format( new Date() ) );
 
         meta = (HtmlMeta) elementIterator.next();
-        assertEquals( meta.getAttributeValue( "http-equiv" ), "Content-Language" );
-        assertEquals( meta.getAttributeValue( "content" ), "en" );
+        assertEquals( meta.getAttribute( "http-equiv" ), "Content-Language" );
+        assertEquals( meta.getAttribute( "content" ), "en" );
 
         meta = (HtmlMeta) elementIterator.next();
-        assertEquals( meta.getAttributeValue( "name" ), "description" );
-        assertEquals( meta.getAttributeValue( "content" ), "Free Web tutorials" );
+        assertEquals( meta.getAttribute( "name" ), "description" );
+        assertEquals( meta.getAttribute( "content" ), "Free Web tutorials" );
 
         meta = (HtmlMeta) elementIterator.next();
-        assertEquals( meta.getAttributeValue( "name" ), "keywords" );
-        assertEquals( meta.getAttributeValue( "content" ), "HTML,CSS,XML,JavaScript" );
+        assertEquals( meta.getAttribute( "name" ), "keywords" );
+        assertEquals( meta.getAttribute( "content" ), "HTML,CSS,XML,JavaScript" );
     }
 }

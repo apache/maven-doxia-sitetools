@@ -22,9 +22,9 @@ package org.apache.maven.doxia.siterenderer;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlHeader2;
-import com.gargoylesoftware.htmlunit.html.HtmlHeader3;
-import com.gargoylesoftware.htmlunit.html.HtmlHeader4;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading3;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading4;
 import com.gargoylesoftware.htmlunit.html.HtmlMeta;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
@@ -48,42 +48,42 @@ public class EntitiesVerifier
         HtmlPage page = htmlPage( file );
         assertNotNull( page );
 
-        HtmlMeta author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 0 );
+        HtmlMeta author = (HtmlMeta) page.getElementsByName( "author" ).get( 0 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Ligature &#198;" ) > 0 );
         assertEquals( "Ligature \u00C6", author.getContentAttribute() );
 
-        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 1 );
+        author = (HtmlMeta) page.getElementsByName( "author" ).get( 1 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Ampersand &amp;" ) > 0 );
         assertEquals( "Ampersand &", author.getContentAttribute() );
 
-        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 2 );
+        author = (HtmlMeta) page.getElementsByName( "author" ).get( 2 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Less than &lt;" ) > 0 );
         assertEquals( "Less than <", author.getContentAttribute() );
 
-        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 3 );
+        author = (HtmlMeta) page.getElementsByName( "author" ).get( 3 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Greater than &gt;" ) > 0 );
         assertEquals( "Greater than >", author.getContentAttribute() );
 
-        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 4 );
+        author = (HtmlMeta) page.getElementsByName( "author" ).get( 4 );
         assertNotNull( author );
         assertTrue( author.getContentAttribute().equals( "Apostrophe '" ) );
         assertEquals( "Apostrophe '", author.getContentAttribute() );
 
-        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 5 );
+        author = (HtmlMeta) page.getElementsByName( "author" ).get( 5 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "Quote &quot;" ) > 0 );
         assertEquals( "Quote \"", author.getContentAttribute() );
 
-        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 6 );
+        author = (HtmlMeta) page.getElementsByName( "author" ).get( 6 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "test@email.com" ) > 0 );
         assertEquals( "test@email.com", author.getContentAttribute() );
 
-        author = (HtmlMeta) page.getHtmlElementsByName( "author" ).get( 7 );
+        author = (HtmlMeta) page.getElementsByName( "author" ).get( 7 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "test&#169;email.com" ) > 0 );
         assertEquals( "test©email.com", author.getContentAttribute() );
@@ -93,7 +93,7 @@ public class EntitiesVerifier
         HtmlDivision division = (HtmlDivision) element;
         assertNotNull( division );
 
-        Iterator elementIterator = division.getAllHtmlChildElements();
+        Iterator<HtmlElement> elementIterator = division.getAllHtmlChildElements().iterator();
 
         // ----------------------------------------------------------------------
         //
@@ -101,35 +101,35 @@ public class EntitiesVerifier
 
         HtmlDivision div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttributeValue( "class" ), "section" );
+        assertEquals( div.getAttribute( "class" ), "section" );
 
-        HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
+        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
         assertEquals( h2.asText().trim(), "section name with entities: '&' '\u0391' ' ' '\uD7ED'" );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttributeValue( "name" ), "section_name_with_entities:____" );
+        assertEquals( a.getAttribute( "name" ), "section_name_with_entities:____" );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttributeValue( "class" ), "section" );
+        assertEquals( div.getAttribute( "class" ), "section" );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttributeValue( "class" ), "section" );
+        assertEquals( div.getAttribute( "class" ), "section" );
 
-        HtmlHeader4 h4 = (HtmlHeader4) elementIterator.next();
+        HtmlHeading4 h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
         assertEquals( h4.asText().trim(), "Entities" );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttributeValue( "name" ), "Entities" );
+        assertEquals( a.getAttribute( "name" ), "Entities" );
 
         div = (HtmlDivision) elementIterator.next();
 
-        HtmlHeader3 h3 = (HtmlHeader3) elementIterator.next();
+        HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
         assertEquals( h3.asText().trim(), "Generic Entities: '&' '<' '>' '\"' '''" );
 
@@ -141,7 +141,7 @@ public class EntitiesVerifier
 
         div = (HtmlDivision) elementIterator.next();
 
-        h3 = (HtmlHeader3) elementIterator.next();
+        h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
         assertEquals( h3.asText().trim(), "Local Entities: '\u0391' '\u0392' '\u0393' '\uD7ED'" );
 
@@ -153,7 +153,7 @@ public class EntitiesVerifier
 
         div = (HtmlDivision) elementIterator.next();
 
-        h3 = (HtmlHeader3) elementIterator.next();
+        h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
         assertEquals( h3.asText().trim(), "DTD Entities: ' ' '\u00A1' '\u00A2'" );
 
@@ -165,19 +165,19 @@ public class EntitiesVerifier
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttributeValue( "class" ), "section" );
+        assertEquals( div.getAttribute( "class" ), "section" );
 
-        h4 = (HtmlHeader4) elementIterator.next();
+        h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
         assertEquals( h4.asText().trim(), "CDATA" );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttributeValue( "name" ), "CDATA" );
+        assertEquals( a.getAttribute( "name" ), "CDATA" );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttributeValue( "class" ), "source" );
+        assertEquals( div.getAttribute( "class" ), "source" );
 
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
         assertNotNull( pre );

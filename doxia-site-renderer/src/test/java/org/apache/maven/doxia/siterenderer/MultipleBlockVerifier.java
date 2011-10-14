@@ -22,7 +22,7 @@ package org.apache.maven.doxia.siterenderer;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlHeader2;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
 import com.gargoylesoftware.htmlunit.html.HtmlListItem;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
@@ -32,7 +32,6 @@ import java.util.Iterator;
 
 
 /**
- * 
  *
  * @author ltheussl
  * @version $Id$
@@ -52,7 +51,7 @@ public class MultipleBlockVerifier
         HtmlDivision division = (HtmlDivision) element;
         assertNotNull( division );
 
-        Iterator elementIterator = division.getAllHtmlChildElements();
+        Iterator<HtmlElement> elementIterator = division.getAllHtmlChildElements().iterator();
 
         // ----------------------------------------------------------------------
         // Verify link
@@ -60,15 +59,15 @@ public class MultipleBlockVerifier
 
         HtmlDivision div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttributeValue( "class" ), "section" );
+        assertEquals( div.getAttribute( "class" ), "section" );
 
-        HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
+        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
         assertEquals( h2.asText().trim(), "section name" );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttributeValue( "name" ), "section_name" );
+        assertEquals( a.getAttribute( "name" ), "section_name" );
 
         // ----------------------------------------------------------------------
         // Paragraph
@@ -87,7 +86,7 @@ public class MultipleBlockVerifier
 
         HtmlListItem li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstDomChild().asText().trim(), "list1" );
+        assertEquals( li.getFirstChild().asText().trim(), "list1" );
 
         // ----------------------------------------------------------------------
         // Paragraph
@@ -106,7 +105,7 @@ public class MultipleBlockVerifier
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstDomChild().asText().trim(), "list1" );
+        assertEquals( li.getFirstChild().asText().trim(), "list1" );
 
         // ----------------------------------------------------------------------
         // Paragraph
@@ -128,7 +127,7 @@ public class MultipleBlockVerifier
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.getFirstDomChild().asText().trim(), "list1" );
+        assertEquals( p.getFirstChild().asText().trim(), "list1" );
 
         assertFalse( elementIterator.hasNext() );
     }

@@ -24,7 +24,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlHeader2;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlScript;
@@ -62,7 +62,7 @@ public class JavascriptVerifier
         // HtmlUnit
         WebClient webClient = new WebClient();
 
-        final List collectedAlerts = new ArrayList();
+        final List<String> collectedAlerts = new ArrayList<String>( 4 );
         webClient.setAlertHandler( new CollectingAlertHandler( collectedAlerts ) );
 
         HtmlPage page = (HtmlPage) webClient.getPage( jsTest.toURI().toURL() );
@@ -73,7 +73,7 @@ public class JavascriptVerifier
         HtmlDivision division = (HtmlDivision) element;
         assertNotNull( division );
 
-        Iterator elementIterator = division.getAllHtmlChildElements();
+        Iterator<HtmlElement> elementIterator = division.getAllHtmlChildElements().iterator();
 
         // ----------------------------------------------------------------------
         //
@@ -81,15 +81,15 @@ public class JavascriptVerifier
 
         HtmlDivision div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttributeValue( "class" ), "section" );
+        assertEquals( div.getAttribute( "class" ), "section" );
 
-        HtmlHeader2 h2 = (HtmlHeader2) elementIterator.next();
+        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
         assertEquals( h2.asText().trim(), "Test" );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttributeValue( "name" ), "Test" );
+        assertEquals( a.getAttribute( "name" ), "Test" );
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
@@ -97,9 +97,9 @@ public class JavascriptVerifier
 
         HtmlScript script = (HtmlScript) elementIterator.next();
         assertNotNull( script  );
-        assertEquals( script.getAttributeValue( "type" ), "text/javascript" );
+        assertEquals( script.getAttribute( "type" ), "text/javascript" );
         assertEquals( script.asText().trim(), "" );
-        final List expectedAlerts = Collections.singletonList( "Hello!" );
+        final List<String> expectedAlerts = Collections.singletonList( "Hello!" );
         assertEquals( expectedAlerts, collectedAlerts );
     }
 }
