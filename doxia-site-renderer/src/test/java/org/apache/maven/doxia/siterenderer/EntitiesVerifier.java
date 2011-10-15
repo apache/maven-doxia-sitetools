@@ -86,7 +86,7 @@ public class EntitiesVerifier
         author = (HtmlMeta) page.getElementsByName( "author" ).get( 7 );
         assertNotNull( author );
         assertTrue( author.toString().indexOf( "test&#169;email.com" ) > 0 );
-        assertEquals( "testÂ©email.com", author.getContentAttribute() );
+        assertEquals( "test©email.com", author.getContentAttribute() );
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
         assertNotNull( element );
