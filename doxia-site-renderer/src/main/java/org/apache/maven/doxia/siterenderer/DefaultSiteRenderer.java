@@ -198,6 +198,7 @@ public class DefaultSiteRenderer
     {
         if ( moduleBasedir.exists() )
         {
+            @SuppressWarnings ( "unchecked" )
             List<String> allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", excludes, false );
 
             String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
@@ -474,7 +475,7 @@ public class DefaultSiteRenderer
 
         context.put( "locale", locale );
         context.put( "supportedLocales", Collections.unmodifiableList( siteRenderingContext.getSiteLocales() ) );
-                                        
+
         // Add user properties
         Map<String, ?> templateProperties = siteRenderingContext.getTemplateProperties();
 

@@ -105,12 +105,12 @@ public class DocumentRendererContext
      */
     public boolean containsKey( Object key )
     {
-        if ( key == null )
+        if ( !( key instanceof String ) ) // this includes null check
         {
             return false;
         }
 
-        return context.containsKey( key );
+        return context.containsKey( key.toString() );
     }
 
     /**
@@ -131,11 +131,11 @@ public class DocumentRendererContext
      */
     public Object remove( Object key )
     {
-        if ( key == null )
+        if ( !( key instanceof String ) ) // this includes null check
         {
             return null;
         }
 
-        return context.remove( key );
+        return context.remove( key.toString() );
     }
 }

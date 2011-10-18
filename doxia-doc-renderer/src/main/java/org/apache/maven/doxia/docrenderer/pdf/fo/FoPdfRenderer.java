@@ -70,6 +70,7 @@ public class FoPdfRenderer
     }
 
     /** {@inheritDoc} */
+    @Override
     public void render( Map<String, SiteModule> filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
@@ -77,6 +78,7 @@ public class FoPdfRenderer
     }
 
     /** {@inheritDoc} */
+    @Override
     public void render( Map<String, SiteModule> filesToProcess, File outputDirectory, DocumentModel documentModel,
                         DocumentRendererContext context )
         throws DocumentRendererException, IOException
@@ -177,6 +179,8 @@ public class FoPdfRenderer
     }
 
     /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings ( "deprecation" )
     public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory )
         throws DocumentRendererException, IOException
     {
@@ -184,6 +188,7 @@ public class FoPdfRenderer
     }
 
     /** {@inheritDoc} */
+    @Override
     public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory,
                                   DocumentRendererContext context )
         throws DocumentRendererException, IOException
@@ -262,9 +267,9 @@ public class FoPdfRenderer
             }
 
             String href = StringUtils.replace( tocItem.getRef(), "\\", "/" );
-            if ( href.lastIndexOf( "." ) != -1 )
+            if ( href.lastIndexOf( '.') != -1 )
             {
-                href = href.substring( 0, href.lastIndexOf( "." ) );
+                href = href.substring( 0, href.lastIndexOf( '.') );
             }
 
             renderModules( href, sink, tocItem, context );
@@ -340,7 +345,7 @@ public class FoPdfRenderer
             {
                 SAXParseException sax = (SAXParseException) e.getCause();
 
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 sb.append( "Error creating PDF from " ).append( inputFile.getAbsolutePath() ).append( ":" )
                   .append( sax.getLineNumber() ).append( ":" ).append( sax.getColumnNumber() ).append( "\n" );
                 sb.append( e.getMessage() );

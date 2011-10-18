@@ -71,6 +71,7 @@ public class DefaultSiteRendererTest
      * @throws java.lang.Exception if something goes wrong.
      * @see org.codehaus.plexus.PlexusTestCase#setUp()
      */
+    @Override
     protected void setUp()
         throws Exception
     {
@@ -104,6 +105,7 @@ public class DefaultSiteRendererTest
      * @throws java.lang.Exception if something goes wrong.
      * @see org.codehaus.plexus.PlexusTestCase#tearDown()
      */
+    @Override
     protected void tearDown()
         throws Exception
     {
@@ -160,7 +162,7 @@ public class DefaultSiteRendererTest
         ctxt.setTemplateName( "default-site.vm" );
         ctxt.setTemplateClassLoader( getClassLoader() );
         ctxt.setUsingDefaultTemplate( true );
-        Map templateProp = new HashMap();
+        final Map<String, String> templateProp = new HashMap<String, String>();
         templateProp.put( "outputEncoding", "UTF-8" );
         ctxt.setTemplateProperties( templateProp );
         ctxt.setDecoration( decoration );
@@ -349,17 +351,18 @@ public class DefaultSiteRendererTest
         }
 
         /** {@inheritDoc} */
-        protected Map getTestDocuments()
+        protected Map<String,String> getTestDocuments()
             throws IOException
         {
-            Map testDocs = new HashMap();
+            Map<String,String> testDocs = new HashMap<String,String>();
 
             File dir = new File( getBasedir(), "target/output" );
 
-            List l = FileUtils.getFileNames( dir, getIncludes()[0], FileUtils.getDefaultExcludesAsString(), true );
-            for ( Iterator it = l.iterator(); it.hasNext(); )
+            @SuppressWarnings ( "unchecked" )
+            List<String> l = FileUtils.getFileNames( dir, getIncludes()[0], FileUtils.getDefaultExcludesAsString(), true );
+            for ( Iterator<String> it = l.iterator(); it.hasNext(); )
             {
-                String file = it.next().toString();
+                String file = it.next();
                 file = StringUtils.replace( file, "\\", "/" );
 
                 Reader reader = ReaderFactory.newXmlReader( new File( file ) );
@@ -377,6 +380,7 @@ public class DefaultSiteRendererTest
         }
 
         /** {@inheritDoc} */
+        @Override
         protected boolean isFailErrorMessage( String message )
         {
             return true;

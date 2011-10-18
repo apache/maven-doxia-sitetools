@@ -277,6 +277,7 @@ public abstract class AbstractDocumentRenderer
             if ( moduleBasedir.exists() )
             {
                 // TODO: handle in/excludes
+                @SuppressWarnings ( "unchecked" )
                 List<String> allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", null, false );
 
                 String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
@@ -309,9 +310,9 @@ public abstract class AbstractDocumentRenderer
                 {
                     filePath = filePath.trim();
 
-                    if ( filePath.lastIndexOf( "." ) > 0 )
+                    if ( filePath.lastIndexOf( '.') > 0 )
                     {
-                        String key = filePath.substring( 0, filePath.lastIndexOf( "." ) );
+                        String key = filePath.substring( 0, filePath.lastIndexOf( '.') );
 
                         if ( duplicatesFiles.containsKey( key ) )
                         {

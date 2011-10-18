@@ -50,6 +50,11 @@ public class DecorationModelInheritenceAssemblerTest
 
     private static final String NAME = "Name";
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testInheritence()
         throws IOException, XmlPullParserException
     {
@@ -71,6 +76,11 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Modified parent!", readModel( "parent.xml" ), parentModel );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testPathsResolvedWhenEmpty()
         throws IOException, XmlPullParserException
     {
@@ -93,6 +103,11 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Modified parent!", readModel( "empty.xml" ), parentModel );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testPathsNotResolvedForExternalUrls()
         throws IOException, XmlPullParserException
     {
@@ -123,21 +138,26 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "check right banner image", "http://jakarta.apache.org/commons/images/logo.png",
                       childModel.getBannerRight().getSrc() );
 
-        Logo poweredBy = (Logo) childModel.getPoweredBy().get( 0 );
+        Logo poweredBy = childModel.getPoweredBy().get( 0 );
         assertEquals( "check powered by logo href", "http://tomcat.apache.org/", poweredBy.getHref() );
         assertEquals( "check powered by logo image", "http://tomcat.apache.org/logo.gif", poweredBy.getImg() );
 
-        LinkItem breadcrumb = (LinkItem) childModel.getBody().getBreadcrumbs().get( 0 );
+        LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
         assertEquals( "check breadcrumb href", "http://www.apache.org/", breadcrumb.getHref() );
 
-        LinkItem link = (LinkItem) childModel.getBody().getLinks().get( 0 );
+        LinkItem link = childModel.getBody().getLinks().get( 0 );
         assertEquals( "check link href", "http://www.bouncycastle.org", link.getHref() );
 
-        Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
-        LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
+        Menu menu = childModel.getBody().getMenus().get( 0 );
+        LinkItem menuItem = menu.getItems().get( 0 );
         assertEquals( "check menu item href", "http://www.apache.org/special/", menuItem.getHref() );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testPathsResolvedForRelativeUrls()
         throws IOException, XmlPullParserException
     {
@@ -165,21 +185,26 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "check right banner href", "../banner/right/", childModel.getBannerRight().getHref() );
         assertEquals( "check right banner image", "../commons/images/logo.png", childModel.getBannerRight().getSrc() );
 
-        Logo poweredBy = (Logo) childModel.getPoweredBy().get( 0 );
+        Logo poweredBy = childModel.getPoweredBy().get( 0 );
         assertEquals( "check powered by logo href", "../tomcat", poweredBy.getHref() );
         assertEquals( "check powered by logo image", "../tomcat/logo.gif", poweredBy.getImg() );
 
-        LinkItem breadcrumb = (LinkItem) childModel.getBody().getBreadcrumbs().get( 0 );
+        LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
         assertEquals( "check breadcrumb href", "../apache", breadcrumb.getHref() );
 
-        LinkItem link = (LinkItem) childModel.getBody().getLinks().get( 0 );
+        LinkItem link = childModel.getBody().getLinks().get( 0 );
         assertEquals( "check link href", "../bouncycastle/", link.getHref() );
 
-        Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
-        LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
+        Menu menu = childModel.getBody().getMenus().get( 0 );
+        LinkItem menuItem = menu.getItems().get( 0 );
         assertEquals( "check menu item href", "../special/", menuItem.getHref() );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testPathsResolvedForSubsiteUrls()
         throws IOException, XmlPullParserException
     {
@@ -210,21 +235,26 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "check right banner href", "../banner/right/", childModel.getBannerRight().getHref() );
         assertEquals( "check right banner image", "../commons/images/logo.png", childModel.getBannerRight().getSrc() );
 
-        Logo poweredBy = (Logo) childModel.getPoweredBy().get( 0 );
+        Logo poweredBy = childModel.getPoweredBy().get( 0 );
         assertEquals( "check powered by logo href", "../tomcat", poweredBy.getHref() );
         assertEquals( "check powered by logo image", "../tomcat/logo.gif", poweredBy.getImg() );
 
-        LinkItem breadcrumb = (LinkItem) childModel.getBody().getBreadcrumbs().get( 0 );
+        LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
         assertEquals( "check breadcrumb href", "../apache", breadcrumb.getHref() );
 
-        LinkItem link = (LinkItem) childModel.getBody().getLinks().get( 0 );
+        LinkItem link = childModel.getBody().getLinks().get( 0 );
         assertEquals( "check link href", "../bouncycastle/", link.getHref() );
 
-        Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
-        LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
+        Menu menu = childModel.getBody().getMenus().get( 0 );
+        LinkItem menuItem = menu.getItems().get( 0 );
         assertEquals( "check menu item href", "../special/", menuItem.getHref() );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testPathsResolvedForRelativeUrlsDepthOfTwo()
         throws IOException, XmlPullParserException
     {
@@ -253,21 +283,26 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "check right banner image", "../../commons/images/logo.png",
                       childModel.getBannerRight().getSrc() );
 
-        Logo poweredBy = (Logo) childModel.getPoweredBy().get( 0 );
+        Logo poweredBy = childModel.getPoweredBy().get( 0 );
         assertEquals( "check powered by logo href", "../../tomcat", poweredBy.getHref() );
         assertEquals( "check powered by logo image", "../../tomcat/logo.gif", poweredBy.getImg() );
 
-        LinkItem breadcrumb = (LinkItem) childModel.getBody().getBreadcrumbs().get( 0 );
+        LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
         assertEquals( "check breadcrumb href", "../../apache", breadcrumb.getHref() );
 
-        LinkItem link = (LinkItem) childModel.getBody().getLinks().get( 0 );
+        LinkItem link = childModel.getBody().getLinks().get( 0 );
         assertEquals( "check link href", "../../bouncycastle/", link.getHref() );
 
-        Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
-        LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
+        Menu menu = childModel.getBody().getMenus().get( 0 );
+        LinkItem menuItem = menu.getItems().get( 0 );
         assertEquals( "check menu item href", "../../special/", menuItem.getHref() );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testPathsResolvedForReverseRelativeUrls()
         throws IOException, XmlPullParserException
     {
@@ -296,21 +331,26 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "check right banner image", "doxia/commons/images/logo.png",
                       childModel.getBannerRight().getSrc() );
 
-        Logo poweredBy = (Logo) childModel.getPoweredBy().get( 0 );
+        Logo poweredBy = childModel.getPoweredBy().get( 0 );
         assertEquals( "check powered by logo href", "doxia/tomcat", poweredBy.getHref() );
         assertEquals( "check powered by logo image", "doxia/tomcat/logo.gif", poweredBy.getImg() );
 
-        LinkItem breadcrumb = (LinkItem) childModel.getBody().getBreadcrumbs().get( 0 );
+        LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
         assertEquals( "check breadcrumb href", "doxia/apache", breadcrumb.getHref() );
 
-        LinkItem link = (LinkItem) childModel.getBody().getLinks().get( 0 );
+        LinkItem link = childModel.getBody().getLinks().get( 0 );
         assertEquals( "check link href", "doxia/bouncycastle/", link.getHref() );
 
-        Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
-        LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
+        Menu menu = childModel.getBody().getMenus().get( 0 );
+        LinkItem menuItem = menu.getItems().get( 0 );
         assertEquals( "check menu item href", "doxia/special/", menuItem.getHref() );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testPathsResolvedForReverseRelativeUrlsDepthOfTwo()
         throws IOException, XmlPullParserException
     {
@@ -340,21 +380,26 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "check right banner image", "doxia/core/commons/images/logo.png",
                       childModel.getBannerRight().getSrc() );
 
-        Logo poweredBy = (Logo) childModel.getPoweredBy().get( 0 );
+        Logo poweredBy = childModel.getPoweredBy().get( 0 );
         assertEquals( "check powered by logo href", "doxia/core/tomcat", poweredBy.getHref() );
         assertEquals( "check powered by logo image", "doxia/core/tomcat/logo.gif", poweredBy.getImg() );
 
-        LinkItem breadcrumb = (LinkItem) childModel.getBody().getBreadcrumbs().get( 0 );
+        LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
         assertEquals( "check breadcrumb href", "doxia/core/apache", breadcrumb.getHref() );
 
-        LinkItem link = (LinkItem) childModel.getBody().getLinks().get( 0 );
+        LinkItem link = childModel.getBody().getLinks().get( 0 );
         assertEquals( "check link href", "doxia/core/bouncycastle/", link.getHref() );
 
-        Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
-        LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
+        Menu menu = childModel.getBody().getMenus().get( 0 );
+        LinkItem menuItem = menu.getItems().get( 0 );
         assertEquals( "check menu item href", "doxia/core/special/", menuItem.getHref() );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testPathsResolvedForUnrelatedRelativeUrls()
         throws IOException, XmlPullParserException
     {
@@ -386,21 +431,26 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "check right banner image", "http://jakarta.apache.org/commons/images/logo.png",
                       childModel.getBannerRight().getSrc() );
 
-        Logo poweredBy = (Logo) childModel.getPoweredBy().get( 0 );
+        Logo poweredBy = childModel.getPoweredBy().get( 0 );
         assertEquals( "check powered by logo href", "http://jakarta.apache.org/tomcat", poweredBy.getHref() );
         assertEquals( "check powered by logo image", "http://jakarta.apache.org/tomcat/logo.gif", poweredBy.getImg() );
 
-        LinkItem breadcrumb = (LinkItem) childModel.getBody().getBreadcrumbs().get( 0 );
+        LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
         assertEquals( "check breadcrumb href", "http://jakarta.apache.org/apache", breadcrumb.getHref() );
 
-        LinkItem link = (LinkItem) childModel.getBody().getLinks().get( 0 );
+        LinkItem link = childModel.getBody().getLinks().get( 0 );
         assertEquals( "check link href", "http://jakarta.apache.org/bouncycastle/", link.getHref() );
 
-        Menu menu = (Menu) childModel.getBody().getMenus().get( 0 );
-        LinkItem menuItem = (LinkItem) menu.getItems().get( 0 );
+        Menu menu = childModel.getBody().getMenus().get( 0 );
+        LinkItem menuItem = menu.getItems().get( 0 );
         assertEquals( "check menu item href", "http://jakarta.apache.org/special/", menuItem.getHref() );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testNullParent()
         throws IOException, XmlPullParserException
     {
@@ -419,6 +469,11 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Check scp result", mergedModel, childModel );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testFullyPopulatedChild()
         throws IOException, XmlPullParserException
     {
@@ -440,6 +495,11 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Modified parent!", readModel( "fully-populated-child.xml" ), parentModel );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testFullyPopulatedParentAndEmptyChild()
         throws IOException, XmlPullParserException
     {
@@ -467,6 +527,11 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Modified parent!", readModel( "fully-populated-child.xml" ), parentModel );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testResolvingAllExternalUrls()
         throws IOException, XmlPullParserException
     {
@@ -478,6 +543,11 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Check result", mergedModel, model );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testResolvingAllRelativeUrls()
         throws IOException, XmlPullParserException
     {
@@ -490,6 +560,11 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Check result", resolvedModel, model );
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testResolvingAllSiteUrls()
         throws IOException, XmlPullParserException
     {
@@ -537,6 +612,11 @@ public class DecorationModelInheritenceAssemblerTest
 
 */
 
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testResolvingEmptyDescriptor()
         throws IOException, XmlPullParserException
     {
@@ -547,6 +627,9 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Check result", mergedModel, model );
     }
 
+    /**
+     *
+     */
     public void testDuplicateParentElements()
     {
         DecorationModel model = new DecorationModel();
@@ -570,6 +653,9 @@ public class DecorationModelInheritenceAssemblerTest
                       child.getPoweredBy().get( 0 ) );
     }
 
+    /**
+     *
+     */
     public void testDuplicateChildElements()
     {
         DecorationModel model = new DecorationModel();
@@ -595,6 +681,9 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Modified parent!", new DecorationModel(), parent );
     }
 
+    /**
+     *
+     */
     public void testBadHref()
     {
         final DecorationModel model = new DecorationModel();
@@ -606,6 +695,9 @@ public class DecorationModelInheritenceAssemblerTest
             model.getBody().getBreadcrumbs().get( 0 ) );
     }
 
+    /**
+     *
+     */
     public void testBreadcrumbWithoutHref()
     {
         DecorationModel model = new DecorationModel();
@@ -616,6 +708,9 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Check item", createLinkItem( "Foo", null ), model.getBody().getBreadcrumbs().get( 0 ) );
     }
 
+    /**
+     *
+     */
     public void testBreadcrumbs()
     {
         String parentHref = "http://parent.com/index.html";
@@ -660,7 +755,7 @@ public class DecorationModelInheritenceAssemblerTest
 
         // now with file url
         parentHref = "file://parent.com/index.html";
-        ( (LinkItem) parent.getBody().getBreadcrumbs().get( 0 ) ).setHref( parentHref );
+        ( parent.getBody().getBreadcrumbs().get( 0 ) ).setHref( parentHref );
         child = new DecorationModel();
         assembler.assembleModelInheritance( "childName", child, parent,
                 "file://parent.com/child/", "file://parent.com/" );
@@ -669,7 +764,7 @@ public class DecorationModelInheritenceAssemblerTest
 
         // now with scp url
         parentHref = "scp://parent.com/index.html";
-        ( (LinkItem) parent.getBody().getBreadcrumbs().get( 0 ) ).setHref( parentHref );
+        ( parent.getBody().getBreadcrumbs().get( 0 ) ).setHref( parentHref );
         child = new DecorationModel();
         assembler.assembleModelInheritance( "childName", child, parent,
                 "scp://parent.com/child/", "scp://parent.com/" );
@@ -684,6 +779,9 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Check child item", createLinkItem( childName, "" ), breadcrumbs.get( 1 ) );
     }
 
+    /**
+     *
+     */
     public void testBannerWithoutHref()
     {
         DecorationModel model = new DecorationModel();
@@ -698,6 +796,9 @@ public class DecorationModelInheritenceAssemblerTest
         assertEquals( "Check banner", createBanner( "Left", null, "images/src.gif", "alt" ), model.getBannerLeft() );
     }
 
+    /**
+     *
+     */
     public void testLogoWithoutImage()
     {
         // This should actually be validated in the model, it doesn't really make sense

@@ -233,6 +233,7 @@ public class URIPathDescriptor
      *
      * @return this URIPathDescriptor as a String.
      */
+    @Override
     public String toString()
     {
         return resolveLink().toString();

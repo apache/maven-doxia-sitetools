@@ -41,6 +41,7 @@ public class DocumentRendererTest
     private File siteDirectoryFile;
 
     /** @throws java.lang.Exception */
+    @Override
     protected void setUp()
         throws Exception
     {
@@ -50,6 +51,7 @@ public class DocumentRendererTest
     }
 
     /** @throws java.lang.Exception */
+    @Override
     protected void tearDown()
         throws Exception
     {
@@ -85,6 +87,7 @@ public class DocumentRendererTest
         renderAggregatedImpl( "itext" );
     }
 
+    @SuppressWarnings ( "unchecked" )
     private void renderImpl( String implementation )
         throws Exception
     {
@@ -100,6 +103,7 @@ public class DocumentRendererTest
 
         docRenderer.render( siteDirectoryFile, outputDirectory, null );
 
+        @SuppressWarnings ( "unchecked" )
         List<String> files =
             FileUtils.getFileNames( new File( siteDirectoryFile, "apt" ), "**/*.apt",
                                     FileUtils.getDefaultExcludesAsString(), false );
