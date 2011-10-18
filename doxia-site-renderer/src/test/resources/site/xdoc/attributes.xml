@@ -83,5 +83,11 @@
       </subsection>
     </section>
 
+    <!-- DOXIA-448 -->
+    <section name="Section name" id="foo" class="bar">
+      <subsection name="Subsection name" id="subfoo" class="subbar">
+      </subsection>
+    </section>
+
   </body>
 </document>

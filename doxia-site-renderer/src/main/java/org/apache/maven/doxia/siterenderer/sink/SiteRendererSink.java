@@ -58,7 +58,7 @@ public class SiteRendererSink
 
     private boolean sectionHasID;
 
-    private boolean sectionTitle;
+    private boolean isSectionTitle;
 
     private Set<String> anchorsInSectionTitle;
 
@@ -92,6 +92,7 @@ public class SiteRendererSink
     }
 
     /** {@inheritDoc} */
+    @Override
     public void title_()
     {
         if ( getTextBuffer().length() > 0 )
@@ -108,6 +109,7 @@ public class SiteRendererSink
      * Do nothing.
      * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#title()
      */
+    @Override
     public void title()
     {
         // nop
@@ -124,6 +126,7 @@ public class SiteRendererSink
     }
 
     /** {@inheritDoc} */
+    @Override
     public void author_()
     {
         if ( getTextBuffer().length() > 0 )
@@ -147,6 +150,7 @@ public class SiteRendererSink
     }
 
     /** {@inheritDoc} */
+    @Override
     public void date_()
     {
         if ( getTextBuffer().length() > 0 )
@@ -173,6 +177,7 @@ public class SiteRendererSink
      * Do nothing.
      * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#body_()
      */
+    @Override
     public void body_()
     {
         // nop
@@ -184,6 +189,7 @@ public class SiteRendererSink
      * Do nothing.
      * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#body()
      */
+    @Override
     public void body()
     {
         // nop
@@ -212,22 +218,25 @@ public class SiteRendererSink
     }
 
     /** {@inheritDoc} */
+    @Override
     public void head_()
     {
         setHeadFlag( false );
     }
 
     /** {@inheritDoc} */
+    @Override
     public void head()
     {
         setHeadFlag( true );
     }
 
     /** {@inheritDoc} */
+    @Override
     public void anchor( String name, SinkEventAttributes attributes )
     {
         super.anchor( name, attributes );
-        if ( sectionTitle )
+        if ( isSectionTitle )
         {
             if ( anchorsInSectionTitle == null )
             {
@@ -236,18 +245,20 @@ public class SiteRendererSink
             anchorsInSectionTitle.add( name );
         }
     }
-    
+
     /** {@inheritDoc} */
+    @Override
     protected void onSectionTitle( int depth, SinkEventAttributes attributes )
     {
         this.sectionTitleBuffer = new StringBuffer();
         sectionHasID = ( attributes != null && attributes.isDefined ( Attribute.ID.toString() ) );
-        sectionTitle = true;
+        isSectionTitle = true;
 
         super.onSectionTitle( depth, attributes );
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void onSectionTitle_( int depth )
     {
         String sectionTitle = sectionTitleBuffer.toString();
@@ -267,7 +278,7 @@ public class SiteRendererSink
             sectionHasID = false;
         }
 
-        this.sectionTitle = false;
+        this.isSectionTitle = false;
         anchorsInSectionTitle = null;
         super.onSectionTitle_( depth );
     }
@@ -284,6 +295,7 @@ public class SiteRendererSink
     }
 
     /** {@inheritDoc} */
+    @Override
     public void text( String text )
     {
         if ( sectionTitleBuffer != null )
@@ -296,11 +308,14 @@ public class SiteRendererSink
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void write( String text )
     {
+        String txt = text;
+
         if ( isHeadFlag() )
         {
-            headWriter.write( unifyEOLs( text ) );
+            headWriter.write( unifyEOLs( txt ) );
 
             return;
         }
@@ -311,14 +326,14 @@ public class SiteRendererSink
 
             if ( relativePathToBasedir == null )
             {
-                text = StringUtils.replace( text, "$relativePath", "." );
+                txt = StringUtils.replace( txt, "$relativePath", "." );
             }
             else
             {
-                text = StringUtils.replace( text, "$relativePath", relativePathToBasedir );
+                txt = StringUtils.replace( txt, "$relativePath", relativePathToBasedir );
             }
         }
 
-        super.write( text );
+        super.write( txt );
     }
 }

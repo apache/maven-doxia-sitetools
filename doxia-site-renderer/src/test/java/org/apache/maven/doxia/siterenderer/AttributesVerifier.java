@@ -212,6 +212,8 @@ public class AttributesVerifier
         assertEquals( "section", div.getAttribute( "class" ) );
         h2 = (HtmlHeading2) elementIterator.next();
         assertEquals( "Section with id", h2.asText().trim() );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "Section_with_id", a.getAttribute( "name" ) );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "subsection-id", a.getAttribute( "name" ) );
@@ -219,6 +221,30 @@ public class AttributesVerifier
         assertEquals( "section", div.getAttribute( "class" ) );
         h3 = (HtmlHeading3) elementIterator.next();
         assertEquals( "Subsection with id", h3.asText().trim() );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "Subsection_with_id", a.getAttribute( "name" ) );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "foo", a.getAttribute( "name" ) );
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( "bar", div.getAttribute( "class" ) );
+        assertEquals( "foo", div.getAttribute( "id" ) );
+        h2 = (HtmlHeading2) elementIterator.next();
+        assertEquals( "Section name", h2.asText().trim() );
+        assertEquals( "", h2.getAttribute( "class" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "Section_name", a.getAttribute( "name" ) );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "subfoo", a.getAttribute( "name" ) );
+        div = (HtmlDivision) elementIterator.next();
+        assertEquals( "subbar", div.getAttribute( "class" ) );
+        assertEquals( "subfoo", div.getAttribute( "id" ) );
+        h3 = (HtmlHeading3) elementIterator.next();
+        assertEquals( "Subsection name", h3.asText().trim() );
+        assertEquals( "", h3.getAttribute( "class" ) );
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "Subsection_name", a.getAttribute( "name" ) );
 
         assertFalse( elementIterator.hasNext() );
     }
