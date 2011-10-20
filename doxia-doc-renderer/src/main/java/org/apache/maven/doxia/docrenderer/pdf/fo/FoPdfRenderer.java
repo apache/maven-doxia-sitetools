@@ -180,7 +180,6 @@ public class FoPdfRenderer
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings ( "deprecation" )
     public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory )
         throws DocumentRendererException, IOException
     {

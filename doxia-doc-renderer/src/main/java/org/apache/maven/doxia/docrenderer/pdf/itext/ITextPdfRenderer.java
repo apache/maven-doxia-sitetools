@@ -197,7 +197,6 @@ public class ITextPdfRenderer
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings ( "deprecation" )
     public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory )
         throws DocumentRendererException, IOException
     {
