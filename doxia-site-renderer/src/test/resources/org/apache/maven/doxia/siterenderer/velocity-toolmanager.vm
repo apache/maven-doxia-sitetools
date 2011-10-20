@@ -1,0 +1,2 @@
+$esc.html('Maven 2 & 3')
+$display.truncate("This is a long string.", 10)

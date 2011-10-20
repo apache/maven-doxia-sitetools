@@ -19,6 +19,7 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -26,22 +27,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.xsd.AbstractXmlValidator;
-
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-
 import org.xml.sax.EntityResolver;
 
 /**
@@ -154,6 +157,22 @@ public class DefaultSiteRendererTest
         // Validate the rendering pages
         // ----------------------------------------------------------------------
         validatePages();
+    }
+    
+    public void testVelocityToolManager()
+        throws Exception
+    {
+        StringWriter writer = new StringWriter();
+
+        SiteRenderingContext siteRenderingContext = new SiteRenderingContext();
+        siteRenderingContext.setTemplateName( "org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm" );
+        RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
+        SiteRendererSink sink = new SiteRendererSink( context );
+        renderer.generateDocument( writer, sink, siteRenderingContext );
+        
+        String renderResult = writer.toString();
+        String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
+        assertEquals( expectedResult, renderResult );
     }
 
     private SiteRenderingContext getSiteRenderingContext( DecorationModel decoration, String siteDir, boolean validate )

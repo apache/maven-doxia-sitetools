@@ -69,8 +69,8 @@ import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.util.XmlValidator;
 
 import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.tools.ToolManager;
 
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -427,7 +427,8 @@ public class DefaultSiteRenderer
 
     private Context createContext( SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
     {
-        VelocityContext context = new VelocityContext();
+    	ToolManager toolManager = new ToolManager( true );
+        Context context = toolManager.createContext();
 
         // ----------------------------------------------------------------------
         // Data objects
