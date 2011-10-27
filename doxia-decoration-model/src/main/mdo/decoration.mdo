@@ -31,12 +31,14 @@ under the License.
       <li><a href="http://maven.apache.org/xsd/decoration-1.0.0.xsd">http://maven.apache.org/xsd/decoration-1.0.0.xsd</a> for Maven 2.0.</li>
     </ul>
     ]]></description>
+
   <defaults>
     <default>
       <key>package</key>
       <value>org.apache.maven.doxia.site.decoration</value>
     </default>
   </defaults>
+
   <classes>
     <class rootElement="true" xml.tagName="project" java.clone="deep">
       <name>DecorationModel</name>
@@ -126,7 +128,11 @@ under the License.
         </field>
         <field xdoc.separator="blank">
           <name>custom</name>
-          <description>Custom configuration for use with customized Velocity templates.</description>
+          <description><![CDATA[
+            Custom configuration for use with customized Velocity templates. Data from this field are
+            accessible in Velocity template from <code>$decoration.custom</code> variable as DOM content.
+            Example: <code>$decoration.custom.getChild( 'customElement' ).getValue()</code>
+          ]]></description>
           <version>1.0.0+</version>
           <type>DOM</type>
           <identifier>true</identifier>
@@ -208,6 +214,7 @@ under the License.
         </codeSegment>
       </codeSegments>
     </class>
+
     <class java.clone="deep">
       <name>Banner</name>
       <description>Banner logo on the masthead of the site.</description>
@@ -265,6 +272,7 @@ under the License.
         </field>
       </fields>
     </class>
+
     <class java.clone="deep">
       <name>PublishDate</name>
       <description>Modify display properties for date published.</description>
@@ -287,6 +295,7 @@ under the License.
         </field>
       </fields>
     </class>
+
     <class java.clone="deep">
       <name>Version</name>
       <description>Modify display properties for version published.</description>
@@ -301,12 +310,14 @@ under the License.
         </field>
       </fields>
     </class>
+
     <class java.clone="deep">
       <name>Logo</name>
       <description>Power by logo on the navigation.</description>
       <version>1.0.0+</version>
       <superClass>LinkItem</superClass>
     </class>
+
     <class java.clone="deep" xsd.compositor="sequence">
       <name>Body</name>
       <description>The main content decoration.</description>
@@ -358,6 +369,7 @@ under the License.
         </field>
       </fields>
     </class>
+
     <class java.clone="deep">
       <name>LinkItem</name>
       <description>A link in the navigation.</description>
@@ -429,6 +441,7 @@ under the License.
         </field>
       </fields>
     </class>
+
     <class java.clone="deep" xsd.compositor="sequence">
       <name>Menu</name>
       <description>A menu in the navigation.</description>
@@ -524,6 +537,7 @@ under the License.
         </field>
       </fields>
     </class>
+
     <class java.clone="deep" xsd.compositor="sequence">
       <name>MenuItem</name>
       <description>A menu item.</description>
@@ -564,6 +578,7 @@ under the License.
         </field>
       </fields>
     </class>
+
     <class java.clone="deep">
       <name>Skin</name>
       <description>An skin artifact declaration.</description>
