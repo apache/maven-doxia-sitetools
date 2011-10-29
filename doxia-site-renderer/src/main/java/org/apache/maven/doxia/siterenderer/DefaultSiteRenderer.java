@@ -355,7 +355,7 @@ public class DefaultSiteRenderer
                 {
                     SiteResourceLoader.setResource( resource );
 
-                    Context vc = createContext( sink, context );
+                    Context vc = createVelocityContext( sink, context );
 
                     StringWriter sw = new StringWriter();
 
@@ -425,7 +425,7 @@ public class DefaultSiteRenderer
         generateDocument( writer, sink, context );
     }
 
-    private Context createContext( SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
+    private Context createVelocityContext( SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
     {
     	ToolManager toolManager = new ToolManager( true );
         Context context = toolManager.createContext();
@@ -507,7 +507,7 @@ public class DefaultSiteRenderer
     public void generateDocument( Writer writer, SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
             throws RendererException
     {
-        Context context = createContext( sink, siteRenderingContext );
+        Context context = createVelocityContext( sink, siteRenderingContext );
 
         writeTemplate( writer, context, siteRenderingContext );
     }

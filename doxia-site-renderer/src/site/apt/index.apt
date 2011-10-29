@@ -93,5 +93,5 @@ Doxia Site Tools - Site Renderer
 | <<<i18n>>>                      | <<<i18n>>>         |                               |
 *---------------------------------+--------------------+-------------------------------+
 
-  see <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#426}DefaultSiteRenderer.createContext(...)}}>>>
+  see <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#426}DefaultSiteRenderer.createVelocityContext(...)}}>>>
   source for more details.
