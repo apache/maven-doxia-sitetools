@@ -47,7 +47,7 @@ Doxia Site Tools - Site Renderer
 
 * Velocity processing
 
-  When their file names end in <<<.vm>>>, documents are processed by Velocity.
+  Site decoration and documents with file names ending in <<<.vm>>> are processed by Velocity.
 
   The velocity context defines some variables:
 
@@ -82,16 +82,33 @@ Doxia Site Tools - Site Renderer
 *---------------------------------+--------------------+-------------------------------+
 | <<<supportedLocales>>>          | <<<List\<Locale\>>>> |                             |
 *---------------------------------+--------------------+-------------------------------+
-| template properties             |                    |                               |
+| <template properties>           |                    | Properties defined by caller: see below for properties defined by <<<maven-site-plugin>>>  |
 *---------------------------------+--------------------+-------------------------------+
-| <<<PathTool>>>                  | <<<PathTool>>>     |                               |
+| <<<PathTool>>>                  | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/PathTool.html}<<<PathTool>>>}} |                               |
 *---------------------------------+--------------------+-------------------------------+
-| <<<FileUtils>>>                 | <<<FileUtils>>>    |                               |
+| <<<FileUtils>>>                 | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/FileUtils.html}<<<FileUtils>>>}} |                               |
 *---------------------------------+--------------------+-------------------------------+
-| <<<StringUtils>>>               | <<<StringUtils>>>  |                               |
+| <<<StringUtils>>>               | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/StringUtils.html}<<<StringUtils>>>}} |                               |
 *---------------------------------+--------------------+-------------------------------+
-| <<<i18n>>>                      | <<<i18n>>>         |                               |
+| <<<i18n>>>                      | {{{http://plexus.codehaus.org/plexus-components/plexus-i18n/apidocs/org/codehaus/plexus/i18n/I18N.html}<<<i18n>>>}} |                               |
 *---------------------------------+--------------------+-------------------------------+
 
   see <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#426}DefaultSiteRenderer.createVelocityContext(...)}}>>>
+  source for more details.
+
+  When <<<doxia-site-renderer>>> is used by <<<maven-site-plugin>>>, following template properties are defined:
+
+*---------------------------------+--------------------+-------------------------------+
+|| variable                       || type              || description                 ||
+*---------------------------------+--------------------+-------------------------------+
+| <<<project>>>                   | {{{/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html}<<<MavenProject>>>}} |                               |
+*---------------------------------+--------------------+-------------------------------+
+| <<<inputEncoding>>>             | <<<String>>>       |                               |
+*---------------------------------+--------------------+-------------------------------+
+| <<<outputEncoding>>>            | <<<String>>>       |                               |
+*---------------------------------+--------------------+-------------------------------+
+| <project properties>            | <<<String>>>       | Properties defined in POM are directly available. |
+*---------------------------------+--------------------+-------------------------------+
+
+  see <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/AbstractSiteRenderingMojo.html#createSiteRenderingContext(java.util.Locale)}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
   source for more details.
