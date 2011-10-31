@@ -59,7 +59,7 @@ public class HeadVerifier
         HtmlElement head = heads.get( 0 );
         assertNotNull( head );
 
-        Iterator<HtmlElement> elementIterator = head.getAllHtmlChildElements().iterator();
+        Iterator<HtmlElement> elementIterator = head.getHtmlElementDescendants().iterator();
 
         // ----------------------------------------------------------------------
         //

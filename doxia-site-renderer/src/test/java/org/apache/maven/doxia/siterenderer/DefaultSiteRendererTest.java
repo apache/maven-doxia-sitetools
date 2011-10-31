@@ -19,7 +19,6 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;

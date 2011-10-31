@@ -55,7 +55,7 @@ public class FaqVerifier
         HtmlDivision division = (HtmlDivision) element;
         assertNotNull( division );
 
-        Iterator<HtmlElement> elementIterator = division.getAllHtmlChildElements().iterator();
+        Iterator<HtmlElement> elementIterator = division.getHtmlElementDescendants().iterator();
 
         // ----------------------------------------------------------------------
         //
