@@ -32,49 +32,52 @@ import org.xml.sax.SAXException;
  * @since 1.2
  */
 public class XhtmlEntityResolver
-        implements EntityResolver
+    implements EntityResolver
+{
+    private static final String XHTML_PUBLIC_ID = "-//W3C//DTD XHTML 1.0 Transitional//EN";
+
+    private static final String DTD = "/dtd/xhtml1-transitional.dtd";
+
+    private static final String LAT1_PUBLIC_ID = "-//W3C//ENTITIES Latin 1 for XHTML//EN";
+
+    private static final String LAT1 = "/dtd/xhtml-lat1.ent";
+
+    private static final String SYMBOL_PUBLIC_ID = "-//W3C//ENTITIES Symbols for XHTML//EN";
+
+    private static final String SYMBOL = "/dtd/xhtml-symbol.ent";
+
+    private static final String SPECIAL_PUBLIC_ID = "-//W3C//ENTITIES Special for XHTML//EN";
+
+    private static final String SPECIAL = "/dtd/xhtml-special.ent";
+
+    /** {@inheritDoc} */
+    public InputSource resolveEntity( String publicId, String systemId )
+        throws SAXException, IOException
     {
-        private static final String XHTML_PUBLIC_ID = "-//W3C//DTD XHTML 1.0 Transitional//EN";
-        private static final String DTD = "/dtd/xhtml1-transitional.dtd";
-
-        private static final String LAT1_PUBLIC_ID = "-//W3C//ENTITIES Latin 1 for XHTML//EN";
-        private static final String LAT1 = "/dtd/xhtml-lat1.ent";
-
-        private static final String SYMBOL_PUBLIC_ID = "-//W3C//ENTITIES Symbols for XHTML//EN";
-        private static final String SYMBOL = "/dtd/xhtml-symbol.ent";
-
-        private static final String SPECIAL_PUBLIC_ID = "-//W3C//ENTITIES Special for XHTML//EN";
-        private static final String SPECIAL = "/dtd/xhtml-special.ent";
-
-
-        /** {@inheritDoc} */
-        public InputSource resolveEntity( String publicId, String systemId )
-            throws SAXException, IOException
+        if ( publicId == null )
         {
-            if ( publicId == null )
-            {
-                return null;
-            }
+            return null;
+        }
 
-            if ( publicId.equals( XHTML_PUBLIC_ID ) )
-            {
-                return new InputSource( XhtmlEntityResolver.class.getResourceAsStream( DTD ) );
-            }
-            else if ( publicId.equals( LAT1_PUBLIC_ID ) )
-            {
-                return new InputSource( XhtmlEntityResolver.class.getResourceAsStream( LAT1 ) );
-            }
-            else if ( publicId.equals( SYMBOL_PUBLIC_ID ) )
-            {
-                return new InputSource( XhtmlEntityResolver.class.getResourceAsStream( SYMBOL ) );
-            }
-            else if ( publicId.equals( SPECIAL_PUBLIC_ID ) )
-            {
-                return new InputSource( XhtmlEntityResolver.class.getResourceAsStream( SPECIAL ) );
-            }
-            else
-            {
-                return null;
-            }
+        if ( publicId.equals( XHTML_PUBLIC_ID ) )
+        {
+            return new InputSource( XhtmlEntityResolver.class.getResourceAsStream( DTD ) );
+        }
+        else if ( publicId.equals( LAT1_PUBLIC_ID ) )
+        {
+            return new InputSource( XhtmlEntityResolver.class.getResourceAsStream( LAT1 ) );
+        }
+        else if ( publicId.equals( SYMBOL_PUBLIC_ID ) )
+        {
+            return new InputSource( XhtmlEntityResolver.class.getResourceAsStream( SYMBOL ) );
+        }
+        else if ( publicId.equals( SPECIAL_PUBLIC_ID ) )
+        {
+            return new InputSource( XhtmlEntityResolver.class.getResourceAsStream( SPECIAL ) );
+        }
+        else
+        {
+            return null;
         }
     }
+}
