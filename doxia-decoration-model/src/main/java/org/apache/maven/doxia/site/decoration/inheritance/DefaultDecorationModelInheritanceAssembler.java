@@ -203,7 +203,7 @@ public class DefaultDecorationModelInheritanceAssembler
                 cBody.setHead( Xpp3Dom.mergeXpp3Dom( (Xpp3Dom) cBody.getHead(), (Xpp3Dom) pBody.getHead() ) );
             }
 
-            cBody.setLinks( mergeLinkItemLists( cBody.getLinks(), pBody.getLinks(), urlContainer ) );
+            cBody.setLinks( mergeLinkItemLists( cBody.getLinks(), pBody.getLinks(), urlContainer, false ) );
 
             if ( cBody.getBreadcrumbs().isEmpty() && !pBody.getBreadcrumbs().isEmpty() )
             {
@@ -212,7 +212,8 @@ public class DefaultDecorationModelInheritanceAssembler
                 breadcrumb.setHref( "" );
                 cBody.getBreadcrumbs().add( breadcrumb );
             }
-            cBody.setBreadcrumbs( mergeLinkItemLists( cBody.getBreadcrumbs(), pBody.getBreadcrumbs(), urlContainer ) );
+            cBody.setBreadcrumbs( mergeLinkItemLists( cBody.getBreadcrumbs(), pBody.getBreadcrumbs(), urlContainer,
+                                                      true ) );
 
             cBody.setMenus( mergeMenus( cBody.getMenus(), pBody.getMenus(), urlContainer ) );
         }
@@ -294,19 +295,26 @@ public class DefaultDecorationModelInheritanceAssembler
     }
 
     private List<LinkItem> mergeLinkItemLists( final List<LinkItem> childList, final List<LinkItem> parentList,
-                                               final URLContainer urlContainer )
+                                               final URLContainer urlContainer, boolean cutParentAfterDuplicate )
     {
         List<LinkItem> items = new ArrayList<LinkItem>( childList.size() + parentList.size() );
 
         for ( LinkItem item : parentList )
         {
-            if ( !items.contains( item ) )
+            if ( !items.contains( item ) && !childList.contains( item ) )
             {
                 final LinkItem clone = item.clone();
 
                 rebaseLinkItemPaths( clone, urlContainer );
 
                 items.add( clone );
+            }
+            else if ( cutParentAfterDuplicate )
+            {
+                // if a parent item is found in child, ignore next items (case for breadcrumbs)
+                // merge ( "B > E", "A > B > C > D" ) -> "A > B > E" (notice missing "C > D")
+                // see http://jira.codehaus.org/browse/DOXIASITETOOLS-62
+                break;
             }
         }
 

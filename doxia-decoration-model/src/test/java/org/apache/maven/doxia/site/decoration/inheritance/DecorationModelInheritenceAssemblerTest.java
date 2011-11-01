@@ -780,6 +780,33 @@ public class DecorationModelInheritenceAssemblerTest
     }
 
     /**
+     * http://jira.codehaus.org/browse/DOXIASITETOOLS-62
+     */
+    public void testBreadcrumbCutParentAfterDuplicate()
+    {
+        DecorationModel child = new DecorationModel(); // B > E
+        child.setBody( new Body() );
+        child.getBody().addBreadcrumb( createLinkItem( "B", null ) );
+        child.getBody().addBreadcrumb( createLinkItem( "E", null ) );
+
+        DecorationModel parent = new DecorationModel(); // A > B > C > D
+        parent.setBody( new Body() );
+        parent.getBody().addBreadcrumb( createLinkItem( "A", null ) );
+        parent.getBody().addBreadcrumb( createLinkItem( "B", null ) );
+        parent.getBody().addBreadcrumb( createLinkItem( "C", null ) );
+        parent.getBody().addBreadcrumb( createLinkItem( "D", null ) );
+
+        assembler.assembleModelInheritance( NAME, child, parent, "http://maven.apache.org/doxia",
+                                            "http://maven.apache.org" );
+
+        final List<LinkItem> breadcrumbs = child.getBody().getBreadcrumbs(); // expected: A > B > E
+        assertEquals( "Check size", 3, breadcrumbs.size() );
+        assertEquals( "Check item", createLinkItem( "A", null ), breadcrumbs.get( 0 ) );
+        assertEquals( "Check item", createLinkItem( "B", null ), breadcrumbs.get( 1 ) );
+        assertEquals( "Check item", createLinkItem( "E", null ), breadcrumbs.get( 2 ) );
+    }
+
+    /**
      *
      */
     public void testBannerWithoutHref()
