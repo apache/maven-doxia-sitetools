@@ -27,11 +27,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.jar.JarOutputStream;
+import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.doxia.sink.render.RenderingContext;
@@ -69,6 +72,8 @@ public class DefaultSiteRendererTest
      */
     private Locale oldLocale;
 
+    private File skinJar = new File( getBasedir(), "target/test-classes/skin.jar" );
+
     /**
      * @throws java.lang.Exception if something goes wrong.
      * @see org.codehaus.plexus.PlexusTestCase#setUp()
@@ -96,6 +101,20 @@ public class DefaultSiteRendererTest
             IOUtil.close( os );
         }
 
+        InputStream skinIS = this.getResourceAsStream( "velocity-toolmanager.vm" );
+        JarOutputStream jarOS = new JarOutputStream( new FileOutputStream( skinJar ) );
+        try
+        {
+            jarOS.putNextEntry( new ZipEntry( "META-INF/maven/site.vm" ) );
+            IOUtil.copy( skinIS, jarOS );
+            jarOS.closeEntry();
+        }
+        finally
+        {
+            IOUtil.close( skinIS );
+            IOUtil.close( jarOS );
+        }
+        
         // Safety
         FileUtils.deleteDirectory( getTestFile( OUTPUT ) );
 
@@ -173,7 +192,40 @@ public class DefaultSiteRendererTest
         String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
         assertEquals( expectedResult, renderResult );
     }
+    
+    public void testVelocityToolManagerForTemplate() throws Exception 
+    {
+        StringWriter writer = new StringWriter();
 
+        File templateFile = new File( getBasedir(), "target/test-classes/org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm" );
+        Map<String, ?> attributes = Collections.emptyMap();
+
+        SiteRenderingContext siteRenderingContext = renderer.createContextForTemplate( templateFile, null, attributes, new DecorationModel(), "defaultWindowTitle", Locale.ENGLISH );
+        RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
+        SiteRendererSink sink = new SiteRendererSink( context );
+        renderer.generateDocument( writer, sink, siteRenderingContext );
+        
+        String renderResult = writer.toString();
+        String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
+        assertEquals( expectedResult, renderResult );
+    }
+    
+    public void testVelocityToolManagerForSkin() throws Exception
+    {
+        StringWriter writer = new StringWriter();
+
+        File skinFile = skinJar;
+        Map<String, ?> attributes = Collections.emptyMap();
+        SiteRenderingContext siteRenderingContext = renderer.createContextForSkin( skinFile, attributes, new DecorationModel(), "defaultWindowTitle", Locale.ENGLISH );
+        RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
+        SiteRendererSink sink = new SiteRendererSink( context );
+        renderer.generateDocument( writer, sink, siteRenderingContext );
+        
+        String renderResult = writer.toString();
+        String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
+        assertEquals( expectedResult, renderResult );
+    }
+    
     private SiteRenderingContext getSiteRenderingContext( DecorationModel decoration, String siteDir, boolean validate )
     {
         SiteRenderingContext ctxt = new SiteRenderingContext();
