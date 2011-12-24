@@ -22,6 +22,7 @@ package org.apache.maven.doxia.siterenderer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -67,6 +68,8 @@ public class SiteRenderingContext
     private List<ModuleReference> modules = new ArrayList<ModuleReference>();
 
     private boolean validate;
+
+    private Date publishDate;
 
     /**
      * If input documents should be validated before parsing.
@@ -372,4 +375,25 @@ public class SiteRenderingContext
     {
         this.outputEncoding = outputEncoding;
     }
+
+    /**
+     * <p>If you want to specify a specific publish date instead of the current date.</p>
+     * 
+     * @return the publish date, can be {@code null}
+     */
+    public Date getPublishDate()
+    {
+        return publishDate;
+    }
+
+    /**
+     * <p>Specify a specific publish date instead of the current date.</p>
+     * 
+     * @param publishDate the publish date
+     */
+    public void setPublishDate( Date publishDate )
+    {
+        this.publishDate = publishDate;
+    }
+    
 }

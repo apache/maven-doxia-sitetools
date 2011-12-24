@@ -465,6 +465,9 @@ public class DefaultSiteRenderer
         context.put( "dateRevision", sdf.format( new Date() ) );
 
         context.put( "currentDate", new Date() );
+        
+        context.put( "publishDate", siteRenderingContext.getPublishDate() );
+        
 
         Locale locale = siteRenderingContext.getLocale();
         context.put( "dateFormat", DateFormat.getDateInstance( DateFormat.DEFAULT, locale ) );
