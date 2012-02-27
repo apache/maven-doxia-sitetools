@@ -129,11 +129,11 @@ public interface Renderer
      *
      * @param writer the writer to render the document to.
      * @param renderingContext the document's rendering context
-     * @param context the site's rendering context
+     * @param siteContext the site's rendering context
      * @throws RendererException if it bombs.
      * @throws FileNotFoundException if it bombs.
      * @throws UnsupportedEncodingException if it bombs.
      */
-    void renderDocument( Writer writer, RenderingContext renderingContext, SiteRenderingContext context )
+    void renderDocument( Writer writer, RenderingContext renderingContext, SiteRenderingContext siteContext )
         throws RendererException, FileNotFoundException, UnsupportedEncodingException;
 }
