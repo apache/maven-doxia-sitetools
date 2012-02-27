@@ -467,7 +467,6 @@ public class DefaultSiteRenderer
         context.put( "currentDate", new Date() );
         
         context.put( "publishDate", siteRenderingContext.getPublishDate() );
-        
 
         Locale locale = siteRenderingContext.getLocale();
         context.put( "dateFormat", DateFormat.getDateInstance( DateFormat.DEFAULT, locale ) );
