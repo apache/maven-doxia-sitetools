@@ -334,7 +334,7 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public void renderDocument( Writer writer, RenderingContext renderingContext, SiteRenderingContext context )
+    public void renderDocument( Writer writer, RenderingContext renderingContext, SiteRenderingContext siteContext )
             throws RendererException, FileNotFoundException, UnsupportedEncodingException
     {
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
@@ -355,14 +355,14 @@ public class DefaultSiteRenderer
                 {
                     SiteResourceLoader.setResource( resource );
 
-                    Context vc = createVelocityContext( sink, context );
+                    Context vc = createVelocityContext( sink, siteContext );
 
                     StringWriter sw = new StringWriter();
 
-                    velocity.getEngine().mergeTemplate( resource, context.getInputEncoding(), vc, sw );
+                    velocity.getEngine().mergeTemplate( resource, siteContext.getInputEncoding(), vc, sw );
 
                     reader = new StringReader( sw.toString() );
-                    if ( parser.getType() == Parser.XML_TYPE && context.isValidate() )
+                    if ( parser.getType() == Parser.XML_TYPE && siteContext.isValidate() )
                     {
                         reader = validate( reader, resource );
                     }
@@ -385,7 +385,7 @@ public class DefaultSiteRenderer
                 {
                     case Parser.XML_TYPE:
                         reader = ReaderFactory.newXmlReader( doc );
-                        if ( context.isValidate() )
+                        if ( siteContext.isValidate() )
                         {
                             reader = validate( reader, resource );
                         }
@@ -394,7 +394,7 @@ public class DefaultSiteRenderer
                     case Parser.TXT_TYPE:
                     case Parser.UNKNOWN_TYPE:
                     default:
-                        reader = ReaderFactory.newReader( doc, context.getInputEncoding() );
+                        reader = ReaderFactory.newReader( doc, siteContext.getInputEncoding() );
                 }
             }
             sink.enableLogging( new PlexusLoggerWrapper( getLogger() ) );
@@ -422,7 +422,7 @@ public class DefaultSiteRenderer
             IOUtil.close( reader );
         }
 
-        generateDocument( writer, sink, context );
+        generateDocument( writer, sink, siteContext );
     }
 
     private Context createVelocityContext( SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
