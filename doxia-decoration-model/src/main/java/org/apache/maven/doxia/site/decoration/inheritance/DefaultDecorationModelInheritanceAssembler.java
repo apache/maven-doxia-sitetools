@@ -216,6 +216,11 @@ public class DefaultDecorationModelInheritanceAssembler
                                                       true ) );
 
             cBody.setMenus( mergeMenus( cBody.getMenus(), pBody.getMenus(), urlContainer ) );
+
+            if ( cBody.getFooter() == null && pBody.getFooter() != null )
+            {
+                cBody.setFooter( pBody.getFooter() );
+            }
         }
     }
 
