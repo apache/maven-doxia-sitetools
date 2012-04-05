@@ -440,7 +440,27 @@ public class DefaultSiteRenderer
         // Add infos from document
         context.put( "authors", sink.getAuthors() );
 
-        context.put( "title", sink.getTitle() );
+        context.put( "shortTitle", sink.getTitle() );
+
+        // DOXIASITETOOLS-70: Prepend the project name to the title, if any
+        String title = "";
+        if ( siteRenderingContext.getDecoration() != null
+                && siteRenderingContext.getDecoration().getName() != null )
+        {
+            title = siteRenderingContext.getDecoration().getName();
+        }
+        else if ( siteRenderingContext.getDefaultWindowTitle() != null )
+        {
+            title = siteRenderingContext.getDefaultWindowTitle();
+        }
+
+        if ( title.length() > 0 )
+        {
+            title += " - ";
+        }
+        title += sink.getTitle();
+
+        context.put( "title", title );
 
         context.put( "headContent", sink.getHead() );
 
