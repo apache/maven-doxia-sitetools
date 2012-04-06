@@ -51,6 +51,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -84,7 +85,6 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.velocity.SiteResourceLoader;
 import org.codehaus.plexus.velocity.VelocityComponent;
-
 
 /**
  * <p>DefaultSiteRenderer class.</p>
@@ -427,7 +427,7 @@ public class DefaultSiteRenderer
 
     private Context createVelocityContext( SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
     {
-    	ToolManager toolManager = new ToolManager( true );
+        ToolManager toolManager = new ToolManager( true );
         Context context = toolManager.createContext();
 
         // ----------------------------------------------------------------------
@@ -498,6 +498,30 @@ public class DefaultSiteRenderer
 
         context.put( "locale", locale );
         context.put( "supportedLocales", Collections.unmodifiableList( siteRenderingContext.getSiteLocales() ) );
+
+        InputStream inputStream = null;
+        try
+        {
+            inputStream = this.getClass().getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven.doxia/doxia-site-renderer/pom.properties" );
+            if ( inputStream == null )
+            {
+                getLogger().debug( "pom.properties for doxia-site-renderer could not be found." );
+            }
+            else
+            {
+                Properties properties = new Properties();
+                properties.load( inputStream );
+                context.put( "doxiaVersion", properties.getProperty( "version" ) );
+            }
+        }
+        catch( IOException e )
+        {
+            getLogger().debug( "Failed to load pom.properties, so doxiaVersion is not available in the velocityContext." );
+        }
+        finally
+        {
+            IOUtil.close( inputStream );
+        }
 
         // Add user properties
         Map<String, ?> templateProperties = siteRenderingContext.getTemplateProperties();

@@ -47,42 +47,6 @@ under the License.
     </contributor>
   </contributors>
 
-  <build>
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-        <includes>
-          <include>org/apache/maven/doxia/siterenderer/resources/default-site.vm</include>
-        </includes>
-        <filtering>true</filtering> <!-- add project version -->
-      </resource>
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-        <excludes>
-          <exclude>org/apache/maven/doxia/siterenderer/resources/default-site.vm</exclude>
-        </excludes>
-      </resource>
-    </resources>
-
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <configuration>
-          <!--
-            We can't use the default delimiters here, because the Velocity
-            template contains expressions that will be interpolated when a site
-            is generated.
-          -->
-          <delimiters>
-            <delimiter>@</delimiter>
-          </delimiters>
-          <useDefaultDelimiters>false</useDefaultDelimiters>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
   <dependencies>
     <!-- doxia -->
     <dependency>
