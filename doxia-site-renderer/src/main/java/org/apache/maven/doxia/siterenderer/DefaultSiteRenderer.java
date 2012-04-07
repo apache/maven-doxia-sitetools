@@ -511,7 +511,7 @@ public class DefaultSiteRenderer
             {
                 Properties properties = new Properties();
                 properties.load( inputStream );
-                context.put( "doxiaVersion", properties.getProperty( "version" ) );
+                context.put( "doxiaSiteRendererVersion", properties.getProperty( "version" ) );
             }
         }
         catch( IOException e )
