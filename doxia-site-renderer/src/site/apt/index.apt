@@ -55,31 +55,31 @@ Doxia Site Tools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 || variable                       || type                || description                 ||
 *---------------------------------+----------------------+-------------------------------+
-| <<<alignedFileName>>>           | <<<String>>>         |                               |
+| <<<alignedFileName>>>           | <<<String>>>         | The file name of the (html) document being rendered, relative to the document being rendered |
 *---------------------------------+----------------------+-------------------------------+
-| <<<authors>>>                   | <<<List\<String\>>>> |                               |
+| <<<authors>>>                   | <<<List\<String\>>>> | A list of authors from the source document |
 *---------------------------------+----------------------+-------------------------------+
 | <<<bodyContent>>>               | <<<String>>>         |                               |
 *---------------------------------+----------------------+-------------------------------+
-| <<<decoration>>>                | {{{../doxia-decoration-model/apidocs/org/apache/maven/doxia/site/decoration/DecorationModel.html}<<<DecorationModel>>>}} |                            |
+| <<<decoration>>>                | {{{../doxia-decoration-model/apidocs/org/apache/maven/doxia/site/decoration/DecorationModel.html}<<<DecorationModel>>>}} | This is a model that represents the data in your <<<site.xml>>> |
 *---------------------------------+----------------------+-------------------------------+
-| <<<currentDate>>>               | <<<Date>>>           |                               |
+| <<<currentDate>>>               | <<<Date>>>           | The date when the site is rendered |
 *---------------------------------+----------------------+-------------------------------+
-| <<<currentFileName>>>           | <<<String>>>         |                               |
+| <<<currentFileName>>>           | <<<String>>>         | The file name of the (html) document being rendered, relative to the site root |
 *---------------------------------+----------------------+-------------------------------+
-| <<<dateCreation>>>              | <<<String>>>         |                               |
+| <<<dateCreation>>>              | <<<String>>>         | The date specified in the source document, in the format "yyyyMMdd" |
 *---------------------------------+----------------------+-------------------------------+
-| <<<dateFormat>>>                | <<<DateFormat>>>     |                               |
+| <<<dateFormat>>>                | <<<DateFormat>>>     | An instance of the default date format for the locale of the document being rendered |
 *---------------------------------+----------------------+-------------------------------+
-| <<<dateRevision>>>              | <<<String>>>         |                               |
+| <<<dateRevision>>>              | <<<String>>>         | The date when the site is rendered, in the format "yyyyMMdd" |
 *---------------------------------+----------------------+-------------------------------+
 | <<<headContent>>>               | <<<String>>>         |                               |
 *---------------------------------+----------------------+-------------------------------+
-| <<<locale>>>                    | <<<Locale>>>         |                               |
+| <<<locale>>>                    | <<<Locale>>>         | The locale for the document being rendered |
 *---------------------------------+----------------------+-------------------------------+
-| <<<publishDate>>>               | <<<Date>>>           |                               |
+| <<<publishDate>>>               | <<<Date>>>           | An optional hardcoded publish date that has been set programmatically |
 *---------------------------------+----------------------+-------------------------------+
-| <<<relativePath>>>              | <<<String>>>         |                               |
+| <<<relativePath>>>              | <<<String>>>         | The path to the site root from the document being rendered |
 *---------------------------------+----------------------+-------------------------------+
 | <<<shortTitle>>>                | <<<String>>>         | The title of the document, excluding the project or site name |
 *---------------------------------+----------------------+-------------------------------+
