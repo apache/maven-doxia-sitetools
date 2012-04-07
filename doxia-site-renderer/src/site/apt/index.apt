@@ -2,8 +2,9 @@
  Introduction
  -----
  Hervé Boutemy
+ Dennis Lundberg
  ------
- 2011-09-13
+ 2012-04-07
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -31,10 +32,10 @@ Doxia Site Tools - Site Renderer
   The Site Renderer handles the rendering of sites, assembling a common site decoration with a collection of documents. 
 
   A default site decoration is included (see <<<default-site.vm>>>), but other decorations can be used at will, either
-  as standalone template or packaged in a <<skin>> artifact (containing a <<<META-INF/maven/site.vm>>> template).
+  as a standalone template or packaged in a <<skin>> artifact (containing a <<<META-INF/maven/site.vm>>> template).
 
   Documents can be dynamically generated with Doxia Sink API, like Maven reports, or simply read from static files,
-  eventually processed by Velocity when their file names end in <<<.vm>>>.
+  eventually processed by Velocity if their file names end in <<<.vm>>>.
 
 * Doxia Site Skins
 
@@ -49,74 +50,74 @@ Doxia Site Tools - Site Renderer
 
   Site decoration and documents with file names ending in <<<.vm>>> are processed by Velocity.
 
-  The velocity context defines some variables:
+  The Velocity context defines some variables, that you can use:
 
-*---------------------------------+--------------------+-------------------------------+
-|| variable                       || type              || description                 ||
-*---------------------------------+--------------------+-------------------------------+
-| <<<alignedFileName>>>           | <<<String>>>       |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<authors>>>                   | <<<List\<String\>>>> |                             |
-*---------------------------------+--------------------+-------------------------------+
-| <<<bodyContent>>>               | <<<String>>>       |                               |
-*---------------------------------+--------------------+-------------------------------+
+*---------------------------------+----------------------+-------------------------------+
+|| variable                       || type                || description                 ||
+*---------------------------------+----------------------+-------------------------------+
+| <<<alignedFileName>>>           | <<<String>>>         |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<authors>>>                   | <<<List\<String\>>>> |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<bodyContent>>>               | <<<String>>>         |                               |
+*---------------------------------+----------------------+-------------------------------+
 | <<<decoration>>>                | {{{../doxia-decoration-model/apidocs/org/apache/maven/doxia/site/decoration/DecorationModel.html}<<<DecorationModel>>>}} |                            |
-*---------------------------------+--------------------+-------------------------------+
-| <<<currentDate>>>               | <<<Date>>>         |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<currentFileName>>>           | <<<String>>>       |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<dateCreation>>>              | <<<String>>>       |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<dateFormat>>>                | <<<DateFormat>>>   |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<dateRevision>>>              | <<<String>>>       |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<headContent>>>               | <<<String>>>       |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<locale>>>                    | <<<Locale>>>       |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<publishDate>>>               | <<<Date>>>         |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<relativePath>>>              | <<<String>>>       |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<shortTitle>>>                | <<<String>>>       | The title of the document, excluding the project or site name |
-*---------------------------------+--------------------+-------------------------------+
-| <<<supportedLocales>>>          | <<<List\<Locale\>>>> |                             |
-*---------------------------------+--------------------+-------------------------------+
-| <<<title>>>                     | <<<String>>>       | The title of the document, including the project or site name |
-*---------------------------------+--------------------+-------------------------------+
+*---------------------------------+----------------------+-------------------------------+
+| <<<currentDate>>>               | <<<Date>>>           |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<currentFileName>>>           | <<<String>>>         |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<dateCreation>>>              | <<<String>>>         |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<dateFormat>>>                | <<<DateFormat>>>     |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<dateRevision>>>              | <<<String>>>         |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<headContent>>>               | <<<String>>>         |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<locale>>>                    | <<<Locale>>>         |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<publishDate>>>               | <<<Date>>>           |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<relativePath>>>              | <<<String>>>         |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<shortTitle>>>                | <<<String>>>         | The title of the document, excluding the project or site name |
+*---------------------------------+----------------------+-------------------------------+
+| <<<supportedLocales>>>          | <<<List\<Locale\>>>> |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<title>>>                     | <<<String>>>         | The title of the document, including the project or site name |
+*---------------------------------+----------------------+-------------------------------+
 
-  There are also some properties defined by caller: see below for properties defined by <<<maven-site-plugin>>>  |
+  There are also some properties defined by caller:
 
-*---------------------------------+--------------------+-------------------------------+
-|| property                       || type              || description                 ||
-*---------------------------------+--------------------+-------------------------------+
+*---------------------------------+----------------------+-------------------------------+
+|| property                       || type                || description                 ||
+*---------------------------------+----------------------+-------------------------------+
 | <<<FileUtils>>>                 | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/FileUtils.html}<<<FileUtils>>>}}        |                               |
-*---------------------------------+--------------------+-------------------------------+
+*---------------------------------+----------------------+-------------------------------+
 | <<<i18n>>>                      | {{{http://plexus.codehaus.org/plexus-components/plexus-i18n/apidocs/org/codehaus/plexus/i18n/I18N.html}<<<i18n>>>}} |                               |
-*---------------------------------+--------------------+-------------------------------+
+*---------------------------------+----------------------+-------------------------------+
 | <<<PathTool>>>                  | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/PathTool.html}<<<PathTool>>>}}          |                               |
-*---------------------------------+--------------------+-------------------------------+
+*---------------------------------+----------------------+-------------------------------+
 | <<<StringUtils>>>               | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/StringUtils.html}<<<StringUtils>>>}}    |                               |
-*---------------------------------+--------------------+-------------------------------+
+*---------------------------------+----------------------+-------------------------------+
 
-  see <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#428}DefaultSiteRenderer.createVelocityContext(...)}}>>>
+  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#428}DefaultSiteRenderer.createVelocityContext(...)}}>>>
   source for more details.
 
   When <<<doxia-site-renderer>>> is used by <<<maven-site-plugin>>>, the following template properties are defined:
 
-*---------------------------------+--------------------+-------------------------------+
-|| variable                       || type              || description                 ||
-*---------------------------------+--------------------+-------------------------------+
-| <<<inputEncoding>>>             | <<<String>>>       |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<outputEncoding>>>            | <<<String>>>       |                               |
-*---------------------------------+--------------------+-------------------------------+
+*---------------------------------+----------------------+-------------------------------+
+|| variable                       || type                || description                 ||
+*---------------------------------+----------------------+-------------------------------+
+| <<<inputEncoding>>>             | <<<String>>>         |                               |
+*---------------------------------+----------------------+-------------------------------+
+| <<<outputEncoding>>>            | <<<String>>>         |                               |
+*---------------------------------+----------------------+-------------------------------+
 | <<<project>>>                   | {{{/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html}<<<MavenProject>>>}} |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <project properties>            | <<<String>>>       | Properties defined in POM are directly available. |
-*---------------------------------+--------------------+-------------------------------+
+*---------------------------------+----------------------+-------------------------------+
+| <project properties>            | <<<String>>>         | Properties defined in POM are directly available. |
+*---------------------------------+----------------------+-------------------------------+
 
-  see <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/AbstractSiteRenderingMojo.html#createSiteRenderingContext(java.util.Locale)}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
+  See <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/AbstractSiteRenderingMojo.html#createSiteRenderingContext(java.util.Locale)}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
   source for more details.
