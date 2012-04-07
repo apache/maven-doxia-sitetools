@@ -54,62 +54,66 @@ Doxia Site Tools - Site Renderer
 *---------------------------------+--------------------+-------------------------------+
 || variable                       || type              || description                 ||
 *---------------------------------+--------------------+-------------------------------+
-| <<<relativePath>>>              | <<<String>>>       |                               |
+| <<<alignedFileName>>>           | <<<String>>>       |                               |
 *---------------------------------+--------------------+-------------------------------+
 | <<<authors>>>                   | <<<List\<String\>>>> |                             |
-*---------------------------------+--------------------+-------------------------------+
-| <<<title>>>                     | <<<String>>>       | The title of the document, including the project or site name |
-*---------------------------------+--------------------+-------------------------------+
-| <<<shortTitle>>>                | <<<String>>>       | The title of the document, excluding the project or site name |
-*---------------------------------+--------------------+-------------------------------+
-| <<<headContent>>>               | <<<String>>>       |                               |
 *---------------------------------+--------------------+-------------------------------+
 | <<<bodyContent>>>               | <<<String>>>       |                               |
 *---------------------------------+--------------------+-------------------------------+
 | <<<decoration>>>                | {{{../doxia-decoration-model/apidocs/org/apache/maven/doxia/site/decoration/DecorationModel.html}<<<DecorationModel>>>}} |                            |
 *---------------------------------+--------------------+-------------------------------+
-| <<<dateCreation>>>              | <<<String>>>       |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<dateRevision>>>              | <<<String>>>       |                               |
-*---------------------------------+--------------------+-------------------------------+
 | <<<currentDate>>>               | <<<Date>>>         |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<publishDate>>>               | <<<Date>>>         |                               |
-*---------------------------------+--------------------+-------------------------------+
-| <<<dateFormat>>>                | <<<DateFormat>>>   |                               |
 *---------------------------------+--------------------+-------------------------------+
 | <<<currentFileName>>>           | <<<String>>>       |                               |
 *---------------------------------+--------------------+-------------------------------+
-| <<<alignedFileName>>>           | <<<String>>>       |                               |
+| <<<dateCreation>>>              | <<<String>>>       |                               |
+*---------------------------------+--------------------+-------------------------------+
+| <<<dateFormat>>>                | <<<DateFormat>>>   |                               |
+*---------------------------------+--------------------+-------------------------------+
+| <<<dateRevision>>>              | <<<String>>>       |                               |
+*---------------------------------+--------------------+-------------------------------+
+| <<<headContent>>>               | <<<String>>>       |                               |
 *---------------------------------+--------------------+-------------------------------+
 | <<<locale>>>                    | <<<Locale>>>       |                               |
 *---------------------------------+--------------------+-------------------------------+
+| <<<publishDate>>>               | <<<Date>>>         |                               |
+*---------------------------------+--------------------+-------------------------------+
+| <<<relativePath>>>              | <<<String>>>       |                               |
+*---------------------------------+--------------------+-------------------------------+
+| <<<shortTitle>>>                | <<<String>>>       | The title of the document, excluding the project or site name |
+*---------------------------------+--------------------+-------------------------------+
 | <<<supportedLocales>>>          | <<<List\<Locale\>>>> |                             |
 *---------------------------------+--------------------+-------------------------------+
-| <template properties>           |                    | Properties defined by caller: see below for properties defined by <<<maven-site-plugin>>>  |
+| <<<title>>>                     | <<<String>>>       | The title of the document, including the project or site name |
 *---------------------------------+--------------------+-------------------------------+
-| <<<PathTool>>>                  | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/PathTool.html}<<<PathTool>>>}} |                               |
+
+  There are also some properties defined by caller: see below for properties defined by <<<maven-site-plugin>>>  |
+
 *---------------------------------+--------------------+-------------------------------+
-| <<<FileUtils>>>                 | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/FileUtils.html}<<<FileUtils>>>}} |                               |
+|| property                       || type              || description                 ||
 *---------------------------------+--------------------+-------------------------------+
-| <<<StringUtils>>>               | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/StringUtils.html}<<<StringUtils>>>}} |                               |
+| <<<FileUtils>>>                 | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/FileUtils.html}<<<FileUtils>>>}}        |                               |
 *---------------------------------+--------------------+-------------------------------+
 | <<<i18n>>>                      | {{{http://plexus.codehaus.org/plexus-components/plexus-i18n/apidocs/org/codehaus/plexus/i18n/I18N.html}<<<i18n>>>}} |                               |
 *---------------------------------+--------------------+-------------------------------+
+| <<<PathTool>>>                  | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/PathTool.html}<<<PathTool>>>}}          |                               |
+*---------------------------------+--------------------+-------------------------------+
+| <<<StringUtils>>>               | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/StringUtils.html}<<<StringUtils>>>}}    |                               |
+*---------------------------------+--------------------+-------------------------------+
 
-  see <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#426}DefaultSiteRenderer.createVelocityContext(...)}}>>>
+  see <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#428}DefaultSiteRenderer.createVelocityContext(...)}}>>>
   source for more details.
 
-  When <<<doxia-site-renderer>>> is used by <<<maven-site-plugin>>>, following template properties are defined:
+  When <<<doxia-site-renderer>>> is used by <<<maven-site-plugin>>>, the following template properties are defined:
 
 *---------------------------------+--------------------+-------------------------------+
 || variable                       || type              || description                 ||
 *---------------------------------+--------------------+-------------------------------+
-| <<<project>>>                   | {{{/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html}<<<MavenProject>>>}} |                               |
-*---------------------------------+--------------------+-------------------------------+
 | <<<inputEncoding>>>             | <<<String>>>       |                               |
 *---------------------------------+--------------------+-------------------------------+
 | <<<outputEncoding>>>            | <<<String>>>       |                               |
+*---------------------------------+--------------------+-------------------------------+
+| <<<project>>>                   | {{{/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html}<<<MavenProject>>>}} |                               |
 *---------------------------------+--------------------+-------------------------------+
 | <project properties>            | <<<String>>>       | Properties defined in POM are directly available. |
 *---------------------------------+--------------------+-------------------------------+
