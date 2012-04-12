@@ -37,18 +37,17 @@
       <p>In addition, Doxia Sitetools processes files with extra <code>.vm</code> extension with <a href="http://velocity.apache.org/">Velocity</a>.</p>
 
       <p>
-        <img src="images/doxia-sitetools-deps.png" width="603" height="201" border="0" usemap="#Doxia_sitetools_dependencies" alt="Doxia Sitetools Dependencies"/>
+        <img src="images/doxia-sitetools-deps.png" width="508" height="201" border="0" usemap="#Doxia_sitetools_dependencies" alt="Doxia Sitetools Dependencies"/>
         <map name="Doxia_sitetools_dependencies" id="Doxia_sitetools_dependencies">
-          <area shape="rect" coords="113,0,240,32"   href="doxia-site-renderer/"       alt="Doxia Site Renderer"/>
-          <area shape="rect" coords="416,0,539,32"   href="doxia-doc-renderer/"        alt="Doxia Document Renderer"/>
-          <area shape="rect" coords="94,169,259,201" href="doxia-decoration-model/"    alt="Doxia Decoration Model"/>
-          <area shape="rect" coords="0,48,172,81"    href="/shared/maven-doxia-tools/" alt="Maven Doxia Tools"/>
-          <area shape="rect" coords="257,0,398,32"   href="http://plexus.codehaus.org/plexus-components/plexus-velocity/" alt="Plexus Velocity"/>
-          <area shape="rect" coords="284,49,371,81"  href="http://velocity.apache.org" alt="Velocity"/>
-          <area shape="rect" coords="205,91,330,123" href="/doxia/doxia/doxia-modules/doxia-module-xhtml/" alt="Doxia Module XHTML"/>
-          <area shape="rect" coords="367,91,470,123" href="/doxia/doxia/doxia-modules/doxia-module-fo/"    alt="Doxia Module FO"/>
-          <area shape="rect" coords="473,91,595,123" href="/doxia/doxia/doxia-modules/doxia-module-itext/" alt="Doxia Module iText"/>
-          <area shape="rect" coords="197,86,602,153" href="/doxia/doxia/doxia-modules/" alt="Doxia Modules"/>
+          <area shape="rect" coords="19,0,146,32"   href="doxia-site-renderer/"       alt="Doxia Site Renderer"/>
+          <area shape="rect" coords="322,0,445,32"   href="doxia-doc-renderer/"        alt="Doxia Document Renderer"/>
+          <area shape="rect" coords="0,169,165,201" href="doxia-decoration-model/"    alt="Doxia Decoration Model"/>
+          <area shape="rect" coords="163,0,304,32"   href="http://plexus.codehaus.org/plexus-components/plexus-velocity/" alt="Plexus Velocity"/>
+          <area shape="rect" coords="190,49,277,81"  href="http://velocity.apache.org" alt="Velocity"/>
+          <area shape="rect" coords="111,91,236,123" href="/doxia/doxia/doxia-modules/doxia-module-xhtml/" alt="Doxia Module XHTML"/>
+          <area shape="rect" coords="273,91,376,123" href="/doxia/doxia/doxia-modules/doxia-module-fo/"    alt="Doxia Module FO"/>
+          <area shape="rect" coords="379,91,501,123" href="/doxia/doxia/doxia-modules/doxia-module-itext/" alt="Doxia Module iText"/>
+          <area shape="rect" coords="103,86,508,153" href="/doxia/doxia/doxia-modules/" alt="Doxia Modules"/>
         </map>
       </p>
 
