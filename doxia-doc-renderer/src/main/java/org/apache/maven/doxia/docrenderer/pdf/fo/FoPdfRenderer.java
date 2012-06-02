@@ -32,6 +32,7 @@ import javax.xml.transform.TransformerException;
 import org.apache.maven.doxia.docrenderer.DocumentRendererContext;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
+import org.apache.maven.doxia.docrenderer.pdf.PdfRenderer;
 import org.apache.maven.doxia.document.DocumentModel;
 import org.apache.maven.doxia.document.DocumentTOC;
 import org.apache.maven.doxia.document.DocumentTOCItem;
@@ -41,6 +42,7 @@ import org.apache.maven.doxia.module.fo.FoSinkFactory;
 import org.apache.maven.doxia.module.fo.FoUtils;
 import org.apache.maven.doxia.module.site.SiteModule;
 
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
@@ -53,8 +55,8 @@ import org.xml.sax.SAXParseException;
  * @author ltheussl
  * @version $Id$
  * @since 1.1
- * @plexus.component role="org.apache.maven.doxia.docrenderer.pdf.PdfRenderer" role-hint="fo"
  */
+@Component( role = PdfRenderer.class, hint = "fo" )
 public class FoPdfRenderer
     extends AbstractPdfRenderer
 {

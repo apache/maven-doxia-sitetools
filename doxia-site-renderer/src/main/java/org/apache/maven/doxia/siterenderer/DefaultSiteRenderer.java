@@ -73,6 +73,8 @@ import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.tools.ToolManager;
 
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -93,8 +95,8 @@ import org.codehaus.plexus.velocity.VelocityComponent;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
  * @since 1.0
- * @plexus.component role-hint="default"
  */
+@Component( role = Renderer.class )
 public class DefaultSiteRenderer
     extends AbstractLogEnabled
     implements Renderer
@@ -103,18 +105,16 @@ public class DefaultSiteRenderer
     // Requirements
     // ----------------------------------------------------------------------
 
-    /** @plexus.requirement */
+    @Requirement
     private VelocityComponent velocity;
 
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     private SiteModuleManager siteModuleManager;
 
-    /** @plexus.requirement */
+    @Requirement
     private Doxia doxia;
 
-    /** @plexus.requirement */
+    @Requirement
     private I18N i18n;
 
     private static final String RESOURCE_DIR = "org/apache/maven/doxia/siterenderer/resources";

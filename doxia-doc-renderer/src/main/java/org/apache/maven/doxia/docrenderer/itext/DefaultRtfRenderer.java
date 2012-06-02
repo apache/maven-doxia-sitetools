@@ -26,15 +26,16 @@ import java.io.IOException;
 
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.module.itext.ITextUtil;
+import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * RTF render with the <code>iText</code> framework
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
- * @plexus.component role="org.apache.maven.doxia.docrenderer.itext.RtfRenderer" role-hint="itext.rtf"
  * @deprecated since 1.1, use {@link org.apache.maven.doxia.docrenderer.pdf.itext.ITextPdfRenderer}.
  */
+@Component( role = RtfRenderer.class, hint = "itext.rtf" )
 public class DefaultRtfRenderer
     extends AbstractITextRender
     implements RtfRenderer

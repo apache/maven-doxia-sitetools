@@ -30,6 +30,7 @@ import org.apache.maven.doxia.site.decoration.Logo;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.MenuItem;
 
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
@@ -38,8 +39,8 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
  * @version $Id$
- * @plexus.component role="org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler"
  */
+@Component( role = DecorationModelInheritanceAssembler.class )
 public class DefaultDecorationModelInheritanceAssembler
     implements DecorationModelInheritanceAssembler
 {

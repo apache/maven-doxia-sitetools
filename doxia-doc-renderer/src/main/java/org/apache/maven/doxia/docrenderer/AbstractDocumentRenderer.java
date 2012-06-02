@@ -50,6 +50,7 @@ import org.apache.maven.doxia.util.XmlValidator;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -73,13 +74,13 @@ public abstract class AbstractDocumentRenderer
     extends AbstractLogEnabled
     implements DocumentRenderer
 {
-    /** @plexus.requirement */
+    @Requirement
     protected SiteModuleManager siteModuleManager;
 
-    /** @plexus.requirement */
+    @Requirement
     protected Doxia doxia;
 
-    /** @plexus.requirement */
+    @Requirement
     private VelocityComponent velocity;
 
     /**

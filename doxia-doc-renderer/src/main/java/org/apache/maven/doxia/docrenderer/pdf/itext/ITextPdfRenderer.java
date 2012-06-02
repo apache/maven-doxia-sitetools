@@ -51,6 +51,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.maven.doxia.docrenderer.DocumentRendererContext;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.docrenderer.pdf.AbstractPdfRenderer;
+import org.apache.maven.doxia.docrenderer.pdf.PdfRenderer;
 import org.apache.maven.doxia.document.DocumentCover;
 import org.apache.maven.doxia.document.DocumentMeta;
 import org.apache.maven.doxia.document.DocumentModel;
@@ -60,6 +61,7 @@ import org.apache.maven.doxia.module.itext.ITextSinkFactory;
 import org.apache.maven.doxia.module.itext.ITextUtil;
 import org.apache.maven.doxia.module.site.SiteModule;
 import org.apache.xml.utils.DefaultErrorHandler;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
@@ -77,8 +79,8 @@ import com.lowagie.text.ElementTags;
  * @author ltheussl
  * @version $Id$
  * @since 1.1
- * @plexus.component role="org.apache.maven.doxia.docrenderer.pdf.PdfRenderer" role-hint="itext"
  */
+@Component( role = PdfRenderer.class, hint = "itext" )
 public class ITextPdfRenderer
     extends AbstractPdfRenderer
 {
