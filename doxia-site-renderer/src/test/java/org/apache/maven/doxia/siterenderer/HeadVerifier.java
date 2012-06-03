@@ -19,6 +19,7 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
+import com.gargoylesoftware.htmlunit.html.HtmlBase;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlLink;
 import com.gargoylesoftware.htmlunit.html.HtmlMeta;
@@ -97,5 +98,8 @@ public class HeadVerifier
         meta = (HtmlMeta) elementIterator.next();
         assertEquals( meta.getAttribute( "name" ), "keywords" );
         assertEquals( meta.getAttribute( "content" ), "HTML,CSS,XML,JavaScript" );
+
+        HtmlBase base = (HtmlBase) elementIterator.next();
+        assertEquals( base.getAttribute( "href" ), "http://maven.apache.org/" );
     }
 }
