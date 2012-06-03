@@ -115,9 +115,6 @@ public class DefaultSiteRendererTest
             IOUtil.close( jarOS );
         }
         
-        // Safety
-        FileUtils.deleteDirectory( getTestFile( OUTPUT ) );
-
         oldLocale = Locale.getDefault();
         Locale.setDefault( Locale.ENGLISH );
     }
@@ -142,14 +139,16 @@ public class DefaultSiteRendererTest
     public void testRender()
         throws Exception
     {
+        // Safety
+        FileUtils.deleteDirectory( getTestFile( OUTPUT ) );
+
         // ----------------------------------------------------------------------
-        // Render the site
+        // Render the site from src/test/resources/site to OUTPUT
         // ----------------------------------------------------------------------
         DecorationModel decoration = new DecorationXpp3Reader()
             .read( new FileReader( getTestFile( "src/test/resources/site/site.xml" ) ) );
 
-        SiteRenderingContext ctxt = getSiteRenderingContext(
-                decoration, "src/test/resources/site", false );
+        SiteRenderingContext ctxt = getSiteRenderingContext( decoration, "src/test/resources/site", false );
         renderer.render( renderer.locateDocumentFiles( ctxt ).values(), ctxt, getTestFile( OUTPUT ) );
 
         ctxt = getSiteRenderingContext( decoration, "src/test/resources/site-validate", true );
