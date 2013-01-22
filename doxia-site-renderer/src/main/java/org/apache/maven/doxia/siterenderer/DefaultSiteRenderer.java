@@ -398,6 +398,11 @@ public class DefaultSiteRenderer
                 }
             }
             sink.enableLogging( new PlexusLoggerWrapper( getLogger() ) );
+
+            if ( reader == null ) // can happen if velocity throws above
+            {
+                throw new RendererException( "Error getting a parser for '" + doc );
+            }
             doxia.parse( reader, renderingContext.getParserId(), sink );
         }
         catch ( ParserNotFoundException e )
