@@ -756,10 +756,11 @@ public class DefaultSiteRenderer
             if ( resourceList != null )
             {
                 Reader r = null;
+                LineNumberReader reader = null;
                 try
                 {
                     r = ReaderFactory.newReader( resourceList, ReaderFactory.UTF_8 );
-                    LineNumberReader reader = new LineNumberReader( r );
+                    reader = new LineNumberReader( r );
 
                     String line = reader.readLine();
 
@@ -798,6 +799,7 @@ public class DefaultSiteRenderer
                 }
                 finally
                 {
+                    IOUtil.close( reader );
                     IOUtil.close( r );
                 }
             }
