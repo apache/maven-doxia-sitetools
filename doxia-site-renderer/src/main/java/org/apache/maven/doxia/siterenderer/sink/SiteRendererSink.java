@@ -54,7 +54,7 @@ public class SiteRendererSink
 
     private final StringWriter headWriter;
 
-    private StringBuffer sectionTitleBuffer;
+    private StringBuilder sectionTitleBuffer;
 
     private boolean sectionHasID;
 
@@ -250,7 +250,7 @@ public class SiteRendererSink
     @Override
     protected void onSectionTitle( int depth, SinkEventAttributes attributes )
     {
-        this.sectionTitleBuffer = new StringBuffer();
+        this.sectionTitleBuffer = new StringBuilder();
         sectionHasID = ( attributes != null && attributes.isDefined ( Attribute.ID.toString() ) );
         isSectionTitle = true;
 

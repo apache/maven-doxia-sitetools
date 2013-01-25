@@ -243,8 +243,8 @@ public class PathDescriptor
     /** {@inheritDoc} */
     public String toString()
     {
-        StringBuffer res =
-            new StringBuffer( ( StringUtils.isNotEmpty( relativePath ) ) ? relativePath : String.valueOf( pathUrl ) );
+        StringBuilder res =
+            new StringBuilder( ( StringUtils.isNotEmpty( relativePath ) ) ? relativePath : String.valueOf( pathUrl ) );
         res.append( " (Base: " ).append( baseUrl ).append( ") Location: " ).append( getLocation() );
         return res.toString();
     }
