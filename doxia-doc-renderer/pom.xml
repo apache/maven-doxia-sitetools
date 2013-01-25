@@ -31,7 +31,7 @@ under the License.
 
   <artifactId>doxia-doc-renderer</artifactId>
 
-  <name>Document Renderer</name>
+  <name>Doxia :: Document Renderer</name>
   <description>The Document Renderer handles the rendering of documents, in formats like PDF and RTF.</description>
   <url>http://maven.apache.org/doxia/doxia-sitetools/doxia-doc-renderer/</url>
 
