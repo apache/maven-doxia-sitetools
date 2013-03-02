@@ -4,7 +4,7 @@
  Hervé Boutemy
  Dennis Lundberg
  ------
- 2012-04-07
+ 2013-03-02
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +29,7 @@
 
 Doxia Site Tools - Site Renderer
 
-  The Site Renderer handles the rendering of sites, assembling a common site decoration with a collection of documents. 
+  The Site Renderer handles the rendering of sites, assembling a common site decoration with a collection of documents.
 
   A default site decoration is included (see <<<default-site.vm>>>), but other decorations can be used at will, either
   as a standalone template or packaged in a <<skin>> artifact (containing a <<<META-INF/maven/site.vm>>> template).
@@ -69,7 +69,7 @@ Doxia Site Tools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<dateCreation>>>              | <<<String>>>         | The date specified in the source document, in the format "yyyyMMdd" |
 *---------------------------------+----------------------+-------------------------------+
-| <<<dateFormat>>>                | <<<DateFormat>>>     | An instance of the default date format for the locale of the document being rendered |
+| <<<dateFormat>>>                | <<<DateFormat>>>     | An instance of the date format as defined in site.xml/publishDate/@format (default: An instance of the default date format for the locale of the document being rendered |
 *---------------------------------+----------------------+-------------------------------+
 | <<<dateRevision>>>              | <<<String>>>         | The date when the site is rendered, in the format "yyyyMMdd" |
 *---------------------------------+----------------------+-------------------------------+

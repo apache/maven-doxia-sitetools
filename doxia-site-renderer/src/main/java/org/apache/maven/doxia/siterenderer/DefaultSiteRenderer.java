@@ -490,11 +490,23 @@ public class DefaultSiteRenderer
         context.put( "dateRevision", sdf.format( new Date() ) );
 
         context.put( "currentDate", new Date() );
-        
+
         context.put( "publishDate", siteRenderingContext.getPublishDate() );
 
         Locale locale = siteRenderingContext.getLocale();
-        context.put( "dateFormat", DateFormat.getDateInstance( DateFormat.DEFAULT, locale ) );
+
+        DateFormat dateFormat = DateFormat.getDateInstance( DateFormat.DEFAULT, locale );
+
+        if ( siteRenderingContext.getDecoration().getPublishDate() != null )
+        {
+            if ( StringUtils.isNotBlank( siteRenderingContext.getDecoration().getPublishDate().getFormat() ) )
+            {
+                dateFormat =
+                    new SimpleDateFormat( siteRenderingContext.getDecoration().getPublishDate().getFormat(), locale );
+            }
+        }
+
+        context.put( "dateFormat", dateFormat );
 
         String currentFileName = renderingContext.getOutputName().replace( '\\', '/' );
         context.put( "currentFileName", currentFileName );

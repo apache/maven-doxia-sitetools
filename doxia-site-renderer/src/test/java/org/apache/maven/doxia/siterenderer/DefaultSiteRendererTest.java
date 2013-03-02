@@ -114,7 +114,7 @@ public class DefaultSiteRendererTest
             IOUtil.close( skinIS );
             IOUtil.close( jarOS );
         }
-        
+
         oldLocale = Locale.getDefault();
         Locale.setDefault( Locale.ENGLISH );
     }
@@ -175,24 +175,25 @@ public class DefaultSiteRendererTest
         // ----------------------------------------------------------------------
         validatePages();
     }
-    
+
     public void testVelocityToolManager()
         throws Exception
     {
         StringWriter writer = new StringWriter();
 
         SiteRenderingContext siteRenderingContext = new SiteRenderingContext();
+        siteRenderingContext.setDecoration(new DecorationModel());
         siteRenderingContext.setTemplateName( "org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm" );
         RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
         SiteRendererSink sink = new SiteRendererSink( context );
         renderer.generateDocument( writer, sink, siteRenderingContext );
-        
+
         String renderResult = writer.toString();
         String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
         assertEquals( expectedResult, renderResult );
     }
-    
-    public void testVelocityToolManagerForTemplate() throws Exception 
+
+    public void testVelocityToolManagerForTemplate() throws Exception
     {
         StringWriter writer = new StringWriter();
 
@@ -203,12 +204,12 @@ public class DefaultSiteRendererTest
         RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
         SiteRendererSink sink = new SiteRendererSink( context );
         renderer.generateDocument( writer, sink, siteRenderingContext );
-        
+
         String renderResult = writer.toString();
         String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
         assertEquals( expectedResult, renderResult );
     }
-    
+
     public void testVelocityToolManagerForSkin() throws Exception
     {
         StringWriter writer = new StringWriter();
@@ -219,12 +220,12 @@ public class DefaultSiteRendererTest
         RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
         SiteRendererSink sink = new SiteRendererSink( context );
         renderer.generateDocument( writer, sink, siteRenderingContext );
-        
+
         String renderResult = writer.toString();
         String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
         assertEquals( expectedResult, renderResult );
     }
-    
+
     private SiteRenderingContext getSiteRenderingContext( DecorationModel decoration, String siteDir, boolean validate )
     {
         SiteRenderingContext ctxt = new SiteRenderingContext();
