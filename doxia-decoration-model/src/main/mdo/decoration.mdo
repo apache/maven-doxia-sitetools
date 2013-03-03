@@ -28,7 +28,7 @@ under the License.
     <p>This is a reference for the site decoration descriptor used in Doxia Sitetools, also known as <code>site.xml</code>.</p>
     <p>An XSD is available at:</p>
     <ul>
-      <li><a href="http://maven.apache.org/xsd/decoration-1.3.0.xsd">http://maven.apache.org/xsd/decoration-1.3.0.xsd</a></li>
+      <li><a href="http://maven.apache.org/xsd/decoration-1.3.1.xsd">http://maven.apache.org/xsd/decoration-1.3.1.xsd</a></li>
     </ul>
     ]]></description>
 
@@ -94,7 +94,7 @@ under the License.
           <type>String</type>
           <identifier>true</identifier>
         </field>
-        <field xdoc.separator="blank">
+        <field xdoc.separator="blank" java.getter="false">
           <name>publishDate</name>
           <description>Modify the date published display properties.</description>
           <version>1.0.0+</version>
@@ -103,7 +103,7 @@ under the License.
           </association>
           <identifier>true</identifier>
         </field>
-        <field>
+        <field java.getter="false">
           <name>version</name>
           <description>Modify the version published display properties.</description>
           <version>1.0.0+</version>
@@ -163,6 +163,33 @@ under the License.
           <version>1.0.0+</version>
           <code>
             <![CDATA[
+
+    public PublishDate getPublishDate()
+    {
+        if ( publishDate == null )
+            return new PublishDate();
+        else
+            return publishDate;
+    }
+
+    public boolean isDefaultPublishDate()
+    {
+        return publishDate == null;
+    }
+
+    public Version getVersion()
+    {
+        if ( version == null )
+            return new Version();
+        else
+            return version;
+    }
+
+    public boolean isDefaultVersion()
+    {
+        return version == null;
+    }
+
     private java.util.Map<String, Menu> menusByRef;
 
     /**
@@ -305,10 +332,11 @@ under the License.
           <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
+          <defaultValue>left</defaultValue>
         </field>
         <field xml.attribute="true">
           <name>format</name>
-          <description>Date format to use. The default is ISO-8601 yyyy-MM-dd.</description>
+          <description>Date format to use.</description>
           <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
@@ -328,6 +356,7 @@ under the License.
           <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
+          <defaultValue>left</defaultValue>
         </field>
       </fields>
     </class>

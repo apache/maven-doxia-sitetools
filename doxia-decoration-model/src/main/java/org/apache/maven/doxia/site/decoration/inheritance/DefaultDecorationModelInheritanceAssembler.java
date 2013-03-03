@@ -68,12 +68,12 @@ public class DefaultDecorationModelInheritanceAssembler
             rebaseBannerPaths( child.getBannerRight(), urlContainer );
         }
 
-        if ( child.getPublishDate() == null && parent.getPublishDate() != null )
+        if ( child.isDefaultPublishDate() && parent.getPublishDate() != null )
         {
             child.setPublishDate( parent.getPublishDate().clone());
         }
 
-        if ( child.getVersion() == null && parent.getVersion() != null )
+        if ( child.isDefaultVersion() && parent.getVersion() != null )
         {
             child.setVersion( parent.getVersion().clone());
         }
