@@ -35,17 +35,6 @@ under the License.
   <description>The Site Renderer handles the rendering of sites, merging site decoration with document content.</description>
   <url>http://maven.apache.org/doxia/doxia-sitetools/doxia-site-renderer/</url>
 
-  <contributors>
-    <contributor>
-      <name>Vincent Siveton</name>
-      <email>vsiveton@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </contributor>
-  </contributors>
 
   <dependencies>
     <!-- doxia -->

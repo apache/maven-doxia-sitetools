@@ -35,19 +35,6 @@ under the License.
   <description>The Document Renderer handles the rendering of documents, in formats like PDF and RTF.</description>
   <url>http://maven.apache.org/doxia/doxia-sitetools/doxia-doc-renderer/</url>
 
-  <developers>
-    <developer>
-      <id>vsiveton</id>
-      <name>Vincent Siveton</name>
-      <email>vsiveton@apache.org</email>
-      <organization>Apache Software Foundation</organization>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </developer>
-  </developers>
-
   <dependencies>
     <!-- doxia -->
     <dependency>
