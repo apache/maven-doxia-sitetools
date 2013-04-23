@@ -181,7 +181,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.3</doxiaVersion>
+    <doxiaVersion>1.4</doxiaVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
   </properties>
 
