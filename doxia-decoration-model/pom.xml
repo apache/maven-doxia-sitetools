@@ -66,12 +66,21 @@ under the License.
             </goals>
           </execution>
           <execution>
-            <id>descriptor-site</id>
+            <id>descriptor-xdoc</id>
             <phase>pre-site</phase>
             <goals>
               <goal>xdoc</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>descriptor-xsd</id>
+            <phase>pre-site</phase>
+            <goals>
               <goal>xsd</goal>
             </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/generated-site/resources/xsd</outputDirectory>
+            </configuration>
           </execution>
         </executions>
       </plugin>
