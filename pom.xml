@@ -351,6 +351,9 @@ under the License.
             <configuration>
               <excludes>
                 <exclude>org/apache/maven/doxia/site/decoration/*</exclude>
+                <!-- DOXIASITETOOLS-85 RenderingContext package changed -->
+                <exclude>org/apache/maven/doxia/siterenderer/*Renderer</exclude>
+                <exclude>org/apache/maven/doxia/siterenderer/sink/*</exclude>
               </excludes>
             </configuration>
           </execution>
