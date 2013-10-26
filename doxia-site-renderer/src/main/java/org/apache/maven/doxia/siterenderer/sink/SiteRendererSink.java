@@ -29,11 +29,10 @@ import java.util.Set;
 import javax.swing.text.html.HTML.Attribute;
 
 import org.apache.maven.doxia.module.xhtml.XhtmlSink;
-import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
+import org.apache.maven.doxia.siterenderer.RenderingContext;
 import org.apache.maven.doxia.util.HtmlTools;
-
 import org.codehaus.plexus.util.StringUtils;
 
 /**

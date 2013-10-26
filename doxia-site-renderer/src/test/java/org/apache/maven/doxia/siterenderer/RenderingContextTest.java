@@ -1,4 +1,4 @@
-package org.apache.maven.doxia.sink.render;
+package org.apache.maven.doxia.siterenderer;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,6 +21,7 @@ package org.apache.maven.doxia.sink.render;
 
 import java.io.File;
 
+import org.apache.maven.doxia.siterenderer.RenderingContext;
 import org.codehaus.plexus.PlexusTestCase;
 
 /**

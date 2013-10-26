@@ -1,4 +1,4 @@
-package org.apache.maven.doxia.sink.render;
+package org.apache.maven.doxia.siterenderer;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -32,7 +32,7 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @version $Id$
- * @since 1.1
+ * @since 1.5 (was since 1.1 in o.a.m.d.sink.render)
  */
 public class RenderingContext
 {
@@ -179,7 +179,7 @@ public class RenderingContext
      */
     public String getAttribute( String key )
     {
-        return (String) attributes.get( key );
+        return attributes.get( key );
     }
 
     /**

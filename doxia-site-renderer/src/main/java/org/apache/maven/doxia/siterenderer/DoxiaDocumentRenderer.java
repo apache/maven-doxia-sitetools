@@ -23,8 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
-import org.apache.maven.doxia.sink.render.RenderingContext;
-
 /**
  * Renders a page with Doxia.
  *

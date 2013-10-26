@@ -32,14 +32,11 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -58,7 +55,6 @@ import java.util.zip.ZipFile;
 
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
-import org.apache.maven.doxia.sink.render.RenderingContext;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
@@ -68,11 +64,9 @@ import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
 import org.apache.maven.doxia.module.site.manager.SiteModuleNotFoundException;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.util.XmlValidator;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.tools.ToolManager;
-
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.i18n.I18N;
