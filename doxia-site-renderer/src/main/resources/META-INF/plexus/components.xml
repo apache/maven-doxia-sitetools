@@ -23,7 +23,7 @@ under the License.
   <components>
     <component>
       <role>org.codehaus.plexus.velocity.VelocityComponent</role>
-      <role-hint>doxia-default</role-hint>
+      <role-hint>doxia-site-renderer</role-hint>
       <implementation>org.codehaus.plexus.velocity.DefaultVelocityComponent</implementation>
       <configuration>
         <properties>
@@ -52,6 +52,7 @@ under the License.
             <value>false</value>
           </property>
 
+          <!-- DOXIA-147: doxia-site-renderer specific configuration (not in default from plexus-velocity) -->
           <property>
             <name>velocimacro.permissions.allow.inline.to.replace.global</name>
             <value>true</value>

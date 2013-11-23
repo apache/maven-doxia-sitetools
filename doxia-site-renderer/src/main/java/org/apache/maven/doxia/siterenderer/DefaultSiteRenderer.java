@@ -99,7 +99,7 @@ public class DefaultSiteRenderer
     // Requirements
     // ----------------------------------------------------------------------
 
-    @Requirement( hint = "doxia-default" )
+    @Requirement( hint = "doxia-site-renderer" ) // DOXIA-147: dedicated component configuration hand-written in component.xml
     private VelocityComponent velocity;
 
     @Requirement
