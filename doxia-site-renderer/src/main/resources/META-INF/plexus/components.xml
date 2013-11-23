@@ -59,31 +59,5 @@ under the License.
         </properties>
       </configuration>
     </component>
-
-    <!-- The Renderer component -->
-    <component>
-      <role>org.apache.maven.doxia.siterenderer.Renderer</role>
-      <role-hint>default</role-hint>
-      <implementation>org.apache.maven.doxia.siterenderer.DefaultSiteRenderer</implementation>
-      <requirements>
-        <requirement>
-          <role>org.codehaus.plexus.velocity.VelocityComponent</role>
-          <field-name>velocity</field-name>
-          <role-hint>doxia-default</role-hint>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.doxia.module.site.manager.SiteModuleManager</role>
-          <field-name>siteModuleManager</field-name>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.doxia.Doxia</role>
-          <field-name>doxia</field-name>
-        </requirement>
-        <requirement>
-          <role>org.codehaus.plexus.i18n.I18N</role>
-          <field-name>i18n</field-name>
-        </requirement>
-      </requirements>
-    </component>
   </components>
 </component-set>
