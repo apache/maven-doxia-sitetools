@@ -99,7 +99,7 @@ public class DefaultSiteRenderer
     // Requirements
     // ----------------------------------------------------------------------
 
-    @Requirement
+    @Requirement( hint = "doxia-default" )
     private VelocityComponent velocity;
 
     @Requirement
