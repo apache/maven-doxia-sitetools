@@ -59,9 +59,9 @@ import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.module.site.SiteModule;
-import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
-import org.apache.maven.doxia.module.site.manager.SiteModuleNotFoundException;
+import org.apache.maven.doxia.parser.module.ParserModule;
+import org.apache.maven.doxia.parser.module.ParserModuleManager;
+import org.apache.maven.doxia.parser.module.ParserModuleNotFoundException;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.util.XmlValidator;
 import org.apache.velocity.Template;
@@ -103,7 +103,7 @@ public class DefaultSiteRenderer
     private VelocityComponent velocity;
 
     @Requirement
-    private SiteModuleManager siteModuleManager;
+    private ParserModuleManager parserModuleManager;
 
     @Requirement
     private Doxia doxia;
@@ -145,8 +145,8 @@ public class DefaultSiteRenderer
         {
             if ( siteDirectory.exists() )
             {
-                Collection<SiteModule> modules = siteModuleManager.getSiteModules();
-                for ( SiteModule module : modules )
+                Collection<ParserModule> modules = parserModuleManager.getParserModules();
+                for ( ParserModule module : modules )
                 {
                     File moduleBasedir = new File( siteDirectory, module.getSourceDirectory() );
 
@@ -169,16 +169,16 @@ public class DefaultSiteRenderer
             {
                 if ( moduleExcludes != null && moduleExcludes.containsKey( module.getParserId() ) )
                 {
-                    addModuleFiles( module.getBasedir(), siteModuleManager.getSiteModule( module.getParserId() ),
+                    addModuleFiles( module.getBasedir(), parserModuleManager.getParserModule( module.getParserId() ),
                         moduleExcludes.get( module.getParserId() ), files );
                 }
                 else
                 {
-                    addModuleFiles( module.getBasedir(), siteModuleManager.getSiteModule( module.getParserId() ), null,
+                    addModuleFiles( module.getBasedir(), parserModuleManager.getParserModule( module.getParserId() ), null,
                             files );
                 }
             }
-            catch ( SiteModuleNotFoundException e )
+            catch ( ParserModuleNotFoundException e )
             {
                 throw new RendererException( "Unable to find module: " + e.getMessage(), e );
             }
@@ -186,7 +186,7 @@ public class DefaultSiteRenderer
         return files;
     }
 
-    private void addModuleFiles( File moduleBasedir, SiteModule module, String excludes,
+    private void addModuleFiles( File moduleBasedir, ParserModule module, String excludes,
                                  Map<String, DocumentRenderer> files )
             throws IOException, RendererException
     {
