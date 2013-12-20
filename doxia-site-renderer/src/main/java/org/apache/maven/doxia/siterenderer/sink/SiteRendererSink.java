@@ -266,7 +266,7 @@ public class SiteRendererSink
         if ( !sectionHasID && !StringUtils.isEmpty( sectionTitle ) )
         {
             String id = HtmlTools.encodeId( sectionTitle );
-            if ( ( anchorsInSectionTitle == null ) || (! anchorsInSectionTitle.contains( id ) ) )
+            if ( ( anchorsInSectionTitle == null ) || ( !anchorsInSectionTitle.contains( id ) ) )
             {
                 anchor( id );
                 anchor_();

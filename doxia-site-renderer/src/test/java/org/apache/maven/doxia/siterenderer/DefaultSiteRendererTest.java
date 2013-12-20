@@ -181,7 +181,7 @@ public class DefaultSiteRendererTest
         StringWriter writer = new StringWriter();
 
         SiteRenderingContext siteRenderingContext = new SiteRenderingContext();
-        siteRenderingContext.setDecoration(new DecorationModel());
+        siteRenderingContext.setDecoration( new DecorationModel() );
         siteRenderingContext.setTemplateName( "org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm" );
         RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
         SiteRendererSink sink = new SiteRendererSink( context );
@@ -196,10 +196,13 @@ public class DefaultSiteRendererTest
     {
         StringWriter writer = new StringWriter();
 
-        File templateFile = new File( getBasedir(), "target/test-classes/org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm" );
+        File templateFile =
+            new File( getBasedir(), "target/test-classes/org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm" );
         Map<String, ?> attributes = Collections.emptyMap();
 
-        SiteRenderingContext siteRenderingContext = renderer.createContextForTemplate( templateFile, null, attributes, new DecorationModel(), "defaultWindowTitle", Locale.ENGLISH );
+        SiteRenderingContext siteRenderingContext =
+            renderer.createContextForTemplate( templateFile, null, attributes, new DecorationModel(),
+                                               "defaultWindowTitle", Locale.ENGLISH );
         RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
         SiteRendererSink sink = new SiteRendererSink( context );
         renderer.generateDocument( writer, sink, siteRenderingContext );
@@ -215,7 +218,9 @@ public class DefaultSiteRendererTest
 
         File skinFile = skinJar;
         Map<String, ?> attributes = Collections.emptyMap();
-        SiteRenderingContext siteRenderingContext = renderer.createContextForSkin( skinFile, attributes, new DecorationModel(), "defaultWindowTitle", Locale.ENGLISH );
+        SiteRenderingContext siteRenderingContext =
+            renderer.createContextForSkin( skinFile, attributes, new DecorationModel(), "defaultWindowTitle",
+                                           Locale.ENGLISH );
         RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
         SiteRendererSink sink = new SiteRendererSink( context );
         renderer.generateDocument( writer, sink, siteRenderingContext );
@@ -427,11 +432,11 @@ public class DefaultSiteRendererTest
 
             File dir = new File( getBasedir(), "target/output" );
 
-            @SuppressWarnings ( "unchecked" )
-            List<String> l = FileUtils.getFileNames( dir, getIncludes()[0], FileUtils.getDefaultExcludesAsString(), true );
-            for ( Iterator<String> it = l.iterator(); it.hasNext(); )
+            List<String> l =
+                FileUtils.getFileNames( dir, getIncludes()[0], FileUtils.getDefaultExcludesAsString(), true );
+
+            for ( String file : l )
             {
-                String file = it.next();
                 file = StringUtils.replace( file, "\\", "/" );
 
                 Reader reader = ReaderFactory.newXmlReader( new File( file ) );

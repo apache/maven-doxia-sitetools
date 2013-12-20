@@ -628,8 +628,9 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public SiteRenderingContext createContextForSkin( File skinFile, Map<String, ?> attributes, DecorationModel decoration,
-                                                      String defaultWindowTitle, Locale locale )
+    public SiteRenderingContext createContextForSkin( File skinFile, Map<String, ?> attributes,
+                                                      DecorationModel decoration, String defaultWindowTitle,
+                                                      Locale locale )
             throws IOException
     {
         SiteRenderingContext context = new SiteRenderingContext();
