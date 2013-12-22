@@ -455,7 +455,7 @@ public class DefaultSiteRenderer
 
         if ( title.length() > 0 )
         {
-            title += " - ";
+            title += " &#x2013; ";
         }
         title += sink.getTitle();
 
