@@ -192,7 +192,6 @@ public class DefaultSiteRenderer
     {
         if ( moduleBasedir.exists() )
         {
-            @SuppressWarnings ( "unchecked" )
             List<String> allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", excludes, false );
 
             String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
