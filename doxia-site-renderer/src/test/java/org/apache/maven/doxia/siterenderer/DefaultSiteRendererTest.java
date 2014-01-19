@@ -92,6 +92,7 @@ public class DefaultSiteRendererTest
         try
         {
             IOUtil.copy( is, os );
+            os.write( "\n\n\n\r\n\r\n\r\n".getBytes( "ISO-8859-1" ) );
         }
         finally
         {
@@ -167,6 +168,7 @@ public class DefaultSiteRendererTest
         verifyMisc();
         verifyDocbookPageExists();
         verifyApt();
+        verifyNewlines();
 
         // ----------------------------------------------------------------------
         // Validate the rendering pages
@@ -191,7 +193,8 @@ public class DefaultSiteRendererTest
         assertEquals( expectedResult, renderResult );
     }
 
-    public void testVelocityToolManagerForTemplate() throws Exception
+    public void testVelocityToolManagerForTemplate()
+        throws Exception
     {
         StringWriter writer = new StringWriter();
 
@@ -211,7 +214,8 @@ public class DefaultSiteRendererTest
         assertEquals( expectedResult, renderResult );
     }
 
-    public void testVelocityToolManagerForSkin() throws Exception
+    public void testVelocityToolManagerForSkin()
+        throws Exception
     {
         StringWriter writer = new StringWriter();
 
@@ -223,7 +227,6 @@ public class DefaultSiteRendererTest
         RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
         SiteRendererSink sink = new SiteRendererSink( context );
         renderer.generateDocument( writer, sink, siteRenderingContext );
-
         String renderResult = writer.toString();
         String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
         assertEquals( expectedResult, renderResult );
@@ -380,12 +383,30 @@ public class DefaultSiteRendererTest
     }
 
     /**
+     * @throws Exception if something goes wrong.
+     */
+    public void verifyNewlines()
+        throws Exception
+    {
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/head.html" ), "ISO-8859-1" ) );
+    }
+
+    private void checkNewlines( String content )
+    {
+        int cr = StringUtils.countMatches( content, "\r" );
+        int lf = StringUtils.countMatches( content, "\n" );
+        assertTrue( "Should contain only Windows or Unix newlines: cr = " + cr + ", lf = " + lf, ( cr == 0 )
+            || ( cr == lf ) );
+    }
+
+    /**
      * Validate the generated pages.
      *
      * @throws Exception if something goes wrong.
      * @since 1.1.1
      */
-    public void validatePages() throws Exception
+    public void validatePages()
+        throws Exception
     {
         new XhtmlValidatorTest().validateGeneratedPages();
     }

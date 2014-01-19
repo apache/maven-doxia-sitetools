@@ -29,11 +29,11 @@ under the License.
         <properties>
           <property>
             <name>resource.loader</name>
-            <value>classpath,site</value>
+            <value>skin,site</value>
           </property>
           <property>
-            <name>classpath.resource.loader.class</name>
-            <value>org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader</value>
+            <name>skin.resource.loader.class</name>
+            <value>org.apache.maven.doxia.siterenderer.SkinResourceLoader</value>
           </property>
           <property>
             <name>site.resource.loader.class</name>
