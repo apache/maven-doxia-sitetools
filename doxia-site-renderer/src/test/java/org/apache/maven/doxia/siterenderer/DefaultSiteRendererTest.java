@@ -388,7 +388,24 @@ public class DefaultSiteRendererTest
     public void verifyNewlines()
         throws Exception
     {
+        /* apt */
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/apt.html" ), "ISO-8859-1" ) );
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/cdc.html" ), "ISO-8859-1" ) );
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/interpolation.html" ), "ISO-8859-1" ) );
+        /* confluence */
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/confluence/anchor.html" ), "ISO-8859-1" ) );
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/confluence/code.html" ), "ISO-8859-1" ) );
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/confluence/table.html" ), "ISO-8859-1" ) );
+        /* docbook */
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/docbook.html" ), "ISO-8859-1" ) );
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/sdocbook_full.html" ), "ISO-8859-1" ) );
+        /* fml */
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/faq.html" ), "ISO-8859-1" ) );
+        /* xdoc */
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/attributes.html" ), "ISO-8859-1" ) );
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/javascript.html" ), "ISO-8859-1" ) );
         checkNewlines( FileUtils.fileRead( getTestFile( "target/output/head.html" ), "ISO-8859-1" ) );
+        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/macro.html" ), "ISO-8859-1" ) );
     }
 
     private void checkNewlines( String content )
