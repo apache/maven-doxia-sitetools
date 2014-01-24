@@ -105,13 +105,13 @@ public class SiteRendererSink
     /**
      * {@inheritDoc}
      *
-     * Do nothing.
+     * Reset text buffer, since text content before title mustn't be in title.
      * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#title()
      */
     @Override
     public void title()
     {
-        // nop
+        resetTextBuffer();
     }
 
     /**
@@ -122,6 +122,13 @@ public class SiteRendererSink
     public String getTitle()
     {
         return title;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void author()
+    {
+        resetTextBuffer();
     }
 
     /** {@inheritDoc} */
@@ -146,6 +153,13 @@ public class SiteRendererSink
     public List<String> getAuthors()
     {
         return authors;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void date()
+    {
+        resetTextBuffer();
     }
 
     /** {@inheritDoc} */
