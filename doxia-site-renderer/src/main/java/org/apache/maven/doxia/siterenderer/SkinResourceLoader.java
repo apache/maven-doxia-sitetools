@@ -54,7 +54,7 @@ public class SkinResourceLoader
         return normalizeNewline( classLoader.getResourceAsStream( name ) );
     }
 
-    private InputStream normalizeNewline( InputStream in )
+    InputStream normalizeNewline( InputStream in )
         throws ResourceNotFoundException
     {
         if ( in == null )
@@ -66,49 +66,38 @@ public class SkinResourceLoader
         {
             byte[] content = IOUtil.toByteArray( in );
 
-            boolean crlf = System.getProperty( "line.separator" ).length() > 1;
+            // following code based on org.apache.maven.doxia.sink.AbstractSink.unifyEOLs(String)
+            
+            byte[] EOL = System.getProperty( "line.separator" ).getBytes();
 
-            if ( crlf )
+            final int size = content.length;
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream( size );
+
+            for ( int i = 0; i < size; i++ )
             {
-                // ensure every \n is preceded by \r
-                final int size = content.length;
-                ByteArrayOutputStream out = new ByteArrayOutputStream( size );
-                boolean cr = false;
-                for ( int i = 0; i < size; i++ )
+                byte b = content[i];
+
+                if ( b == '\r' )
                 {
-                    byte b = content[i];
-                    if ( b == '\r' )
+                    if ( ( i + 1 ) < size && content[i + 1] == '\n' )
                     {
-                        cr = true;
-                        out.write( b );
+                        i++;
                     }
-                    else
-                    {
-                        if ( b == '\n' && !cr )
-                        {
-                            out.write( '\r' );
-                        }
-                        cr = false;
-                        out.write( b );
-                    }
+
+                    out.write( EOL );
                 }
-                return new ByteArrayInputStream( out.toByteArray() );
-            }
-            else
-            {
-                // remove every \r
-                final int size = content.length;
-                int j = 0;
-                for ( int i = 0; i < size; i++ )
+                else if ( b == '\n' )
                 {
-                    byte b = content[i];
-                    if ( b != '\r' )
-                    {
-                        content[j++] = b;
-                    }
+                    out.write( EOL );
                 }
-                return new ByteArrayInputStream( content, 0, j );
+                else
+                {
+                    out.write( b );
+                }
             }
+
+            return new ByteArrayInputStream( out.toByteArray() );
         }
         catch ( IOException ioe )
         {
