@@ -300,7 +300,6 @@ under the License.
           <artifactId>maven-release-plugin</artifactId>
           <configuration>
             <tagBase>https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/tags</tagBase>
-            <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
         <!-- TODO need to upgrade to last version or Maven parent version -->
@@ -313,11 +312,16 @@ under the License.
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <configuration>
+            <topSiteURL>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven-doxia/content/${maven.site.path}</topSiteURL>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-publish-plugin</artifactId>
           <configuration>
-            <content>${project.build.directory}/staging</content>
             <checkoutDirectory>${maven.site.cache}/doxia/${maven.site.path}</checkoutDirectory>
-            <tryUpdate>true</tryUpdate>
           </configuration>
         </plugin>
       </plugins>
