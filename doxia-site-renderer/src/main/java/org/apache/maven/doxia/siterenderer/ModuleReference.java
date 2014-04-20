@@ -22,7 +22,7 @@ package org.apache.maven.doxia.siterenderer;
 import java.io.File;
 
 /**
- * Holds a small extra module reference in the list of added modules to the rendering context.
+ * Holds an extra Doxia source module reference in the list of added modules to the site rendering context.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
@@ -41,7 +41,7 @@ class ModuleReference
     /**
      * <p>Getter for the field <code>parserId</code>.</p>
      *
-     * @return a {@link java.lang.String} object.
+     * @return Doxia parser id associated to this source module.
      */
     public String getParserId()
     {

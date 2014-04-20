@@ -36,7 +36,7 @@ import org.apache.maven.doxia.util.HtmlTools;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Sink for site rendering.
+ * Sink for site rendering of a document, to allow later merge document's output with a template.
  *
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  * @version $Id$
@@ -66,9 +66,9 @@ public class SiteRendererSink
     private RenderingContext renderingContext;
 
     /**
-     * Construct a new SiteRendererSink.
+     * Construct a new SiteRendererSink for a document.
      *
-     * @param renderingContext the RenderingContext.
+     * @param renderingContext the document's RenderingContext.
      */
     public SiteRendererSink( RenderingContext renderingContext )
     {
@@ -76,10 +76,10 @@ public class SiteRendererSink
     }
 
     /**
-     * Construct a new SiteRendererSink.
+     * Construct a new SiteRendererSink for a document.
      *
      * @param writer the writer for the sink.
-     * @param renderingContext the RenderingContext.
+     * @param renderingContext the document's RenderingContext.
      */
     private SiteRendererSink( StringWriter writer, RenderingContext renderingContext )
     {

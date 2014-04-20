@@ -32,7 +32,9 @@ import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Skin resource loader: gets content from context classloader, which should contain skin artifact,
- * and normalizes newlines. 
+ * and normalizes newlines (see <a href="http://jira.codehaus.org/browse/DOXIASITETOOLS-87">DOXIASITETOOLS-87</a>.
+ * 
+ * @author Hervé Boutemy
  */
 public class SkinResourceLoader
     extends ResourceLoader

@@ -77,10 +77,10 @@ public class RenderingContext
     /**
      * <p>Constructor for RenderingContext.</p>
      *
-     * @param basedir a {@link java.io.File} object.
-     * @param document a {@link java.lang.String} object.
-     * @param parserId a {@link java.lang.String} object.
-     * @param extension a {@link java.lang.String} object.
+     * @param basedir the source base directory.
+     * @param document the source document name.
+     * @param parserId the Doxia module parser id associated to this document.
+     * @param extension the source document filename extension.
      */
     public RenderingContext( File basedir, String document, String parserId, String extension )
     {

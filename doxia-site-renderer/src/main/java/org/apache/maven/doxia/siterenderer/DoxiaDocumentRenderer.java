@@ -37,7 +37,7 @@ public class DoxiaDocumentRenderer
     /**
      * Constructor.
      *
-     * @param renderingContext the RenderingContext to use.
+     * @param renderingContext the document's RenderingContext to use.
      */
     public DoxiaDocumentRenderer( RenderingContext renderingContext )
     {

@@ -52,7 +52,7 @@ public interface DocumentRenderer
     String getOutputName();
 
     /**
-     * Return the RenderingContext.
+     * Return the RenderingContext of the document.
      *
      * @return RenderingContext.
      */

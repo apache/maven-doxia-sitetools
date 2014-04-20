@@ -289,7 +289,7 @@ public class SiteRenderingContext
      * Add a module source directory.
      *
      * @param moduleBasedir The base directory for module's source files.
-     * @param moduleParserId a {@link java.lang.String} object.
+     * @param moduleParserId module's Doxia parser id.
      */
     public void addModuleDirectory( File moduleBasedir, String moduleParserId )
     {
