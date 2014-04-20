@@ -194,14 +194,15 @@ public class DefaultSiteRenderer
         {
             List<String> allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", excludes, false );
 
-            String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
+            String fullExtension = "." + module.getExtension();
             List<String> docs = new LinkedList<String>( allFiles );
             // Take care of extension case
             for ( Iterator<String> it = docs.iterator(); it.hasNext(); )
             {
-                String name = it.next().trim();
+                String name = it.next();
 
-                if ( !name.toLowerCase( Locale.ENGLISH ).endsWith( "." + lowerCaseExtension ) )
+                if ( ( name.length() < fullExtension.length() )
+                    || !name.substring( name.length() - fullExtension.length() ).equalsIgnoreCase( fullExtension ) )
                 {
                     it.remove();
                 }
@@ -209,11 +210,13 @@ public class DefaultSiteRenderer
 
             List<String> velocityFiles = new LinkedList<String>( allFiles );
             // *.xml.vm
+            fullExtension += ".vm";
             for ( Iterator<String> it = velocityFiles.iterator(); it.hasNext(); )
             {
-                String name = it.next().trim();
+                String name = it.next();
 
-                if ( !name.toLowerCase( Locale.ENGLISH ).endsWith( lowerCaseExtension + ".vm" ) )
+                if ( ( name.length() < fullExtension.length() )
+                    || !name.substring( name.length() - fullExtension.length() ).equalsIgnoreCase( fullExtension ) )
                 {
                     it.remove();
                 }
@@ -222,13 +225,11 @@ public class DefaultSiteRenderer
 
             for ( String doc : docs )
             {
-                String docc = doc.trim();
-
                 RenderingContext context =
-                        new RenderingContext( moduleBasedir, docc, module.getParserId(), module.getExtension() );
+                        new RenderingContext( moduleBasedir, doc, module.getParserId(), module.getExtension() );
 
                 // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
-                if ( docc.toLowerCase( Locale.ENGLISH ).endsWith( ".vm" ) )
+                if ( doc.substring( doc.length() - 3 ).equalsIgnoreCase( ".vm" ) )
                 {
                     context.setAttribute( "velocity", "true" );
                 }
@@ -244,7 +245,7 @@ public class DefaultSiteRenderer
 
                     File originalDoc = new File( originalContext.getBasedir(), originalContext.getInputName() );
 
-                    throw new RendererException( "Files '" + module.getSourceDirectory() + File.separator + docc
+                    throw new RendererException( "File '" + module.getSourceDirectory() + File.separator + doc
                         + "' clashes with existing '" + originalDoc + "'." );
                 }
                 // -----------------------------------------------------------------------
@@ -260,15 +261,15 @@ public class DefaultSiteRenderer
 
                         if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
                         {
-                            throw new RendererException( "Files '" + module.getSourceDirectory() + File.separator
-                                + docc + "' clashes with existing '" + originalDoc + "'." );
+                            throw new RendererException( "File '" + module.getSourceDirectory() + File.separator
+                                + doc + "' clashes with existing '" + originalDoc + "'." );
                         }
 
                         if ( getLogger().isWarnEnabled() )
                         {
                             getLogger().warn(
-                                              "Files '" + module.getSourceDirectory() + File.separator + docc
-                                                  + "' could clashes with existing '" + originalDoc + "'." );
+                                              "File '" + module.getSourceDirectory() + File.separator + doc
+                                                  + "' could clash with existing '" + originalDoc + "'." );
                         }
                     }
                 }
