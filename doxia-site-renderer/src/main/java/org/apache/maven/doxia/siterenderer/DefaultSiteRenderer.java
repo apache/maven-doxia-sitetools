@@ -53,8 +53,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import javax.annotation.Nullable;
-
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
 import org.apache.maven.doxia.parser.ParseException;
@@ -203,7 +201,7 @@ public class DefaultSiteRenderer
             {
                 String name = it.next();
 
-                if ( endsWithIgnoreCase( name, fullExtension ) )
+                if ( !endsWithIgnoreCase( name, fullExtension ) )
                 {
                     it.remove();
                 }
@@ -216,7 +214,7 @@ public class DefaultSiteRenderer
             {
                 String name = it.next();
 
-                if ( endsWithIgnoreCase( name, fullExtension ) )
+                if ( !endsWithIgnoreCase( name, fullExtension ) )
                 {
                     it.remove();
                 }
