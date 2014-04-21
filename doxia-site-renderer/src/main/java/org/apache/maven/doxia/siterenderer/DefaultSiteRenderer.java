@@ -53,6 +53,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import javax.annotation.Nullable;
+
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
 import org.apache.maven.doxia.parser.ParseException;
@@ -201,8 +203,7 @@ public class DefaultSiteRenderer
             {
                 String name = it.next();
 
-                if ( ( name.length() < fullExtension.length() )
-                    || !name.substring( name.length() - fullExtension.length() ).equalsIgnoreCase( fullExtension ) )
+                if ( endsWithIgnoreCase( name, fullExtension ) )
                 {
                     it.remove();
                 }
@@ -215,8 +216,7 @@ public class DefaultSiteRenderer
             {
                 String name = it.next();
 
-                if ( ( name.length() < fullExtension.length() )
-                    || !name.substring( name.length() - fullExtension.length() ).equalsIgnoreCase( fullExtension ) )
+                if ( endsWithIgnoreCase( name, fullExtension ) )
                 {
                     it.remove();
                 }
@@ -922,4 +922,14 @@ public class DefaultSiteRenderer
         }
     }
 
+    // TODO replace with StringUtils.endsWithIgnoreCase() from maven-shared-utils 0.7
+    private boolean endsWithIgnoreCase( String str, String searchStr )
+    {
+        if ( str.length() < searchStr.length() )
+        {
+            return false;
+        }
+
+        return str.regionMatches( true, str.length() - searchStr.length(), searchStr, 0, searchStr.length() );
+    }
 }
