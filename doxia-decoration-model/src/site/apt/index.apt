@@ -18,4 +18,9 @@ Doxia Sitetool Decoration Model
 
    * An XSD referenced in the {{{./decoration.html}Descriptor Reference}}.
 
- Inheritance algorithm is added to merge the decoration between a parent and a child.
+* Inheritance
+
+ Decoration model can be merged from a parent <<<site.xml>>> into a child <<<site.xml>>> using
+ <<<DecorationModelInheritanceAssembler>>> ({{{./apidocs/org/apache/maven/doxia/site/decoration/inheritance/DecorationModelInheritanceAssembler.html}javadoc}})
+ with its <<<DefaultDecorationModelInheritanceAssembler>>> implementation
+ ({{{./xref/org/apache/maven/doxia/site/decoration/inheritance/DefaultDecorationModelInheritanceAssembler.html}source}}).
