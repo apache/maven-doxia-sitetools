@@ -54,6 +54,13 @@ public class DefaultDecorationModelInheritanceAssembler
             return;
         }
 
+        // do not inherit if descriptor forbids.
+        // we may push this down the schema later.
+        if ( "override".equals( child.getCombineSelf() ) )
+        {
+            return;
+        }
+
         URLContainer urlContainer = new URLContainer( parentBaseUrl, childBaseUrl );
 
         if ( child.getBannerLeft() == null && parent.getBannerLeft() != null )

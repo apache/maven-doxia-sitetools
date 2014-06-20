@@ -81,6 +81,22 @@ public class DecorationModelInheritenceAssemblerTest
      * @throws IOException
      * @throws XmlPullParserException
      */
+    public void testSuppressedInheritence()
+            throws IOException, XmlPullParserException
+    {
+        DecorationModel unassembledChildModel = readModel( "child-no-inheritance.xml" );
+        DecorationModel childModel = readModel( "child-no-inheritance.xml" );
+        DecorationModel parentModel = readModel( "parent.xml" );
+        assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/doxia",
+                "http://maven.apache.org" );
+        assertEquals( "Check result", unassembledChildModel, childModel );
+    }
+
+    /**
+     *
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
     public void testPathsResolvedWhenEmpty()
         throws IOException, XmlPullParserException
     {
