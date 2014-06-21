@@ -48,15 +48,7 @@ public class DefaultDecorationModelInheritanceAssembler
     public void assembleModelInheritance( String name, DecorationModel child, DecorationModel parent,
                                           String childBaseUrl, String parentBaseUrl )
     {
-        // cannot inherit from null parent.
-        if ( parent == null )
-        {
-            return;
-        }
-
-        // do not inherit if descriptor forbids.
-        // we may push this down the schema later.
-        if ( "override".equals( child.getCombineSelf() ) )
+        if ( parent == null || !child.isMergeParent() )
         {
             return;
         }

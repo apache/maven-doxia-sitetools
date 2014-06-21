@@ -44,7 +44,6 @@ under the License.
       <name>DecorationModel</name>
       <description><![CDATA[
          The <code>&lt;project&gt;</code> element is the root of the site decoration descriptor.
-         The following table lists all of the possible child elements.
       ]]></description>
       <version>1.0.0+</version>
       <fields>
@@ -56,12 +55,14 @@ under the License.
           <identifier>true</identifier>
         </field>
         <field xml.attribute="true" xml.tagName="combine.self">
-           <description>Whether to inherit configuration from a parent project site descriptor.</description>
+           <description><![CDATA[
+             Whether to inherit configuration from a parent project site descriptor (<code>merge</code>)
+           or not (<code>override</code>).
+           ]]></description>
            <name>combineSelf</name>
            <version>1.6.0+</version>
            <type>String</type>
            <defaultValue>merge</defaultValue>
-           <identifier>true</identifier>
         </field>
         <field>
           <name>bannerLeft</name>
@@ -171,6 +172,14 @@ under the License.
           <version>1.0.0+</version>
           <code>
             <![CDATA[
+    public static final String MERGE = "merge";
+
+    public static final String OVERRIDE = "override";
+
+    public boolean isMergeParent()
+    {
+        return !OVERRIDE.equals( combineSelf );
+    }
 
     public PublishDate getPublishDate()
     {
