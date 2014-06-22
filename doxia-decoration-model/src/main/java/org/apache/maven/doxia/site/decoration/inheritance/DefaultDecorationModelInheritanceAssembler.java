@@ -53,6 +53,8 @@ public class DefaultDecorationModelInheritanceAssembler
             return;
         }
 
+        child.setCombineSelf( parent.getCombineSelf() );
+
         URLContainer urlContainer = new URLContainer( parentBaseUrl, childBaseUrl );
 
         if ( child.getBannerLeft() == null && parent.getBannerLeft() != null )

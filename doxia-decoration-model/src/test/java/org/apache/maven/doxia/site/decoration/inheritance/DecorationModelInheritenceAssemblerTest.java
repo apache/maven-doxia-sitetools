@@ -88,8 +88,18 @@ public class DecorationModelInheritenceAssemblerTest
         DecorationModel childModel = readModel( "child-no-inheritance.xml" );
         DecorationModel parentModel = readModel( "parent.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/doxia",
-                "http://maven.apache.org" );
+                                            "http://maven.apache.org" );
         assertEquals( "Check result", unassembledChildModel, childModel );
+
+        // 2 levels of inheritance
+        DecorationModel childOfchildModel = new DecorationModel();
+        assembler.assembleModelInheritance( "Child of Child", childOfchildModel, childModel,
+                                            "http://maven.apache.org/doxia/child", "http://maven.apache.org/doxia" );
+        assembler.assembleModelInheritance( NAME, childOfchildModel, parentModel, "http://maven.apache.org/doxia",
+                                            "http://maven.apache.org" );
+        // check that the 3 breadcrumb items from parent.xml are not inherited
+        assertEquals( "child of child no inheritance: breadcrumbs count", 0,
+                      childOfchildModel.getBody().getBreadcrumbs().size() );
     }
 
     /**
