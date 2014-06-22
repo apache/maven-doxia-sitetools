@@ -55,6 +55,8 @@ public class SiteRendererSink
 
     private StringBuilder sectionTitleBuffer;
 
+    private StringBuilder sectionTitleWriteBuffer;
+
     private boolean sectionHasID;
 
     private boolean isSectionTitle;
@@ -263,11 +265,13 @@ public class SiteRendererSink
     @Override
     protected void onSectionTitle( int depth, SinkEventAttributes attributes )
     {
-        this.sectionTitleBuffer = new StringBuilder();
         sectionHasID = ( attributes != null && attributes.isDefined ( Attribute.ID.toString() ) );
         isSectionTitle = true;
 
         super.onSectionTitle( depth, attributes );
+
+        this.sectionTitleBuffer = new StringBuilder();
+        this.sectionTitleWriteBuffer = new StringBuilder();
     }
 
     /** {@inheritDoc} */
@@ -276,20 +280,27 @@ public class SiteRendererSink
     {
         String sectionTitle = sectionTitleBuffer.toString();
         this.sectionTitleBuffer = null;
+        String sectionWriteTitle = sectionTitleWriteBuffer.toString();
+        this.sectionTitleWriteBuffer = null;
 
-        if ( !sectionHasID && !StringUtils.isEmpty( sectionTitle ) )
+        if ( !StringUtils.isEmpty( sectionTitle ) )
         {
-            String id = HtmlTools.encodeId( sectionTitle );
-            if ( ( anchorsInSectionTitle == null ) || ( !anchorsInSectionTitle.contains( id ) ) )
+            if ( sectionHasID )
             {
-                anchor( id );
-                anchor_();
+                sectionHasID = false;
+            }
+            else
+            {
+                String id = HtmlTools.encodeId( sectionTitle );
+                if ( ( anchorsInSectionTitle == null ) || ( !anchorsInSectionTitle.contains( id ) ) )
+                {
+                    anchor( id );
+                    anchor_();
+                }
             }
         }
-        else
-        {
-            sectionHasID = false;
-        }
+
+        super.write( sectionWriteTitle );
 
         this.isSectionTitle = false;
         anchorsInSectionTitle = null;
@@ -347,6 +358,14 @@ public class SiteRendererSink
             }
         }
 
-        super.write( txt );
+        if ( sectionTitleWriteBuffer != null )
+        {
+            // this implies we're inside a section title, collect text events for anchor generation
+            sectionTitleWriteBuffer.append( txt );
+        }
+        else
+        {
+            super.write( txt );
+        }
     }
 }

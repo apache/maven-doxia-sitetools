@@ -68,10 +68,10 @@ public class FaqVerifier
         assertEquals( h2.asText().trim(), "Oft Asked Questions" );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertEquals( a.getAttribute( "name" ), "top" );
+        assertEquals( "Oft_Asked_Questions", a.getAttribute( "name" ) );
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( a.getAttribute( "name" ), "Oft_Asked_Questions" );
+        assertEquals( "top", a.getAttribute( "name" ) );
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         element = elementIterator.next();

@@ -113,6 +113,9 @@ public class AptVerifier
         // Note: htmlunit strips the white space, actual result is ok
         assertEquals( "Section formatting: italicboldmono", h2.asText().trim() );
 
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "Section_formatting:_italic_bold_mono", a.getAttribute( "name" ) );
+
         HtmlItalic italic = (HtmlItalic) elementIterator.next();
         assertEquals( "i", italic.getTagName() );
         assertEquals( "italic", italic.asText().trim() );
@@ -125,9 +128,6 @@ public class AptVerifier
         assertEquals( "tt", tt.getTagName() );
         assertEquals( "mono", tt.asText().trim() );
 
-        a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "Section_formatting:_italic_bold_mono", a.getAttribute( "name" ) );
-
         div = (HtmlDivision) elementIterator.next();
         assertEquals( "section", div.getAttribute( "class" ) );
 
@@ -135,6 +135,9 @@ public class AptVerifier
         assertNotNull( h3 );
         // Note: htmlunit strips the white space, actual result is ok
         assertEquals( "SubSection formatting: italicboldmono", h3.asText().trim() );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "SubSection_formatting:_italic_bold_mono", a.getAttribute( "name" ) );
 
         italic = (HtmlItalic) elementIterator.next();
         assertEquals( "i", italic.getTagName() );
@@ -147,9 +150,6 @@ public class AptVerifier
         tt = (HtmlTeletype) elementIterator.next();
         assertEquals( "tt", tt.getTagName() );
         assertEquals( "mono", tt.asText().trim() );
-
-        a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "SubSection_formatting:_italic_bold_mono", a.getAttribute( "name" ) );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
