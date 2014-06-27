@@ -91,6 +91,21 @@ public class DefaultDecorationModelInheritanceAssembler
             child.setLastModified( parent.getLastModified() );
         }
 
+        if ( child.getGoogleAdSenseClient() == null && parent.getGoogleAdSenseClient() != null )
+        {
+            child.setGoogleAdSenseClient( parent.getGoogleAdSenseClient() );
+        }
+
+        if ( child.getGoogleAdSenseSlot() == null && parent.getGoogleAdSenseSlot() != null )
+        {
+            child.setGoogleAdSenseSlot( parent.getGoogleAdSenseSlot() );
+        }
+
+        if ( child.getGoogleAnalyticsAccountId() == null && parent.getGoogleAnalyticsAccountId() != null )
+        {
+            child.setGoogleAnalyticsAccountId( parent.getGoogleAnalyticsAccountId() );
+        }
+
         assembleBodyInheritance( name, child, parent, urlContainer );
 
         assembleCustomInheritance( child, parent );
