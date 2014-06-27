@@ -29,13 +29,13 @@ import junit.framework.TestCase;
  * @version $Id$
  */
 public class PathUtilsTest
-        extends TestCase
+    extends TestCase
 {
     private static final String SLASH = File.separator;
 
     /** @throws Exception */
     public void testConvertPath()
-            throws Exception
+        throws Exception
     {
         PathDescriptor oldPath = new PathDescriptor( (String) null, "base" );
         PathDescriptor newPath = new PathDescriptor( "/tmp", "target" );
@@ -45,7 +45,7 @@ public class PathUtilsTest
 
     /** @throws Exception */
     public void testGetRelativePath()
-            throws Exception
+        throws Exception
     {
         PathDescriptor oldPath = new PathDescriptor( "/tmp/foo", "base" );
         PathDescriptor newPath = new PathDescriptor( "/tmp", "target" );
@@ -63,7 +63,7 @@ public class PathUtilsTest
 
     /** @throws Exception */
     public void testRelativePathScpBase()
-            throws Exception
+        throws Exception
     {
         PathDescriptor oldPath = new PathDescriptor( "http://maven.apache.org/", "source" );
         PathDescriptor newPath = new PathDescriptor( "http://maven.apache.org/", "target" );

@@ -59,29 +59,29 @@ public class DefaultDecorationModelInheritanceAssembler
 
         if ( child.getBannerLeft() == null && parent.getBannerLeft() != null )
         {
-            child.setBannerLeft( parent.getBannerLeft().clone());
+            child.setBannerLeft( parent.getBannerLeft().clone() );
             rebaseBannerPaths( child.getBannerLeft(), urlContainer );
         }
 
-        if ( child.getBannerRight() == null && parent.getBannerRight() != null)
+        if ( child.getBannerRight() == null && parent.getBannerRight() != null )
         {
-            child.setBannerRight( parent.getBannerRight().clone());
+            child.setBannerRight( parent.getBannerRight().clone() );
             rebaseBannerPaths( child.getBannerRight(), urlContainer );
         }
 
         if ( child.isDefaultPublishDate() && parent.getPublishDate() != null )
         {
-            child.setPublishDate( parent.getPublishDate().clone());
+            child.setPublishDate( parent.getPublishDate().clone() );
         }
 
         if ( child.isDefaultVersion() && parent.getVersion() != null )
         {
-            child.setVersion( parent.getVersion().clone());
+            child.setVersion( parent.getVersion().clone() );
         }
 
         if ( child.getSkin() == null && parent.getSkin() != null )
         {
-            child.setSkin( parent.getSkin().clone());
+            child.setSkin( parent.getSkin().clone() );
         }
 
         child.setPoweredBy( mergePoweredByLists( child.getPoweredBy(), parent.getPoweredBy(), urlContainer ) );

@@ -31,7 +31,7 @@ import junit.framework.TestCase;
  * @since 1.2
  */
 public class URIPathDescriptorTest
-        extends TestCase
+    extends TestCase
 {
     private static final String maven = "http://maven.apache.org/";
 
@@ -41,7 +41,7 @@ public class URIPathDescriptorTest
      * @throws Exception
      */
     public void testConstructor()
-            throws Exception
+        throws Exception
     {
         final String expected = maven + "doxia";
 
@@ -93,7 +93,7 @@ public class URIPathDescriptorTest
      * @throws Exception
      */
     public void testResolveLink()
-            throws Exception
+        throws Exception
     {
         final String expected = maven + "source";
 
@@ -136,7 +136,7 @@ public class URIPathDescriptorTest
      * @throws Exception
      */
     public void testRebaseLink()
-            throws Exception
+        throws Exception
     {
         URIPathDescriptor oldPath = new URIPathDescriptor( maven, "source" );
         assertEquals( "../source", oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
@@ -189,7 +189,7 @@ public class URIPathDescriptorTest
      * @throws Exception
      */
     public void testRelativizeLink()
-            throws Exception
+        throws Exception
     {
         URIPathDescriptor path = new URIPathDescriptor( maven, "source" );
         assertEquals( "source", path.relativizeLink().toString() );
@@ -240,7 +240,7 @@ public class URIPathDescriptorTest
      * @throws Exception
      */
     public void testSameSite()
-            throws Exception
+        throws Exception
     {
         final URIPathDescriptor path = new URIPathDescriptor( maven, "doxia" );
 

@@ -49,7 +49,8 @@ public class PathDescriptor
      * @param path the path.
      * @throws java.net.MalformedURLException if a URL cannot be formed from the path.
      */
-    public PathDescriptor( final String path ) throws MalformedURLException
+    public PathDescriptor( final String path )
+        throws MalformedURLException
     {
         this( (URL) null, path );
     }
@@ -61,7 +62,8 @@ public class PathDescriptor
      * @param path the path.
      * @throws java.net.MalformedURLException if a URL cannot be formed from the path.
      */
-    public PathDescriptor( final String base, final String path ) throws MalformedURLException
+    public PathDescriptor( final String base, final String path )
+        throws MalformedURLException
     {
         this( PathDescriptor.buildBaseUrl( base ), path );
     }
@@ -73,7 +75,8 @@ public class PathDescriptor
      * @param path the path.
      * @throws java.net.MalformedURLException if a URL cannot be formed from the path.
      */
-    public PathDescriptor( final URL baseUrl, final String path ) throws MalformedURLException
+    public PathDescriptor( final URL baseUrl, final String path )
+        throws MalformedURLException
     {
         this.baseUrl = baseUrl;
 
@@ -110,7 +113,8 @@ public class PathDescriptor
         this.relativePath = relPath;
     }
 
-    private static URL buildBaseUrl( final String base ) throws MalformedURLException
+    private static URL buildBaseUrl( final String base )
+        throws MalformedURLException
     {
         if ( base == null )
         {
@@ -127,7 +131,8 @@ public class PathDescriptor
         }
     }
 
-    private static URL buildUrl( final URL baseUrl, final String path ) throws MalformedURLException
+    private static URL buildUrl( final URL baseUrl, final String path )
+        throws MalformedURLException
     {
         if ( baseUrl == null )
         {
@@ -153,7 +158,7 @@ public class PathDescriptor
     }
 
     /**
-     * Check if this PathDescriptor decribes a file.
+     * Check if this PathDescriptor describes a file.
      *
      * @return true for file, false otherwise.
      */
@@ -163,7 +168,7 @@ public class PathDescriptor
     }
 
     /**
-     * Check if this PathDescriptor decribes a relative path.
+     * Check if this PathDescriptor describes a relative path.
      *
      * @return true if {@link #getPathUrl()} returns null.
      */
