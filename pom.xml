@@ -185,12 +185,6 @@ under the License.
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
   </properties>
 
-  <contributors>
-    <contributor>
-      <name>Michael Osipov</name>
-    </contributor>
-  </contributors>
-
   <dependencyManagement>
     <dependencies>
       <!-- doxia -->
