@@ -771,6 +771,11 @@ public class DefaultSiteRenderer
 
                     while ( line != null )
                     {
+                        if ( line.startsWith( "#" ) || line.trim().length() == 0 )
+                        {
+                            continue;
+                        }
+
                         InputStream is = getClass().getClassLoader().getResourceAsStream( RESOURCE_DIR + "/" + line );
 
                         if ( is == null )

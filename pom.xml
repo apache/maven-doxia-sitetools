@@ -375,6 +375,28 @@ under the License.
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>src/test/resources/site/confluence/confluence/*.confluence</exclude>
+            <excludes>src/test/resources/org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm</excludes>
+            <excludes>src/test/resources/org/apache/maven/doxia/siterenderer/velocity-toolmanager.expected.txt</excludes>
+            <excludes>src/test/resources/dtd/xhtml-*.ent</excludes>
+            <excludes>src/test/resources/dtd/xhtml1-transitional.dtd</excludes>
+            <excludes>src/test/resources/xhtml-lat1.ent</excludes>
+          </excludes>            
+        </configuration>
+        <executions>
+          <execution>
+            <id>check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>      
     </plugins>
   </build>
 
