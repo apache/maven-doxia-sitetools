@@ -767,9 +767,9 @@ public class DefaultSiteRenderer
                     r = ReaderFactory.newReader( resourceList, ReaderFactory.UTF_8 );
                     reader = new LineNumberReader( r );
 
-                    String line = reader.readLine();
+                    String line;
 
-                    while ( line != null )
+                    while ( ( line = reader.readLine() ) != null )
                     {
                         if ( line.startsWith( "#" ) || line.trim().length() == 0 )
                         {
@@ -803,8 +803,6 @@ public class DefaultSiteRenderer
                         }
 
                         IOUtil.close( is );
-
-                        line = reader.readLine();
                     }
                 }
                 finally
