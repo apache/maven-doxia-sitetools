@@ -50,7 +50,7 @@ Doxia Site Tools - Site Renderer
 
   Site decoration and documents with file names ending in <<<.vm>>> are processed by Velocity.
 
-  The Velocity context defines some variables, that you can use:
+  The Velocity context contains some variables related to rendering context that you can use:
 
 *---------------------------------+----------------------+-------------------------------+
 || variable                       || type                || description                 ||
@@ -88,7 +88,7 @@ Doxia Site Tools - Site Renderer
 | <<<title>>>                     | <<<String>>>         | The title of the document, including the project or site name |
 *---------------------------------+----------------------+-------------------------------+
 
-  There are also some properties defined by caller:
+  There are also some tools for general use:
 
 *---------------------------------+----------------------+-------------------------------+
 || property                       || type                || description                 ||
