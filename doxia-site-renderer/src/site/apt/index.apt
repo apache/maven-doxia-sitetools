@@ -102,7 +102,7 @@ Doxia Site Tools - Site Renderer
 | <<<StringUtils>>>               | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/StringUtils.html}<<<StringUtils>>>}}    |                               |
 *---------------------------------+----------------------+-------------------------------+
 
-  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#428}DefaultSiteRenderer.createVelocityContext(...)}}>>>
+  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#L428}DefaultSiteRenderer.createVelocityContext(...)}}>>>
   source for more details.
 
   When <<<doxia-site-renderer>>> is used by <<<maven-site-plugin>>>, the following template properties are defined:
