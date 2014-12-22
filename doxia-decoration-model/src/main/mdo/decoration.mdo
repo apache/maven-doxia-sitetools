@@ -28,7 +28,7 @@ under the License.
     <p>This is a reference for the site decoration descriptor used in Doxia Sitetools, also known as <code>site.xml</code>.</p>
     <p>An XSD is available at:</p>
     <ul>
-      <li><a href="http://maven.apache.org/xsd/decoration-1.4.0.xsd">http://maven.apache.org/xsd/decoration-1.4.0.xsd</a></li>
+      <li><a href="http://maven.apache.org/xsd/decoration-${version}.xsd">http://maven.apache.org/xsd/decoration-${version}.xsd</a></li>
     </ul>
     ]]></description>
 
