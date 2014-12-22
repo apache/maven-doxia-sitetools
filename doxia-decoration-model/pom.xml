@@ -51,7 +51,8 @@ under the License.
           <models>
             <model>src/main/mdo/decoration.mdo</model>
           </models>
-          <version>1.6.0</version>
+          <!-- TODO Do not forget to update the version in the decoration description. See DOXIASITETOOLS-98. -->
+          <version>1.7.0</version>
           <firstVersion>1.0.0</firstVersion>
         </configuration>
         <executions>
