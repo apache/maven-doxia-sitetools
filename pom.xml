@@ -181,7 +181,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.6</doxiaVersion>
+    <doxiaVersion>1.6.1-SNAPSHOT</doxiaVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
   </properties>
 
@@ -386,7 +386,8 @@ under the License.
             <excludes>src/test/resources/dtd/xhtml-*.ent</excludes>
             <excludes>src/test/resources/dtd/xhtml1-transitional.dtd</excludes>
             <excludes>src/test/resources/xhtml-lat1.ent</excludes>
-          </excludes>            
+            <excludes>*.state</excludes>
+          </excludes>
         </configuration>
         <executions>
           <execution>
@@ -396,7 +397,7 @@ under the License.
             </goals>
           </execution>
         </executions>
-      </plugin>      
+      </plugin>
     </plugins>
   </build>
 

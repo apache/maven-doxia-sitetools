@@ -19,6 +19,36 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.maven.doxia.Doxia;
+import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
+import org.apache.maven.doxia.parser.ParseException;
+import org.apache.maven.doxia.parser.Parser;
+import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
+import org.apache.maven.doxia.parser.module.ParserModule;
+import org.apache.maven.doxia.parser.module.ParserModuleManager;
+import org.apache.maven.doxia.parser.module.ParserModuleNotFoundException;
+import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
+import org.apache.maven.doxia.util.XmlValidator;
+import org.apache.velocity.Template;
+import org.apache.velocity.context.Context;
+import org.apache.velocity.tools.ToolManager;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
+import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.util.DirectoryScanner;
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.Os;
+import org.codehaus.plexus.util.PathTool;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.velocity.SiteResourceLoader;
+import org.codehaus.plexus.velocity.VelocityComponent;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,35 +83,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.apache.maven.doxia.Doxia;
-import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
-import org.apache.maven.doxia.parser.ParseException;
-import org.apache.maven.doxia.parser.Parser;
-import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.parser.module.ParserModule;
-import org.apache.maven.doxia.parser.module.ParserModuleManager;
-import org.apache.maven.doxia.parser.module.ParserModuleNotFoundException;
-import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
-import org.apache.maven.doxia.util.XmlValidator;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
-import org.apache.velocity.tools.ToolManager;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.Os;
-import org.codehaus.plexus.util.PathTool;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.WriterFactory;
-import org.codehaus.plexus.velocity.SiteResourceLoader;
-import org.codehaus.plexus.velocity.VelocityComponent;
-
 /**
  * <p>DefaultSiteRenderer class.</p>
  *
@@ -99,7 +100,8 @@ public class DefaultSiteRenderer
     // Requirements
     // ----------------------------------------------------------------------
 
-    @Requirement( hint = "doxia-site-renderer" ) // DOXIA-147: dedicated component configuration hand-written in component.xml
+    @Requirement( hint = "doxia-site-renderer" )
+    // DOXIA-147: dedicated component configuration hand-written in component.xml
     private VelocityComponent velocity;
 
     @Requirement
@@ -121,7 +123,9 @@ public class DefaultSiteRenderer
     // Renderer implementation
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void render( Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext,
                         File outputDirectory )
         throws RendererException, IOException
@@ -134,9 +138,11 @@ public class DefaultSiteRenderer
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Map<String, DocumentRenderer> locateDocumentFiles( SiteRenderingContext siteRenderingContext )
-            throws IOException, RendererException
+        throws IOException, RendererException
     {
         Map<String, DocumentRenderer> files = new LinkedHashMap<String, DocumentRenderer>();
         Map<String, String> moduleExcludes = siteRenderingContext.getModuleExcludes();
@@ -152,8 +158,7 @@ public class DefaultSiteRenderer
 
                     if ( moduleExcludes != null && moduleExcludes.containsKey( module.getParserId() ) )
                     {
-                        addModuleFiles( moduleBasedir, module, moduleExcludes.get( module.getParserId() ),
-                                files );
+                        addModuleFiles( moduleBasedir, module, moduleExcludes.get( module.getParserId() ), files );
                     }
                     else
                     {
@@ -170,12 +175,12 @@ public class DefaultSiteRenderer
                 if ( moduleExcludes != null && moduleExcludes.containsKey( module.getParserId() ) )
                 {
                     addModuleFiles( module.getBasedir(), parserModuleManager.getParserModule( module.getParserId() ),
-                        moduleExcludes.get( module.getParserId() ), files );
+                                    moduleExcludes.get( module.getParserId() ), files );
                 }
                 else
                 {
-                    addModuleFiles( module.getBasedir(), parserModuleManager.getParserModule( module.getParserId() ), null,
-                            files );
+                    addModuleFiles( module.getBasedir(), parserModuleManager.getParserModule( module.getParserId() ),
+                                    null, files );
                 }
             }
             catch ( ParserModuleNotFoundException e )
@@ -188,98 +193,107 @@ public class DefaultSiteRenderer
 
     private void addModuleFiles( File moduleBasedir, ParserModule module, String excludes,
                                  Map<String, DocumentRenderer> files )
-            throws IOException, RendererException
+        throws IOException, RendererException
     {
         if ( moduleBasedir.exists() )
         {
             List<String> allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", excludes, false );
 
-            String fullExtension = "." + module.getExtension();
-            List<String> docs = new LinkedList<String>( allFiles );
-            // Take care of extension case
-            for ( Iterator<String> it = docs.iterator(); it.hasNext(); )
+            if ( !ArrayUtils.isEmpty( module.getExtension() ) )
             {
-                String name = it.next();
-
-                if ( !endsWithIgnoreCase( name, fullExtension ) )
+                for ( String extension : module.getExtension() )
                 {
-                    it.remove();
-                }
-            }
 
-            List<String> velocityFiles = new LinkedList<String>( allFiles );
-            // *.xml.vm
-            fullExtension += ".vm";
-            for ( Iterator<String> it = velocityFiles.iterator(); it.hasNext(); )
-            {
-                String name = it.next();
-
-                if ( !endsWithIgnoreCase( name, fullExtension ) )
-                {
-                    it.remove();
-                }
-            }
-            docs.addAll( velocityFiles );
-
-            for ( String doc : docs )
-            {
-                RenderingContext context =
-                        new RenderingContext( moduleBasedir, doc, module.getParserId(), module.getExtension() );
-
-                // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
-                if ( doc.substring( doc.length() - 3 ).equalsIgnoreCase( ".vm" ) )
-                {
-                    context.setAttribute( "velocity", "true" );
-                }
-
-                String key = context.getOutputName();
-                key = StringUtils.replace( key, "\\", "/" );
-
-                if ( files.containsKey( key ) )
-                {
-                    DocumentRenderer renderer = files.get( key );
-
-                    RenderingContext originalContext = renderer.getRenderingContext();
-
-                    File originalDoc = new File( originalContext.getBasedir(), originalContext.getInputName() );
-
-                    throw new RendererException( "File '" + module.getSourceDirectory() + File.separator + doc
-                        + "' clashes with existing '" + originalDoc + "'." );
-                }
-                // -----------------------------------------------------------------------
-                // Handle key without case differences
-                // -----------------------------------------------------------------------
-                for ( Map.Entry<String, DocumentRenderer> entry : files.entrySet() )
-                {
-                    if ( entry.getKey().equalsIgnoreCase( key ) )
+                    String fullExtension = "." + extension;
+                    List<String> docs = new LinkedList<String>( allFiles );
+                    // Take care of extension case
+                    for ( Iterator<String> it = docs.iterator(); it.hasNext(); )
                     {
-                        RenderingContext originalContext = entry.getValue().getRenderingContext();
+                        String name = it.next();
 
-                        File originalDoc = new File( originalContext.getBasedir(), originalContext.getInputName() );
-
-                        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
+                        if ( !endsWithIgnoreCase( name, fullExtension ) )
                         {
-                            throw new RendererException( "File '" + module.getSourceDirectory() + File.separator
-                                + doc + "' clashes with existing '" + originalDoc + "'." );
-                        }
-
-                        if ( getLogger().isWarnEnabled() )
-                        {
-                            getLogger().warn(
-                                              "File '" + module.getSourceDirectory() + File.separator + doc
-                                                  + "' could clash with existing '" + originalDoc + "'." );
+                            it.remove();
                         }
                     }
-                }
 
-                files.put( key, new DoxiaDocumentRenderer( context ) );
+                    List<String> velocityFiles = new LinkedList<String>( allFiles );
+                    // *.xml.vm
+                    fullExtension += ".vm";
+                    for ( Iterator<String> it = velocityFiles.iterator(); it.hasNext(); )
+                    {
+                        String name = it.next();
+
+                        if ( !endsWithIgnoreCase( name, fullExtension ) )
+                        {
+                            it.remove();
+                        }
+                    }
+                    docs.addAll( velocityFiles );
+
+                    for ( String doc : docs )
+                    {
+
+                        RenderingContext context =
+                            new RenderingContext( moduleBasedir, doc, module.getParserId(), extension );
+
+                        // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
+                        if ( doc.substring( doc.length() - 3 ).equalsIgnoreCase( ".vm" ) )
+                        {
+                            context.setAttribute( "velocity", "true" );
+                        }
+
+                        String key = context.getOutputName();
+                        key = StringUtils.replace( key, "\\", "/" );
+
+                        if ( files.containsKey( key ) )
+                        {
+                            DocumentRenderer renderer = files.get( key );
+
+                            RenderingContext originalContext = renderer.getRenderingContext();
+
+                            File originalDoc = new File( originalContext.getBasedir(), originalContext.getInputName() );
+
+                            throw new RendererException( "File '" + module.getSourceDirectory() + File.separator + doc
+                                                             + "' clashes with existing '" + originalDoc + "'." );
+                        }
+                        // -----------------------------------------------------------------------
+                        // Handle key without case differences
+                        // -----------------------------------------------------------------------
+                        for ( Map.Entry<String, DocumentRenderer> entry : files.entrySet() )
+                        {
+                            if ( entry.getKey().equalsIgnoreCase( key ) )
+                            {
+                                RenderingContext originalContext = entry.getValue().getRenderingContext();
+
+                                File originalDoc =
+                                    new File( originalContext.getBasedir(), originalContext.getInputName() );
+
+                                if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
+                                {
+                                    throw new RendererException(
+                                        "File '" + module.getSourceDirectory() + File.separator + doc
+                                            + "' clashes with existing '" + originalDoc + "'." );
+                                }
+
+                                if ( getLogger().isWarnEnabled() )
+                                {
+                                    getLogger().warn( "File '" + module.getSourceDirectory() + File.separator + doc
+                                                          + "' could clash with existing '" + originalDoc + "'." );
+                                }
+                            }
+                        }
+
+                        files.put( key, new DoxiaDocumentRenderer( context ) );
+                    }
+                }
             }
         }
     }
 
     private void renderModule( Collection<DocumentRenderer> docs, SiteRenderingContext siteRenderingContext,
                                File outputDirectory )
-            throws IOException, RendererException
+        throws IOException, RendererException
     {
         for ( DocumentRenderer docRenderer : docs )
         {
@@ -289,8 +303,8 @@ public class DefaultSiteRenderer
 
             File inputFile = new File( renderingContext.getBasedir(), renderingContext.getInputName() );
 
-            boolean modified = !outputFile.exists() || ( inputFile.lastModified() > outputFile.lastModified() )
-                || ( siteRenderingContext.getDecoration().getLastModified() > outputFile.lastModified() );
+            boolean modified = !outputFile.exists() || ( inputFile.lastModified() > outputFile.lastModified() ) || (
+                siteRenderingContext.getDecoration().getLastModified() > outputFile.lastModified() );
 
             if ( modified || docRenderer.isOverwrite() )
             {
@@ -325,9 +339,11 @@ public class DefaultSiteRenderer
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void renderDocument( Writer writer, RenderingContext renderingContext, SiteRenderingContext siteContext )
-            throws RendererException, FileNotFoundException, UnsupportedEncodingException
+        throws RendererException, FileNotFoundException, UnsupportedEncodingException
     {
         SiteRendererSink sink = new SiteRendererSink( renderingContext );
 
@@ -403,8 +419,8 @@ public class DefaultSiteRenderer
         }
         catch ( ParseException e )
         {
-            throw new RendererException( "Error parsing '"
-                    + doc + "': line [" + e.getLineNumber() + "] " + e.getMessage(), e );
+            throw new RendererException(
+                "Error parsing '" + doc + "': line [" + e.getLineNumber() + "] " + e.getMessage(), e );
         }
         catch ( IOException e )
         {
@@ -441,8 +457,7 @@ public class DefaultSiteRenderer
 
         // DOXIASITETOOLS-70: Prepend the project name to the title, if any
         String title = "";
-        if ( siteRenderingContext.getDecoration() != null
-                && siteRenderingContext.getDecoration().getName() != null )
+        if ( siteRenderingContext.getDecoration() != null && siteRenderingContext.getDecoration().getName() != null )
         {
             title = siteRenderingContext.getDecoration().getName();
         }
@@ -472,7 +487,7 @@ public class DefaultSiteRenderer
             {
                 // we support only ISO-8601 date
                 context.put( "dateCreation",
-                        sdf.format( new SimpleDateFormat( "yyyy-MM-dd" ).parse( sink.getDate() ) ) );
+                             sdf.format( new SimpleDateFormat( "yyyy-MM-dd" ).parse( sink.getDate() ) ) );
             }
             catch ( java.text.ParseException e )
             {
@@ -511,7 +526,8 @@ public class DefaultSiteRenderer
         InputStream inputStream = null;
         try
         {
-            inputStream = this.getClass().getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven.doxia/doxia-site-renderer/pom.properties" );
+            inputStream = this.getClass().getClassLoader().getResourceAsStream(
+                "META-INF/maven/org.apache.maven.doxia/doxia-site-renderer/pom.properties" );
             if ( inputStream == null )
             {
                 getLogger().debug( "pom.properties for doxia-site-renderer could not be found." );
@@ -523,9 +539,10 @@ public class DefaultSiteRenderer
                 context.put( "doxiaSiteRendererVersion", properties.getProperty( "version" ) );
             }
         }
-        catch( IOException e )
+        catch ( IOException e )
         {
-            getLogger().debug( "Failed to load pom.properties, so doxiaVersion is not available in the velocityContext." );
+            getLogger().debug(
+                "Failed to load pom.properties, so doxiaVersion is not available in the velocityContext." );
         }
         finally
         {
@@ -558,9 +575,11 @@ public class DefaultSiteRenderer
         return context;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void generateDocument( Writer writer, SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
-            throws RendererException
+        throws RendererException
     {
         Context context = createVelocityContext( sink, siteRenderingContext );
 
@@ -568,7 +587,7 @@ public class DefaultSiteRenderer
     }
 
     private void writeTemplate( Writer writer, Context context, SiteRenderingContext siteContext )
-            throws RendererException
+        throws RendererException
     {
         ClassLoader old = null;
 
@@ -599,10 +618,10 @@ public class DefaultSiteRenderer
     }
 
     /**
-     * @noinspection OverlyBroadCatchBlock,UnusedCatchParameter
+     * @noinspection OverlyBroadCatchBlock, UnusedCatchParameter
      */
     private void processTemplate( String templateName, Context context, Writer writer )
-            throws RendererException
+        throws RendererException
     {
         Template template;
 
@@ -625,11 +644,13 @@ public class DefaultSiteRenderer
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public SiteRenderingContext createContextForSkin( File skinFile, Map<String, ?> attributes,
                                                       DecorationModel decoration, String defaultWindowTitle,
                                                       Locale locale )
-            throws IOException
+        throws IOException
     {
         SiteRenderingContext context = new SiteRenderingContext();
 
@@ -640,7 +661,7 @@ public class DefaultSiteRenderer
             if ( zipFile.getEntry( SKIN_TEMPLATE_LOCATION ) != null )
             {
                 context.setTemplateName( SKIN_TEMPLATE_LOCATION );
-                context.setTemplateClassLoader( new URLClassLoader( new URL[]{skinFile.toURI().toURL()} ) );
+                context.setTemplateClassLoader( new URLClassLoader( new URL[]{ skinFile.toURI().toURL() } ) );
             }
             else
             {
@@ -684,16 +705,19 @@ public class DefaultSiteRenderer
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public SiteRenderingContext createContextForTemplate( File templateFile, File skinFile, Map<String, ?> attributes,
                                                           DecorationModel decoration, String defaultWindowTitle,
                                                           Locale locale )
-            throws MalformedURLException
+        throws MalformedURLException
     {
         SiteRenderingContext context = new SiteRenderingContext();
 
         context.setTemplateName( templateFile.getName() );
-        context.setTemplateClassLoader( new URLClassLoader( new URL[]{templateFile.getParentFile().toURI().toURL()} ) );
+        context.setTemplateClassLoader(
+            new URLClassLoader( new URL[]{ templateFile.getParentFile().toURI().toURL() } ) );
 
         context.setTemplateProperties( attributes );
         context.setLocale( locale );
@@ -717,9 +741,12 @@ public class DefaultSiteRenderer
         }
     }
 
-    /** {@inheritDoc} */
-    public void copyResources( SiteRenderingContext siteRenderingContext, File resourcesDirectory, File outputDirectory )
-            throws IOException
+    /**
+     * {@inheritDoc}
+     */
+    public void copyResources( SiteRenderingContext siteRenderingContext, File resourcesDirectory,
+                               File outputDirectory )
+        throws IOException
     {
         if ( siteRenderingContext.getSkinJarFile() != null )
         {
@@ -755,8 +782,8 @@ public class DefaultSiteRenderer
 
         if ( siteRenderingContext.isUsingDefaultTemplate() )
         {
-            InputStream resourceList = getClass().getClassLoader()
-                    .getResourceAsStream( RESOURCE_DIR + "/resources.txt" );
+            InputStream resourceList =
+                getClass().getClassLoader().getResourceAsStream( RESOURCE_DIR + "/resources.txt" );
 
             if ( resourceList != null )
             {
@@ -843,7 +870,7 @@ public class DefaultSiteRenderer
             {
                 writer = WriterFactory.newWriter( siteCssFile, siteRenderingContext.getOutputEncoding() );
                 //DOXIA-290...the file should not be 0 bytes.
-                writer.write( "/* You can override this file with your own styles */"  );
+                writer.write( "/* You can override this file with your own styles */" );
             }
             finally
             {
@@ -853,7 +880,7 @@ public class DefaultSiteRenderer
     }
 
     private static void copyFileFromZip( ZipFile file, ZipEntry entry, File destFile )
-            throws IOException
+        throws IOException
     {
         FileOutputStream fos = new FileOutputStream( destFile );
 
@@ -875,13 +902,13 @@ public class DefaultSiteRenderer
      * @throws java.io.IOException if any
      */
     protected void copyDirectory( File source, File destination )
-            throws IOException
+        throws IOException
     {
         if ( source.exists() )
         {
             DirectoryScanner scanner = new DirectoryScanner();
 
-            String[] includedResources = {"**/**"};
+            String[] includedResources = { "**/**" };
 
             scanner.setIncludes( includedResources );
 
@@ -905,7 +932,7 @@ public class DefaultSiteRenderer
     }
 
     private Reader validate( Reader source, String resource )
-            throws ParseException, IOException
+        throws ParseException, IOException
     {
         getLogger().debug( "Validating: " + resource );
 
