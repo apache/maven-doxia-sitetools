@@ -206,7 +206,8 @@ public abstract class AbstractDocumentRenderer
         }
         else
         {
-            render( getFilesToProcess( baseDirectory ), outputDirectory, readDocumentModel( documentDescriptor ), null );
+            render( getFilesToProcess( baseDirectory ), outputDirectory, readDocumentModel( documentDescriptor ),
+                    null );
         }
     }
 
@@ -311,9 +312,9 @@ public abstract class AbstractDocumentRenderer
                 {
                     filePath = filePath.trim();
 
-                    if ( filePath.lastIndexOf( '.') > 0 )
+                    if ( filePath.lastIndexOf( '.' ) > 0 )
                     {
-                        String key = filePath.substring( 0, filePath.lastIndexOf( '.') );
+                        String key = filePath.substring( 0, filePath.lastIndexOf( '.' ) );
 
                         if ( duplicatesFiles.containsKey( key ) )
                         {

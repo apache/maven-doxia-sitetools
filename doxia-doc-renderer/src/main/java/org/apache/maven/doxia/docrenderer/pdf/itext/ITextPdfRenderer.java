@@ -552,7 +552,7 @@ public class ITextPdfRenderer
             SiteModule module = entry.getValue();
             File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
 
-            String outputITextName = key.substring( 0, key.lastIndexOf( '.') + 1 ) + "xml";
+            String outputITextName = key.substring( 0, key.lastIndexOf( '.' ) + 1 ) + "xml";
             File outputITextFileTmp = new File( outputDirectory, outputITextName );
             outputITextFileTmp.deleteOnExit();
             if ( !outputITextFileTmp.getParentFile().exists() )
@@ -575,7 +575,8 @@ public class ITextPdfRenderer
      * @throws IOException if any
      * @since 1.1.1
      */
-    private List<File> parseTOCFiles( File outputDirectory, DocumentModel documentModel, DocumentRendererContext context )
+    private List<File> parseTOCFiles( File outputDirectory, DocumentModel documentModel,
+                                      DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
         List<File> iTextFiles = new LinkedList<File>();
@@ -592,9 +593,9 @@ public class ITextPdfRenderer
             }
 
             String href = StringUtils.replace( tocItem.getRef(), "\\", "/" );
-            if ( href.lastIndexOf( '.') != -1 )
+            if ( href.lastIndexOf( '.' ) != -1 )
             {
-                href = href.substring( 0, href.lastIndexOf( '.') );
+                href = href.substring( 0, href.lastIndexOf( '.' ) );
             }
 
             Collection<SiteModule> modules = siteModuleManager.getSiteModules();
@@ -623,7 +624,7 @@ public class ITextPdfRenderer
 
                     if ( source.exists() )
                     {
-                        String outputITextName = doc.substring( 0, doc.lastIndexOf( '.') + 1 ) + "xml";
+                        String outputITextName = doc.substring( 0, doc.lastIndexOf( '.' ) + 1 ) + "xml";
                         File outputITextFileTmp = new File( outputDirectory, outputITextName );
                         outputITextFileTmp.deleteOnExit();
                         if ( !outputITextFileTmp.getParentFile().exists() )

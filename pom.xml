@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>24</version>
+    <version>26</version>
     <relativePath>../../pom/maven/pom.xml</relativePath>
   </parent>
 
@@ -379,13 +379,13 @@ under the License.
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
         <configuration>
-          <excludes>
+          <excludes combine.children="append">
             <exclude>src/test/resources/site/confluence/confluence/*.confluence</exclude>
-            <excludes>src/test/resources/org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm</excludes>
-            <excludes>src/test/resources/org/apache/maven/doxia/siterenderer/velocity-toolmanager.expected.txt</excludes>
-            <excludes>src/test/resources/dtd/xhtml-*.ent</excludes>
-            <excludes>src/test/resources/dtd/xhtml1-transitional.dtd</excludes>
-            <excludes>src/test/resources/xhtml-lat1.ent</excludes>
+            <exclude>src/test/resources/org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm</exclude>
+            <exclude>src/test/resources/org/apache/maven/doxia/siterenderer/velocity-toolmanager.expected.txt</exclude>
+            <exclude>src/test/resources/dtd/xhtml-*.ent</exclude>
+            <exclude>src/test/resources/dtd/xhtml1-transitional.dtd</exclude>
+            <exclude>src/test/resources/xhtml-lat1.ent</exclude>
           </excludes>            
         </configuration>
         <executions>

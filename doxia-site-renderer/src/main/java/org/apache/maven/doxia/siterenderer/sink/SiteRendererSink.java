@@ -41,6 +41,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  * @version $Id$
  */
+@SuppressWarnings( "checkstyle:methodname" )
 public class SiteRendererSink
     extends XhtmlSink
     implements Sink, org.codehaus.doxia.sink.Sink

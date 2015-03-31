@@ -86,7 +86,8 @@ public interface DocumentRenderer
 //     * @throws java.io.IOException if any
 //     * @since 1.1.2
 //     */
-//    void render( File baseDirectory, File outputDirectory, DocumentModel documentModel, DocumentRendererContext context )
+//    void render( File baseDirectory, File outputDirectory, DocumentModel documentModel,
+//                 DocumentRendererContext context )
 //        throws DocumentRendererException, IOException;
 
     /**

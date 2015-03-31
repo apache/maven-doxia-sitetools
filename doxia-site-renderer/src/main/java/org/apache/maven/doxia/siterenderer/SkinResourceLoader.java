@@ -70,7 +70,7 @@ public class SkinResourceLoader
 
             // following code based on org.apache.maven.doxia.sink.AbstractSink.unifyEOLs(String)
             
-            byte[] EOL = System.getProperty( "line.separator" ).getBytes();
+            byte[] eol = System.getProperty( "line.separator" ).getBytes();
 
             final int size = content.length;
 
@@ -87,11 +87,11 @@ public class SkinResourceLoader
                         i++;
                     }
 
-                    out.write( EOL );
+                    out.write( eol );
                 }
                 else if ( b == '\n' )
                 {
-                    out.write( EOL );
+                    out.write( eol );
                 }
                 else
                 {

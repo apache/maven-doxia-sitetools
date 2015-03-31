@@ -122,13 +122,13 @@ public abstract class AbstractITextRender
                 {
                     String fullPathDoc = new File( moduleBasedir, doc ).getPath();
 
-                    String outputITextName = doc.substring( 0, doc.indexOf( '.') + 1 ) + "xml";
+                    String outputITextName = doc.substring( 0, doc.indexOf( '.' ) + 1 ) + "xml";
                     File outputITextFile = new File( outputDirectory, outputITextName );
                     if ( !outputITextFile.getParentFile().exists() )
                     {
                         outputITextFile.getParentFile().mkdirs();
                     }
-                    String iTextOutputName = doc.substring( 0, doc.indexOf( '.') + 1 ) + getOutputExtension();
+                    String iTextOutputName = doc.substring( 0, doc.indexOf( '.' ) + 1 ) + getOutputExtension();
                     File iTextOutputFile = new File( outputDirectory, iTextOutputName );
                     if ( !iTextOutputFile.getParentFile().exists() )
                     {
@@ -210,7 +210,7 @@ public abstract class AbstractITextRender
                 {
                     String fullPathDoc = new File( moduleBasedir, doc ).getPath();
 
-                    String outputITextName = doc.substring( 0, doc.lastIndexOf( '.') + 1 ) + "xml";
+                    String outputITextName = doc.substring( 0, doc.lastIndexOf( '.' ) + 1 ) + "xml";
                     File outputITextFile = new File( outputDirectory, outputITextName );
 
                     if ( ( documentModel.getToc() == null ) || ( documentModel.getToc().getItems() == null ) )
@@ -240,12 +240,12 @@ public abstract class AbstractITextRender
                             }
 
                             String outTmp = StringUtils.replace( outputITextFile.getAbsolutePath(), "\\", "/" );
-                            outTmp = outTmp.substring( 0, outTmp.lastIndexOf( '.') );
+                            outTmp = outTmp.substring( 0, outTmp.lastIndexOf( '.' ) );
 
                             String outRef = StringUtils.replace( tocItem.getRef(), "\\", "/" );
-                            if ( outRef.lastIndexOf( '.') != -1 )
+                            if ( outRef.lastIndexOf( '.' ) != -1 )
                             {
-                                outRef = outRef.substring( 0, outRef.lastIndexOf( '.') );
+                                outRef = outRef.substring( 0, outRef.lastIndexOf( '.' ) );
                             }
                             else
                             {

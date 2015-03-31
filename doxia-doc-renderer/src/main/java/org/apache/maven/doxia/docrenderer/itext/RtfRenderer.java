@@ -28,6 +28,7 @@ import org.apache.maven.doxia.docrenderer.DocRenderer;
  * @version $Id$
  * @deprecated since 1.1, use an implementation of {@link org.apache.maven.doxia.docrenderer.DocumentRenderer}.
  */
+@SuppressWarnings( "checkstyle:interfaceistype" )
 public interface RtfRenderer
     extends DocRenderer
 {

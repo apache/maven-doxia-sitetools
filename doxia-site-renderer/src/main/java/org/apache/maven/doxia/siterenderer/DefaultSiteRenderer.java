@@ -99,7 +99,8 @@ public class DefaultSiteRenderer
     // Requirements
     // ----------------------------------------------------------------------
 
-    @Requirement( hint = "doxia-site-renderer" ) // DOXIA-147: dedicated component configuration hand-written in component.xml
+    @Requirement( hint = "doxia-site-renderer" ) // DOXIA-147: dedicated component configuration hand-written
+                                                 // in component.xml
     private VelocityComponent velocity;
 
     @Requirement
@@ -174,8 +175,8 @@ public class DefaultSiteRenderer
                 }
                 else
                 {
-                    addModuleFiles( module.getBasedir(), parserModuleManager.getParserModule( module.getParserId() ), null,
-                            files );
+                    addModuleFiles( module.getBasedir(), parserModuleManager.getParserModule( module.getParserId() ),
+                                    null, files );
                 }
             }
             catch ( ParserModuleNotFoundException e )
@@ -511,7 +512,9 @@ public class DefaultSiteRenderer
         InputStream inputStream = null;
         try
         {
-            inputStream = this.getClass().getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven.doxia/doxia-site-renderer/pom.properties" );
+            inputStream =
+                this.getClass().getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven.doxia"
+                                                                          + "/doxia-site-renderer/pom.properties" );
             if ( inputStream == null )
             {
                 getLogger().debug( "pom.properties for doxia-site-renderer could not be found." );
@@ -523,9 +526,10 @@ public class DefaultSiteRenderer
                 context.put( "doxiaSiteRendererVersion", properties.getProperty( "version" ) );
             }
         }
-        catch( IOException e )
+        catch ( IOException e )
         {
-            getLogger().debug( "Failed to load pom.properties, so doxiaVersion is not available in the velocityContext." );
+            getLogger().debug( "Failed to load pom.properties, so doxiaVersion is not available"
+                                   + " in the velocityContext." );
         }
         finally
         {
@@ -718,7 +722,8 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public void copyResources( SiteRenderingContext siteRenderingContext, File resourcesDirectory, File outputDirectory )
+    public void copyResources( SiteRenderingContext siteRenderingContext, File resourcesDirectory,
+                               File outputDirectory )
             throws IOException
     {
         if ( siteRenderingContext.getSkinJarFile() != null )

@@ -31,7 +31,8 @@ import org.apache.maven.doxia.docrenderer.DocumentRendererException;
  * @version $Id$
  * @since 1.1
  */
-public interface PdfRenderer extends DocumentRenderer
+public interface PdfRenderer
+    extends DocumentRenderer
 {
     /** Plexus lookup role. */
     String ROLE = PdfRenderer.class.getName();

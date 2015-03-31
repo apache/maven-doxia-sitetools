@@ -126,8 +126,9 @@ public class FoPdfRenderer
             }
 
             String generateTOC =
-                ( context != null && context.get( "generateTOC" ) != null ? context.get( "generateTOC" ).toString().trim()
-                                : "start" );
+                ( context != null && context.get( "generateTOC" ) != null )
+                        ? context.get( "generateTOC" ).toString().trim()
+                        : "start";
             int tocPosition = 0;
             if ( "start".equalsIgnoreCase( generateTOC ) )
             {
@@ -268,9 +269,9 @@ public class FoPdfRenderer
             }
 
             String href = StringUtils.replace( tocItem.getRef(), "\\", "/" );
-            if ( href.lastIndexOf( '.') != -1 )
+            if ( href.lastIndexOf( '.' ) != -1 )
             {
-                href = href.substring( 0, href.lastIndexOf( '.') );
+                href = href.substring( 0, href.lastIndexOf( '.' ) );
             }
 
             renderModules( href, sink, tocItem, context );
