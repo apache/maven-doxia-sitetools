@@ -53,6 +53,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
 import org.apache.maven.doxia.parser.ParseException;
@@ -194,86 +196,93 @@ public class DefaultSiteRenderer
         if ( moduleBasedir.exists() )
         {
             List<String> allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", excludes, false );
-
-            String fullExtension = "." + module.getExtension();
-            List<String> docs = new LinkedList<String>( allFiles );
-            // Take care of extension case
-            for ( Iterator<String> it = docs.iterator(); it.hasNext(); )
+            if ( !ArrayUtils.isEmpty( module.getExtensions() ) )
             {
-                String name = it.next();
-
-                if ( !endsWithIgnoreCase( name, fullExtension ) )
+                for ( String extension : module.getExtensions() )
                 {
-                    it.remove();
-                }
-            }
 
-            List<String> velocityFiles = new LinkedList<String>( allFiles );
-            // *.xml.vm
-            fullExtension += ".vm";
-            for ( Iterator<String> it = velocityFiles.iterator(); it.hasNext(); )
-            {
-                String name = it.next();
-
-                if ( !endsWithIgnoreCase( name, fullExtension ) )
-                {
-                    it.remove();
-                }
-            }
-            docs.addAll( velocityFiles );
-
-            for ( String doc : docs )
-            {
-                RenderingContext context =
-                        new RenderingContext( moduleBasedir, doc, module.getParserId(), module.getExtension() );
-
-                // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
-                if ( doc.substring( doc.length() - 3 ).equalsIgnoreCase( ".vm" ) )
-                {
-                    context.setAttribute( "velocity", "true" );
-                }
-
-                String key = context.getOutputName();
-                key = StringUtils.replace( key, "\\", "/" );
-
-                if ( files.containsKey( key ) )
-                {
-                    DocumentRenderer renderer = files.get( key );
-
-                    RenderingContext originalContext = renderer.getRenderingContext();
-
-                    File originalDoc = new File( originalContext.getBasedir(), originalContext.getInputName() );
-
-                    throw new RendererException( "File '" + module.getSourceDirectory() + File.separator + doc
-                        + "' clashes with existing '" + originalDoc + "'." );
-                }
-                // -----------------------------------------------------------------------
-                // Handle key without case differences
-                // -----------------------------------------------------------------------
-                for ( Map.Entry<String, DocumentRenderer> entry : files.entrySet() )
-                {
-                    if ( entry.getKey().equalsIgnoreCase( key ) )
+                    String fullExtension = "." + extension;
+                    List<String> docs = new LinkedList<String>( allFiles );
+                    // Take care of extension case
+                    for ( Iterator<String> it = docs.iterator(); it.hasNext(); )
                     {
-                        RenderingContext originalContext = entry.getValue().getRenderingContext();
+                        String name = it.next();
 
-                        File originalDoc = new File( originalContext.getBasedir(), originalContext.getInputName() );
-
-                        if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
+                        if ( !endsWithIgnoreCase( name, fullExtension ) )
                         {
-                            throw new RendererException( "File '" + module.getSourceDirectory() + File.separator
-                                + doc + "' clashes with existing '" + originalDoc + "'." );
-                        }
-
-                        if ( getLogger().isWarnEnabled() )
-                        {
-                            getLogger().warn(
-                                              "File '" + module.getSourceDirectory() + File.separator + doc
-                                                  + "' could clash with existing '" + originalDoc + "'." );
+                            it.remove();
                         }
                     }
-                }
 
-                files.put( key, new DoxiaDocumentRenderer( context ) );
+                    List<String> velocityFiles = new LinkedList<String>( allFiles );
+                    // *.xml.vm
+                    fullExtension += ".vm";
+                    for ( Iterator<String> it = velocityFiles.iterator(); it.hasNext(); )
+                    {
+                        String name = it.next();
+
+                        if ( !endsWithIgnoreCase( name, fullExtension ) )
+                        {
+                            it.remove();
+                        }
+                    }
+                    docs.addAll( velocityFiles );
+
+                    for ( String doc : docs )
+                    {
+                        RenderingContext context =
+                                new RenderingContext( moduleBasedir, doc, module.getParserId(), extension );
+
+                        // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
+                        if ( doc.substring( doc.length() - 3 ).equalsIgnoreCase( ".vm" ) )
+                        {
+                            context.setAttribute( "velocity", "true" );
+                        }
+
+                        String key = context.getOutputName();
+                        key = StringUtils.replace( key, "\\", "/" );
+
+                        if ( files.containsKey( key ) )
+                        {
+                            DocumentRenderer renderer = files.get( key );
+
+                            RenderingContext originalContext = renderer.getRenderingContext();
+
+                            File originalDoc = new File( originalContext.getBasedir(), originalContext.getInputName() );
+
+                            throw new RendererException( "File '" + module.getSourceDirectory() + File.separator + doc
+                                + "' clashes with existing '" + originalDoc + "'." );
+                        }
+                        // -----------------------------------------------------------------------
+                        // Handle key without case differences
+                        // -----------------------------------------------------------------------
+                        for ( Map.Entry<String, DocumentRenderer> entry : files.entrySet() )
+                        {
+                            if ( entry.getKey().equalsIgnoreCase( key ) )
+                            {
+                                RenderingContext originalContext = entry.getValue().getRenderingContext();
+
+                                File originalDoc = new File( originalContext.getBasedir(), 
+                                    originalContext.getInputName() );
+
+                                if ( Os.isFamily( Os.FAMILY_WINDOWS ) )
+                                {
+                                    throw new RendererException( "File '" + module.getSourceDirectory() + File.separator
+                                        + doc + "' clashes with existing '" + originalDoc + "'." );
+                                }
+
+                                if ( getLogger().isWarnEnabled() )
+                                {
+                                    getLogger().warn(
+                                                      "File '" + module.getSourceDirectory() + File.separator + doc
+                                                          + "' could clash with existing '" + originalDoc + "'." );
+                                }
+                            }
+                        }
+
+                        files.put( key, new DoxiaDocumentRenderer( context ) );
+                    }
+                }
             }
         }
     }
