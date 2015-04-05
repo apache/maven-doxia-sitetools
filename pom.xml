@@ -167,7 +167,7 @@ under the License.
   </scm>
   <issueManagement>
     <system>jira</system>
-    <url>http://jira.codehaus.org/browse/DOXIASITETOOLS</url>
+    <url>https://issues.apache.org/jira/browse/DOXIASITETOOLS</url>
   </issueManagement>
   <ciManagement>
     <system>Jenkins</system>
