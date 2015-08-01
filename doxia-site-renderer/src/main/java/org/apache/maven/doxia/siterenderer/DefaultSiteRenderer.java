@@ -317,7 +317,10 @@ public class DefaultSiteRenderer
                 Writer writer = null;
                 try
                 {
-                    writer = WriterFactory.newWriter( outputFile, siteRenderingContext.getOutputEncoding() );
+                    if ( !docRenderer.isExternalReport() )
+                    {
+                        writer = WriterFactory.newWriter( outputFile, siteRenderingContext.getOutputEncoding() );
+                    }
                     docRenderer.renderDocument( writer, this, siteRenderingContext );
                 }
                 finally

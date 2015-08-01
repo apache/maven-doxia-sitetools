@@ -69,4 +69,9 @@ public class DoxiaDocumentRenderer
         return false;
     }
 
+    public boolean isExternalReport()
+    {
+        return false;
+    }
+
 }

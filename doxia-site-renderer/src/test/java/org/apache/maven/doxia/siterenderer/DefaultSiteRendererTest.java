@@ -19,6 +19,12 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -27,6 +33,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -174,6 +181,21 @@ public class DefaultSiteRendererTest
         // Validate the rendering pages
         // ----------------------------------------------------------------------
         validatePages();
+    }
+    
+    public void testExternalReport()
+        throws Exception
+    {
+        DocumentRenderer docRenderer = mock( DocumentRenderer.class );
+        when( docRenderer.isExternalReport() ).thenReturn( true );
+        when( docRenderer.getOutputName() ).thenReturn( "external/index" );
+        when( docRenderer.getRenderingContext() ).thenReturn( new RenderingContext( new File( "" ), "index.html" )  );
+        
+        SiteRenderingContext context = new SiteRenderingContext();
+
+        renderer.render( Collections.singletonList( docRenderer ), context, new File( "target/output" ) );
+
+        verify( docRenderer ).renderDocument( isNull( Writer.class ), eq( renderer ), eq( context ) );
     }
 
     public void testVelocityToolManager()

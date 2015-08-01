@@ -64,4 +64,12 @@ public interface DocumentRenderer
      * @return whether to overwrite
      */
     boolean isOverwrite();
+    
+    /**
+     * Whether this document is an external report.
+     * 
+     * @return {@code true} if report is external, otherwise {@code false}
+     * @since 1.7
+     */
+    boolean isExternalReport();
 }
