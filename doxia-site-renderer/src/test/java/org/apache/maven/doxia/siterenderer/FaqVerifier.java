@@ -147,6 +147,10 @@ public class FaqVerifier
         assertEquals( element.getTagName(), "i" );
         assertEquals( element.asText().trim(), "italic" );
 
+        element = elementIterator.next();
+        assertEquals( element.getTagName(), "b" );
+        assertEquals( element.asText().trim(), "non-US-ASCII characters: àéèç" );
+
         p = (HtmlParagraph) elementIterator.next();
         assertEquals( p.getAttribute( "align" ), "right" );
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -34,7 +34,7 @@ under the License.
           A paragraph with a <a href="#Using_Maven">local link</a>,
           a link to another <a href="./cdc.html">source document</a>,
           an <a href="http://maven.apache.org/?l=a&amp;m=b">external link</a>
-          with entities, and an <i>italic</i> text.
+          with entities, an <i>italic</i> text and <b>non-US-ASCII characters: איטח</b>.
         </p>
       </answer>
     </faq>
