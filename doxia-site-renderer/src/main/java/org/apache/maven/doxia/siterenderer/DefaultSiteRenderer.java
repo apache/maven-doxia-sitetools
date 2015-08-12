@@ -389,14 +389,7 @@ public class DefaultSiteRenderer
                 switch ( parser.getType() )
                 {
                     case Parser.XML_TYPE:
-                        if ( siteContext.getInputEncoding() != null )
-                        {
-                            reader = ReaderFactory.newReader( doc, siteContext.getInputEncoding() );
-                        }
-                        else
-                        {
-                            reader = ReaderFactory.newXmlReader( doc );
-                        }
+                        reader = ReaderFactory.newXmlReader( doc );
                         if ( siteContext.isValidate() )
                         {
                             reader = validate( reader, resource );
