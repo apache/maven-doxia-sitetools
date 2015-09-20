@@ -171,12 +171,12 @@ public class DefaultDecorationModelInheritanceAssembler
     {
         if ( banner.getHref() != null ) // it may be empty
         {
-            banner.setHref( rebaseLink( banner.getHref(), urlContainer ) );
+            banner.setHref( urlContainer.rebaseLink( banner.getHref() ) );
         }
 
         if ( banner.getSrc() != null )
         {
-            banner.setSrc( rebaseLink( banner.getSrc(), urlContainer ) );
+            banner.setSrc( urlContainer.rebaseLink( banner.getSrc() ) );
         }
     }
 
@@ -301,7 +301,7 @@ public class DefaultDecorationModelInheritanceAssembler
 
     private void rebaseLinkItemPaths( final LinkItem item, final URLContainer urlContainer )
     {
-        item.setHref( rebaseLink( item.getHref(), urlContainer ) );
+        item.setHref( urlContainer.rebaseLink( item.getHref() ) );
     }
 
     private void relativizeLogoPaths( final Logo logo, final String baseUrl )
@@ -312,7 +312,7 @@ public class DefaultDecorationModelInheritanceAssembler
 
     private void rebaseLogoPaths( final Logo logo, final URLContainer urlContainer )
     {
-        logo.setImg( rebaseLink( logo.getImg(), urlContainer ) );
+        logo.setImg( urlContainer.rebaseLink( logo.getImg() ) );
         rebaseLinkItemPaths( logo, urlContainer );
     }
 
@@ -379,20 +379,6 @@ public class DefaultDecorationModelInheritanceAssembler
         return logos;
     }
 
-    // rebase only affects relative links, a relative link wrt an old base gets translated,
-    // so it points to the same location as viewed from a new base
-    private String rebaseLink( final String link, final URLContainer urlContainer )
-    {
-        if ( link == null || urlContainer.getOldPath() == null )
-        {
-            return link;
-        }
-
-        final URIPathDescriptor oldPath = new URIPathDescriptor( urlContainer.getOldPath(), link );
-
-        return oldPath.rebaseLink( urlContainer.getNewPath() ).toString();
-    }
-
     // relativize only affects absolute links, if the link has the same scheme, host and port
     // as the base, it is made into a relative link as viewed from the base
     private String relativizeLink( final String link, final String baseUri )
@@ -455,6 +441,22 @@ public class DefaultDecorationModelInheritanceAssembler
         public String getOldPath()
         {
             return this.oldPath;
+        }
+
+        /**
+         * Rebase only affects relative links, a relative link wrt an old base gets translated,
+         * so it points to the same location as viewed from a new base
+         */
+        public String rebaseLink( final String link )
+        {
+            if ( link == null || getOldPath() == null )
+            {
+                return link;
+            }
+
+            final URIPathDescriptor oldPath = new URIPathDescriptor( getOldPath(), link );
+
+            return oldPath.rebaseLink( getNewPath() ).toString();
         }
     }
 }
