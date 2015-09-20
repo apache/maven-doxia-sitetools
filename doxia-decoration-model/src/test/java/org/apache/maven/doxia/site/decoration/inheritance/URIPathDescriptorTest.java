@@ -33,7 +33,7 @@ import junit.framework.TestCase;
 public class URIPathDescriptorTest
     extends TestCase
 {
-    private static final String maven = "http://maven.apache.org/";
+    private static final String BASE_URL = "http://maven.apache.org/";
 
     /**
      * Test of constructor, of class URIPathDescriptor.
@@ -43,11 +43,11 @@ public class URIPathDescriptorTest
     public void testConstructor()
         throws Exception
     {
-        final String expected = maven + "doxia";
+        final String expected = BASE_URL + "doxia";
 
-        final URIPathDescriptor path = new URIPathDescriptor( maven, "doxia" );
+        final URIPathDescriptor path = new URIPathDescriptor( BASE_URL, "doxia" );
         assertEquals( expected, path.toString() );
-        assertEquals( maven, path.getBaseURI().toString() );
+        assertEquals( BASE_URL, path.getBaseURI().toString() );
         assertEquals( "doxia", path.getLink().toString() );
 
         URIPathDescriptor compare = new URIPathDescriptor( "http://maven.apache.org", "/doxia" );
@@ -83,7 +83,7 @@ public class URIPathDescriptorTest
         compare = new URIPathDescriptor( "C:\\Foo\\bar", "bar" );
         assertEquals( "C:/Foo/bar/bar", compare.toString() ); // NOTE: C: is the scheme here!
 
-        assertFailure( "/doxia", maven );
+        assertFailure( "/doxia", BASE_URL );
         assertFailure( "file:///C:/Documents and Settings/foo/", "bar" );
     }
 
@@ -95,24 +95,24 @@ public class URIPathDescriptorTest
     public void testResolveLink()
         throws Exception
     {
-        final String expected = maven + "source";
+        final String expected = BASE_URL + "source";
 
-        URIPathDescriptor oldPath = new URIPathDescriptor( maven, "source" );
+        URIPathDescriptor oldPath = new URIPathDescriptor( BASE_URL, "source" );
         assertEquals( expected, oldPath.resolveLink().toString() );
 
-        oldPath = new URIPathDescriptor( maven, "source/" );
+        oldPath = new URIPathDescriptor( BASE_URL, "source/" );
         assertEquals( expected + "/", oldPath.resolveLink().toString() );
 
-        oldPath = new URIPathDescriptor( maven, "/source" );
+        oldPath = new URIPathDescriptor( BASE_URL, "/source" );
         assertEquals( expected, oldPath.resolveLink().toString() );
 
         oldPath = new URIPathDescriptor( "http://maven.apache.org", "source" );
         assertEquals( expected, oldPath.resolveLink().toString() );
 
-        oldPath = new URIPathDescriptor( maven, "source/index.html" );
+        oldPath = new URIPathDescriptor( BASE_URL, "source/index.html" );
         assertEquals( expected + "/index.html", oldPath.resolveLink().toString() );
 
-        oldPath = new URIPathDescriptor( maven, "source/index.html?var=foo&amp;var2=bar" );
+        oldPath = new URIPathDescriptor( BASE_URL, "source/index.html?var=foo&amp;var2=bar" );
         assertEquals( expected + "/index.html?var=foo&amp;var2=bar", oldPath.resolveLink().toString() );
 
         oldPath = new URIPathDescriptor( "file:////Users/", "user" );
@@ -138,36 +138,36 @@ public class URIPathDescriptorTest
     public void testRebaseLink()
         throws Exception
     {
-        URIPathDescriptor oldPath = new URIPathDescriptor( maven, "source" );
+        URIPathDescriptor oldPath = new URIPathDescriptor( BASE_URL, "source" );
         assertEquals( "../source", oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
         assertEquals( "http://maven.apache.org/source", oldPath.rebaseLink( null ).toString() );
         assertEquals( "http://maven.apache.org/source", oldPath.rebaseLink( "C:/Documents and Settings/" ).toString() );
 
-        oldPath = new URIPathDescriptor( maven, "./" );
+        oldPath = new URIPathDescriptor( BASE_URL, "./" );
         assertEquals( "", oldPath.rebaseLink( "http://maven.apache.org/" ).toString() );
 
-        oldPath = new URIPathDescriptor( maven, "" );
+        oldPath = new URIPathDescriptor( BASE_URL, "" );
         assertEquals( "", oldPath.rebaseLink( "http://maven.apache.org/" ).toString() );
 
-        oldPath = new URIPathDescriptor( maven, "source/index.html" );
+        oldPath = new URIPathDescriptor( BASE_URL, "source/index.html" );
         assertEquals( "../source/index.html", oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
 
-        oldPath = new URIPathDescriptor( maven, "source/index.html?var=foo&amp;var2=bar" );
+        oldPath = new URIPathDescriptor( BASE_URL, "source/index.html?var=foo&amp;var2=bar" );
         assertEquals( "../source/index.html?var=foo&amp;var2=bar",
             oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
 
         oldPath = new URIPathDescriptor( "scp://people.apache.org/", "source" );
         assertEquals( "../source", oldPath.rebaseLink( "scp://people.apache.org/doxia" ).toString() );
 
-        oldPath = new URIPathDescriptor( maven, "banner/left" );
+        oldPath = new URIPathDescriptor( BASE_URL, "banner/left" );
         assertEquals( "../banner/left", oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
 
-        oldPath = new URIPathDescriptor( maven, "index.html?var=foo&amp;var2=bar" );
+        oldPath = new URIPathDescriptor( BASE_URL, "index.html?var=foo&amp;var2=bar" );
         assertEquals( "../index.html?var=foo&amp;var2=bar",
             oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
 
         oldPath = new URIPathDescriptor( "http://jakarta.apache.org/", "banner/left" );
-        assertEquals( "http://jakarta.apache.org/banner/left", oldPath.rebaseLink( maven ).toString() );
+        assertEquals( "http://jakarta.apache.org/banner/left", oldPath.rebaseLink( BASE_URL ).toString() );
 
         oldPath = new URIPathDescriptor( "file:////Users/", "user" );
         assertEquals( "../user", oldPath.rebaseLink( "file:////Users/target" ).toString() );
@@ -191,19 +191,19 @@ public class URIPathDescriptorTest
     public void testRelativizeLink()
         throws Exception
     {
-        URIPathDescriptor path = new URIPathDescriptor( maven, "source" );
+        URIPathDescriptor path = new URIPathDescriptor( BASE_URL, "source" );
         assertEquals( "source", path.relativizeLink().toString() );
 
-        path = new URIPathDescriptor( maven, "http://maven.apache.org/source" );
+        path = new URIPathDescriptor( BASE_URL, "http://maven.apache.org/source" );
         assertEquals( "source", path.relativizeLink().toString() );
 
-        path = new URIPathDescriptor( maven, "http://maven.apache.org/" );
+        path = new URIPathDescriptor( BASE_URL, "http://maven.apache.org/" );
         assertEquals( "./", path.relativizeLink().toString() );
 
-        path = new URIPathDescriptor( maven, "http://maven.apache.org" );
+        path = new URIPathDescriptor( BASE_URL, "http://maven.apache.org" );
         assertEquals( "./", path.relativizeLink().toString() );
 
-        path = new URIPathDescriptor( "http://maven.apache.org", maven );
+        path = new URIPathDescriptor( "http://maven.apache.org", BASE_URL );
         assertEquals( "./", path.relativizeLink().toString() );
 
         path = new URIPathDescriptor( "http://maven.apache.org", "http://maven.apache.org" );
@@ -215,10 +215,10 @@ public class URIPathDescriptorTest
         path = new URIPathDescriptor( "http://maven.apache.org/doxia", "http://maven.apache.org/source" );
         assertEquals( "../source", path.relativizeLink().toString() );
 
-        path = new URIPathDescriptor( maven, "http://maven.apache.org/index.html" );
+        path = new URIPathDescriptor( BASE_URL, "http://maven.apache.org/index.html" );
         assertEquals( "index.html", path.relativizeLink().toString() );
 
-        path = new URIPathDescriptor( maven, "http://maven.apache.org/index.html?var=foo&amp;var2=bar" );
+        path = new URIPathDescriptor( BASE_URL, "http://maven.apache.org/index.html?var=foo&amp;var2=bar" );
         assertEquals( "index.html?var=foo&amp;var2=bar", path.relativizeLink().toString() );
 
         path = new URIPathDescriptor( "file:////Users/", "index.html" );
@@ -242,7 +242,7 @@ public class URIPathDescriptorTest
     public void testSameSite()
         throws Exception
     {
-        final URIPathDescriptor path = new URIPathDescriptor( maven, "doxia" );
+        final URIPathDescriptor path = new URIPathDescriptor( BASE_URL, "doxia" );
 
         assertTrue( path.sameSite( new URI( "http://maven.apache.org/" ) ) );
         assertTrue( path.sameSite( new URI( "http://maven.apache.org" ) ) );
