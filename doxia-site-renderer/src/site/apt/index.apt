@@ -41,10 +41,9 @@ Doxia Site Tools - Site Renderer
 
   Site decoration can be customized with skins.
 
-  Maven team provides {{{/skins/}a collection of skins}} for projects use, but
-  {{{http://docs.codehaus.org/display/MAVENUSER/Maven+Skins}more skins are listed in MAVENUSER wiki}}.
+  Maven team provides {{{/skins/}a collection of skins}} for projects use.
 
-  Some documentation is available on {{{/plugins/maven-site-plugin/examples/creatingskins.html}how to write a new skin}}.
+  Some documentation is available on {{{/plugins/maven-site-plugin/examples/creatingskins.html}how to create a new skin}}.
 
 * Velocity processing
 
@@ -93,13 +92,13 @@ Doxia Site Tools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 || property                       || type                || description                 ||
 *---------------------------------+----------------------+-------------------------------+
-| <<<FileUtils>>>                 | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/FileUtils.html}<<<FileUtils>>>}}        |                               |
+| <<<FileUtils>>>                 | {{{http://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus/util/FileUtils.html}<<<FileUtils>>>}}        |                               |
 *---------------------------------+----------------------+-------------------------------+
-| <<<i18n>>>                      | {{{http://plexus.codehaus.org/plexus-components/plexus-i18n/apidocs/org/codehaus/plexus/i18n/I18N.html}<<<i18n>>>}} |                               |
+| <<<i18n>>>                      | {{{http://codehaus-plexus.github.io/plexus-i18n/apidocs/org/codehaus/plexus/i18n/I18N.html}<<<I18N>>>}} |                               |
 *---------------------------------+----------------------+-------------------------------+
-| <<<PathTool>>>                  | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/PathTool.html}<<<PathTool>>>}}          |                               |
+| <<<PathTool>>>                  | {{{http://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus/util/PathTool.html}<<<PathTool>>>}}          |                               |
 *---------------------------------+----------------------+-------------------------------+
-| <<<StringUtils>>>               | {{{http://plexus.codehaus.org/plexus-utils/apidocs/org/codehaus/plexus/util/StringUtils.html}<<<StringUtils>>>}}    |                               |
+| <<<StringUtils>>>               | {{{http://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus/util/StringUtils.html}<<<StringUtils>>>}}    |                               |
 *---------------------------------+----------------------+-------------------------------+
 
   See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#L428}DefaultSiteRenderer.createVelocityContext(...)}}>>>
