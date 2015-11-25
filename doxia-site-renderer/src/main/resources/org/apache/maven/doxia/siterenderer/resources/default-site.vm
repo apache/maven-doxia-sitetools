@@ -30,6 +30,8 @@ under the License.
     $href.toLowerCase().startsWith("ftp:/") || $href.toLowerCase().startsWith("mailto:") ||
     $href.toLowerCase().startsWith("file:/") || ($href.toLowerCase().indexOf("://") != -1) )
     #set ( $linkClass = ' class="externalLink"' )
+  #elseif( $target && $target == "_blank" )
+    #set ( $linkClass = ' class="newWindow"' )
   #else
     #set ( $linkClass = "" )
   #end
