@@ -347,6 +347,10 @@ under the License.
                   <packages>org.apache.maven.doxia.docrenderer*</packages>
                 </group>
                 <group>
+                  <title>Doxia Integration Tools</title>
+                  <packages>org.apache.maven.doxia.tools*</packages>
+                </group>
+                <group>
                   <title>Doxia Site Renderer</title>
                   <packages>org.apache.maven.doxia.siterenderer*</packages>
                 </group>
