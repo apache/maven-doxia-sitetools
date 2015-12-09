@@ -46,6 +46,7 @@ under the License.
   <modules>
     <module>doxia-decoration-model</module>
     <module>doxia-doc-renderer</module>
+    <module>doxia-integration-tools</module>
     <module>doxia-site-renderer</module>
   </modules>
 
