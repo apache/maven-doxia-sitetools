@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -762,8 +761,6 @@ public class DefaultSiteTool
         // we require child modules and reactors to process module menu
         if ( project.getModules().size() > 0 )
         {
-            List<MavenProject> projects = reactorProjects;
-
             if ( menu.getName() == null )
             {
                 menu.setName( i18n.getString( "site-tool", llocale, "decorationModel.menu.projectmodules" ) );
@@ -773,9 +770,8 @@ public class DefaultSiteTool
 
             // Not running reactor - search for the projects manually
             List<Model> models = new ArrayList<Model>( project.getModules().size() );
-            for ( Iterator<String> i = project.getModules().iterator(); i.hasNext(); )
+            for ( String module : (List<String>) project.getModules() )
             {
-                String module = i.next();
                 Model model;
                 File f = new File( project.getBasedir(), module + "/pom.xml" );
                 if ( f.exists() )
