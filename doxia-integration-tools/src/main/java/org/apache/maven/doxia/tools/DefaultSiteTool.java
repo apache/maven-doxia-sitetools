@@ -708,31 +708,6 @@ public class DefaultSiteTool
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * @deprecated Please use
-     *      {@link #populateParentMenu(DecorationModel, Locale, MavenProject, MavenProject, boolean)} instead
-     */
-    public void populateProjectParentMenu( DecorationModel decorationModel, Locale locale, MavenProject project,
-                                           MavenProject parentProject, boolean keepInheritedRefs )
-    {
-        populateParentMenu( decorationModel, locale, project, parentProject, keepInheritedRefs );
-    }
-
-    /**
-     * {@inheritDoc}
-     * @deprecated Please use
-     *      {@link #populateModulesMenu(MavenProject, List, ArtifactRepository, DecorationModel, Locale, boolean)}
-     *      instead
-     */
-    public void populateModules( MavenProject project, List<MavenProject> reactorProjects,
-                                 ArtifactRepository localRepository, DecorationModel decorationModel, Locale locale,
-                                 boolean keepInheritedRefs )
-        throws SiteToolException
-    {
-        populateModulesMenu( project, reactorProjects, localRepository, decorationModel, locale, keepInheritedRefs );
-    }
-
     /** {@inheritDoc} */
     public void populateModulesMenu( MavenProject project, List<MavenProject> reactorProjects,
                                      ArtifactRepository localRepository, DecorationModel decorationModel,
