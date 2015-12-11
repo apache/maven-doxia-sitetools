@@ -805,7 +805,7 @@ public class DefaultSiteTool
     }
 
     /** {@inheritDoc} */
-    public List<Locale> getAvailableLocales( String locales )
+    public List<Locale> getSiteLocales( String locales )
     {
         if ( locales == null )
         {
@@ -815,9 +815,9 @@ public class DefaultSiteTool
         String[] localesArray = StringUtils.split( locales, "," );
         List<Locale> localesList = new ArrayList<Locale>( localesArray.length );
 
-        for ( int i = 0; i < localesArray.length; i++ )
+        for ( String localeString : localesArray )
         {
-            Locale locale = codeToLocale( localesArray[i] );
+            Locale locale = codeToLocale( localeString );
 
             if ( locale == null )
             {
@@ -828,7 +828,7 @@ public class DefaultSiteTool
             {
                 if ( getLogger().isWarnEnabled() )
                 {
-                    getLogger().warn( "The locale parsed defined by '" + locale
+                    getLogger().warn( "The locale defined by '" + locale
                         + "' is not available in this Java Virtual Machine ("
                         + System.getProperty( "java.version" )
                         + " from " + System.getProperty( "java.vendor" ) + ") - IGNORING" );
@@ -844,10 +844,10 @@ public class DefaultSiteTool
                 if ( getLogger().isWarnEnabled() )
                 {
                     getLogger().warn( "The locale '" + locale + "' (" + locale.getDisplayName( Locale.ENGLISH )
-                        + ") is not currently support by Maven - IGNORING."
-                        + "\nContribution are welcome and greatly appreciated!"
+                        + ") is not currently supported by Maven Site - IGNORING."
+                        + "\nContributions are welcome and greatly appreciated!"
                         + "\nIf you want to contribute a new translation, please visit "
-                        + "http://maven.apache.org/plugins/maven-site-plugin/i18n.html for detailed instructions." );
+                        + "http://maven.apache.org/plugins/localization.html for detailed instructions." );
                 }
 
                 continue;
@@ -864,8 +864,17 @@ public class DefaultSiteTool
         return localesList;
     }
 
-    /** {@inheritDoc} */
-    public Locale codeToLocale( String localeCode )
+    /**
+     * Converts a locale code like "en", "en_US" or "en_US_win" to a <code>java.util.Locale</code>
+     * object.
+     * <p>If localeCode = <code>default</code>, return the current value of the default locale for this instance
+     * of the Java Virtual Machine.</p>
+     *
+     * @param localeCode the locale code string.
+     * @return a java.util.Locale object instanced or null if errors occurred
+     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Locale.html">java.util.Locale#getDefault()</a>
+     */
+    private Locale codeToLocale( String localeCode )
     {
         if ( localeCode == null )
         {

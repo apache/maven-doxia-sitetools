@@ -36,6 +36,8 @@ import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.PlexusTestCase;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
+
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @version $Id$
@@ -290,4 +292,18 @@ public class SiteToolTest
         assertNotNull( model );
     }
 
+
+    public void testGetAvailableLocales()
+                    throws Exception
+    {
+        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
+
+        assertEquals( Arrays.asList( new Locale[] { SiteTool.DEFAULT_LOCALE } ), tool.getSiteLocales( "en" ) );
+
+        assertEquals( Arrays.asList( new Locale[] { SiteTool.DEFAULT_LOCALE, Locale.FRENCH, Locale.ITALIAN } ),
+                      tool.getSiteLocales( "en,fr,it" ) );
+
+        // by default, only DEFAULT_LOCALE
+        assertEquals( Arrays.asList( new Locale[] { SiteTool.DEFAULT_LOCALE } ), tool.getSiteLocales( "" ) );
+    }
 }

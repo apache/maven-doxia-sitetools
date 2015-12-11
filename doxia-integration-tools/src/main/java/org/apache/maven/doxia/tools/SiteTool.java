@@ -43,7 +43,7 @@ public interface SiteTool
     String ROLE = SiteTool.class.getName();
 
     /**
-     * The locale by default for all default bundles
+     * The locale by default for a Maven Site
      * @see Locale#ENGLISH
      */
     Locale DEFAULT_LOCALE = Locale.ENGLISH;
@@ -269,25 +269,12 @@ public interface SiteTool
         throws SiteToolException;
 
     /**
-     * Init the <code>localesList</code> variable.
-     * <p>If the <code>locales</code> variable is available, the first valid token will be the
-     * <code>defaultLocale</code> for this instance of the Java Virtual Machine.</p>
+     * Extracts from a comma-separated list the locales that are available in <code>site-tool</code>
+     * resource bundle. Notice that <code>default</code> value will be changed to the default locale of
+     * the JVM.
      *
-     * @param locales A comma separated list of locales supported by Maven. The first valid token will be the
-     * default Locale for this instance of the Java Virtual Machine.
-     * @return a list of <code>Locale</code>
+     * @param locales A comma separated list of locales
+     * @return a list of <code>Locale</code>, which at least contains the Maven default locale which is english
      */
-    List<Locale> getAvailableLocales( String locales );
-
-    /**
-     * Converts a locale code like "en", "en_US" or "en_US_win" to a <code>java.util.Locale</code>
-     * object.
-     * <p>If localeCode = <code>default</code>, return the current value of the default locale for this instance
-     * of the Java Virtual Machine.</p>
-     *
-     * @param localeCode the locale code string.
-     * @return a java.util.Locale object instanced or null if errors occurred
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Locale.html">java.util.Locale#getDefault()</a>
-     */
-    Locale codeToLocale( String localeCode );
+    List<Locale> getSiteLocales( String locales );
 }
