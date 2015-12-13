@@ -124,20 +124,19 @@ public interface SiteTool
     /**
      * Get a decoration model for a project.
      *
+     * @param siteDirectory the site directory, may be <code>null</code>
+     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
      * @param project the Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.
      * @param localRepository the Maven local repository, not null.
      * @param repositories the Maven remote repositories, not null.
-     * @param siteDirectory The path to the directory containing the <code>site.xml</code> file, relative to the
-     * project base directory. If null, using by default "src/site".
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
      * @return the <code>DecorationModel</code> object corresponding to the <code>site.xml</code> file with some
      * interpolations.
      * @throws SiteToolException if any
      */
-    DecorationModel getDecorationModel( MavenProject project, List<MavenProject> reactorProjects,
-                                        ArtifactRepository localRepository, List<ArtifactRepository> repositories,
-                                        String siteDirectory, Locale locale )
+    DecorationModel getDecorationModel( File siteDirectory, Locale locale, MavenProject project,
+                                        List<MavenProject> reactorProjects, ArtifactRepository localRepository,
+                                        List<ArtifactRepository> repositories )
         throws SiteToolException;
 
     /**

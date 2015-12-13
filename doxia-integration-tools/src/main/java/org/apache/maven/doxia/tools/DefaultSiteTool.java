@@ -379,10 +379,9 @@ public class DefaultSiteTool
     }
 
     /** {@inheritDoc} */
-    public DecorationModel getDecorationModel( MavenProject project, List<MavenProject> reactorProjects,
-                                               ArtifactRepository localRepository,
-                                               List<ArtifactRepository> repositories, String siteDirectory,
-                                               Locale locale )
+    public DecorationModel getDecorationModel( File siteDirectory, Locale locale, MavenProject project,
+                                               List<MavenProject> reactorProjects, ArtifactRepository localRepository,
+                                               List<ArtifactRepository> repositories )
         throws SiteToolException
     {
         checkNotNull( "project", project );
@@ -400,9 +399,8 @@ public class DefaultSiteTool
 
         MavenProject parentProject = getParentProject( project, reactorProjects, localRepository );
 
-        DecorationModel decorationModel =
-            getDecorationModel( project, parentProject, reactorProjects, localRepository, repositories, siteDirectory,
-                                llocale, props );
+        DecorationModel decorationModel = getDecorationModel( siteDirectory, llocale, project, parentProject,
+                                                              reactorProjects, localRepository, repositories, props );
 
         if ( decorationModel == null )
         {
@@ -1021,16 +1019,16 @@ public class DefaultSiteTool
      * @param reactorProjects not null
      * @param localRepository not null
      * @param repositories not null
-     * @param siteDirectory not null
+     * @param siteDirectory may be null
      * @param locale not null
      * @param origProps not null
      * @return the decoration model depending the locale
      * @throws SiteToolException if any
      */
-    private DecorationModel getDecorationModel( MavenProject project, MavenProject parentProject,
-                                                List<MavenProject> reactorProjects, ArtifactRepository localRepository,
-                                                List<ArtifactRepository> repositories, String siteDirectory,
-                                                Locale locale, Map<String, String> origProps )
+    private DecorationModel getDecorationModel( File siteDirectory, Locale locale, MavenProject project,
+                                                MavenProject parentProject, List<MavenProject> reactorProjects,
+                                                ArtifactRepository localRepository,
+                                                List<ArtifactRepository> repositories, Map<String, String> origProps )
         throws SiteToolException
     {
         Map<String, String> props = new HashMap<String, String>( origProps );
@@ -1051,7 +1049,7 @@ public class DefaultSiteTool
         }
         else
         {
-            siteDescriptor = getSiteDescriptor( new File( project.getBasedir(), siteDirectory ), locale );
+            siteDescriptor = getSiteDescriptor( siteDirectory, locale );
         }
 
         String siteDescriptorContent = null;
@@ -1091,9 +1089,8 @@ public class DefaultSiteTool
 
             MavenProject parentParentProject = getParentProject( parentProject, reactorProjects, localRepository );
 
-            DecorationModel parent =
-                getDecorationModel( parentProject, parentParentProject, reactorProjects, localRepository, repositories,
-                                    siteDirectory, locale, props );
+            DecorationModel parent = getDecorationModel( null, locale, parentProject, parentParentProject,
+                                                         reactorProjects, localRepository, repositories, props );
 
             // MSHARED-116 requires an empty decoration model (instead of a null one)
             // MSHARED-145 requires us to do this only if there is a parent to merge it with

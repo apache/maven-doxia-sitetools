@@ -256,14 +256,12 @@ public class SiteToolTest
         project.setGroupId( "org.apache.maven" );
         project.setArtifactId( "maven-site" );
         project.setVersion( "1.0" );
-        String siteDirectory = "src/site";
         List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
 
         project.setBasedir( null ); // get it from repo
 
-        DecorationModel model =
-            tool.getDecorationModel( project, reactorProjects, getLocalRepo(), project.getRemoteArtifactRepositories(),
-                                     siteDirectory, Locale.getDefault() );
+        DecorationModel model = tool.getDecorationModel( null, Locale.getDefault(), project, reactorProjects,
+                                                         getLocalRepo(), project.getRemoteArtifactRepositories() );
         assertNotNull( model );
         assertNotNull( model.getBannerLeft() );
         assertEquals( "Maven", model.getBannerLeft().getName() );
@@ -289,8 +287,8 @@ public class SiteToolTest
         List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
 
         DecorationModel model =
-            tool.getDecorationModel( project, reactorProjects, getLocalRepo(), project.getRemoteArtifactRepositories(),
-                                     siteDirectory, Locale.getDefault() );
+            tool.getDecorationModel( new File( project.getBasedir(), siteDirectory ), Locale.getDefault(), project,
+                                     reactorProjects, getLocalRepo(), project.getRemoteArtifactRepositories() );
         assertNotNull( model );
     }
 
