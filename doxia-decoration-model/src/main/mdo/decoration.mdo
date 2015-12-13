@@ -550,8 +550,8 @@ under the License.
         <field xml.attribute="true">
           <name>ref</name>
           <description><![CDATA[
-            A reference to a pre-defined menu, such as a <code>reports</code>, <code>modules</code>
-            or <code>parent</code>.
+            Mark this menu as reference to a pre-defined menu: <code>reports</code>, <code>modules</code>
+            or <code>parent</code>. It will be populated at runtime with corresponding pre-defined content.
           ]]></description>
           <version>1.0.0+</version>
           <type>String</type>
