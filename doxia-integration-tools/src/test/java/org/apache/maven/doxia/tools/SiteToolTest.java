@@ -22,6 +22,7 @@ package org.apache.maven.doxia.tools;
 import java.io.File;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,6 +36,7 @@ import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
 import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.util.FileUtils;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 
@@ -292,7 +294,6 @@ public class SiteToolTest
         assertNotNull( model );
     }
 
-
     public void testGetAvailableLocales()
                     throws Exception
     {
@@ -305,5 +306,35 @@ public class SiteToolTest
 
         // by default, only DEFAULT_LOCALE
         assertEquals( Arrays.asList( new Locale[] { SiteTool.DEFAULT_LOCALE } ), tool.getSiteLocales( "" ) );
+    }
+
+    public void testGetInterpolatedSiteDescriptorContent()
+        throws Exception
+    {
+        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
+        assertNotNull( tool );
+
+        File pomXmlFile = getTestFile( "src/test/resources/unit/interpolated-site/pom.xml" );
+        assertNotNull( pomXmlFile );
+        assertTrue( pomXmlFile.exists() );
+
+        File descriptorFile = getTestFile( "src/test/resources/unit/interpolated-site/src/site/site.xml" );
+        assertNotNull( descriptorFile );
+        assertTrue( descriptorFile.exists() );
+
+        String siteDescriptorContent = FileUtils.fileRead( descriptorFile );
+        assertNotNull( siteDescriptorContent );
+        assertTrue( siteDescriptorContent.contains( "${project.name}" ) );
+        assertFalse( siteDescriptorContent.contains( "Interpolatesite" ) );
+
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "interpolated-site" );
+
+        SiteTool siteTool = (SiteTool) lookup( SiteTool.ROLE );
+        siteDescriptorContent =
+            siteTool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>(), project,
+                                                           siteDescriptorContent );
+        assertNotNull( siteDescriptorContent );
+        assertFalse( siteDescriptorContent.contains( "${project.name}" ) );
+        assertTrue( siteDescriptorContent.contains( "Interpolatesite" ) );
     }
 }

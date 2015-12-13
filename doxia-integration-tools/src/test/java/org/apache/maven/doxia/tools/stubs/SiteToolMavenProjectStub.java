@@ -48,12 +48,11 @@ public class SiteToolMavenProjectStub
     {
         basedir = new File( super.getBasedir() + "/src/test/resources/unit/" + projectName );
 
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
 
         try
         {
-            model = pomReader.read( new FileReader( new File( getBasedir(), "pom.xml" ) ) );
+            model = new MavenXpp3Reader().read( new FileReader( new File( getBasedir(), "pom.xml" ) ) );
             setModel( model );
         }
         catch ( Exception e )
