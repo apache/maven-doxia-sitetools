@@ -323,32 +323,32 @@ public class DefaultSiteTool
     }
 
     /** {@inheritDoc} */
-    public File getSiteDescriptorFromBasedir( String siteDirectory, File basedir, Locale locale )
+    public File getSiteDescriptor( File siteDirectory, Locale locale )
     {
-        checkNotNull( "basedir", basedir );
-
-        String dir = siteDirectory;
-        if ( dir == null )
-        {
-            // TODO need to be more dynamic
-            dir = "src/site";
-        }
-
         final Locale llocale = ( locale == null ) ? new Locale( "" ) : locale;
 
-        File siteDir = new File( basedir, dir );
-
-        File siteDescriptor = new File( siteDir, "site_" + llocale.getLanguage() + ".xml" );
+        File siteDescriptor = new File( siteDirectory, "site_" + llocale.getLanguage() + ".xml" );
 
         if ( !siteDescriptor.isFile() )
         {
-            siteDescriptor = new File( siteDir, "site.xml" );
+            siteDescriptor = new File( siteDirectory, "site.xml" );
         }
         return siteDescriptor;
     }
 
-    /** {@inheritDoc} */
-    public File getSiteDescriptorFromRepository( MavenProject project, ArtifactRepository localRepository,
+    /**
+     * Get a site descriptor from one of the repositories.
+     *
+     * @param project the Maven project, not null.
+     * @param localRepository the Maven local repository, not null.
+     * @param repositories the Maven remote repositories, not null.
+     * @param locale the locale wanted for the site descriptor. If not null, searching for
+     * <code>site_<i>localeLanguage</i>.xml</code>, otherwise searching for <code>site.xml</code>.
+     * @return the site descriptor into the local repository after download of it from repositories or null if not
+     * found in repositories.
+     * @throws SiteToolException if any
+     */
+    File getSiteDescriptorFromRepository( MavenProject project, ArtifactRepository localRepository,
                                                  List<ArtifactRepository> repositories, Locale locale )
         throws SiteToolException
     {
@@ -434,7 +434,7 @@ public class DefaultSiteTool
             populateParentMenu( decorationModel, llocale, project, parentProject, true );
         }
 
-        populateModulesMenu( project, reactorProjects, localRepository, decorationModel, llocale, true );
+        populateModulesMenu( decorationModel, llocale, project, reactorProjects, localRepository, true );
 
         if ( decorationModel.getBannerLeft() == null )
         {
@@ -445,57 +445,6 @@ public class DefaultSiteTool
         }
 
         return decorationModel;
-    }
-
-    /** {@inheritDoc} */
-    public void populateReportsMenu( DecorationModel decorationModel, Locale locale,
-                                     Map<String, List<MavenReport>> categories )
-    {
-        checkNotNull( "decorationModel", decorationModel );
-        checkNotNull( "categories", categories );
-
-        Menu menu = decorationModel.getMenuRef( "reports" );
-
-        if ( menu == null )
-        {
-            return;
-        }
-
-        final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale;
-
-        if ( menu.getName() == null )
-        {
-            menu.setName( i18n.getString( "site-tool", llocale, "decorationModel.menu.projectdocumentation" ) );
-        }
-
-        boolean found = false;
-        if ( menu.getItems().isEmpty() )
-        {
-            List<MavenReport> categoryReports = categories.get( MavenReport.CATEGORY_PROJECT_INFORMATION );
-            if ( !isEmptyList( categoryReports ) )
-            {
-                MenuItem item = createCategoryMenu(
-                                                    i18n.getString( "site-tool", llocale,
-                                                                    "decorationModel.menu.projectinformation" ),
-                                                    "/project-info.html", categoryReports, llocale );
-                menu.getItems().add( item );
-                found = true;
-            }
-
-            categoryReports = categories.get( MavenReport.CATEGORY_PROJECT_REPORTS );
-            if ( !isEmptyList( categoryReports ) )
-            {
-                MenuItem item =
-                    createCategoryMenu( i18n.getString( "site-tool", llocale, "decorationModel.menu.projectreports" ),
-                                        "/project-reports.html", categoryReports, llocale );
-                menu.getItems().add( item );
-                found = true;
-            }
-        }
-        if ( !found )
-        {
-            decorationModel.removeMenuRef( "reports" );
-        }
     }
 
     /** {@inheritDoc} */
@@ -638,8 +587,17 @@ public class DefaultSiteTool
         return parentProject;
     }
 
-    /** {@inheritDoc} */
-    public void populateParentMenu( DecorationModel decorationModel, Locale locale, MavenProject project,
+    /**
+     * Populate the pre-defined <code>parent</code> menu of the decoration model,
+     * if used through <code>&lt;menu ref="parent"/&gt;</code>.
+     *
+     * @param decorationModel the Doxia Sitetools DecorationModel, not null.
+     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
+     * @param project a Maven project, not null.
+     * @param parentProject a Maven parent project, not null.
+     * @param keepInheritedRefs used for inherited references.
+     */
+    private void populateParentMenu( DecorationModel decorationModel, Locale locale, MavenProject project,
                                     MavenProject parentProject, boolean keepInheritedRefs )
     {
         checkNotNull( "decorationModel", decorationModel );
@@ -708,10 +666,21 @@ public class DefaultSiteTool
         }
     }
 
-    /** {@inheritDoc} */
-    public void populateModulesMenu( MavenProject project, List<MavenProject> reactorProjects,
-                                     ArtifactRepository localRepository, DecorationModel decorationModel,
-                                     Locale locale, boolean keepInheritedRefs )
+    /**
+     * Populate the pre-defined <code>modules</code> menu of the decoration model,
+     * if used through <code>&lt;menu ref="modules"/&gt;</code>.
+     *
+     * @param decorationModel the Doxia Sitetools DecorationModel, not null.
+     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
+     * @param project a Maven project, not null.
+     * @param reactorProjects the Maven reactor projects, not null.
+     * @param localRepository the Maven local repository, not null.
+     * @param keepInheritedRefs used for inherited references.
+     * @throws SiteToolException if any
+     */
+    private void populateModulesMenu( DecorationModel decorationModel, Locale locale, MavenProject project,
+                                     List<MavenProject> reactorProjects, ArtifactRepository localRepository,
+                                     boolean keepInheritedRefs )
         throws SiteToolException
     {
         checkNotNull( "project", project );
@@ -776,6 +745,57 @@ public class DefaultSiteTool
         {
             // only remove if project has no modules AND menu is not inherited, see MSHARED-174
             decorationModel.removeMenuRef( "modules" );
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void populateReportsMenu( DecorationModel decorationModel, Locale locale,
+                                     Map<String, List<MavenReport>> categories )
+    {
+        checkNotNull( "decorationModel", decorationModel );
+        checkNotNull( "categories", categories );
+
+        Menu menu = decorationModel.getMenuRef( "reports" );
+
+        if ( menu == null )
+        {
+            return;
+        }
+
+        final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale;
+
+        if ( menu.getName() == null )
+        {
+            menu.setName( i18n.getString( "site-tool", llocale, "decorationModel.menu.projectdocumentation" ) );
+        }
+
+        boolean found = false;
+        if ( menu.getItems().isEmpty() )
+        {
+            List<MavenReport> categoryReports = categories.get( MavenReport.CATEGORY_PROJECT_INFORMATION );
+            if ( !isEmptyList( categoryReports ) )
+            {
+                MenuItem item = createCategoryMenu(
+                                                    i18n.getString( "site-tool", llocale,
+                                                                    "decorationModel.menu.projectinformation" ),
+                                                    "/project-info.html", categoryReports, llocale );
+                menu.getItems().add( item );
+                found = true;
+            }
+
+            categoryReports = categories.get( MavenReport.CATEGORY_PROJECT_REPORTS );
+            if ( !isEmptyList( categoryReports ) )
+            {
+                MenuItem item =
+                    createCategoryMenu( i18n.getString( "site-tool", llocale, "decorationModel.menu.projectreports" ),
+                                        "/project-reports.html", categoryReports, llocale );
+                menu.getItems().add( item );
+                found = true;
+            }
+        }
+        if ( !found )
+        {
+            decorationModel.removeMenuRef( "reports" );
         }
     }
 
@@ -1031,7 +1051,7 @@ public class DefaultSiteTool
         }
         else
         {
-            siteDescriptor = getSiteDescriptorFromBasedir( siteDirectory, project.getBasedir(), locale );
+            siteDescriptor = getSiteDescriptor( new File( project.getBasedir(), siteDirectory ), locale );
         }
 
         String siteDescriptorContent = null;

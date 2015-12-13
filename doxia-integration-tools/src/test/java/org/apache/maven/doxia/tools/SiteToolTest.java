@@ -210,12 +210,12 @@ public class SiteToolTest
         assertNotNull( tool );
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );
-        assertEquals( tool.getSiteDescriptorFromBasedir( null, project.getBasedir(), null ).toString(),
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), null ).toString(),
             project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
-        assertEquals( tool.getSiteDescriptorFromBasedir( null, project.getBasedir(), Locale.ENGLISH ).toString(),
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.ENGLISH ).toString(),
             project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
         String siteDir = "src/blabla";
-        assertEquals( tool.getSiteDescriptorFromBasedir( siteDir, project.getBasedir(), null ).toString(),
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), siteDir ), null ).toString(),
             project.getBasedir() + File.separator + "src" + File.separator + "blabla" + File.separator + "site.xml" );
     }
 
@@ -225,7 +225,7 @@ public class SiteToolTest
     public void testGetSiteDescriptorFromRepository()
         throws Exception
     {
-        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
+        DefaultSiteTool tool = (DefaultSiteTool) lookup( SiteTool.ROLE );
         assertNotNull( tool );
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );

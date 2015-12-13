@@ -78,83 +78,14 @@ public interface SiteTool
         throws SiteToolException;
 
     /**
-     * Calculate the relative path between two URLs or between two files.
+     * Get a site descriptor from the project's site directory.
      *
-     * For example:
-     * <dl>
-     * <dt>to = "http://maven.apache.org" and from = "http://maven.apache.org"</dt>
-     * <dd>return ""</dd>
-     * <dt>to = "http://maven.apache.org" and from = "http://maven.apache.org/plugins/maven-site-plugin/"</dt>
-     * <dd>return "../.."</dd>
-     * <dt>to = "http://maven.apache.org/plugins/maven-site-plugin/" and from = "http://maven.apache.org"</dt>
-     * <dd>return "plugins/maven-site-plugin"</dd>
-     * <dt>to = "/myproject/myproject-module1" and from = "/myproject/myproject"</dt>
-     * <dd>return "../myproject-module1"</dd>
-     * </dl>
-     * <b>Note</b>: The file separator depends on the system.
-     *
-     * @param to the <code>to</code> url of file as string
-     * @param from the <code>from</code> url of file as string
-     * @return a relative path from <code>from</code> to <code>to</code>.
-     */
-    String getRelativePath( String to, String from );
-
-    /**
-     * Get a site descriptor from the project's base directory.
-     *
-     * @param siteDirectory The path to the directory containing the <code>site.xml</code> file, relative to the
-     * project base directory. If null, using by default "src/site".
-     * @param basedir not null.
+     * @param siteDirectory the site directory
      * @param locale the locale wanted for the site descriptor. If not null, searching for
      * <code>site_<i>localeLanguage</i>.xml</code>, otherwise searching for <code>site.xml</code>.
-     * @return the site descriptor relative file, i.e. <code>src/site/site.xml</code>, depending on parameter values.
-     */
-    File getSiteDescriptorFromBasedir( String siteDirectory, File basedir, Locale locale );
-
-    /**
-     * Get a site descriptor from one of the repositories.
-     *
-     * @param project the Maven project, not null.
-     * @param localRepository the Maven local repository, not null.
-     * @param repositories the Maven remote repositories, not null.
-     * @param locale the locale wanted for the site descriptor. If not null, searching for
-     * <code>site_<i>localeLanguage</i>.xml</code>, otherwise searching for <code>site.xml</code>.
-     * @return the site descriptor into the local repository after download of it from repositories or null if not
-     * found in repositories.
-     * @throws SiteToolException if any
-     */
-    File getSiteDescriptorFromRepository( MavenProject project, ArtifactRepository localRepository,
-                                          List<ArtifactRepository> repositories, Locale locale )
-        throws SiteToolException;
-
-    /**
-     * Get a decoration model for a project.
-     *
-     * @param project the Maven project, not null.
-     * @param reactorProjects the Maven reactor projects, not null.
-     * @param localRepository the Maven local repository, not null.
-     * @param repositories the Maven remote repositories, not null.
-     * @param siteDirectory The path to the directory containing the <code>site.xml</code> file, relative to the
-     * project base directory. If null, using by default "src/site".
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
-     * @return the <code>DecorationModel</code> object corresponding to the <code>site.xml</code> file with some
-     * interpolations.
-     * @throws SiteToolException if any
-     */
-    DecorationModel getDecorationModel( MavenProject project, List<MavenProject> reactorProjects,
-                                        ArtifactRepository localRepository, List<ArtifactRepository> repositories,
-                                        String siteDirectory, Locale locale )
-        throws SiteToolException;
-
-    /**
-     * Populate the reports menu part of the decoration model.
-     *
-     * @param decorationModel the Doxia DecorationModel, not null.
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
-     * @param categories a map to put on the decoration model, not null.
-     */
-    void populateReportsMenu( DecorationModel decorationModel, Locale locale,
-                              Map<String, List<MavenReport>> categories );
+     * @return the site descriptor file
+     */ // used by maven-pdf-plugin (should not?)
+    File getSiteDescriptor( File siteDirectory, Locale locale );
 
     /**
      * Interpolating several expressions in the site descriptor content. Actually, the expressions can be in
@@ -182,15 +113,78 @@ public interface SiteTool
      *
      * @param props a map used for interpolation, not null.
      * @param aProject a Maven project, not null.
-     * @param inputEncoding the input encoding of the site descriptor, not null.
-     * @param outputEncoding the output encoding wanted, not null.
      * @param siteDescriptorContent the site descriptor file, not null.
-     * @return the site descriptor content based on the <code>site.xml</code> file with interpolated strings.
+     * @return the interpolated site descriptor content.
      * @throws SiteToolException if errors happened during the interpolation.
-     */
+     */ // used by maven-pdf-plugin (should not?)
     String getInterpolatedSiteDescriptorContent( Map<String, String> props, MavenProject aProject,
                                                  String siteDescriptorContent )
         throws SiteToolException;
+
+    /**
+     * Get a decoration model for a project.
+     *
+     * @param project the Maven project, not null.
+     * @param reactorProjects the Maven reactor projects, not null.
+     * @param localRepository the Maven local repository, not null.
+     * @param repositories the Maven remote repositories, not null.
+     * @param siteDirectory The path to the directory containing the <code>site.xml</code> file, relative to the
+     * project base directory. If null, using by default "src/site".
+     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
+     * @return the <code>DecorationModel</code> object corresponding to the <code>site.xml</code> file with some
+     * interpolations.
+     * @throws SiteToolException if any
+     */
+    DecorationModel getDecorationModel( MavenProject project, List<MavenProject> reactorProjects,
+                                        ArtifactRepository localRepository, List<ArtifactRepository> repositories,
+                                        String siteDirectory, Locale locale )
+        throws SiteToolException;
+
+    /**
+     * Populate the pre-defined <code>reports</code> menu of the decoration model,
+     * if used through <code>&lt;menu ref="reports"/&gt;</code>. Notice this menu reference is translated into
+     * 2 separate menus: "Project Information" and "Project Reports".
+     *
+     * @param decorationModel the Doxia Sitetools DecorationModel, not null.
+     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
+     * @param reportsPerCategory reports per category to put in "Reports" or "Information" menus, not null.
+     * @see MavenReport#CATEGORY_PROJECT_INFORMATION
+     * @see MavenReport#CATEGORY_PROJECT_REPORTS
+     */
+    void populateReportsMenu( DecorationModel decorationModel, Locale locale,
+                              Map<String, List<MavenReport>> reportsPerCategory );
+
+    /**
+     * Extracts from a comma-separated list the locales that are available in <code>site-tool</code>
+     * resource bundle. Notice that <code>default</code> value will be changed to the default locale of
+     * the JVM.
+     *
+     * @param locales A comma separated list of locales
+     * @return a list of <code>Locale</code>, which at least contains the Maven default locale which is english
+     */
+    List<Locale> getSiteLocales( String locales );
+
+    /**
+     * Calculate the relative path between two URLs or between two files.
+     *
+     * For example:
+     * <dl>
+     * <dt>to = "http://maven.apache.org" and from = "http://maven.apache.org"</dt>
+     * <dd>return ""</dd>
+     * <dt>to = "http://maven.apache.org" and from = "http://maven.apache.org/plugins/maven-site-plugin/"</dt>
+     * <dd>return "../.."</dd>
+     * <dt>to = "http://maven.apache.org/plugins/maven-site-plugin/" and from = "http://maven.apache.org"</dt>
+     * <dd>return "plugins/maven-site-plugin"</dd>
+     * <dt>to = "/myproject/myproject-module1" and from = "/myproject/myproject"</dt>
+     * <dd>return "../myproject-module1"</dd>
+     * </dl>
+     * <b>Note</b>: The file separator depends on the system.
+     *
+     * @param to the <code>to</code> url of file as string
+     * @param from the <code>from</code> url of file as string
+     * @return a relative path from <code>from</code> to <code>to</code>.
+     */
+    String getRelativePath( String to, String from );
 
     /**
      * Returns the parent POM with interpolated URLs. Attempts to source this value from the
@@ -207,42 +201,4 @@ public interface SiteTool
      */
     MavenProject getParentProject( MavenProject aProject, List<MavenProject> reactorProjects,
                                    ArtifactRepository localRepository );
-
-    /**
-     * Populate the parent menu part of the decoration model.
-     *
-     * @param decorationModel the Doxia DecorationModel, not null.
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
-     * @param project a Maven project, not null.
-     * @param parentProject a Maven parent project, not null.
-     * @param keepInheritedRefs used for inherited references.
-     */
-    void populateParentMenu( DecorationModel decorationModel, Locale locale, MavenProject project,
-                             MavenProject parentProject, boolean keepInheritedRefs );
-
-    /**
-     * Populate the modules menu part of the decoration model.
-     *
-     * @param project a Maven project, not null.
-     * @param reactorProjects the Maven reactor projects, not null.
-     * @param localRepository the Maven local repository, not null.
-     * @param decorationModel the Doxia site descriptor model, not null.
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
-     * @param keepInheritedRefs used for inherited references.
-     * @throws SiteToolException if any
-     */
-    void populateModulesMenu( MavenProject project, List<MavenProject> reactorProjects,
-                              ArtifactRepository localRepository, DecorationModel decorationModel, Locale locale,
-                              boolean keepInheritedRefs )
-        throws SiteToolException;
-
-    /**
-     * Extracts from a comma-separated list the locales that are available in <code>site-tool</code>
-     * resource bundle. Notice that <code>default</code> value will be changed to the default locale of
-     * the JVM.
-     *
-     * @param locales A comma separated list of locales
-     * @return a list of <code>Locale</code>, which at least contains the Maven default locale which is english
-     */
-    List<Locale> getSiteLocales( String locales );
 }
