@@ -402,7 +402,7 @@ public class DefaultSiteTool
 
         MavenProject parentProject = getParentProject( project, reactorProjects, localRepository );
 
-        DecorationModel decorationModel = getDecorationModel( siteDirectory, llocale, project, parentProject,
+        DecorationModel decorationModel = getDecorationModel( 0, siteDirectory, llocale, project, parentProject,
                                                               reactorProjects, localRepository, repositories, props );
 
         if ( decorationModel == null )
@@ -1025,6 +1025,7 @@ public class DefaultSiteTool
     }
 
     /**
+     * @param depth depth of project
      * @param siteDirectory, can be null if project.basedir is null, ie POM from repository
      * @param locale not null
      * @param project not null
@@ -1035,7 +1036,7 @@ public class DefaultSiteTool
      * @return the decoration model depending the locale
      * @throws SiteToolException if any
      */
-    private DecorationModel getDecorationModel( File siteDirectory, Locale locale, MavenProject project,
+    private DecorationModel getDecorationModel( int depth, File siteDirectory, Locale locale, MavenProject project,
                                                 MavenProject parentProject, List<MavenProject> reactorProjects,
                                                 ArtifactRepository localRepository,
                                                 List<ArtifactRepository> repositories, Map<String, String> origProps )
@@ -1099,7 +1100,8 @@ public class DefaultSiteTool
 
         if ( parentProject != null && ( decoration == null || decoration.isMergeParent() ) )
         {
-            getLogger().debug( "Looking for parent project site descriptor: " + parentProject.getId() );
+            depth++;
+            getLogger().debug( depth + "> Looking for parent project site descriptor: " + parentProject.getId() );
 
             MavenProject parentParentProject = getParentProject( parentProject, reactorProjects, localRepository );
 
@@ -1116,8 +1118,8 @@ public class DefaultSiteTool
             }
 
             DecorationModel parent =
-                getDecorationModel( parentSiteDirectory, locale, parentProject, parentParentProject, reactorProjects,
-                                    localRepository, repositories, props );
+                getDecorationModel( depth, parentSiteDirectory, locale, parentProject, parentParentProject,
+                                    reactorProjects, localRepository, repositories, props );
 
             // MSHARED-116 requires an empty decoration model (instead of a null one)
             // MSHARED-145 requires us to do this only if there is a parent to merge it with
@@ -1138,11 +1140,13 @@ public class DefaultSiteTool
             String parentDistMgmnt = getDistMgmntSiteUrl( parentProject );
             if ( getLogger().isDebugEnabled() )
             {
-                getLogger().debug( "assembling decoration model inheritance: distributionManagement.site.url child = " + projectDistMgmnt
-                    + " and parent = " + parentDistMgmnt );
+                getLogger().debug( "assembling decoration model inheritance: distributionManagement.site.url child = "
+                    + projectDistMgmnt + " and parent = " + parentDistMgmnt );
             }
             assembler.assembleModelInheritance( name, decoration, parent, projectDistMgmnt,
                                                 parentDistMgmnt == null ? projectDistMgmnt : parentDistMgmnt );
+
+            getLogger().debug( depth + "< decoration model ready for: " + parentProject.getId() );
         }
 
         return decoration;
