@@ -447,11 +447,6 @@ public class DefaultSiteTool
             decorationModel.setBannerLeft( banner );
         }
 
-        if ( decorationModel != null && decorationModel.getSkin() != null )
-        {
-            getLogger().debug( "Skin used: " + decorationModel.getSkin() );
-        }
-
         return decorationModel;
     }
 
