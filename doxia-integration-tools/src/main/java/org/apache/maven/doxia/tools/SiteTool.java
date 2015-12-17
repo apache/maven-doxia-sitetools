@@ -80,7 +80,7 @@ public interface SiteTool
     /**
      * Get a site descriptor from the project's site directory.
      *
-     * @param siteDirectory the site directory
+     * @param siteDirectory the site directory, not null
      * @param locale the locale wanted for the site descriptor. If not null, searching for
      * <code>site_<i>localeLanguage</i>.xml</code>, otherwise searching for <code>site.xml</code>.
      * @return the site descriptor file
@@ -124,7 +124,7 @@ public interface SiteTool
     /**
      * Get a decoration model for a project.
      *
-     * @param siteDirectory the site directory, may be <code>null</code>
+     * @param siteDirectory the site directory, may be null if project from repository
      * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
      * @param project the Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.

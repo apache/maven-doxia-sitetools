@@ -325,6 +325,7 @@ public class DefaultSiteTool
     /** {@inheritDoc} */
     public File getSiteDescriptor( File siteDirectory, Locale locale )
     {
+        checkNotNull( "siteDirectory", siteDirectory );
         final Locale llocale = ( locale == null ) ? new Locale( "" ) : locale;
 
         File siteDescriptor = new File( siteDirectory, "site_" + llocale.getLanguage() + ".xml" );
@@ -391,6 +392,8 @@ public class DefaultSiteTool
 
         final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale;
 
+        getLogger().debug( "Computing decoration model for locale " + llocale );
+
         Map<String, String> props = new HashMap<String, String>( 2 );
 
         // This is to support the deprecated ${reports} and ${modules} tags.
@@ -404,6 +407,8 @@ public class DefaultSiteTool
 
         if ( decorationModel == null )
         {
+            getLogger().debug( "Using default site descriptor" );
+
             String siteDescriptorContent;
 
             InputStream in = null;
@@ -440,6 +445,11 @@ public class DefaultSiteTool
             Banner banner = new Banner();
             banner.setName( project.getName() );
             decorationModel.setBannerLeft( banner );
+        }
+
+        if ( decorationModel != null && decorationModel.getSkin() != null )
+        {
+            getLogger().debug( "Skin used: " + decorationModel.getSkin() );
         }
 
         return decorationModel;
@@ -1015,12 +1025,12 @@ public class DefaultSiteTool
     }
 
     /**
+     * @param siteDirectory, can be null if project.basedir is null, ie POM from repository
+     * @param locale not null
      * @param project not null
      * @param reactorProjects not null
      * @param localRepository not null
      * @param repositories not null
-     * @param siteDirectory may be null
-     * @param locale not null
      * @param origProps not null
      * @return the decoration model depending the locale
      * @throws SiteToolException if any
@@ -1064,6 +1074,10 @@ public class DefaultSiteTool
                 siteDescriptorContent = IOUtil.toString( siteDescriptorReader );
                 siteDescriptorLastModified = siteDescriptor.lastModified();
             }
+            else
+            {
+                getLogger().debug( "No site descriptor found for " + project.getId() );
+            }
         }
         catch ( IOException e )
         {
@@ -1085,12 +1099,25 @@ public class DefaultSiteTool
 
         if ( parentProject != null && ( decoration == null || decoration.isMergeParent() ) )
         {
-            getLogger().debug( "Loading parent project site descriptor..." );
+            getLogger().debug( "Looking for parent project site descriptor: " + parentProject.getId() );
 
             MavenProject parentParentProject = getParentProject( parentProject, reactorProjects, localRepository );
 
-            DecorationModel parent = getDecorationModel( null, locale, parentProject, parentParentProject,
-                                                         reactorProjects, localRepository, repositories, props );
+            File parentSiteDirectory = null;
+
+            if ( parentProject.getBasedir() != null )
+            {
+                String siteRelativePath = getRelativeFilePath( project.getBasedir().getAbsolutePath(),
+                                                               siteDescriptor.getParentFile().getAbsolutePath() );
+
+                parentSiteDirectory = new File( parentProject.getBasedir(), siteRelativePath );
+                // notice: using same siteRelativePath for parent as current project; may be wrong if site plugin
+                // has different configuration. But this is a rare case (this only has impact if parent if from reactor)
+            }
+
+            DecorationModel parent =
+                getDecorationModel( parentSiteDirectory, locale, parentProject, parentParentProject, reactorProjects,
+                                    localRepository, repositories, props );
 
             // MSHARED-116 requires an empty decoration model (instead of a null one)
             // MSHARED-145 requires us to do this only if there is a parent to merge it with
@@ -1111,16 +1138,11 @@ public class DefaultSiteTool
             String parentDistMgmnt = getDistMgmntSiteUrl( parentProject );
             if ( getLogger().isDebugEnabled() )
             {
-                getLogger().debug( "model inheritance distributionManagement.site.url child = " + projectDistMgmnt
-                    + ", parent = " + parentDistMgmnt );
+                getLogger().debug( "assembling decoration model inheritance: distributionManagement.site.url child = " + projectDistMgmnt
+                    + " and parent = " + parentDistMgmnt );
             }
             assembler.assembleModelInheritance( name, decoration, parent, projectDistMgmnt,
                                                 parentDistMgmnt == null ? projectDistMgmnt : parentDistMgmnt );
-        }
-
-        if ( decoration != null && decoration.getSkin() != null )
-        {
-            getLogger().debug( "Skin used: " + decoration.getSkin() );
         }
 
         return decoration;

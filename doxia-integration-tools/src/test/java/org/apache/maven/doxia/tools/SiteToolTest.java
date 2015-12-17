@@ -258,19 +258,34 @@ public class SiteToolTest
         project.setVersion( "1.0" );
         List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
 
-        project.setBasedir( null ); // get it from repo
-
-        DecorationModel model = tool.getDecorationModel( null, Locale.getDefault(), project, reactorProjects,
-                                                         getLocalRepo(), project.getRemoteArtifactRepositories() );
+        // model from current local build
+        DecorationModel model =
+            tool.getDecorationModel( new File( project.getBasedir(), "src/site" ), Locale.getDefault(), project,
+                                     reactorProjects, getLocalRepo(), project.getRemoteArtifactRepositories() );
         assertNotNull( model );
         assertNotNull( model.getBannerLeft() );
-        assertEquals( "Maven", model.getBannerLeft().getName() );
-        assertEquals( "images/apache-maven-project-2.png", model.getBannerLeft().getSrc() );
+        assertEquals( "Maven Site", model.getBannerLeft().getName() );
+        assertEquals( "http://maven.apache.org/images/apache-maven-project.png", model.getBannerLeft().getSrc() );
         assertEquals( "http://maven.apache.org/", model.getBannerLeft().getHref() );
         assertNotNull( model.getBannerRight() );
         assertNull( model.getBannerRight().getName() );
-        assertEquals( "images/maven-logo-2.gif", model.getBannerRight().getSrc() );
+        assertEquals( "http://maven.apache.org/images/maven-small.gif", model.getBannerRight().getSrc() );
         assertNull( model.getBannerRight().getHref() );
+
+        // model from repo: http://repo1.maven.org/maven2/org/apache/maven/maven-site/1.0/maven-site-1.0-site.xml
+        project.setBasedir( null );
+        DecorationModel modelFromRepo =
+            tool.getDecorationModel( null, Locale.getDefault(), project, reactorProjects, getLocalRepo(),
+                                     project.getRemoteArtifactRepositories() );
+        assertNotNull( modelFromRepo );
+        assertNotNull( modelFromRepo.getBannerLeft() );
+        assertEquals( "Maven", modelFromRepo.getBannerLeft().getName() );
+        assertEquals( "images/apache-maven-project-2.png", modelFromRepo.getBannerLeft().getSrc() );
+        assertEquals( "http://maven.apache.org/", modelFromRepo.getBannerLeft().getHref() );
+        assertNotNull( modelFromRepo.getBannerRight() );
+        assertNull( modelFromRepo.getBannerRight().getName() );
+        assertEquals( "images/maven-logo-2.gif", modelFromRepo.getBannerRight().getSrc() );
+        assertNull( modelFromRepo.getBannerRight().getHref() );
     }
 
     /**
