@@ -70,7 +70,7 @@ public interface Renderer
         throws RendererException;
 
     /**
-     * Return a SiteRenderingContext.
+     * Return a SiteRenderingContext for a site using a skin.
      *
      * @param skinFile
      * @param attributes
@@ -85,7 +85,7 @@ public interface Renderer
         throws IOException;
 
     /**
-     * Return a SiteRenderingContext.
+     * Return a SiteRenderingContext for a site using a local template.
      *
      * @param templateFile
      * @param skinFile
@@ -108,8 +108,20 @@ public interface Renderer
      * @param resourcesDirectory
      * @param outputDirectory
      * @throws java.io.IOException if it bombs.
+     * @deprecated since 1.7, use copyResources without resourcesDirectory parameter
      */
     void copyResources( SiteRenderingContext siteRenderingContext, File resourcesDirectory, File outputDirectory )
+        throws IOException;
+
+    /**
+     * Copy resource files from skin, template, and site resources.
+     *
+     * @param siteRenderingContext
+     * @param outputDirectory
+     * @throws java.io.IOException if it bombs.
+     * @since 1.7
+     */
+    void copyResources( SiteRenderingContext siteRenderingContext, File outputDirectory )
         throws IOException;
 
     /**
@@ -124,7 +136,7 @@ public interface Renderer
         throws IOException, RendererException;
 
     /**
-     * Render a document.
+     * Render a document written in a Doxia markup language.
      *
      * @param writer the writer to render the document to.
      * @param renderingContext the document's rendering context

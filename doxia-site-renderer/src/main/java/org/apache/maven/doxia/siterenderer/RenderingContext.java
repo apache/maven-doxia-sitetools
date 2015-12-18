@@ -28,7 +28,7 @@ import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * The rendering context of a document.
+ * The rendering context of a document written in a Doxia supported markup.
  *
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @version $Id$

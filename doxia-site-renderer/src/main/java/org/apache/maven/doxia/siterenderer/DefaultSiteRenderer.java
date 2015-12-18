@@ -125,19 +125,6 @@ public class DefaultSiteRenderer
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public void render( Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext,
-                        File outputDirectory )
-        throws RendererException, IOException
-    {
-        renderModule( documents, siteRenderingContext, outputDirectory );
-
-        for ( File siteDirectory : siteRenderingContext.getSiteDirectories() )
-        {
-            copyResources( siteRenderingContext, new File( siteDirectory, "resources" ), outputDirectory );
-        }
-    }
-
-    /** {@inheritDoc} */
     public Map<String, DocumentRenderer> locateDocumentFiles( SiteRenderingContext siteRenderingContext )
             throws IOException, RendererException
     {
@@ -287,11 +274,12 @@ public class DefaultSiteRenderer
         }
     }
 
-    private void renderModule( Collection<DocumentRenderer> docs, SiteRenderingContext siteRenderingContext,
-                               File outputDirectory )
-            throws IOException, RendererException
+    /** {@inheritDoc} */
+    public void render( Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext,
+                        File outputDirectory )
+        throws RendererException, IOException
     {
-        for ( DocumentRenderer docRenderer : docs )
+        for ( DocumentRenderer docRenderer : documents )
         {
             RenderingContext renderingContext = docRenderer.getRenderingContext();
 
@@ -734,8 +722,14 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public void copyResources( SiteRenderingContext siteRenderingContext, File resourcesDirectory,
-                               File outputDirectory )
+    public void copyResources( SiteRenderingContext siteRenderingContext, File resourcesDirectory, File outputDirectory )
+            throws IOException
+    {
+        throw new AssertionError( "copyResources( SiteRenderingContext, File, File ) is deprecated." );
+    }
+
+    /** {@inheritDoc} */
+    public void copyResources( SiteRenderingContext siteRenderingContext, File outputDirectory )
             throws IOException
     {
         if ( siteRenderingContext.getSkinJarFile() != null )
@@ -831,9 +825,14 @@ public class DefaultSiteRenderer
         }
 
         // Copy extra site resources
-        if ( resourcesDirectory != null && resourcesDirectory.exists() )
+        for ( File siteDirectory : siteRenderingContext.getSiteDirectories() )
         {
-            copyDirectory( resourcesDirectory, outputDirectory );
+            File resourcesDirectory = new File( siteDirectory, "resources" );
+
+            if ( resourcesDirectory != null && resourcesDirectory.exists() )
+            {
+                copyDirectory( resourcesDirectory, outputDirectory );
+            }
         }
 
         // Check for the existence of /css/site.css
@@ -853,7 +852,7 @@ public class DefaultSiteRenderer
             if ( getLogger().isDebugEnabled() )
             {
                 getLogger().debug(
-                    "The file '" + siteCssFile.getAbsolutePath() + "' does not exists. Creating an empty file." );
+                    "The file '" + siteCssFile.getAbsolutePath() + "' does not exist. Creating an empty file." );
             }
             Writer writer = null;
             try
