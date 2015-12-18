@@ -722,15 +722,16 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public void copyResources( SiteRenderingContext siteRenderingContext, File resourcesDirectory, File outputDirectory )
-            throws IOException
+    public void copyResources( SiteRenderingContext siteRenderingContext, File resourcesDirectory,
+                               File outputDirectory )
+        throws IOException
     {
         throw new AssertionError( "copyResources( SiteRenderingContext, File, File ) is deprecated." );
     }
 
     /** {@inheritDoc} */
     public void copyResources( SiteRenderingContext siteRenderingContext, File outputDirectory )
-            throws IOException
+        throws IOException
     {
         if ( siteRenderingContext.getSkinJarFile() != null )
         {
