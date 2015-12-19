@@ -25,7 +25,7 @@ package org.apache.maven.doxia.siterenderer;
  * @author Emmanuel Venisse
  * @version $Id$
  */
-public class SiteRendererException
+public class RendererException
     extends Exception
 {
 
@@ -36,7 +36,7 @@ public class SiteRendererException
      *
      * @param message a custom message.
      */
-    public SiteRendererException( String message )
+    public RendererException( String message )
     {
         super( message );
     }
@@ -47,7 +47,7 @@ public class SiteRendererException
      * @param message a custom message.
      * @param t the cause.
      */
-    public SiteRendererException( String message, Throwable t )
+    public RendererException( String message, Throwable t )
     {
         super( message, t );
     }

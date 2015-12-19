@@ -70,7 +70,7 @@ public class DefaultSiteRendererTest
     /**
      * The renderer used to produce output.
      */
-    private SiteRenderer renderer;
+    private Renderer renderer;
 
     /**
      * The locale before executing tests.
@@ -89,7 +89,7 @@ public class DefaultSiteRendererTest
     {
         super.setUp();
 
-        renderer = (SiteRenderer) lookup( SiteRenderer.class );
+        renderer = (Renderer) lookup( Renderer.ROLE );
 
         // copy the default-site.vm
         InputStream is =
@@ -225,7 +225,7 @@ public class DefaultSiteRendererTest
         Map<String, ?> attributes = Collections.emptyMap();
 
         SiteRenderingContext siteRenderingContext =
-            renderer.createSiteContextForTemplate( templateFile, null, attributes, new DecorationModel(),
+            renderer.createContextForTemplate( templateFile, null, attributes, new DecorationModel(),
                                                "defaultWindowTitle", Locale.ENGLISH );
         RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
         SiteRendererSink sink = new SiteRendererSink( context );
@@ -244,7 +244,7 @@ public class DefaultSiteRendererTest
         File skinFile = skinJar;
         Map<String, ?> attributes = Collections.emptyMap();
         SiteRenderingContext siteRenderingContext =
-            renderer.createSiteContextForSkin( skinFile, attributes, new DecorationModel(), "defaultWindowTitle",
+            renderer.createContextForSkin( skinFile, attributes, new DecorationModel(), "defaultWindowTitle",
                                            Locale.ENGLISH );
         RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
         SiteRendererSink sink = new SiteRendererSink( context );

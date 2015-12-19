@@ -26,13 +26,13 @@ import java.io.File;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-class DoxiaModuleReference
+class ModuleReference
 {
     private final String parserId;
 
     private final File basedir;
 
-    DoxiaModuleReference( String parserId, File basedir )
+    ModuleReference( String parserId, File basedir )
     {
         this.parserId = parserId;
         this.basedir = basedir;

@@ -65,7 +65,7 @@ public class SiteRenderingContext
 
     private Map<String, String> moduleExcludes;
 
-    private List<DoxiaModuleReference> modules = new ArrayList<DoxiaModuleReference>();
+    private List<ModuleReference> modules = new ArrayList<ModuleReference>();
 
     private boolean validate;
 
@@ -293,7 +293,7 @@ public class SiteRenderingContext
      */
     public void addModuleDirectory( File moduleBasedir, String moduleParserId )
     {
-        this.modules.add( new DoxiaModuleReference( moduleParserId, moduleBasedir ) );
+        this.modules.add( new ModuleReference( moduleParserId, moduleBasedir ) );
     }
 
     /**
@@ -311,7 +311,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.List} object.
      */
-    public List<DoxiaModuleReference> getModules()
+    public List<ModuleReference> getModules()
     {
         return modules;
     }
