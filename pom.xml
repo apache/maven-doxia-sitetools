@@ -265,8 +265,6 @@ under the License.
                 <!-- DOXIASITETOOLS-85 RenderingContext package changed -->
                 <exclude>org/apache/maven/doxia/siterenderer/*Renderer</exclude>
                 <exclude>org/apache/maven/doxia/siterenderer/sink/*</exclude>
-                <!-- DOXIASITETOOLS-127 Renderer renamed to SiteRenderer -->
-                <exclude>org/apache/maven/doxia/siterenderer/*RendererException</exclude>
               </excludes>
             </configuration>
           </execution>

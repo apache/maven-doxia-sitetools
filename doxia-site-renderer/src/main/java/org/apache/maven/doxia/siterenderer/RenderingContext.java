@@ -28,7 +28,7 @@ import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * The rendering context of a document written in a Doxia supported markup.
+ * The rendering context of a document.
  *
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @version $Id$
@@ -51,35 +51,28 @@ public class RenderingContext
     private Map<String, String> attributes;
 
     /**
-     * <p>Constructor for RenderingContext.</p>
+     * <p>
+     * Constructor for RenderingContext when document is not rendered from a Doxia source.
+     * </p>
      *
-     * @param basedir a {@link java.io.File} object.
-     * @param document a {@link java.lang.String} object.
+     * @param basedir the pseudo-source base directory.
+     * @param document the pseudo-source document name: will be used to compute output name (same name with extension
+     *            replaced with <code>.html</code>).
      */
     public RenderingContext( File basedir, String document )
     {
-        this( basedir, document, null );
+        this( basedir, document, null, null );
     }
 
     /**
-     * <p>Constructor for RenderingContext.</p>
-     *
-     * @param basedir a {@link java.io.File} object.
-     * @param document a {@link java.lang.String} object.
-     * @param parserId a {@link java.lang.String} object.
-     */
-    public RenderingContext( File basedir, String document, String parserId )
-    {
-        this( basedir, document, parserId, null );
-
-    }
-
-    /**
-     * <p>Constructor for RenderingContext.</p>
+     * <p>
+     * Constructor for RenderingContext.
+     * </p>
      *
      * @param basedir the source base directory.
      * @param document the source document name.
-     * @param parserId the Doxia module parser id associated to this document.
+     * @param parserId the Doxia module parser id associated to this document, may be null if document not rendered from
+     *            a Doxia source.
      * @param extension the source document filename extension.
      */
     public RenderingContext( File basedir, String document, String parserId, String extension )

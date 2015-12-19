@@ -24,7 +24,9 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 /**
- * Renders a page with Doxia.
+ * Renderer for a document that has a source file to be parsed by Doxia.
+ * Details about the source file are in {@link RenderingContext}, which is expected to have
+ * a non-null parserId and extension.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$

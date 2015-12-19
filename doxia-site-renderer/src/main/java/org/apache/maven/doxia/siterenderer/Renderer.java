@@ -33,7 +33,8 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 
 /**
- * <p>Renderer interface.</p>
+ * <p>Site Renderer interface: render a collection of documents into a site, ie decored with a site template
+ * (eventually packaged as skin).</p>
  *
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  * @version $Id$
@@ -46,31 +47,31 @@ public interface Renderer
     String ROLE = Renderer.class.getName();
 
     /**
-     * Render a collection of documents.
+     * Render a collection of documents into a site.
      *
      * @param documents the documents to render.
      * @param siteRenderingContext the SiteRenderingContext to use.
      * @param outputDirectory the output directory to write results.
-     * @throws org.apache.maven.doxia.siterenderer.RendererException if it bombs.
-     * @throws java.io.IOException if it bombs.
+     * @throws RendererException if it bombs.
+     * @throws IOException if it bombs.
      */
     void render( Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext,
                  File outputDirectory )
         throws RendererException, IOException;
 
     /**
-     * Generate a document.
+     * Generate a document output from a Doxia SiteRenderer Sink.
      *
      * @param writer the Writer to use.
-     * @param sink the Sink to receive the events.
+     * @param sink the Site Renderer Sink to receive the Doxia events.
      * @param siteRenderingContext the SiteRenderingContext to use.
-     * @throws org.apache.maven.doxia.siterenderer.RendererException if it bombs.
+     * @throws RendererException if it bombs.
      */
     void generateDocument( Writer writer, SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
         throws RendererException;
 
     /**
-     * Return a SiteRenderingContext for a site using a skin.
+     * Create a Site Rendering Context for a site using a skin.
      *
      * @param skinFile
      * @param attributes
@@ -85,7 +86,7 @@ public interface Renderer
         throws IOException;
 
     /**
-     * Return a SiteRenderingContext for a site using a local template.
+     * Create a Site Rendering Context for a site using a local template.
      *
      * @param templateFile
      * @param skinFile
@@ -94,7 +95,7 @@ public interface Renderer
      * @param defaultWindowTitle
      * @param locale
      * @return a SiteRenderingContext.
-     * @throws java.net.MalformedURLException if it bombs.
+     * @throws MalformedURLException if it bombs.
      */
     SiteRenderingContext createContextForTemplate( File templateFile, File skinFile, Map<String, ?> attributes,
                                                    DecorationModel decoration, String defaultWindowTitle,
@@ -107,7 +108,7 @@ public interface Renderer
      * @param siteRenderingContext
      * @param resourcesDirectory
      * @param outputDirectory
-     * @throws java.io.IOException if it bombs.
+     * @throws IOException if it bombs.
      * @deprecated since 1.7, use copyResources without resourcesDirectory parameter
      */
     void copyResources( SiteRenderingContext siteRenderingContext, File resourcesDirectory, File outputDirectory )
@@ -118,28 +119,29 @@ public interface Renderer
      *
      * @param siteRenderingContext
      * @param outputDirectory
-     * @throws java.io.IOException if it bombs.
+     * @throws IOException if it bombs.
      * @since 1.7
      */
     void copyResources( SiteRenderingContext siteRenderingContext, File outputDirectory )
         throws IOException;
 
     /**
-     * Return the document files in a Map.
+     * Locate Doxia document source files in the site source context.
      *
      * @param siteRenderingContext
-     * @return the document files in a Map.
-     * @throws java.io.IOException if it bombs.
-     * @throws org.apache.maven.doxia.siterenderer.RendererException if it bombs.
+     * @return the Doxia document renderers in a Map keyed by output file name.
+     * @throws IOException if it bombs.
+     * @throws RendererException if it bombs.
      */
     Map<String, DocumentRenderer> locateDocumentFiles( SiteRenderingContext siteRenderingContext )
         throws IOException, RendererException;
 
     /**
-     * Render a document written in a Doxia markup language.
+     * Render a document written in a Doxia markup language. This method is an internal method, used by
+     * {@link DoxiaDocumentRenderer}.
      *
      * @param writer the writer to render the document to.
-     * @param renderingContext the document's rendering context
+     * @param renderingContext the document's rendering context, which is expected to have a non-null parser id.
      * @param siteContext the site's rendering context
      * @throws RendererException if it bombs.
      * @throws FileNotFoundException if it bombs.

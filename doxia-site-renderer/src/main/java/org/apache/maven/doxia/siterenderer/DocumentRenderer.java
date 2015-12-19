@@ -24,7 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 /**
- * Renders a page.
+ * Renders a page, whatever the source is: a Doxia source file, a report or anything else.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$

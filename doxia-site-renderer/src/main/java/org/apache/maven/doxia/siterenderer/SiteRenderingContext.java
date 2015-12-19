@@ -65,7 +65,7 @@ public class SiteRenderingContext
 
     private Map<String, String> moduleExcludes;
 
-    private List<ModuleReference> modules = new ArrayList<ModuleReference>();
+    private List<ExtraDoxiaModuleReference> modules = new ArrayList<ExtraDoxiaModuleReference>();
 
     private boolean validate;
 
@@ -276,24 +276,26 @@ public class SiteRenderingContext
     }
 
     /**
-     * <p>addSiteDirectory.</p>
+     * Add a site directory, expected to have a Doxia Site layout, ie one directory per Doxia parser module containing
+     * files with parser extension. Typical values are <code>src/site</code> or <code>target/generated-site</code>.
      *
-     * @param file a {@link java.io.File} object.
+     * @param siteDirectory a {@link java.io.File} object.
      */
-    public void addSiteDirectory( File file )
+    public void addSiteDirectory( File siteDirectory )
     {
-        this.siteDirectories.add( file );
+        this.siteDirectories.add( siteDirectory );
     }
 
     /**
-     * Add a module source directory.
+     * Add a extra-module source directory: used for Maven 1.x <code>${basedir}/xdocs</code> layout, which contains
+     * <code>xdoc</code> and <code>fml</code>.
      *
      * @param moduleBasedir The base directory for module's source files.
      * @param moduleParserId module's Doxia parser id.
      */
     public void addModuleDirectory( File moduleBasedir, String moduleParserId )
     {
-        this.modules.add( new ModuleReference( moduleParserId, moduleBasedir ) );
+        this.modules.add( new ExtraDoxiaModuleReference( moduleParserId, moduleBasedir ) );
     }
 
     /**
@@ -311,7 +313,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.List} object.
      */
-    public List<ModuleReference> getModules()
+    public List<ExtraDoxiaModuleReference> getModules()
     {
         return modules;
     }

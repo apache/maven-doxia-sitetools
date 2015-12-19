@@ -26,13 +26,13 @@ import java.io.File;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-class ModuleReference
+class ExtraDoxiaModuleReference
 {
     private final String parserId;
 
     private final File basedir;
 
-    ModuleReference( String parserId, File basedir )
+    ExtraDoxiaModuleReference( String parserId, File basedir )
     {
         this.parserId = parserId;
         this.basedir = basedir;
@@ -43,7 +43,7 @@ class ModuleReference
      *
      * @return Doxia parser id associated to this source module.
      */
-    public String getParserId()
+    String getParserId()
     {
         return parserId;
     }
@@ -53,7 +53,7 @@ class ModuleReference
      *
      * @return The base directory for module's source files.
      */
-    public File getBasedir()
+    File getBasedir()
     {
         return basedir;
     }
