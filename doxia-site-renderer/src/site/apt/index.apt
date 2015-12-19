@@ -34,7 +34,8 @@ Doxia Site Tools - Site Renderer
   A default site decoration is included (see <<<default-site.vm>>>), but other decorations can be used at will, either
   as a standalone template or packaged in a <<skin>> artifact (containing a <<<META-INF/maven/site.vm>>> template).
 
-  Documents can be dynamically generated with Doxia Sink API, like Maven reports, or simply read from static files,
+  Documents can be dynamically generated with {{{/doxia/doxia/doxia-sink-api/}Doxia Sink API}}, like Maven reports,
+  or simply read from static files written in {{{/doxia/references/index.html}markup supported by Doxia Parser}},
   eventually processed by Velocity if their file names end in <<<.vm>>>.
 
 * Doxia Site Skins
@@ -56,23 +57,17 @@ Doxia Site Tools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<alignedFileName>>>           | <<<String>>>         | The file name of the (html) document being rendered, relative to the document being rendered |
 *---------------------------------+----------------------+-------------------------------+
-| <<<authors>>>                   | <<<List\<String\>>>> | A list of authors from the source document |
-*---------------------------------+----------------------+-------------------------------+
-| <<<bodyContent>>>               | <<<String>>>         |                               |
-*---------------------------------+----------------------+-------------------------------+
 | <<<decoration>>>                | {{{../doxia-decoration-model/apidocs/org/apache/maven/doxia/site/decoration/DecorationModel.html}<<<DecorationModel>>>}} | This is a model that represents the data in your <<<site.xml>>> |
 *---------------------------------+----------------------+-------------------------------+
 | <<<currentDate>>>               | <<<Date>>>           | The date when the site is rendered |
 *---------------------------------+----------------------+-------------------------------+
 | <<<currentFileName>>>           | <<<String>>>         | The file name of the (html) document being rendered, relative to the site root |
 *---------------------------------+----------------------+-------------------------------+
-| <<<dateCreation>>>              | <<<String>>>         | The date specified in the source document, in the format "yyyyMMdd" |
-*---------------------------------+----------------------+-------------------------------+
-| <<<dateFormat>>>                | <<<DateFormat>>>     | An instance of the date format as defined in site.xml/publishDate/@format (default: An instance of the default date format for the locale of the document being rendered |
+| <<<dateFormat>>>                | <<<DateFormat>>>     | An instance of the date format as defined in <<<site.xml/publishDate/@format>>> (default: An instance of the default date format for the locale of the document being rendered |
 *---------------------------------+----------------------+-------------------------------+
 | <<<dateRevision>>>              | <<<String>>>         | The date when the site is rendered, in the format "yyyyMMdd" |
 *---------------------------------+----------------------+-------------------------------+
-| <<<headContent>>>               | <<<String>>>         |                               |
+| <<<doxiaSiteRendererVersion>>>  | <<<String>>>         | The version of Doxia Site Renderer in use |
 *---------------------------------+----------------------+-------------------------------+
 | <<<locale>>>                    | <<<Locale>>>         | The locale for the document being rendered |
 *---------------------------------+----------------------+-------------------------------+
@@ -80,17 +75,13 @@ Doxia Site Tools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<relativePath>>>              | <<<String>>>         | The path to the site root from the document being rendered |
 *---------------------------------+----------------------+-------------------------------+
-| <<<shortTitle>>>                | <<<String>>>         | The title of the document, excluding the project or site name |
-*---------------------------------+----------------------+-------------------------------+
-| <<<supportedLocales>>>          | <<<List\<Locale\>>>> |                               |
-*---------------------------------+----------------------+-------------------------------+
-| <<<title>>>                     | <<<String>>>         | The title of the document, including the project or site name |
+| <<<supportedLocales>>>          | <<<List\<Locale\>>>> | The list of locales that the site will contain |
 *---------------------------------+----------------------+-------------------------------+
 
   There are also some tools for general use:
 
 *---------------------------------+----------------------+-------------------------------+
-|| property                       || type                || description                 ||
+|| variable                       || type                || description                 ||
 *---------------------------------+----------------------+-------------------------------+
 | <<<FileUtils>>>                 | {{{http://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus/util/FileUtils.html}<<<FileUtils>>>}}        |                               |
 *---------------------------------+----------------------+-------------------------------+
@@ -101,8 +92,10 @@ Doxia Site Tools - Site Renderer
 | <<<StringUtils>>>               | {{{http://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus/util/StringUtils.html}<<<StringUtils>>>}}    |                               |
 *---------------------------------+----------------------+-------------------------------+
 
-  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#L428}DefaultSiteRenderer.createVelocityContext(...)}}>>>
+  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#L416}DefaultSiteRenderer.createDocumentVelocityContext(...)}}>>>
   source for more details.
+
+** Maven Site Plugin
 
   When <<<doxia-site-renderer>>> is used by <<<maven-site-plugin>>>, the following template properties are defined:
 
@@ -113,10 +106,34 @@ Doxia Site Tools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<outputEncoding>>>            | <<<String>>>         |                               |
 *---------------------------------+----------------------+-------------------------------+
-| <<<project>>>                   | {{{/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html}<<<MavenProject>>>}} |                               |
+| <<<project>>>                   | {{{/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html}<<<MavenProject>>>}} | The current project |
 *---------------------------------+----------------------+-------------------------------+
 | <project properties>            | <<<String>>>         | Properties defined in POM are directly available. |
 *---------------------------------+----------------------+-------------------------------+
 
-  See <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/AbstractSiteRenderingMojo.html#createSiteRenderingContext(java.util.Locale)}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
+  See <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/render/AbstractSiteRenderingMojo.html#createSiteRenderingContext(java.util.Locale)}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
+  source for more details.
+
+** Site Template
+
+  When Velocity is processing the site template (be it from skin or local template), there are a few complementary variables
+  available that give access to information taken from document being merged into the template:
+
+*---------------------------------+----------------------+-------------------------------+
+|| variable                       || type                || description                 ||
+*---------------------------------+----------------------+-------------------------------+
+| <<<authors>>>                   | <<<List\<String\>>>> | A list of authors from the source document |
+*---------------------------------+----------------------+-------------------------------+
+| <<<bodyContent>>>               | <<<String>>>         | HTML body content of the Doxia generated output |
+*---------------------------------+----------------------+-------------------------------+
+| <<<dateCreation>>>              | <<<String>>>         | The date specified in the source document, in the format "yyyyMMdd" |
+*---------------------------------+----------------------+-------------------------------+
+| <<<headContent>>>               | <<<String>>>         | HTML head content of the Doxia generated output                              |
+*---------------------------------+----------------------+-------------------------------+
+| <<<shortTitle>>>                | <<<String>>>         | The title of the document, excluding the project or site name |
+*---------------------------------+----------------------+-------------------------------+
+| <<<title>>>                     | <<<String>>>         | The title of the document, including the project or site name |
+*---------------------------------+----------------------+-------------------------------+
+
+  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#L504}DefaultSiteRenderer.createSiteTemplateVelocityContext(...)}}>>>
   source for more details.

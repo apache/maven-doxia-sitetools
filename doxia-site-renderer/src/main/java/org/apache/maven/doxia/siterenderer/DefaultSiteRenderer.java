@@ -61,6 +61,7 @@ import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.decoration.PublishDate;
 import org.apache.maven.doxia.parser.module.ParserModule;
 import org.apache.maven.doxia.parser.module.ParserModuleManager;
 import org.apache.maven.doxia.parser.module.ParserModuleNotFoundException;
@@ -78,6 +79,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.PathTool;
+import org.codehaus.plexus.util.PropertyUtils;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
@@ -331,11 +333,12 @@ public class DefaultSiteRenderer
             // TODO: DOXIA-111: the filter used here must be checked generally.
             if ( renderingContext.getAttribute( "velocity" ) != null )
             {
+                getLogger().debug( "Processing Velocity for " + renderingContext.getInputName() );
                 try
                 {
                     SiteResourceLoader.setResource( resource );
 
-                    Context vc = createVelocityContext( sink, siteContext );
+                    Context vc = createDocumentVelocityContext( sink, siteContext );
 
                     StringWriter sw = new StringWriter();
 
@@ -410,7 +413,14 @@ public class DefaultSiteRenderer
         generateDocument( writer, sink, siteContext );
     }
 
-    private Context createVelocityContext( SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
+    /**
+     * Create a Velocity Context for a Doxia document, containing every information about rendered document.
+     * 
+     * @param sink the site renderer sink for the document
+     * @param siteRenderingContext the site rendering context
+     * @return
+     */
+    protected Context createDocumentVelocityContext( SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
     {
         ToolManager toolManager = new ToolManager( true );
         Context context = toolManager.createContext();
@@ -421,6 +431,91 @@ public class DefaultSiteRenderer
 
         RenderingContext renderingContext = sink.getRenderingContext();
         context.put( "relativePath", renderingContext.getRelativePath() );
+
+        String currentFileName = renderingContext.getOutputName().replace( '\\', '/' );
+        context.put( "currentFileName", currentFileName );
+
+        context.put( "alignedFileName", PathTool.calculateLink( currentFileName, renderingContext.getRelativePath() ) );
+
+        context.put( "decoration", siteRenderingContext.getDecoration() );
+
+        Locale locale = siteRenderingContext.getLocale();
+        context.put( "locale", locale );
+        context.put( "supportedLocales", Collections.unmodifiableList( siteRenderingContext.getSiteLocales() ) );
+
+        context.put( "currentDate", new Date() );
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyyMMdd" );
+        context.put( "dateRevision", sdf.format( new Date() ) );
+
+        context.put( "publishDate", siteRenderingContext.getPublishDate() );
+
+        DateFormat dateFormat = DateFormat.getDateInstance( DateFormat.DEFAULT, locale );
+        PublishDate publishDate = siteRenderingContext.getDecoration().getPublishDate();
+        if ( publishDate != null && StringUtils.isNotBlank( publishDate.getFormat() ) )
+        {
+            dateFormat = new SimpleDateFormat( publishDate.getFormat(), locale );
+        }
+        context.put( "dateFormat", dateFormat );
+
+        // doxiaSiteRendererVersion
+        InputStream inputStream = this.getClass().getResourceAsStream( "/META-INF/"
+            + "maven/org.apache.maven.doxia/doxia-site-renderer/pom.properties" );
+        Properties properties = PropertyUtils.loadProperties( inputStream );
+        if ( inputStream == null )
+        {
+            getLogger().debug( "pom.properties for doxia-site-renderer could not be found." );
+        }
+        else if ( properties == null )
+        {
+            getLogger().debug( "Failed to load pom.properties, so doxiaVersion is not available"
+                + " in the Velocity context." );
+        }
+        else
+        {
+            context.put( "doxiaSiteRendererVersion", properties.getProperty( "version" ) );
+        }
+
+        // Add user properties
+        Map<String, ?> templateProperties = siteRenderingContext.getTemplateProperties();
+
+        if ( templateProperties != null )
+        {
+            for ( Map.Entry<String, ?> entry : templateProperties.entrySet() )
+            {
+                context.put( entry.getKey(), entry.getValue() );
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        // Tools
+        // ----------------------------------------------------------------------
+
+        context.put( "PathTool", new PathTool() );
+
+        context.put( "FileUtils", new FileUtils() );
+
+        context.put( "StringUtils", new StringUtils() );
+
+        context.put( "i18n", i18n );
+
+        return context;
+    }
+
+    /**
+     * Create a Velocity Context for the site template decorating the document. In addition to all the informations
+     * from the document, this context contains data gathered in {@link SiteRendererSink} during document rendering.
+     * 
+     * @param sink the site renderer sink for the document
+     * @param siteRenderingContext the site rendering context
+     * @return
+     */
+    protected Context createSiteTemplateVelocityContext( SiteRendererSink sink,
+                                                         SiteRenderingContext siteRenderingContext )
+    {
+        // first get the context from Doxia source
+        Context context = createDocumentVelocityContext( sink, siteRenderingContext );
+
+        // then add data objects from rendered document
 
         // Add infos from document
         context.put( "authors", sink.getAuthors() );
@@ -451,8 +546,6 @@ public class DefaultSiteRenderer
 
         context.put( "bodyContent", sink.getBody() );
 
-        context.put( "decoration", siteRenderingContext.getDecoration() );
-
         SimpleDateFormat sdf = new SimpleDateFormat( "yyyyMMdd" );
         if ( StringUtils.isNotEmpty( sink.getDate() ) )
         {
@@ -467,85 +560,6 @@ public class DefaultSiteRenderer
                 getLogger().debug( "Could not parse date: " + sink.getDate() + ", ignoring!", e );
             }
         }
-        context.put( "dateRevision", sdf.format( new Date() ) );
-
-        context.put( "currentDate", new Date() );
-
-        context.put( "publishDate", siteRenderingContext.getPublishDate() );
-
-        Locale locale = siteRenderingContext.getLocale();
-
-        DateFormat dateFormat = DateFormat.getDateInstance( DateFormat.DEFAULT, locale );
-
-        if ( siteRenderingContext.getDecoration().getPublishDate() != null )
-        {
-            if ( StringUtils.isNotBlank( siteRenderingContext.getDecoration().getPublishDate().getFormat() ) )
-            {
-                dateFormat =
-                    new SimpleDateFormat( siteRenderingContext.getDecoration().getPublishDate().getFormat(), locale );
-            }
-        }
-
-        context.put( "dateFormat", dateFormat );
-
-        String currentFileName = renderingContext.getOutputName().replace( '\\', '/' );
-        context.put( "currentFileName", currentFileName );
-
-        context.put( "alignedFileName", PathTool.calculateLink( currentFileName, renderingContext.getRelativePath() ) );
-
-        context.put( "locale", locale );
-        context.put( "supportedLocales", Collections.unmodifiableList( siteRenderingContext.getSiteLocales() ) );
-
-        // doxiaSiteRendererVersion
-        InputStream inputStream = null;
-        try
-        {
-            inputStream =
-                this.getClass().getClassLoader().getResourceAsStream( "META-INF/maven/org.apache.maven.doxia"
-                                                                          + "/doxia-site-renderer/pom.properties" );
-            if ( inputStream == null )
-            {
-                getLogger().debug( "pom.properties for doxia-site-renderer could not be found." );
-            }
-            else
-            {
-                Properties properties = new Properties();
-                properties.load( inputStream );
-                context.put( "doxiaSiteRendererVersion", properties.getProperty( "version" ) );
-            }
-        }
-        catch ( IOException e )
-        {
-            getLogger().debug( "Failed to load pom.properties, so doxiaVersion is not available"
-                                   + " in the velocityContext." );
-        }
-        finally
-        {
-            IOUtil.close( inputStream );
-        }
-
-        // Add user properties
-        Map<String, ?> templateProperties = siteRenderingContext.getTemplateProperties();
-
-        if ( templateProperties != null )
-        {
-            for ( Map.Entry<String, ?> entry : templateProperties.entrySet() )
-            {
-                context.put( entry.getKey(), entry.getValue() );
-            }
-        }
-
-        // ----------------------------------------------------------------------
-        // Tools
-        // ----------------------------------------------------------------------
-
-        context.put( "PathTool", new PathTool() );
-
-        context.put( "FileUtils", new FileUtils() );
-
-        context.put( "StringUtils", new StringUtils() );
-
-        context.put( "i18n", i18n );
 
         return context;
     }
@@ -554,17 +568,16 @@ public class DefaultSiteRenderer
     public void generateDocument( Writer writer, SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
             throws RendererException
     {
-        Context context = createVelocityContext( sink, siteRenderingContext );
+        String templateName = siteRenderingContext.getTemplateName();
 
-        writeTemplate( writer, context, siteRenderingContext );
-    }
+        getLogger().debug( "Processing Velocity for template " + templateName + " on "
+            + sink.getRenderingContext().getInputName() );
 
-    private void writeTemplate( Writer writer, Context context, SiteRenderingContext siteContext )
-            throws RendererException
-    {
+        Context context = createSiteTemplateVelocityContext( sink, siteRenderingContext );
+
         ClassLoader old = null;
 
-        if ( siteContext.getTemplateClassLoader() != null )
+        if ( siteRenderingContext.getTemplateClassLoader() != null )
         {
             // -------------------------------------------------------------------------
             // If no template classloader was set we'll just use the context classloader
@@ -572,12 +585,30 @@ public class DefaultSiteRenderer
 
             old = Thread.currentThread().getContextClassLoader();
 
-            Thread.currentThread().setContextClassLoader( siteContext.getTemplateClassLoader() );
+            Thread.currentThread().setContextClassLoader( siteRenderingContext.getTemplateClassLoader() );
         }
 
         try
         {
-            processTemplate( siteContext.getTemplateName(), context, writer );
+            Template template;
+
+            try
+            {
+                template = velocity.getEngine().getTemplate( templateName );
+            }
+            catch ( Exception e )
+            {
+                throw new RendererException( "Could not find the site decoration template '" + templateName + "'", e );
+            }
+
+            try
+            {
+                template.merge( context, writer );
+            }
+            catch ( Exception e )
+            {
+                throw new RendererException( "Error while merging site decoration template.", e );
+            }
         }
         finally
         {
@@ -587,33 +618,6 @@ public class DefaultSiteRenderer
             {
                 Thread.currentThread().setContextClassLoader( old );
             }
-        }
-    }
-
-    /**
-     * @noinspection OverlyBroadCatchBlock,UnusedCatchParameter
-     */
-    private void processTemplate( String templateName, Context context, Writer writer )
-            throws RendererException
-    {
-        Template template;
-
-        try
-        {
-            template = velocity.getEngine().getTemplate( templateName );
-        }
-        catch ( Exception e )
-        {
-            throw new RendererException( "Could not find the template '" + templateName, e );
-        }
-
-        try
-        {
-            template.merge( context, writer );
-        }
-        catch ( Exception e )
-        {
-            throw new RendererException( "Error while generating code.", e );
         }
     }
 
