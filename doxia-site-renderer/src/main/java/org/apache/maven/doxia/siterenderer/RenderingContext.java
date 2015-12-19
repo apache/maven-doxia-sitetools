@@ -21,7 +21,6 @@ package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.codehaus.plexus.util.PathTool;
@@ -79,28 +78,28 @@ public class RenderingContext
     {
         this.basedir = basedir;
         this.extension = extension;
+        this.inputName = document;
+        this.parserId = parserId;
+        this.attributes = new HashMap<String, String>();
+
         if ( StringUtils.isNotEmpty( extension ) )
         {
             // here we now the parserId we can play with this
             // index.xml -> index.html
             // index.xml.vm -> index.html
             // download.apt.vm --> download.html
-            int startIndexOfExtension =
-                document.toLowerCase( Locale.ENGLISH ).indexOf( "." + extension.toLowerCase( Locale.ENGLISH ) );
-            String fileNameWithoutExt = document.substring( 0, startIndexOfExtension );
+            if ( DefaultSiteRenderer.endsWithIgnoreCase( document, ".vm" ) )
+            {
+                document = document.substring( 0, document.length() - 3 );
+            }
+            String fileNameWithoutExt = document.substring( 0, document.length() - extension.length() - 1 );
             this.outputName = fileNameWithoutExt + ".html";
         }
         else
         {
-            this.outputName = document.substring( 0, document.indexOf( '.' ) ).replace( '\\', '/' ) + ".html";
+            this.outputName = document.substring( 0, document.lastIndexOf( '.' ) ).replace( '\\', '/' ) + ".html";
         }
-        this.relativePath = PathTool.getRelativePath( basedir.getPath(), new File( basedir, document ).getPath() );
-
-        this.inputName = document;
-
-        this.parserId = parserId;
-
-        this.attributes = new HashMap<String, String>();
+        this.relativePath = PathTool.getRelativePath( basedir.getPath(), new File( basedir, inputName ).getPath() );
     }
 
     /**

@@ -48,6 +48,10 @@ public class RenderingContextTest
         assertEquals( "file.with.dot.in.name.html", renderingContext.getOutputName() );
         assertEquals( ".", renderingContext.getRelativePath() );
 
+        renderingContext = new RenderingContext( baseDir, docName );
+        assertEquals( "file.with.dot.in.name.html", renderingContext.getOutputName() );
+        assertEquals( ".", renderingContext.getRelativePath() );
+
         docName = "index.xml.vm";
 
         renderingContext = new RenderingContext( baseDir, docName, "", "xml" );

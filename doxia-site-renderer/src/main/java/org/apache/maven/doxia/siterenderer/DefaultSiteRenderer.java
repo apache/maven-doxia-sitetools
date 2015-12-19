@@ -929,7 +929,7 @@ public class DefaultSiteRenderer
     }
 
     // TODO replace with StringUtils.endsWithIgnoreCase() from maven-shared-utils 0.7
-    private boolean endsWithIgnoreCase( String str, String searchStr )
+    static boolean endsWithIgnoreCase( String str, String searchStr )
     {
         if ( str.length() < searchStr.length() )
         {

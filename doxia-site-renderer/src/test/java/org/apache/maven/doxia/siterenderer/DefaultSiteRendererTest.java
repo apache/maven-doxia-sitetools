@@ -175,6 +175,7 @@ public class DefaultSiteRendererTest
         verifyMisc();
         verifyDocbookPageExists();
         verifyApt();
+        verifyExtensionInFilename();
         verifyNewlines();
 
         // ----------------------------------------------------------------------
@@ -389,9 +390,9 @@ public class DefaultSiteRendererTest
     public void verifyDocbookPageExists()
         throws Exception
     {
-        File nestedItems = getTestFile( "target/output/docbook.html" );
-        assertNotNull( nestedItems );
-        assertTrue( nestedItems.exists() );
+        File output = getTestFile( "target/output/docbook.html" );
+        assertNotNull( output );
+        assertTrue( output.exists() );
     }
 
     /**
@@ -402,6 +403,17 @@ public class DefaultSiteRendererTest
     {
         AptVerifier verifier = new AptVerifier();
         verifier.verify( "target/output/apt.html" );
+    }
+
+    /**
+     * @throws Exception if something goes wrong.
+     */
+    public void verifyExtensionInFilename()
+        throws Exception
+    {
+        File output = getTestFile( "target/output/extension.apt.not.at.end.html" );
+        assertNotNull( output );
+        assertTrue( output.exists() );
     }
 
     /**
