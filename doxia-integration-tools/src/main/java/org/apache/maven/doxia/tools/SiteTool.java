@@ -133,6 +133,7 @@ public interface SiteTool
      * @return the <code>DecorationModel</code> object corresponding to the <code>site.xml</code> file with some
      * interpolations.
      * @throws SiteToolException if any
+     * @since 1.7, was previously with other parameter types and order
      */
     DecorationModel getDecorationModel( File siteDirectory, Locale locale, MavenProject project,
                                         List<MavenProject> reactorProjects, ArtifactRepository localRepository,
@@ -160,6 +161,7 @@ public interface SiteTool
      *
      * @param locales A comma separated list of locales
      * @return a list of <code>Locale</code>, which at least contains the Maven default locale which is english
+     * @since 1.7, was previously getAvailableLocales(String)
      */
     List<Locale> getSiteLocales( String locales );
 

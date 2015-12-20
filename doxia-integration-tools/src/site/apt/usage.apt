@@ -52,7 +52,7 @@ public class YourOwnMojo extends AbstractMojo
 
     public someMethod()
     {
-        List localesList = siteTool.getAvailableLocales( locales );
+        List localesList = siteTool.getSiteLocales( locales );
         String relativePath = siteTool.getRelativePath( "C:/foo/child",
                                                         "C:/foo/master" );
         ...
