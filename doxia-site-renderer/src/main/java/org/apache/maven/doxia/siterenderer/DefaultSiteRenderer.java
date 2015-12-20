@@ -741,6 +741,13 @@ public class DefaultSiteRenderer
                         File destFile = new File( outputDirectory, entry.getName() );
                         if ( !entry.isDirectory() )
                         {
+                            if ( destFile.exists() )
+                            {
+                                // don't override existing content: avoids extra rewrite with same content or extra site
+                                // resource
+                                continue;
+                            }
+
                             destFile.getParentFile().mkdirs();
 
                             copyFileFromZip( file, entry, destFile );
@@ -789,6 +796,13 @@ public class DefaultSiteRenderer
                         }
 
                         File outputFile = new File( outputDirectory, line );
+
+                        if ( outputFile.exists() )
+                        {
+                            // don't override existing content: avoids extra rewrite with same content or extra site
+                            // resource
+                            continue;
+                        }
 
                         if ( !outputFile.getParentFile().exists() )
                         {
