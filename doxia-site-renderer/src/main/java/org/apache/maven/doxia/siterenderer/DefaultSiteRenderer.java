@@ -345,10 +345,6 @@ public class DefaultSiteRenderer
                     velocity.getEngine().mergeTemplate( resource, siteContext.getInputEncoding(), vc, sw );
 
                     reader = new StringReader( sw.toString() );
-                    if ( parser.getType() == Parser.XML_TYPE && siteContext.isValidate() )
-                    {
-                        reader = validate( reader, resource );
-                    }
                 }
                 catch ( Exception e )
                 {
@@ -360,6 +356,11 @@ public class DefaultSiteRenderer
                     {
                         getLogger().error( "Error parsing " + resource + " as a velocity template, using as text." );
                     }
+                }
+
+                if ( parser.getType() == Parser.XML_TYPE && siteContext.isValidate() )
+                {
+                    reader = validate( reader, resource );
                 }
             }
             else
