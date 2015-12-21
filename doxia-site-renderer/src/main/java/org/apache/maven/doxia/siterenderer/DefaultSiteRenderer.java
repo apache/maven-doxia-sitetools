@@ -344,7 +344,30 @@ public class DefaultSiteRenderer
 
                     velocity.getEngine().mergeTemplate( resource, siteContext.getInputEncoding(), vc, sw );
 
-                    reader = new StringReader( sw.toString() );
+                    String doxiaContent = sw.toString();
+
+                    if ( siteContext.getVelocityDocumentOutput() != null )
+                    {
+                        // save Velocity processing result, ie the Doxia content that will be parsed after
+                        if ( !siteContext.getVelocityDocumentOutput().exists() )
+                        {
+                            siteContext.getVelocityDocumentOutput().mkdirs();
+                        }
+
+                        String input = renderingContext.getInputName();
+                        File outputFile = new File( siteContext.getVelocityDocumentOutput(),
+                                                    input.substring( 0, input.length() - 3 ) );
+
+                        File outputParent = outputFile.getParentFile();
+                        if ( !outputParent.exists() )
+                        {
+                            outputParent.mkdirs();
+                        }
+
+                        FileUtils.fileWrite( outputFile, siteContext.getInputEncoding(), doxiaContent );
+                    }
+
+                    reader = new StringReader( doxiaContent );
                 }
                 catch ( Exception e )
                 {

@@ -71,6 +71,8 @@ public class SiteRenderingContext
 
     private Date publishDate;
 
+    private File velocityDocumentOutput;
+
     /**
      * If input documents should be validated before parsing.
      * By default no validation is performed.
@@ -397,5 +399,22 @@ public class SiteRenderingContext
     {
         this.publishDate = publishDate;
     }
-    
+
+    /**
+     * Directory where to save documents after Velocity processing (*.vm), but before parsing them with Doxia.
+     * @return not null if the documents are to be saved
+     */
+    public File getVelocityDocumentOutput()
+    {
+        return velocityDocumentOutput;
+    }
+
+    /**
+     * Where to (eventually) save documents after Velocity processing (*.vm), but before parsing them with Doxia?
+     * @param velocityDocumentOutput not null if the documents are to be saved
+     */
+    public void setVelocityDocumentOutput( File velocityDocumentOutput )
+    {
+        this.velocityDocumentOutput = velocityDocumentOutput;
+    }
 }
