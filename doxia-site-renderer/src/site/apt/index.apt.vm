@@ -4,7 +4,7 @@
  Hervé Boutemy
  Dennis Lundberg
  ------
- 2013-03-02
+ 2015-12-20
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -80,19 +80,55 @@ Doxia Site Tools - Site Renderer
 
   There are also some tools for general use:
 
-*---------------------------------+----------------------+-------------------------------+
-|| variable                       || type                || description                 ||
-*---------------------------------+----------------------+-------------------------------+
-| <<<FileUtils>>>                 | {{{http://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus/util/FileUtils.html}<<<FileUtils>>>}}        |                               |
-*---------------------------------+----------------------+-------------------------------+
-| <<<i18n>>>                      | {{{http://codehaus-plexus.github.io/plexus-i18n/apidocs/org/codehaus/plexus/i18n/I18N.html}<<<I18N>>>}} |                               |
-*---------------------------------+----------------------+-------------------------------+
-| <<<PathTool>>>                  | {{{http://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus/util/PathTool.html}<<<PathTool>>>}}          |                               |
-*---------------------------------+----------------------+-------------------------------+
-| <<<StringUtils>>>               | {{{http://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus/util/StringUtils.html}<<<StringUtils>>>}}    |                               |
-*---------------------------------+----------------------+-------------------------------+
+#set( $plexus = "http://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus" )
+*---------------------------------+------------------------------------------------------+-------------------------------+
+|| variable                       || type                                                || description                 ||
+*---------------------------------+------------------------------------------------------+-------------------------------+
+| <<<FileUtils>>>                 | {{{$plexus/util/FileUtils.html}<<<FileUtils>>>}}     |                               |
+*---------------------------------+------------------------------------------------------+-------------------------------+
+| <<<i18n>>>                      | {{{$plexus/i18n/I18N.html}<<<I18N>>>}}               |                               |
+*---------------------------------+------------------------------------------------------+-------------------------------+
+| <<<PathTool>>>                  | {{{$plexus/util/PathTool.html}<<<PathTool>>>}}       |                               |
+*---------------------------------+------------------------------------------------------+-------------------------------+
+| <<<StringUtils>>>               | {{{$plexus/util/StringUtils.html}<<<StringUtils>>>}} |                               |
+*---------------------------------+------------------------------------------------------+-------------------------------+
 
-  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#L416}DefaultSiteRenderer.createDocumentVelocityContext(...)}}>>>
+  And there are {{{http://velocity.apache.org/tools/releases/2.0/generic.html} Velocity Generic Tools}}:
+
+#set( $generic = "http://velocity.apache.org/tools/releases/2.0/javadoc/org/apache/velocity/tools/generic" )
+*------------------+--------------------------------------------------+-------------------------------+
+|| variable        || type                                            || description                 ||
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<alternator>>> | {{{$generic/AlternatorTool.html}AlternatorTool}} | For creating Alternators to easily alternate over a set of values
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<convert>>>    | {{{$generic/ConversionTool.html}ConversionTool}} | For converting String values to richer object types
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<date>>>       | {{{$generic/DateTool.html}DateTool}}             | For manipulating, formatting, and comparing dates
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<display>>>    | {{{$generic/DisplayTool.html}DisplayTool}}       | For controlling display of references (e.g. truncating values, "pretty printing" lists, and displaying alternates when a reference is null)
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<esc>>>        | {{{$generic/EscapeTool.html}EscapeTool}}         | For common escaping needs in Velocity templates (e.g. escaping html, xml, javascript etc.)
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<field>>>      | {{{$generic/FieldTool.html}FieldTool}}           | For (easy) access to static fields in a class, such as string constants
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<loop>>>       | {{{$generic/LoopTool.html}LoopTool}}             | A convenience tool to use with \#foreach loops. It wraps a list with a custom iterator to provide greater control, allowing loops to end early, skip ahead and more
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<math>>>       | {{{$generic/MathTool.html}MathTool}}             | For performing math functions
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<number>>>     | {{{$generic/NumberTool.html}NumberTool}}         | For formatting and converting numbers
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<render>>>     | {{{$generic/RenderTool.html}RenderTool}}         | To evaluate and render arbitrary strings of VTL, including recursive rendering
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<text>>>       | {{{$generic/ResourceTool.html}ResourceTool}}     | For simplified access to ResourceBundles for internationalization or other dynamic content needs
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<sorter>>>     | {{{$generic/SortTool.html}SortTool}}             | Used to sort collections (or arrays, iterators, etc) on any arbitary set of properties exposed by the objects contained within the collection
+*------------------+--------------------------------------------------+-------------------------------+
+| <<<xml>>>        | {{{$generic/XmlTool.html}XmlTool}}               | For reading/navigating XML files. This uses dom4j under the covers and provides complete XPath support
+*------------------+--------------------------------------------------+-------------------------------+
+~~| <<<context>>>    | (causes RuntimeException)
+~~| <<<link>>>       | (causes NullPointerException)
+
+  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html\#L416}DefaultSiteRenderer.createDocumentVelocityContext(...)}}>>>
   source for more details.
 
 ** Maven Site Plugin
@@ -111,7 +147,7 @@ Doxia Site Tools - Site Renderer
 | <project properties>            | <<<String>>>         | Properties defined in POM are directly available. |
 *---------------------------------+----------------------+-------------------------------+
 
-  See <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/render/AbstractSiteRenderingMojo.html#createSiteRenderingContext(java.util.Locale)}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
+  See <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/render/AbstractSiteRenderingMojo.html\#createSiteRenderingContext(java.util.Locale)}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
   source for more details.
 
 ** Site Template
@@ -135,5 +171,5 @@ Doxia Site Tools - Site Renderer
 | <<<title>>>                     | <<<String>>>         | The title of the document, including the project or site name |
 *---------------------------------+----------------------+-------------------------------+
 
-  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#L504}DefaultSiteRenderer.createSiteTemplateVelocityContext(...)}}>>>
+  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html\#L504}DefaultSiteRenderer.createSiteTemplateVelocityContext(...)}}>>>
   source for more details.
