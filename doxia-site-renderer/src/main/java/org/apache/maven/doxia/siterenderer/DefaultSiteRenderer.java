@@ -338,7 +338,7 @@ public class DefaultSiteRenderer
                 {
                     SiteResourceLoader.setResource( resource );
 
-                    Context vc = createDocumentVelocityContext( sink, siteContext );
+                    Context vc = createDocumentVelocityContext( renderingContext, siteContext );
 
                     StringWriter sw = new StringWriter();
 
@@ -444,7 +444,8 @@ public class DefaultSiteRenderer
      * @param siteRenderingContext the site rendering context
      * @return
      */
-    protected Context createDocumentVelocityContext( SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
+    protected Context createDocumentVelocityContext( RenderingContext renderingContext,
+                                                     SiteRenderingContext siteRenderingContext )
     {
         ToolManager toolManager = new ToolManager( true );
         Context context = toolManager.createContext();
@@ -453,7 +454,6 @@ public class DefaultSiteRenderer
         // Data objects
         // ----------------------------------------------------------------------
 
-        RenderingContext renderingContext = sink.getRenderingContext();
         context.put( "relativePath", renderingContext.getRelativePath() );
 
         String currentFileName = renderingContext.getOutputName().replace( '\\', '/' );
@@ -529,22 +529,22 @@ public class DefaultSiteRenderer
      * Create a Velocity Context for the site template decorating the document. In addition to all the informations
      * from the document, this context contains data gathered in {@link SiteRendererSink} during document rendering.
      * 
-     * @param sink the site renderer sink for the document
+     * @param siteRendererSink the site renderer sink for the document
      * @param siteRenderingContext the site rendering context
      * @return
      */
-    protected Context createSiteTemplateVelocityContext( SiteRendererSink sink,
+    protected Context createSiteTemplateVelocityContext( SiteRendererSink siteRendererSink,
                                                          SiteRenderingContext siteRenderingContext )
     {
-        // first get the context from Doxia source
-        Context context = createDocumentVelocityContext( sink, siteRenderingContext );
+        // first get the context from document
+        Context context = createDocumentVelocityContext( siteRendererSink.getRenderingContext(), siteRenderingContext );
 
         // then add data objects from rendered document
 
         // Add infos from document
-        context.put( "authors", sink.getAuthors() );
+        context.put( "authors", siteRendererSink.getAuthors() );
 
-        context.put( "shortTitle", sink.getTitle() );
+        context.put( "shortTitle", siteRendererSink.getTitle() );
 
         // DOXIASITETOOLS-70: Prepend the project name to the title, if any
         String title = "";
@@ -560,28 +560,33 @@ public class DefaultSiteRenderer
 
         if ( title.length() > 0 )
         {
-            title += " &#x2013; ";
+            title += " &#x2013; "; // Symbol Name: En Dash, Html Entity: &ndash;
         }
-        title += sink.getTitle();
+        title += siteRendererSink.getTitle();
 
         context.put( "title", title );
 
-        context.put( "headContent", sink.getHead() );
+        context.put( "headContent", siteRendererSink.getHead() );
 
-        context.put( "bodyContent", sink.getBody() );
+        context.put( "bodyContent", siteRendererSink.getBody() );
 
         SimpleDateFormat sdf = new SimpleDateFormat( "yyyyMMdd" );
-        if ( StringUtils.isNotEmpty( sink.getDate() ) )
+        if ( StringUtils.isNotEmpty( siteRendererSink.getDate() ) )
         {
+            String documentDate = siteRendererSink.getDate();
+
             try
             {
                 // we support only ISO-8601 date
-                context.put( "dateCreation",
-                        sdf.format( new SimpleDateFormat( "yyyy-MM-dd" ).parse( sink.getDate() ) ) );
+                Date dateCreation = new SimpleDateFormat( "yyyy-MM-dd" ).parse( documentDate );
+
+                context.put( "dateCreation", sdf.format( dateCreation ) );
             }
             catch ( java.text.ParseException e )
             {
-                getLogger().debug( "Could not parse date: " + sink.getDate() + ", ignoring!", e );
+                getLogger().warn( "Could not parse date '" + documentDate + "' from "
+                    + siteRendererSink.getRenderingContext().getInputName()
+                    + " (expected yyyy-MM-dd format), ignoring!" );
             }
         }
 
