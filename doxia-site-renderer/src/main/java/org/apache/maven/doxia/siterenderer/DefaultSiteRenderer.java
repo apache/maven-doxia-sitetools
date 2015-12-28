@@ -346,16 +346,16 @@ public class DefaultSiteRenderer
 
                     String doxiaContent = sw.toString();
 
-                    if ( siteContext.getVelocityDocumentOutput() != null )
+                    if ( siteContext.getProcessedContentOutput() != null )
                     {
                         // save Velocity processing result, ie the Doxia content that will be parsed after
-                        if ( !siteContext.getVelocityDocumentOutput().exists() )
+                        if ( !siteContext.getProcessedContentOutput().exists() )
                         {
-                            siteContext.getVelocityDocumentOutput().mkdirs();
+                            siteContext.getProcessedContentOutput().mkdirs();
                         }
 
                         String input = renderingContext.getInputName();
-                        File outputFile = new File( siteContext.getVelocityDocumentOutput(),
+                        File outputFile = new File( siteContext.getProcessedContentOutput(),
                                                     input.substring( 0, input.length() - 3 ) );
 
                         File outputParent = outputFile.getParentFile();
