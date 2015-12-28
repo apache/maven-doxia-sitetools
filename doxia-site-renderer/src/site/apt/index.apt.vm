@@ -71,6 +71,8 @@ Doxia Site Tools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<doxiaSiteRendererVersion>>>  | <<<String>>>         | The version of Doxia Site Renderer in use |
 *---------------------------------+----------------------+-------------------------------+
+| <<<isoDateFormat>>>             | <<<DateFormat>>>     | An instance of the ISO-8601 date format, ie "yyyy-MM-dd" |
+*---------------------------------+----------------------+-------------------------------+
 | <<<locale>>>                    | <<<Locale>>>         | The locale for the document being rendered |
 *---------------------------------+----------------------+-------------------------------+
 | <<<publishDate>>>               | <<<Date>>>           | An optional hardcoded publish date that has been set programmatically |
