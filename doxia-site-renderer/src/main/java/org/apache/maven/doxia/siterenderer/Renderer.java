@@ -89,15 +89,15 @@ public interface Renderer
      * Create a Site Rendering Context for a site using a local template.
      *
      * @param templateFile
-     * @param skinFile
      * @param attributes
      * @param decoration
      * @param defaultWindowTitle
      * @param locale
      * @return a SiteRenderingContext.
      * @throws MalformedURLException if it bombs.
+     * @since 1.7, had an additional skinFile parameter before
      */
-    SiteRenderingContext createContextForTemplate( File templateFile, File skinFile, Map<String, ?> attributes,
+    SiteRenderingContext createContextForTemplate( File templateFile, Map<String, ?> attributes,
                                                    DecorationModel decoration, String defaultWindowTitle,
                                                    Locale locale )
         throws MalformedURLException;

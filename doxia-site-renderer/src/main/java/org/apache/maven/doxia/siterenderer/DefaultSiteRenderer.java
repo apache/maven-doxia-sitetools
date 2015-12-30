@@ -652,13 +652,28 @@ public class DefaultSiteRenderer
         }
     }
 
+    private SiteRenderingContext createSiteRenderingContext( Map<String, ?> attributes, DecorationModel decoration,
+                                                             String defaultWindowTitle, Locale locale )
+    {
+        SiteRenderingContext context = new SiteRenderingContext();
+
+        context.setTemplateProperties( attributes );
+        context.setLocale( locale );
+        context.setDecoration( decoration );
+        context.setDefaultWindowTitle( defaultWindowTitle );
+
+        return context;
+    }
+
     /** {@inheritDoc} */
     public SiteRenderingContext createContextForSkin( File skinFile, Map<String, ?> attributes,
                                                       DecorationModel decoration, String defaultWindowTitle,
                                                       Locale locale )
             throws IOException
     {
-        SiteRenderingContext context = new SiteRenderingContext();
+        SiteRenderingContext context = createSiteRenderingContext( attributes, decoration, defaultWindowTitle, locale );
+
+        context.setSkinJarFile( skinFile );
 
         ZipFile zipFile = getZipFile( skinFile );
 
@@ -681,67 +696,21 @@ public class DefaultSiteRenderer
             closeZipFile( zipFile );
         }
 
-        context.setTemplateProperties( attributes );
-        context.setLocale( locale );
-        context.setDecoration( decoration );
-        context.setDefaultWindowTitle( defaultWindowTitle );
-        context.setSkinJarFile( skinFile );
-
         return context;
     }
 
-    private static ZipFile getZipFile( File file )
-        throws IOException
-    {
-        if ( file == null )
-        {
-            throw new IOException( "Error opening ZipFile: null" );
-        }
-
-        try
-        {
-            // TODO: plexus-archiver, if it could do the excludes
-            return new ZipFile( file );
-        }
-        catch ( ZipException ex )
-        {
-            IOException ioe = new IOException( "Error opening ZipFile: " + file.getAbsolutePath() );
-            ioe.initCause( ex );
-            throw ioe;
-        }
-    }
-
     /** {@inheritDoc} */
-    public SiteRenderingContext createContextForTemplate( File templateFile, File skinFile, Map<String, ?> attributes,
+    public SiteRenderingContext createContextForTemplate( File templateFile, Map<String, ?> attributes,
                                                           DecorationModel decoration, String defaultWindowTitle,
                                                           Locale locale )
             throws MalformedURLException
     {
-        SiteRenderingContext context = new SiteRenderingContext();
+        SiteRenderingContext context = createSiteRenderingContext( attributes, decoration, defaultWindowTitle, locale );
 
         context.setTemplateName( templateFile.getName() );
         context.setTemplateClassLoader( new URLClassLoader( new URL[]{templateFile.getParentFile().toURI().toURL()} ) );
 
-        context.setTemplateProperties( attributes );
-        context.setLocale( locale );
-        context.setDecoration( decoration );
-        context.setDefaultWindowTitle( defaultWindowTitle );
-        context.setSkinJarFile( skinFile );
-
         return context;
-    }
-
-    private static void closeZipFile( ZipFile zipFile )
-    {
-        // TODO: move to plexus utils
-        try
-        {
-            zipFile.close();
-        }
-        catch ( IOException e )
-        {
-            // ignore
-        }
     }
 
     /** {@inheritDoc} */
@@ -986,5 +955,39 @@ public class DefaultSiteRenderer
         }
 
         return str.regionMatches( true, str.length() - searchStr.length(), searchStr, 0, searchStr.length() );
+    }
+
+    private static ZipFile getZipFile( File file )
+        throws IOException
+    {
+        if ( file == null )
+        {
+            throw new IOException( "Error opening ZipFile: null" );
+        }
+
+        try
+        {
+            // TODO: plexus-archiver, if it could do the excludes
+            return new ZipFile( file );
+        }
+        catch ( ZipException ex )
+        {
+            IOException ioe = new IOException( "Error opening ZipFile: " + file.getAbsolutePath() );
+            ioe.initCause( ex );
+            throw ioe;
+        }
+    }
+
+    private static void closeZipFile( ZipFile zipFile )
+    {
+        // TODO: move to plexus utils
+        try
+        {
+            zipFile.close();
+        }
+        catch ( IOException e )
+        {
+            // ignore
+        }
     }
 }

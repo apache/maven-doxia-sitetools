@@ -226,7 +226,7 @@ public class DefaultSiteRendererTest
         Map<String, ?> attributes = Collections.emptyMap();
 
         SiteRenderingContext siteRenderingContext =
-            renderer.createContextForTemplate( templateFile, null, attributes, new DecorationModel(),
+            renderer.createContextForTemplate( templateFile, attributes, new DecorationModel(),
                                                "defaultWindowTitle", Locale.ENGLISH );
         RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
         SiteRendererSink sink = new SiteRendererSink( context );
