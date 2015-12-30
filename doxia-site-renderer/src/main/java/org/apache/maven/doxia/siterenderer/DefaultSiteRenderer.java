@@ -481,8 +481,6 @@ public class DefaultSiteRenderer
         }
         context.put( "dateFormat", dateFormat );
 
-        context.put( "isoDateFormat", new SimpleDateFormat( "yyyy-MM-dd" ) );
-
         // doxiaSiteRendererVersion
         InputStream inputStream = this.getClass().getResourceAsStream( "/META-INF/"
             + "maven/org.apache.maven.doxia/doxia-site-renderer/pom.properties" );
