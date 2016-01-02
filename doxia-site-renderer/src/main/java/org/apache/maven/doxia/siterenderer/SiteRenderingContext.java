@@ -39,7 +39,7 @@ import org.codehaus.plexus.util.WriterFactory;
  */
 public class SiteRenderingContext
 {
-    private String inputEncoding = ReaderFactory.UTF_8;
+    private String inputEncoding = ReaderFactory.FILE_ENCODING;
 
     private String outputEncoding = WriterFactory.UTF_8;
 
