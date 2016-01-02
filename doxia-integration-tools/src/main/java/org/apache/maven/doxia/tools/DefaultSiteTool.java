@@ -527,6 +527,8 @@ public class DefaultSiteTool
                     && reactorProject.getVersion().equals( origParent.getVersion() ) )
                 {
                     parentProject = reactorProject;
+
+                    getLogger().debug( "Parent project " + origParent.getId() + " picked from reactor" );
                     break;
                 }
             }
@@ -555,14 +557,16 @@ public class DefaultSiteTool
                             && mavenProject.getVersion().equals( origParent.getVersion() ) )
                         {
                             parentProject = mavenProject;
-                        }
 
-                        getLogger().info( "Parent project loaded from a relative path: " + relativePath );
+                            getLogger().debug( "Parent project " + origParent.getId() + " loaded from a relative path: "
+                                + relativePath );
+                        }
                     }
                 }
                 catch ( ProjectBuildingException e )
                 {
-                    getLogger().info( "Unable to load parent project from a relative path: " + e.getMessage() );
+                    getLogger().info( "Unable to load parent project " + origParent.getId() + " from a relative path: "
+                        + e.getMessage() );
                 }
             }
 
@@ -572,19 +576,23 @@ public class DefaultSiteTool
                 {
                     parentProject = mavenProjectBuilder.buildFromRepository( aProject.getParentArtifact(), aProject
                         .getRemoteArtifactRepositories(), localRepository );
-                    getLogger().info( "Parent project loaded from repository: " + parentProject.getId() );
+
+                    getLogger().debug( "Parent project " + origParent.getId() + " loaded from repository" );
                 }
                 catch ( ProjectBuildingException e )
                 {
-                    getLogger().warn( "Unable to load parent project from repository: " + e.getMessage() );
+                    getLogger().warn( "Unable to load parent project " + origParent.getId() + " from repository: "
+                        + e.getMessage() );
                 }
             }
 
             if ( parentProject == null )
             {
-                // fallback to uninterpolated value
+                // fallback to original parent, which may contain uninterpolated value (still need a unit test)
 
                 parentProject = origParent;
+
+                getLogger().debug( "Parent project " + origParent.getId() + " picked from original value" );
             }
         }
         return parentProject;
