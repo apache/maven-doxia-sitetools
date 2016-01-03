@@ -985,7 +985,8 @@ public class DefaultSiteTool
             }
             else
             {
-                getLogger().debug( "Skipped site descriptor for locale " + locale.getLanguage() );
+                getLogger().debug( "No site descriptor found for " + project.getId() + " for locale "
+                    + locale.getLanguage() );
             }
         }
         catch ( ArtifactNotFoundException e )
@@ -1022,7 +1023,7 @@ public class DefaultSiteTool
             // we use zero length files to avoid re-resolution (see below)
             if ( result.length() == 0 )
             {
-                getLogger().debug( "Skipped remote site descriptor check" );
+                getLogger().debug( "No site descriptor found for " + project.getId() + " without locale" );
                 result = null;
             }
         }
@@ -1151,7 +1152,7 @@ public class DefaultSiteTool
             String parentDistMgmnt = getDistMgmntSiteUrl( parentProject );
             if ( getLogger().isDebugEnabled() )
             {
-                getLogger().debug( "decoration model inheritance: assembling child with level " + depth
+                getLogger().debug( "Site decoration model inheritance: assembling child with level " + depth
                     + " parent: distributionManagement.site.url child = " + projectDistMgmnt + " and parent = "
                     + parentDistMgmnt );
             }
