@@ -26,6 +26,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -392,7 +393,7 @@ public class DefaultSiteTool
 
         final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale;
 
-        getLogger().debug( "Computing decoration model for locale " + llocale );
+        getLogger().debug( "Computing decoration model of " + project.getId() + " for locale " + llocale );
 
         Map<String, String> props = new HashMap<String, String>( 2 );
 
@@ -400,10 +401,12 @@ public class DefaultSiteTool
         props.put( "reports", "<menu ref=\"reports\"/>\n" );
         props.put( "modules", "<menu ref=\"modules\"/>\n" );
 
-        MavenProject parentProject = getParentProject( project, reactorProjects, localRepository );
 
-        DecorationModel decorationModel = getDecorationModel( 0, siteDirectory, llocale, project, parentProject,
-                                                              reactorProjects, localRepository, repositories, props );
+        Map.Entry<DecorationModel, MavenProject> result =
+            getDecorationModel( 0, siteDirectory, llocale, project, reactorProjects, localRepository, repositories,
+                                props );
+        DecorationModel decorationModel = result.getKey();
+        MavenProject parentProject = result.getValue();
 
         if ( decorationModel == null )
         {
@@ -1036,21 +1039,24 @@ public class DefaultSiteTool
      * @param localRepository not null
      * @param repositories not null
      * @param origProps not null
-     * @return the decoration model depending the locale
+     * @return the decoration model depending the locale and the parent project
      * @throws SiteToolException if any
      */
-    private DecorationModel getDecorationModel( int depth, File siteDirectory, Locale locale, MavenProject project,
-                                                MavenProject parentProject, List<MavenProject> reactorProjects,
-                                                ArtifactRepository localRepository,
-                                                List<ArtifactRepository> repositories, Map<String, String> origProps )
+    private Map.Entry<DecorationModel, MavenProject> getDecorationModel( int depth, File siteDirectory, Locale locale,
+                                                                         MavenProject project,
+                                                                         List<MavenProject> reactorProjects,
+                                                                         ArtifactRepository localRepository,
+                                                                         List<ArtifactRepository> repositories,
+                                                                         Map<String, String> origProps )
         throws SiteToolException
     {
         Map<String, String> props = new HashMap<String, String>( origProps );
 
+        // 1. get site descriptor File
         File siteDescriptor;
         if ( project.getBasedir() == null )
         {
-            // POM is in the repository, look there for site descriptor
+            // POM is in the repository: look into the repository for site descriptor
             try
             {
                 siteDescriptor = getSiteDescriptorFromRepository( project, localRepository, repositories, locale );
@@ -1063,20 +1069,27 @@ public class DefaultSiteTool
         }
         else
         {
+            // POM is in build directory: look for site descriptor as local file
             siteDescriptor = getSiteDescriptor( siteDirectory, locale );
         }
 
-        String siteDescriptorContent = null;
-        long siteDescriptorLastModified = 0L;
+        // 2. read DecorationModel from site descriptor File
+        DecorationModel decoration = null;
         Reader siteDescriptorReader = null;
         try
         {
             if ( siteDescriptor != null && siteDescriptor.exists() )
             {
-                getLogger().debug( "Reading site descriptor from " + siteDescriptor );
+                getLogger().debug( "Reading" + ( depth == 0 ? "" : ( " parent level " + depth ) )
+                    + " site descriptor from " + siteDescriptor );
+
                 siteDescriptorReader = ReaderFactory.newXmlReader( siteDescriptor );
-                siteDescriptorContent = IOUtil.toString( siteDescriptorReader );
-                siteDescriptorLastModified = siteDescriptor.lastModified();
+
+                String siteDescriptorContent = IOUtil.toString( siteDescriptorReader );
+                String interpolated = getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
+
+                decoration = readDecorationModel( interpolated );
+                decoration.setLastModified( siteDescriptor.lastModified() );
             }
             else
             {
@@ -1085,48 +1098,43 @@ public class DefaultSiteTool
         }
         catch ( IOException e )
         {
-            throw new SiteToolException( "The site descriptor cannot be read!", e );
+            throw new SiteToolException( "The site descriptor for " + project.getId() + " cannot be read from "
+                + siteDescriptor, e );
         }
         finally
         {
             IOUtil.close( siteDescriptorReader );
         }
 
-        DecorationModel decoration = null;
-        if ( siteDescriptorContent != null )
-        {
-            siteDescriptorContent = getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
+        // 3. look for parent project
+        MavenProject parentProject = getParentProject( project, reactorProjects, localRepository ); 
 
-            decoration = readDecorationModel( siteDescriptorContent );
-            decoration.setLastModified( siteDescriptorLastModified );
-        }
-
+        // 4. merge with parent project DecorationModel
         if ( parentProject != null && ( decoration == null || decoration.isMergeParent() ) )
         {
             depth++;
-            getLogger().debug( depth + "> Looking for parent project site descriptor: " + parentProject.getId() );
-
-            MavenProject parentParentProject = getParentProject( parentProject, reactorProjects, localRepository );
+            getLogger().debug( "Looking for site descriptor of level " + depth + " parent project: "
+                + parentProject.getId() );
 
             File parentSiteDirectory = null;
-
             if ( parentProject.getBasedir() != null )
             {
+                // extrapolate parent project site directory
                 String siteRelativePath = getRelativeFilePath( project.getBasedir().getAbsolutePath(),
                                                                siteDescriptor.getParentFile().getAbsolutePath() );
 
                 parentSiteDirectory = new File( parentProject.getBasedir(), siteRelativePath );
                 // notice: using same siteRelativePath for parent as current project; may be wrong if site plugin
-                // has different configuration. But this is a rare case (this only has impact if parent if from reactor)
+                // has different configuration. But this is a rare case (this only has impact if parent is from reactor)
             }
 
-            DecorationModel parent =
-                getDecorationModel( depth, parentSiteDirectory, locale, parentProject, parentParentProject,
-                                    reactorProjects, localRepository, repositories, props );
+            DecorationModel parentDecoration =
+                getDecorationModel( depth, parentSiteDirectory, locale, parentProject, reactorProjects, localRepository,
+                                    repositories, props ).getKey();
 
             // MSHARED-116 requires an empty decoration model (instead of a null one)
             // MSHARED-145 requires us to do this only if there is a parent to merge it with
-            if ( decoration == null && parent != null )
+            if ( decoration == null && parentDecoration != null )
             {
                 // we have no site descriptor: merge the parent into an empty one
                 decoration = new DecorationModel();
@@ -1138,21 +1146,20 @@ public class DefaultSiteTool
                 name = decoration.getName();
             }
 
-            // Merge the parent and child site descriptors
+            // Merge the parent and child DecorationModels
             String projectDistMgmnt = getDistMgmntSiteUrl( project );
             String parentDistMgmnt = getDistMgmntSiteUrl( parentProject );
             if ( getLogger().isDebugEnabled() )
             {
-                getLogger().debug( "assembling decoration model inheritance: distributionManagement.site.url child = "
-                    + projectDistMgmnt + " and parent = " + parentDistMgmnt );
+                getLogger().debug( "decoration model inheritance: assembling child with level " + depth
+                    + " parent: distributionManagement.site.url child = " + projectDistMgmnt + " and parent = "
+                    + parentDistMgmnt );
             }
-            assembler.assembleModelInheritance( name, decoration, parent, projectDistMgmnt,
+            assembler.assembleModelInheritance( name, decoration, parentDecoration, projectDistMgmnt,
                                                 parentDistMgmnt == null ? projectDistMgmnt : parentDistMgmnt );
-
-            getLogger().debug( depth + "< decoration model ready for: " + parentProject.getId() );
         }
 
-        return decoration;
+        return new AbstractMap.SimpleEntry<DecorationModel, MavenProject>( decoration, parentProject );
     }
 
     /**
