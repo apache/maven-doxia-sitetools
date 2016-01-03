@@ -112,6 +112,14 @@ public class SiteToolTest
                                                            decorationModel ) );
     }
 
+    private void checkGetRelativePathDirectory( SiteTool tool, String relative, String to, String from )
+    {
+        assertEquals( relative, tool.getRelativePath( to, from ) );
+        assertEquals( relative, tool.getRelativePath( to + '/', from ) );
+        assertEquals( relative, tool.getRelativePath( to, from + '/' ) );
+        assertEquals( relative, tool.getRelativePath( to + '/', from + '/' ) );
+    }
+
     /**
      * @throws Exception
      */
@@ -121,37 +129,28 @@ public class SiteToolTest
         SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
         assertNotNull( tool );
 
-        String to = "http://maven.apache.org";
-        String from = "http://maven.apache.org";
-        assertEquals( tool.getRelativePath( to, from ), "" );
+        checkGetRelativePathDirectory( tool, "", "http://maven.apache.org", "http://maven.apache.org" );
 
-        to = "http://maven.apache.org";
-        from = "http://maven.apache.org/";
-        assertEquals( tool.getRelativePath( to, from ), "" );
+        checkGetRelativePathDirectory( tool, ".." + File.separator + "..", "http://maven.apache.org",
+                                       "http://maven.apache.org/plugins/maven-site-plugin" );
 
-        to = "http://maven.apache.org/";
-        from = "http://maven.apache.org";
-        assertEquals( tool.getRelativePath( to, from ), "" );
+        checkGetRelativePathDirectory( tool, "plugins" + File.separator + "maven-site-plugin",
+                                       "http://maven.apache.org/plugins/maven-site-plugin", "http://maven.apache.org"                         );
 
-        to = "http://maven.apache.org/";
-        from = "http://maven.apache.org/";
-        assertEquals( tool.getRelativePath( to, from ), "" );
+        checkGetRelativePathDirectory( tool, "", "dav:https://maven.apache.org", "dav:https://maven.apache.org" );
 
-        to = "http://maven.apache.org/";
-        from = "http://maven.apache.org/plugins/maven-site-plugin";
-        assertEquals( tool.getRelativePath( to, from ), ".." + File.separator + ".." );
-        to = "http://maven.apache.org";
-        from = "http://maven.apache.org/plugins/maven-site-plugin/";
-        assertEquals( tool.getRelativePath( to, from ), ".." + File.separator + ".." );
-        to = "http://maven.apache.org/";
-        from = "http://maven.apache.org/plugins/maven-site-plugin/";
-        assertEquals( tool.getRelativePath( to, from ), ".." + File.separator + ".." );
-        to = "http://maven.apache.org";
-        from = "http://maven.apache.org/plugins/maven-site-plugin";
-        assertEquals( tool.getRelativePath( to, from ), ".." + File.separator + ".." );
+        checkGetRelativePathDirectory( tool, "plugins" + File.separator + "maven-site-plugin",
+                                       "dav:http://maven.apache.org/plugins/maven-site-plugin",
+                                       "dav:http://maven.apache.org" );
 
-        to = "http://maven.apache.org/downloads.html";
-        from = "http://maven.apache.org/index.html";
+        checkGetRelativePathDirectory( tool, "", "scm:svn:https://maven.apache.org", "scm:svn:https://maven.apache.org" );
+
+        checkGetRelativePathDirectory( tool, "plugins" + File.separator + "maven-site-plugin",
+                                       "scm:svn:https://maven.apache.org/plugins/maven-site-plugin",
+                                       "scm:svn:https://maven.apache.org" );
+
+        String to = "http://maven.apache.org/downloads.html";
+        String from = "http://maven.apache.org/index.html";
         // FIXME! assertEquals( "downloads.html", tool.getRelativePath( to, from ) );
 
         // MSITE-600, MSHARED-203
@@ -162,20 +161,7 @@ public class SiteToolTest
         // note: 'tmp' is the host here which is probably not the intention, but at least the result is correct
         to = "file://tmp/bloop";
         from = "scp://localhost:/tmp/blop";
-        assertEquals( tool.getRelativePath( to, from ), to );
-
-        to = "http://maven.apache.org/plugins/maven-site-plugin/";
-        from = "http://maven.apache.org";
-        assertEquals( tool.getRelativePath( to, from ), "plugins" + File.separator + "maven-site-plugin" );
-        to = "http://maven.apache.org/plugins/maven-site-plugin/";
-        from = "http://maven.apache.org/";
-        assertEquals( tool.getRelativePath( to, from ), "plugins" + File.separator + "maven-site-plugin" );
-        to = "http://maven.apache.org/plugins/maven-site-plugin";
-        from = "http://maven.apache.org";
-        assertEquals( tool.getRelativePath( to, from ), "plugins" + File.separator + "maven-site-plugin" );
-        to = "http://maven.apache.org/plugins/maven-site-plugin";
-        from = "http://maven.apache.org/";
-        assertEquals( tool.getRelativePath( to, from ), "plugins" + File.separator + "maven-site-plugin" );
+        assertEquals( to, tool.getRelativePath( to, from ) );
 
         // Tests between files as described in MIDEA-102
         to = "C:/dev/voca/gateway/parser/gateway-parser.iml";

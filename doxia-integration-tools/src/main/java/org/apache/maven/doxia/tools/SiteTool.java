@@ -180,6 +180,8 @@ public interface SiteTool
      * <dd>return "../myproject-module1"</dd>
      * </dl>
      * <b>Note</b>: The file separator depends on the system.
+     * Maven-specific urls are supported, like <code>dav:https://dav.codehaus.org/</code> or
+     * <code>scm:svn:https://svn.apache.org/repos/asf</code>.
      *
      * @param to the <code>to</code> url of file as string
      * @param from the <code>from</code> url of file as string
