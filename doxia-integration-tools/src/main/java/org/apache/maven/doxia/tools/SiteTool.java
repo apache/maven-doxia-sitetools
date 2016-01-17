@@ -190,12 +190,12 @@ public interface SiteTool
     String getRelativePath( String to, String from );
 
     /**
-     * Returns the parent POM with interpolated URLs. Attempts to source this value from the
+     * Returns the parent POM with interpolated URLs.
+     * If called from Maven 3, just returns <code>project.getParent()</code>, which is already
+     * interpolated. But when called from Maven 2, attempts to source this value from the
      * <code>reactorProjects</code> parameters if available (reactor env model attributes
      * are interpolated), or if the reactor is unavailable (-N) resorts to the
      * <code>project.getParent().getUrl()</code> value which will NOT have been interpolated.
-     * <p/>
-     * TODO: once bug is fixed in Maven proper, remove this.
      *
      * @param aProject a Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.

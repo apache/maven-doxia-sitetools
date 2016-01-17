@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.apache.commons.io.FilenameUtils;
@@ -43,6 +44,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.site.decoration.Banner;
@@ -517,6 +519,12 @@ public class DefaultSiteTool
         checkNotNull( "aProject", aProject );
         checkNotNull( "reactorProjects", reactorProjects );
         checkNotNull( "localRepository", localRepository );
+
+        if ( isMaven3OrMore() )
+        {
+            // no need to make voodoo with Maven 3: job already done
+            return aProject.getParent();
+        }
 
         MavenProject parentProject = null;
 
@@ -1426,5 +1434,38 @@ public class DefaultSiteTool
         {
             throw new IllegalArgumentException( "The parameter '" + name + "' cannot be null." );
         }
+    }
+
+    /**
+     * Check the current Maven version to see if it's Maven 3.0 or newer.
+     */
+    private static boolean isMaven3OrMore()
+    {
+        return new DefaultArtifactVersion( getMavenVersion() ).getMajorVersion() >= 3;
+    }
+
+    private static String getMavenVersion()
+    {
+        // This relies on the fact that MavenProject is the in core classloader
+        // and that the core classloader is for the maven-core artifact
+        // and that should have a pom.properties file
+        // if this ever changes, we will have to revisit this code.
+        final Properties properties = new Properties();
+        final String corePomProperties = "META-INF/maven/org.apache.maven/maven-core/pom.properties";
+        final InputStream in = MavenProject.class.getClassLoader().getResourceAsStream( corePomProperties );
+       try
+        {
+            properties.load( in );
+        }
+        catch ( IOException ioe )
+        {
+            return "";
+        }
+        finally
+        {
+            IOUtil.close( in );
+        }
+
+        return properties.getProperty( "version" ).trim();
     }
 }
