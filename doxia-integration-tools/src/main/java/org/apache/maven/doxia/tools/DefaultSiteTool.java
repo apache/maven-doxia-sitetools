@@ -24,13 +24,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,6 +54,7 @@ import org.apache.maven.doxia.site.decoration.MenuItem;
 import org.apache.maven.doxia.site.decoration.Skin;
 import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Site;
@@ -382,6 +383,28 @@ public class DefaultSiteTool
         }
     }
 
+    /**
+     * Read site descriptor content from Reader, adding support for deprecated <code>${reports}</code>,
+     * <code>${parentProject}</code> and <code>${modules}</code> tags.
+     *
+     * @param reader
+     * @return the input content interpolated with deprecated tags 
+     * @throws IOException
+     */
+    private static String readSiteDescriptor( Reader reader )
+        throws IOException
+    {
+        String siteDescriptorContent = IOUtil.toString( reader );
+    
+        // This is to support the deprecated ${reports}, ${parentProject} and ${modules} tags.
+        Properties props = new Properties();
+        props.put( "reports", "<menu ref=\"reports\"/>\n" );
+        props.put( "modules", "<menu ref=\"modules\"/>\n" );
+        props.put( "parentProject", "<menu ref=\"parent\"/>" );
+    
+        return StringUtils.interpolate( siteDescriptorContent, props );
+    }
+
     /** {@inheritDoc} */
     public DecorationModel getDecorationModel( File siteDirectory, Locale locale, MavenProject project,
                                                List<MavenProject> reactorProjects, ArtifactRepository localRepository,
@@ -397,16 +420,8 @@ public class DefaultSiteTool
 
         getLogger().debug( "Computing decoration model of " + project.getId() + " for locale " + llocale );
 
-        Map<String, String> props = new HashMap<String, String>( 2 );
-
-        // This is to support the deprecated ${reports} and ${modules} tags.
-        props.put( "reports", "<menu ref=\"reports\"/>\n" );
-        props.put( "modules", "<menu ref=\"modules\"/>\n" );
-
-
         Map.Entry<DecorationModel, MavenProject> result =
-            getDecorationModel( 0, siteDirectory, llocale, project, reactorProjects, localRepository, repositories,
-                                props );
+            getDecorationModel( 0, siteDirectory, llocale, project, reactorProjects, localRepository, repositories );
         DecorationModel decorationModel = result.getKey();
         MavenProject parentProject = result.getValue();
 
@@ -416,12 +431,12 @@ public class DefaultSiteTool
 
             String siteDescriptorContent;
 
-            InputStream in = null;
+            Reader reader = null;
             try
             {
                 // Note the default is not a super class - it is used when nothing else is found
-                in = getClass().getResourceAsStream( "/default-site.xml" );
-                siteDescriptorContent = IOUtil.toString( in, "UTF-8" );
+                reader = ReaderFactory.newXmlReader( getClass().getResourceAsStream( "/default-site.xml" ) );
+                siteDescriptorContent = readSiteDescriptor( reader );
             }
             catch ( IOException e )
             {
@@ -429,13 +444,18 @@ public class DefaultSiteTool
             }
             finally
             {
-                IOUtil.close( in );
+                IOUtil.close( reader );
             }
-
-            siteDescriptorContent = getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
 
             decorationModel = readDecorationModel( siteDescriptorContent );
         }
+
+        // DecorationModel back to String to interpolate, then go back to DecorationModel
+        String siteDescriptorContent = decorationModelToString( decorationModel );
+        System.out.println( "inherited : " + siteDescriptorContent );
+        siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent );
+        System.out.println( "interpolated : " + siteDescriptorContent );
+        decorationModel = readDecorationModel( siteDescriptorContent );
 
         if ( parentProject != null )
         {
@@ -461,19 +481,16 @@ public class DefaultSiteTool
         throws SiteToolException
     {
         checkNotNull( "props", props );
+
+        return getInterpolatedSiteDescriptorContent( aProject, siteDescriptorContent );
+    }
+
+    private String getInterpolatedSiteDescriptorContent( MavenProject aProject,
+                                                        String siteDescriptorContent )
+        throws SiteToolException
+    {
         checkNotNull( "aProject", aProject );
         checkNotNull( "siteDescriptorContent", siteDescriptorContent );
-
-        // MSITE-201: The ObjectBasedValueSource( aProject ) below will match
-        // ${modules} to aProject.getModules(), so we need to interpolate that
-        // first.
-
-        Map<String, String> modulesProps = new HashMap<String, String>( 1 );
-
-        // Legacy for the old ${modules} syntax
-        modulesProps.put( "modules", "<menu ref=\"modules\"/>" );
-
-        String interpolatedSiteDescriptorContent = StringUtils.interpolate( siteDescriptorContent, modulesProps );
 
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
 
@@ -495,21 +512,12 @@ public class DefaultSiteTool
         try
         {
             // FIXME: this does not escape xml entities, see MSITE-226, PLXCOMP-118
-            interpolatedSiteDescriptorContent = interpolator.interpolate( interpolatedSiteDescriptorContent,
-                                                                          "project" );
+            return interpolator.interpolate( siteDescriptorContent, "project" );
         }
         catch ( InterpolationException e )
         {
             throw new SiteToolException( "Cannot interpolate site descriptor: " + e.getMessage(), e );
         }
-
-        // Legacy for the old ${parentProject} syntax
-        props.put( "parentProject", "<menu ref=\"parent\"/>" );
-
-        // Legacy for the old ${reports} syntax
-        props.put( "reports", "<menu ref=\"reports\"/>" );
-
-        return StringUtils.interpolate( interpolatedSiteDescriptorContent, props );
     }
 
     /** {@inheritDoc} */
@@ -1055,12 +1063,9 @@ public class DefaultSiteTool
                                                                          MavenProject project,
                                                                          List<MavenProject> reactorProjects,
                                                                          ArtifactRepository localRepository,
-                                                                         List<ArtifactRepository> repositories,
-                                                                         Map<String, String> origProps )
+                                                                         List<ArtifactRepository> repositories )
         throws SiteToolException
     {
-        Map<String, String> props = new HashMap<String, String>( origProps );
-
         // 1. get site descriptor File
         File siteDescriptor;
         if ( project.getBasedir() == null )
@@ -1094,10 +1099,9 @@ public class DefaultSiteTool
 
                 siteDescriptorReader = ReaderFactory.newXmlReader( siteDescriptor );
 
-                String siteDescriptorContent = IOUtil.toString( siteDescriptorReader );
-                String interpolated = getInterpolatedSiteDescriptorContent( props, project, siteDescriptorContent );
+                String siteDescriptorContent = readSiteDescriptor( siteDescriptorReader );
 
-                decoration = readDecorationModel( interpolated );
+                decoration = readDecorationModel( siteDescriptorContent );
                 decoration.setLastModified( siteDescriptor.lastModified() );
             }
             else
@@ -1139,7 +1143,7 @@ public class DefaultSiteTool
 
             DecorationModel parentDecoration =
                 getDecorationModel( depth, parentSiteDirectory, locale, parentProject, reactorProjects, localRepository,
-                                    repositories, props ).getKey();
+                                    repositories ).getKey();
 
             // MSHARED-116 requires an empty decoration model (instead of a null one)
             // MSHARED-145 requires us to do this only if there is a parent to merge it with
@@ -1179,10 +1183,9 @@ public class DefaultSiteTool
     private DecorationModel readDecorationModel( String siteDescriptorContent )
         throws SiteToolException
     {
-        DecorationModel decoration;
         try
         {
-            decoration = new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
+            return new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
         }
         catch ( XmlPullParserException e )
         {
@@ -1192,7 +1195,26 @@ public class DefaultSiteTool
         {
             throw new SiteToolException( "Error reading site descriptor", e );
         }
-        return decoration;
+    }
+
+    private String decorationModelToString( DecorationModel decoration )
+        throws SiteToolException
+    {
+        StringWriter writer = new StringWriter();
+
+        try
+        {
+            new DecorationXpp3Writer().write( writer, decoration );
+            return writer.toString();
+        }
+        catch ( IOException e )
+        {
+            throw new SiteToolException( "Error reading site descriptor", e );
+        }
+        finally
+        {
+            IOUtil.close( writer );
+        }
     }
 
     private static String buildRelativePath( final String toPath,  final String fromPath, final char separatorChar )

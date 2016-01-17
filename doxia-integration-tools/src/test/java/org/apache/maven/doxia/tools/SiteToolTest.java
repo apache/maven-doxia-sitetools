@@ -338,7 +338,7 @@ public class SiteToolTest
     }
     
     // MSHARED-217 -> DOXIATOOLS-34 -> DOXIASITETOOLS-118
-    public void testMultiModuleInterpolation()
+    public void testDecorationModelInheritanceAndInterpolation()
         throws Exception
     {
         SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
@@ -348,24 +348,22 @@ public class SiteToolTest
         parentProject.setGroupId( "org.apache.maven.shared.its" );
         parentProject.setArtifactId( "mshared-217-parent" );
         parentProject.setVersion( "1.0-SNAPSHOT" );
-        parentProject.setBasedir( null ); // get it from repo
         parentProject.setName( "MSHARED-217 Parent" );
-        String siteDirectory = "src/site";
         
         SiteToolMavenProjectStub childProject = new SiteToolMavenProjectStub( "interpolation-child-test" );
         childProject.setParent( parentProject );
         childProject.setGroupId( "org.apache.maven.shared.its" );
         childProject.setArtifactId( "mshared-217-child" );
         childProject.setVersion( "1.0-SNAPSHOT" );
-        childProject.setBasedir( null ); // get it from repo
         childProject.setName( "MSHARED-217 Child" );
 
         List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList( parentProject );
 
-        DecorationModel model =
-            tool.getDecorationModel( new File( siteDirectory ), Locale.getDefault(), childProject, reactorProjects,
-                                     getLocalRepo(), childProject.getRemoteArtifactRepositories() );
+        DecorationModel model = tool.getDecorationModel( new File( childProject.getBasedir(), "src/site" ),
+                                                         Locale.getDefault(), childProject, reactorProjects,
+                                                         getLocalRepo(), childProject.getRemoteArtifactRepositories() );
         assertNotNull( model );
         assertEquals( "MSHARED-217 Child", model.getName() );
+        assertEquals( "project.artifactId = mshared-217-child", model.getBannerLeft().getName() );
     }
 }
