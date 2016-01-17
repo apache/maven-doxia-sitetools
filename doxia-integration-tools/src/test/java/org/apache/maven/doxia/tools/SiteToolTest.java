@@ -22,6 +22,8 @@ package org.apache.maven.doxia.tools;
 import java.io.File;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -37,8 +39,6 @@ import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -335,5 +335,37 @@ public class SiteToolTest
         assertNotNull( siteDescriptorContent );
         assertFalse( siteDescriptorContent.contains( "${project.name}" ) );
         assertTrue( siteDescriptorContent.contains( "Interpolatesite" ) );
+    }
+    
+    // MSHARED-217 -> DOXIATOOLS-34 -> DOXIASITETOOLS-118
+    public void testMultiModuleInterpolation()
+        throws Exception
+    {
+        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
+        assertNotNull( tool );
+
+        SiteToolMavenProjectStub parentProject = new SiteToolMavenProjectStub( "interpolation-parent-test" );
+        parentProject.setGroupId( "org.apache.maven.shared.its" );
+        parentProject.setArtifactId( "mshared-217-parent" );
+        parentProject.setVersion( "1.0-SNAPSHOT" );
+        parentProject.setBasedir( null ); // get it from repo
+        parentProject.setName( "MSHARED-217 Parent" );
+        String siteDirectory = "src/site";
+        
+        SiteToolMavenProjectStub childProject = new SiteToolMavenProjectStub( "interpolation-child-test" );
+        childProject.setParent( parentProject );
+        childProject.setGroupId( "org.apache.maven.shared.its" );
+        childProject.setArtifactId( "mshared-217-child" );
+        childProject.setVersion( "1.0-SNAPSHOT" );
+        childProject.setBasedir( null ); // get it from repo
+        childProject.setName( "MSHARED-217 Child" );
+
+        List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList( parentProject );
+
+        DecorationModel model =
+            tool.getDecorationModel( new File( siteDirectory ), Locale.getDefault(), childProject, reactorProjects,
+                                     getLocalRepo(), childProject.getRemoteArtifactRepositories() );
+        assertNotNull( model );
+        assertEquals( "MSHARED-217 Child", model.getName() );
     }
 }
