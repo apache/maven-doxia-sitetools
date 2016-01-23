@@ -265,6 +265,9 @@ under the License.
                 <!-- DOXIASITETOOLS-85 RenderingContext package changed -->
                 <exclude>org/apache/maven/doxia/siterenderer/*Renderer</exclude>
                 <exclude>org/apache/maven/doxia/siterenderer/sink/*</exclude>
+                <!-- DOXIA-511 -->
+                <exclude>org/apache/maven/doxia/docrenderer/AbstractDocumentRenderer</exclude>
+                <exclude>org/apache/maven/doxia/docrenderer/itext/AbstractITextRender</exclude>
               </excludes>
             </configuration>
           </execution>

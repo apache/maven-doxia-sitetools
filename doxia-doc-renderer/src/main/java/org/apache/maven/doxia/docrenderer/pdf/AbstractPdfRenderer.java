@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.maven.doxia.docrenderer.AbstractDocumentRenderer;
 import org.apache.maven.doxia.docrenderer.DocumentRendererException;
 import org.apache.maven.doxia.document.DocumentModel;
-import org.apache.maven.doxia.module.site.SiteModule;
+import org.apache.maven.doxia.parser.module.ParserModule;
 
 /**
  * Abstract pdf renderer, this doesn't depend on the framework.
@@ -46,7 +46,7 @@ public abstract class AbstractPdfRenderer
     }
 
     /** {@inheritDoc} */
-    public void render( Map<String, SiteModule> filesToProcess, File outputDirectory, DocumentModel documentModel )
+    public void render( Map<String, ParserModule> filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
         render( filesToProcess, outputDirectory, documentModel, null );

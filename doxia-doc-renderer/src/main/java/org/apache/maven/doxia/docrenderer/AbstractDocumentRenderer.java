@@ -43,8 +43,8 @@ import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
-import org.apache.maven.doxia.module.site.SiteModule;
-import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
+import org.apache.maven.doxia.parser.module.ParserModule;
+import org.apache.maven.doxia.parser.module.ParserModuleManager;
 import org.apache.maven.doxia.util.XmlValidator;
 
 import org.apache.velocity.VelocityContext;
@@ -75,7 +75,7 @@ public abstract class AbstractDocumentRenderer
     implements DocumentRenderer
 {
     @Requirement
-    protected SiteModuleManager siteModuleManager;
+    protected ParserModuleManager parserModuleManager;
 
     @Requirement
     protected Doxia doxia;
@@ -96,14 +96,14 @@ public abstract class AbstractDocumentRenderer
      * Render an aggregate document from the files found in a Map.
      *
      * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
-     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
+     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding ParserModule as values.
      * @param outputDirectory the output directory where the aggregate document should be generated.
      * @param documentModel the document model, containing all the metadata, etc.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      * @deprecated since 1.1.2, use {@link #render(Map, File, DocumentModel, DocumentRendererContext)}
      */
-    public abstract void render( Map<String, SiteModule> filesToProcess, File outputDirectory,
+    public abstract void render( Map<String, ParserModule> filesToProcess, File outputDirectory,
                                  DocumentModel documentModel )
         throws DocumentRendererException, IOException;
 
@@ -129,14 +129,14 @@ public abstract class AbstractDocumentRenderer
      * Render an aggregate document from the files found in a Map.
      *
      * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
-     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
+     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding ParserModule as values.
      * @param outputDirectory the output directory where the aggregate document should be generated.
      * @param documentModel the document model, containing all the metadata, etc.
      * @param context the rendering context when processing files.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      */
-    public void render( Map<String, SiteModule> filesToProcess, File outputDirectory, DocumentModel documentModel,
+    public void render( Map<String, ParserModule> filesToProcess, File outputDirectory, DocumentModel documentModel,
                         DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
@@ -215,14 +215,14 @@ public abstract class AbstractDocumentRenderer
      * Render documents separately for each file found in a Map.
      *
      * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
-     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
+     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding ParserModule as values.
      * @param outputDirectory the output directory where the documents should be generated.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      * @since 1.1.1
      * @deprecated since 1.1.2, use {@link #renderIndividual(Map, File, DocumentRendererContext)}
      */
-    public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory )
+    public void renderIndividual( Map<String, ParserModule> filesToProcess, File outputDirectory )
         throws DocumentRendererException, IOException
     {
         // nop
@@ -232,14 +232,14 @@ public abstract class AbstractDocumentRenderer
      * Render documents separately for each file found in a Map.
      *
      * @param filesToProcess the Map of Files to process. The Map should contain as keys the paths of the
-     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
+     *      source files (relative to {@link #getBaseDir() baseDir}), and the corresponding ParserModule as values.
      * @param outputDirectory the output directory where the documents should be generated.
      * @param context the rendering context.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      * @since 1.1.2
      */
-    public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory,
+    public void renderIndividual( Map<String, ParserModule> filesToProcess, File outputDirectory,
                                   DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
@@ -248,7 +248,7 @@ public abstract class AbstractDocumentRenderer
 
     /**
      * Returns a Map of files to process. The Map contains as keys the paths of the source files
-     *      (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
+     *      (relative to {@link #getBaseDir() baseDir}), and the corresponding ParserModule as values.
      *
      * @param baseDirectory the directory containing the source files.
      *              This should follow the standard Maven convention, ie containing all the site modules.
@@ -256,52 +256,56 @@ public abstract class AbstractDocumentRenderer
      * @throws java.io.IOException in case of a problem reading the files under baseDirectory.
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      */
-    public Map<String, SiteModule> getFilesToProcess( File baseDirectory )
+    public Map<String, ParserModule> getFilesToProcess( File baseDirectory )
         throws IOException, DocumentRendererException
     {
         if ( !baseDirectory.isDirectory() )
         {
             getLogger().warn( "No files found to process!" );
 
-            return new HashMap<String, SiteModule>();
+            return new HashMap<String, ParserModule>();
         }
 
         setBaseDir( baseDirectory.getAbsolutePath() );
 
-        Map<String, SiteModule> filesToProcess = new LinkedHashMap<String, SiteModule>();
+        Map<String, ParserModule> filesToProcess = new LinkedHashMap<String, ParserModule>();
         Map<String, String> duplicatesFiles = new LinkedHashMap<String, String>();
 
-        Collection<SiteModule> modules = siteModuleManager.getSiteModules();
-        for ( SiteModule module : modules )
+        Collection<ParserModule> modules = parserModuleManager.getParserModules();
+        for ( ParserModule module : modules )
         {
             File moduleBasedir = new File( baseDirectory, module.getSourceDirectory() );
 
             if ( moduleBasedir.exists() )
             {
                 // TODO: handle in/excludes
-                @SuppressWarnings ( "unchecked" )
                 List<String> allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", null, false );
 
-                String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
+                String[] extensions = getExtensions( module );
                 List<String> docs = new LinkedList<String>( allFiles );
                 // Take care of extension case
                 for ( Iterator<String> it = docs.iterator(); it.hasNext(); )
                 {
                     String name = it.next().trim();
 
-                    if ( !name.toLowerCase( Locale.ENGLISH ).endsWith( "." + lowerCaseExtension ) )
+                    if ( !endsWithIgnoreCase( name, extensions ) )
                     {
                         it.remove();
                     }
                 }
 
+                String[] vmExtensions = new String[extensions.length];
+                for ( int i = 0; i < extensions.length; i++ )
+                {
+                    vmExtensions[i] = extensions[i] + ".vm";
+                }
                 List<String> velocityFiles = new LinkedList<String>( allFiles );
                 // *.xml.vm
                 for ( Iterator<String> it = velocityFiles.iterator(); it.hasNext(); )
                 {
                     String name = it.next().trim();
 
-                    if ( !name.toLowerCase( Locale.ENGLISH ).endsWith( lowerCaseExtension + ".vm" ) )
+                    if ( !endsWithIgnoreCase( name, vmExtensions ) )
                     {
                         it.remove();
                     }
@@ -334,27 +338,60 @@ public abstract class AbstractDocumentRenderer
         return filesToProcess;
     }
 
+    protected static String[] getExtensions( ParserModule module )
+    {
+        String[] extensions = new String[module.getExtensions().length];
+        for ( int i = module.getExtensions().length - 1; i >= 0; i-- )
+        {
+            extensions[i] = '.' + module.getExtensions()[i];
+        }
+        return extensions;
+    }
+
+    // TODO replace with StringUtils.endsWithIgnoreCase() from maven-shared-utils 0.7
+    protected static boolean endsWithIgnoreCase( String str, String searchStr )
+    {
+        if ( str.length() < searchStr.length() )
+        {
+            return false;
+        }
+
+        return str.regionMatches( true, str.length() - searchStr.length(), searchStr, 0, searchStr.length() );
+    }
+
+    protected static boolean endsWithIgnoreCase( String str, String[] searchStrs )
+    {
+        for ( String searchStr : searchStrs )
+        {
+            if ( endsWithIgnoreCase( str, searchStr ) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Returns a Map of files to process. The Map contains as keys the paths of the source files
-     *      (relative to {@link #getBaseDir() baseDir}), and the corresponding SiteModule as values.
+     *      (relative to {@link #getBaseDir() baseDir}), and the corresponding ParserModule as values.
      *
      * @param files The Collection of source files.
      * @return a Map of files to process.
      */
-    public Map<String, SiteModule> getFilesToProcess( Collection<String> files )
+    public Map<String, ParserModule> getFilesToProcess( Collection<String> files )
     {
         // ----------------------------------------------------------------------
         // Map all the file names to parser ids
         // ----------------------------------------------------------------------
 
-        Map<String, SiteModule> filesToProcess = new HashMap<String, SiteModule>();
+        Map<String, ParserModule> filesToProcess = new HashMap<String, ParserModule>();
 
-        Collection<SiteModule> modules = siteModuleManager.getSiteModules();
-        for ( SiteModule siteModule : modules )
+        Collection<ParserModule> modules = parserModuleManager.getParserModules();
+        for ( ParserModule module : modules )
         {
-            String extension = "." + siteModule.getExtension();
+            String[] extensions = getExtensions( module );
 
-            String sourceDirectory = File.separator + siteModule.getSourceDirectory() + File.separator;
+            String sourceDirectory = File.separator + module.getSourceDirectory() + File.separator;
 
             for ( String file : files )
             {
@@ -363,14 +400,14 @@ public abstract class AbstractDocumentRenderer
 
                 if ( file.indexOf( sourceDirectory ) != -1 )
                 {
-                    filesToProcess.put( file, siteModule );
+                    filesToProcess.put( file, module );
                 }
-                else if ( file.toLowerCase( Locale.ENGLISH ).endsWith( extension ) )
+                else
                 {
                     // don't overwrite if it's there already
-                    if ( !filesToProcess.containsKey( file ) )
+                    if ( endsWithIgnoreCase( file, extensions ) && !filesToProcess.containsKey( file ) )
                     {
-                        filesToProcess.put( file, siteModule );
+                        filesToProcess.put( file, module );
                     }
                 }
             }

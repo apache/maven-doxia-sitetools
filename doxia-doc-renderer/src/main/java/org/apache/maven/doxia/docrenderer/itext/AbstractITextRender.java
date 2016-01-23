@@ -51,8 +51,8 @@ import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Reader;
 import org.apache.maven.doxia.module.itext.ITextSink;
 import org.apache.maven.doxia.module.itext.ITextSinkFactory;
 import org.apache.maven.doxia.module.itext.ITextUtil;
-import org.apache.maven.doxia.module.site.SiteModule;
-import org.apache.maven.doxia.module.site.manager.SiteModuleManager;
+import org.apache.maven.doxia.parser.module.ParserModule;
+import org.apache.maven.doxia.parser.module.ParserModuleManager;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.xml.utils.DefaultErrorHandler;
@@ -91,7 +91,7 @@ public abstract class AbstractITextRender
     /**
      * @plexus.requirement
      */
-    protected SiteModuleManager siteModuleManager;
+    protected ParserModuleManager parserModuleManager;
 
     /**
      * @plexus.requirement
@@ -103,20 +103,36 @@ public abstract class AbstractITextRender
         TRANSFORMER_FACTORY.setErrorListener( new DefaultErrorHandler() );
     }
 
+    private List<String> getModuleFileNames( ParserModule module, File moduleBasedir )
+        throws IOException
+    {
+        StringBuilder includes = new StringBuilder();
+
+        for ( String extension: module.getExtensions() )
+        {
+            if ( includes.length() > 0 )
+            {
+                includes.append( ',' );
+            }
+            includes.append( "**/*." );
+            includes.append( extension );
+        }
+
+        return FileUtils.getFileNames( moduleBasedir, includes.toString(), null, false );
+    }
+
     /** {@inheritDoc} */
     public void render( File siteDirectory, File outputDirectory )
         throws DocumentRendererException, IOException
     {
-        Collection<SiteModule> modules = siteModuleManager.getSiteModules();
-        for ( SiteModule module : modules )
+        Collection<ParserModule> modules = parserModuleManager.getParserModules();
+        for ( ParserModule module : modules )
         {
             File moduleBasedir = new File( siteDirectory, module.getSourceDirectory() );
 
             if ( moduleBasedir.exists() )
             {
-                @SuppressWarnings ( "unchecked" )
-                List<String> docs =
-                    FileUtils.getFileNames( moduleBasedir, "**/*." + module.getExtension(), null, false );
+                List<String> docs = getModuleFileNames( module, moduleBasedir );
 
                 for ( String doc : docs )
                 {
@@ -195,16 +211,15 @@ public abstract class AbstractITextRender
         }
 
         List<File> iTextFiles = new LinkedList<File>();
-        Collection<SiteModule> modules = siteModuleManager.getSiteModules();
-        for ( SiteModule module : modules )
+        Collection<ParserModule> modules = parserModuleManager.getParserModules();
+        for ( ParserModule module : modules )
         {
             File moduleBasedir = new File( siteDirectory, module.getSourceDirectory() );
 
             if ( moduleBasedir.exists() )
             {
                 @SuppressWarnings ( "unchecked" )
-                List<String> docs =
-                    FileUtils.getFileNames( moduleBasedir, "**/*." + module.getExtension(), null, false );
+                List<String> docs = getModuleFileNames( module, moduleBasedir );
 
                 for ( String doc : docs )
                 {
@@ -296,7 +311,7 @@ public abstract class AbstractITextRender
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException
      * @throws java.io.IOException
      */
-    private void parse( String fullPathDoc, SiteModule module, File outputITextFile )
+    private void parse( String fullPathDoc, ParserModule module, File outputITextFile )
         throws DocumentRendererException, IOException
     {
         Writer writer = WriterFactory.newXmlWriter( outputITextFile );

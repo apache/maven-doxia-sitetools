@@ -40,7 +40,7 @@ import org.apache.maven.doxia.module.fo.FoAggregateSink;
 import org.apache.maven.doxia.module.fo.FoSink;
 import org.apache.maven.doxia.module.fo.FoSinkFactory;
 import org.apache.maven.doxia.module.fo.FoUtils;
-import org.apache.maven.doxia.module.site.SiteModule;
+import org.apache.maven.doxia.parser.module.ParserModule;
 
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.IOUtil;
@@ -73,7 +73,7 @@ public class FoPdfRenderer
 
     /** {@inheritDoc} */
     @Override
-    public void render( Map<String, SiteModule> filesToProcess, File outputDirectory, DocumentModel documentModel )
+    public void render( Map<String, ParserModule> filesToProcess, File outputDirectory, DocumentModel documentModel )
         throws DocumentRendererException, IOException
     {
         render( filesToProcess, outputDirectory, documentModel, null );
@@ -81,7 +81,7 @@ public class FoPdfRenderer
 
     /** {@inheritDoc} */
     @Override
-    public void render( Map<String, SiteModule> filesToProcess, File outputDirectory, DocumentModel documentModel,
+    public void render( Map<String, ParserModule> filesToProcess, File outputDirectory, DocumentModel documentModel,
                         DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
@@ -183,7 +183,7 @@ public class FoPdfRenderer
 
     /** {@inheritDoc} */
     @Override
-    public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory )
+    public void renderIndividual( Map<String, ParserModule> filesToProcess, File outputDirectory )
         throws DocumentRendererException, IOException
     {
         renderIndividual( filesToProcess, outputDirectory, null );
@@ -191,23 +191,26 @@ public class FoPdfRenderer
 
     /** {@inheritDoc} */
     @Override
-    public void renderIndividual( Map<String, SiteModule> filesToProcess, File outputDirectory,
+    public void renderIndividual( Map<String, ParserModule> filesToProcess, File outputDirectory,
                                   DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
-        for ( Map.Entry<String, SiteModule> entry : filesToProcess.entrySet() )
+        for ( Map.Entry<String, ParserModule> entry : filesToProcess.entrySet() )
         {
             String key = entry.getKey();
-            SiteModule module = entry.getValue();
+            ParserModule module = entry.getValue();
 
             File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
 
             String output = key;
-            String lowerCaseExtension = module.getExtension().toLowerCase( Locale.ENGLISH );
-            if ( output.toLowerCase( Locale.ENGLISH ).indexOf( "." + lowerCaseExtension ) != -1 )
+            for ( String extension : module.getExtensions() )
             {
-                output =
-                    output.substring( 0, output.toLowerCase( Locale.ENGLISH ).indexOf( "." + lowerCaseExtension ) );
+                String lowerCaseExtension = extension.toLowerCase( Locale.ENGLISH );
+                if ( output.toLowerCase( Locale.ENGLISH ).indexOf( "." + lowerCaseExtension ) != -1 )
+                {
+                    output =
+                        output.substring( 0, output.toLowerCase( Locale.ENGLISH ).indexOf( "." + lowerCaseExtension ) );
+                }
             }
 
             File outputFOFile = new File( outputDirectory, output + ".fo" );
@@ -232,14 +235,14 @@ public class FoPdfRenderer
         }
     }
 
-    private void mergeAllSources( Map<String, SiteModule> filesToProcess, FoAggregateSink sink,
+    private void mergeAllSources( Map<String, ParserModule> filesToProcess, FoAggregateSink sink,
                                   DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
-        for ( Map.Entry<String, SiteModule> entry : filesToProcess.entrySet() )
+        for ( Map.Entry<String, ParserModule> entry : filesToProcess.entrySet() )
         {
             String key = entry.getKey();
-            SiteModule module = entry.getValue();
+            ParserModule module = entry.getValue();
             sink.setDocumentName( key );
             File fullDoc = new File( getBaseDir(), module.getSourceDirectory() + File.separator + key );
 
@@ -287,36 +290,39 @@ public class FoPdfRenderer
                                 DocumentRendererContext context )
         throws DocumentRendererException, IOException
     {
-        Collection<SiteModule> modules = siteModuleManager.getSiteModules();
-        for ( SiteModule module : modules )
+        Collection<ParserModule> modules = parserModuleManager.getParserModules();
+        for ( ParserModule module : modules )
         {
             File moduleBasedir = new File( getBaseDir(), module.getSourceDirectory() );
 
             if ( moduleBasedir.exists() )
             {
-                String doc = href + "." + module.getExtension();
-                File source = new File( moduleBasedir, doc );
-
-                // Velocity file?
-                if ( !source.exists() )
+                for ( String extension : module.getExtensions() )
                 {
-                    if ( href.indexOf( "." + module.getExtension() ) != -1 )
+                    String doc = href + "." + extension;
+                    File source = new File( moduleBasedir, doc );
+    
+                    // Velocity file?
+                    if ( !source.exists() )
                     {
-                        doc = href + ".vm";
+                        if ( href.indexOf( "." + extension ) != -1 )
+                        {
+                            doc = href + ".vm";
+                        }
+                        else
+                        {
+                            doc = href + "." + extension + ".vm";
+                        }
+                        source = new File( moduleBasedir, doc );
                     }
-                    else
+    
+                    if ( source.exists() )
                     {
-                        doc = href + "." + module.getExtension() + ".vm";
+                        sink.setDocumentName( doc );
+                        sink.setDocumentTitle( tocItem.getName() );
+    
+                        parse( source.getPath(), module.getParserId(), sink, context );
                     }
-                    source = new File( moduleBasedir, doc );
-                }
-
-                if ( source.exists() )
-                {
-                    sink.setDocumentName( doc );
-                    sink.setDocumentTitle( tocItem.getName() );
-
-                    parse( source.getPath(), module.getParserId(), sink, context );
                 }
             }
         }
