@@ -380,7 +380,10 @@ public class DefaultSiteRendererTest
     public void verifyMisc()
         throws Exception
     {
-        MiscVerifier verifier = new MiscVerifier();
+        AbstractVerifier verifier = new MiscVerifier();
+        verifier.verify( "target/output/misc.html" );
+
+        verifier = new CommentsVerifier();
         verifier.verify( "target/output/misc.html" );
     }
 
@@ -401,7 +404,10 @@ public class DefaultSiteRendererTest
     public void verifyApt()
         throws Exception
     {
-        AptVerifier verifier = new AptVerifier();
+        AbstractVerifier verifier = new AptVerifier();
+        verifier.verify( "target/output/apt.html" );
+
+        verifier = new CommentsVerifier();
         verifier.verify( "target/output/apt.html" );
     }
 

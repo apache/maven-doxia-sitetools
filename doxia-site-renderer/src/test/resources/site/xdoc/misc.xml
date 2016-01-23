@@ -27,5 +27,7 @@
           <param name="midlet" value="org.micro.applet.SimpleDemoMIDlet"/>
       </applet>
 
+      <!-- DOXIASITETOOLS-146 comments are not rendered -->
+
   </body>
 </document>

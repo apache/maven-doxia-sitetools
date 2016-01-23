@@ -329,6 +329,8 @@ public class DefaultSiteRenderer
             String resource = doc.getAbsolutePath();
 
             Parser parser = doxia.getParser( renderingContext.getParserId() );
+            // DOXIASITETOOLS-146 don't render comments from source markup
+            parser.setEmitComments( false );
 
             // TODO: DOXIA-111: the filter used here must be checked generally.
             if ( renderingContext.getAttribute( "velocity" ) != null )
