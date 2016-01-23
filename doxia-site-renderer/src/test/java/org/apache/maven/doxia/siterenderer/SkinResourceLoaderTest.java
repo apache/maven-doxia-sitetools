@@ -25,7 +25,7 @@ import java.io.InputStream;
 
 import junit.framework.TestCase;
 
-import org.apache.maven.doxia.sink.AbstractSink;
+import org.apache.maven.doxia.sink.impl.AbstractSink;
 import org.codehaus.plexus.util.IOUtil;
 
 public class SkinResourceLoaderTest
