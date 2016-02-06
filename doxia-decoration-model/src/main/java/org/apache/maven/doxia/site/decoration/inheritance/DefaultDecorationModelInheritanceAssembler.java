@@ -226,7 +226,7 @@ public class DefaultDecorationModelInheritanceAssembler
             {
                 LinkItem breadcrumb = new LinkItem();
                 breadcrumb.setName( name );
-                breadcrumb.setHref( "" );
+                breadcrumb.setHref( "index.html" );
                 cBody.getBreadcrumbs().add( breadcrumb );
             }
             cBody.setBreadcrumbs( mergeLinkItemLists( cBody.getBreadcrumbs(), pBody.getBreadcrumbs(), urlContainer,

@@ -773,7 +773,7 @@ public class DecorationModelInheritenceAssemblerTest
         // now with child breadcrumb
         child = new DecorationModel();
         child.setBody( new Body() );
-        child.getBody().addBreadcrumb( createLinkItem( "Child", "" ) );
+        child.getBody().addBreadcrumb( createLinkItem( "Child", "index.html" ) );
         assembler.assembleModelInheritance( "childName", child, parent,
                 "http://parent.com/child/", "http://parent.com/" );
         assertBreadcrumbsCorrect( child.getBody().getBreadcrumbs(), "Child", parentHref );
@@ -802,7 +802,7 @@ public class DecorationModelInheritenceAssemblerTest
     {
         assertEquals( "Check size", 2, breadcrumbs.size() );
         assertEquals( "Check parent item", createLinkItem( "Parent", parentHref ), breadcrumbs.get( 0 ) );
-        assertEquals( "Check child item", createLinkItem( childName, "" ), breadcrumbs.get( 1 ) );
+        assertEquals( "Check child item", createLinkItem( childName, "index.html" ), breadcrumbs.get( 1 ) );
     }
 
     /**

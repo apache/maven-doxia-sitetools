@@ -47,7 +47,7 @@ under the License.
       <item name="Apache" href="http://www.apache.org/"/>
       <item name="Jakarta Commons" href="http://jakarta.apache.org/commons/"/>
       <item name="Sandbox" href="http://jakarta.apache.org/commons/sandbox/"/>
-      <item name="Name" href=""/>
+      <item name="Name" href="index.html"/>
     </breadcrumbs>
 
     <menu name="Top Menu" inherit="top">
