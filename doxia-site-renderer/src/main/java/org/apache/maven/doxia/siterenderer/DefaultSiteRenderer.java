@@ -70,6 +70,7 @@ import org.apache.maven.doxia.util.XmlValidator;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.tools.ToolManager;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.i18n.I18N;
@@ -115,6 +116,9 @@ public class DefaultSiteRenderer
 
     @Requirement
     private I18N i18n;
+
+    @Requirement
+    private PlexusContainer plexus;
 
     private static final String RESOURCE_DIR = "org/apache/maven/doxia/siterenderer/resources";
 
@@ -524,6 +528,7 @@ public class DefaultSiteRenderer
 
         context.put( "i18n", i18n );
 
+        context.put( "plexus", plexus );
         return context;
     }
 

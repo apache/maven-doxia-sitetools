@@ -96,6 +96,8 @@ Doxia Site Tools - Site Renderer
 *---------------------------------+------------------------------------------------------+-------------------------------+
 | <<<StringUtils>>>               | {{{$plexus/util/StringUtils.html}<<<StringUtils>>>}} |                               |
 *---------------------------------+------------------------------------------------------+-------------------------------+
+| <<<plexus>>>                    | {{{http://git.eclipse.org/c/sisu/org.eclipse.sisu.plexus.git/tree/org.eclipse.sisu.plexus/src/org/codehaus/plexus/PlexusContainer.java}<<<PlexusContainer>>>}} |  |
+*---------------------------------+------------------------------------------------------+-------------------------------+
 
   And there are {{{http://velocity.apache.org/tools/releases/2.0/generic.html} Velocity Generic Tools}}:
 
