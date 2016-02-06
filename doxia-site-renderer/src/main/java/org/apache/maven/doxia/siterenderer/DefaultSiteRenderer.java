@@ -69,7 +69,25 @@ import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.util.XmlValidator;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.tools.Scope;
 import org.apache.velocity.tools.ToolManager;
+import org.apache.velocity.tools.config.EasyFactoryConfiguration;
+import org.apache.velocity.tools.generic.AlternatorTool;
+import org.apache.velocity.tools.generic.ClassTool;
+import org.apache.velocity.tools.generic.ComparisonDateTool;
+import org.apache.velocity.tools.generic.ContextTool;
+import org.apache.velocity.tools.generic.ConversionTool;
+import org.apache.velocity.tools.generic.DisplayTool;
+import org.apache.velocity.tools.generic.EscapeTool;
+import org.apache.velocity.tools.generic.FieldTool;
+import org.apache.velocity.tools.generic.LinkTool;
+import org.apache.velocity.tools.generic.LoopTool;
+import org.apache.velocity.tools.generic.MathTool;
+import org.apache.velocity.tools.generic.NumberTool;
+import org.apache.velocity.tools.generic.RenderTool;
+import org.apache.velocity.tools.generic.ResourceTool;
+import org.apache.velocity.tools.generic.SortTool;
+import org.apache.velocity.tools.generic.XmlTool;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
@@ -444,8 +462,46 @@ public class DefaultSiteRenderer
     }
 
     /**
+     * Creates a Velocity Context with all generic tools configured wit the site rendering context.
+     *
+     * @param siteRenderingContext the site rendering context
+     * @return a Velocity tools managed context
+     */
+    protected Context createToolManagedVelocityContext( SiteRenderingContext siteRenderingContext )
+    {
+        Locale locale = siteRenderingContext.getLocale();
+        String dateFormat = siteRenderingContext.getDecoration().getPublishDate().getFormat();
+
+        EasyFactoryConfiguration config = new EasyFactoryConfiguration( false );
+        config.property( "safeMode", Boolean.FALSE );
+        config.toolbox( Scope.REQUEST )
+            .tool( ContextTool.class )
+            .tool( LinkTool.class )
+            .tool( LoopTool.class )
+            .tool( RenderTool.class );
+        config.toolbox( Scope.APPLICATION ).property( "locale", locale )
+            .tool( AlternatorTool.class )
+            .tool( ClassTool.class )
+            .tool( ComparisonDateTool.class ).property( "format", dateFormat )
+            .tool( ConversionTool.class ).property( "dateFormat", dateFormat )
+            .tool( DisplayTool.class )
+            .tool( EscapeTool.class )
+            .tool( FieldTool.class )
+            .tool( MathTool.class )
+            .tool( NumberTool.class )
+            .tool( ResourceTool.class ).property( "bundles", new String[] { "site-renderer" } )
+            .tool( SortTool.class )
+            .tool( XmlTool.class );
+
+        ToolManager manager = new ToolManager( false, false );
+        manager.configure( config );
+
+        return manager.createContext();
+    }
+
+    /**
      * Create a Velocity Context for a Doxia document, containing every information about rendered document.
-     * 
+     *
      * @param sink the site renderer sink for the document
      * @param siteRenderingContext the site rendering context
      * @return
@@ -453,9 +509,7 @@ public class DefaultSiteRenderer
     protected Context createDocumentVelocityContext( RenderingContext renderingContext,
                                                      SiteRenderingContext siteRenderingContext )
     {
-        ToolManager toolManager = new ToolManager( true );
-        Context context = toolManager.createContext();
-
+        Context context = createToolManagedVelocityContext( siteRenderingContext );
         // ----------------------------------------------------------------------
         // Data objects
         // ----------------------------------------------------------------------
@@ -535,7 +589,7 @@ public class DefaultSiteRenderer
     /**
      * Create a Velocity Context for the site template decorating the document. In addition to all the informations
      * from the document, this context contains data gathered in {@link SiteRendererSink} during document rendering.
-     * 
+     *
      * @param siteRendererSink the site renderer sink for the document
      * @param siteRenderingContext the site rendering context
      * @return
