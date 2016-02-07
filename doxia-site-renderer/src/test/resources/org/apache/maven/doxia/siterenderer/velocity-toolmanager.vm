@@ -1,2 +1,7 @@
 $esc.html('Maven 2 & 3')
 $display.truncate("This is a long string.", 10)
+
+We have the following keys in the context:
+#foreach( $key in $sorter.sort( $context.keys ) )
+  $display.printf( "%2s", ${foreach.count} ). $key
+#end

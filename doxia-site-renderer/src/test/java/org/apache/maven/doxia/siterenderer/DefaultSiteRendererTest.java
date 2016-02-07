@@ -183,7 +183,7 @@ public class DefaultSiteRendererTest
         // ----------------------------------------------------------------------
         validatePages();
     }
-    
+
     public void testExternalReport()
         throws Exception
     {
@@ -191,7 +191,7 @@ public class DefaultSiteRendererTest
         when( docRenderer.isExternalReport() ).thenReturn( true );
         when( docRenderer.getOutputName() ).thenReturn( "external/index" );
         when( docRenderer.getRenderingContext() ).thenReturn( new RenderingContext( new File( "" ), "index.html" )  );
-        
+
         SiteRenderingContext context = new SiteRenderingContext();
 
         renderer.render( Collections.singletonList( docRenderer ), context, new File( "target/output" ) );
@@ -206,6 +206,17 @@ public class DefaultSiteRendererTest
 
         SiteRenderingContext siteRenderingContext = new SiteRenderingContext();
         siteRenderingContext.setDecoration( new DecorationModel() );
+
+        Map<String, Object> attributes = new HashMap<String, Object>();
+
+        /*
+         * We need to add doxiaSiteRendererVersion manually because version property from pom.properties
+         * is not available at test time in some cases.
+         */
+        attributes.put( "doxiaSiteRendererVersion", "1.7-bogus" );
+
+        siteRenderingContext.setTemplateProperties( attributes );
+
         siteRenderingContext.setTemplateName( "org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm" );
         RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
         SiteRendererSink sink = new SiteRendererSink( context );
@@ -223,7 +234,13 @@ public class DefaultSiteRendererTest
 
         File templateFile =
             new File( getBasedir(), "target/test-classes/org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm" );
-        Map<String, ?> attributes = Collections.emptyMap();
+        Map<String, Object> attributes = new HashMap<String, Object>();
+
+        /*
+         * We need to add doxiaSiteRendererVersion manually because version property from pom.properties
+         * is not available at test time in some cases.
+         */
+        attributes.put( "doxiaSiteRendererVersion", "1.7-bogus" );
 
         SiteRenderingContext siteRenderingContext =
             renderer.createContextForTemplate( templateFile, attributes, new DecorationModel(),
@@ -243,7 +260,15 @@ public class DefaultSiteRendererTest
         StringWriter writer = new StringWriter();
 
         File skinFile = skinJar;
-        Map<String, ?> attributes = Collections.emptyMap();
+
+        Map<String, Object> attributes = new HashMap<String, Object>();
+
+        /*
+         * We need to add doxiaSiteRendererVersion manually because version property from pom.properties
+         * is not available at test time in some cases.
+         */
+        attributes.put( "doxiaSiteRendererVersion", "1.7-bogus" );
+
         SiteRenderingContext siteRenderingContext =
             renderer.createContextForSkin( skinFile, attributes, new DecorationModel(), "defaultWindowTitle",
                                            Locale.ENGLISH );
