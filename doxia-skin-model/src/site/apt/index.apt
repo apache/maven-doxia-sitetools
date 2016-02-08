@@ -1,5 +1,5 @@
  -----
- Doxia Site Tools Skin Model
+ Doxia Sitetools Skin Model
  -----
  Hervé Boutemy
  -----
@@ -26,9 +26,9 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Doxia Site Tools Skin Model
+Doxia Sitetools Skin Model
 
- This is strictly the model for Doxia Site Tools Skin Model, used in skins in <<<META-INF/maven/skin.xml>>>.
+ This is strictly the model for Doxia Sitetools Skin Model, used in skins in <<<META-INF/maven/skin.xml>>>.
 
  The following are generated from this model:
 
@@ -38,11 +38,11 @@ Doxia Site Tools Skin Model
 
    * An XSD referenced in the {{{./skin.html}Descriptor Reference}}.
 
-* Doxia Site Tools Skin
+* Doxia Sitetools Skin
 
-  A Doxia Site Tools skin must contain a Velocity template named <<<META-INF/maven/site.vm>>>: it will be called
-  by {{{../doxia-site-renderer/index.html}Doxia Site Tools - Site Renderer}} with additional variables about the
-  rendered document as documented {{{../doxia-site-renderer/index.html#Site_Template}Site Template section}},
+  A Doxia Sitetools skin must contain a Velocity template named <<<META-INF/maven/site.vm>>>: it will be called
+  by {{{../doxia-site-renderer/index.html}Doxia Sitetools &#x2013; Site Renderer}} with additional variables about the
+  rendered document as documented in the {{{../doxia-site-renderer/index.html#Site_Template}Site Template section}},
   the main variable being <<<bodyContent>>>.
 
   Maven team provides {{{/skins/}a collection of skins}} for projects use.
@@ -51,4 +51,4 @@ Doxia Site Tools Skin Model
   by copying other skins to benefit from examples of breadcrumbs or menu generation from
   {{{../doxia-decoration-model/index.html}decoration model}}.
 
-  Since Doxia Site Tools 1.7, a skin descriptor can be added in <<<META-INF/maven/skin.xml>>>.
+  Since Doxia Sitetools 1.7, a skin descriptor can be added in <<<META-INF/maven/skin.xml>>>.

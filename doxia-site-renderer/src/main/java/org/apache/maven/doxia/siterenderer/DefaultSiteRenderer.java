@@ -767,7 +767,7 @@ public class DefaultSiteRenderer
                 context.setSkinModel( skinModel );
 
                 String toolsPrerequisite =
-                    skinModel.getPrerequisites() == null ? null : skinModel.getPrerequisites().getDoxiaSiteTools();
+                    skinModel.getPrerequisites() == null ? null : skinModel.getPrerequisites().getDoxiaSitetools();
 
                 Package p = DefaultSiteRenderer.class.getPackage();
                 String current = ( p == null ) ? null : p.getSpecificationVersion();

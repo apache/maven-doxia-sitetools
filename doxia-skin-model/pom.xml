@@ -32,7 +32,7 @@ under the License.
   <artifactId>doxia-skin-model</artifactId>
 
   <name>Doxia :: Skin Model</name>
-  <description>The Skin Model defines meta-data for Doxia Site Tools skins.</description>
+  <description>The Skin Model defines metadata for Doxia Sitetools skins.</description>
 
   <dependencies>
     <dependency>
