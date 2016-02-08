@@ -776,7 +776,7 @@ public class DefaultSiteRenderer
                     && !matchVersion( current, toolsPrerequisite ) )
                 {
                     throw new RendererException( "Cannot use skin: has " + toolsPrerequisite
-                        + " Doxia Site Tools prerequisite, but current is " + current );
+                        + " Doxia Sitetools prerequisite, but current is " + current );
                 }
             }
         }
@@ -822,6 +822,12 @@ public class DefaultSiteRenderer
                 @SuppressWarnings( "unchecked" )
                 int compareTo = recommendedVersion.compareTo( v );
                 matched = ( compareTo <= 0 );
+            }
+
+            if ( getLogger().isDebugEnabled() )
+            {
+                getLogger().debug( "Skin doxia-site-tools prerequisite: " + prerequisite + ", current: " + current
+                    + ", matched = " + matched );
             }
 
             return matched;

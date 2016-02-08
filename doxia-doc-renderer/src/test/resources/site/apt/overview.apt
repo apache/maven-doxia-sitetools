@@ -92,9 +92,9 @@ void parse( Reader source, Sink sink )
 
  For more information on modules, read the {{{./modules/index.html}Doxia Module Guide}}.
 
-*Doxia Site Tools
+*Doxia Sitetools
 
- The <Site Tools> are a collection of tools to renderer an output. The main tool used by Maven,
+ The <Sitetools> are a collection of tools to renderer an output. The main tool used by Maven,
  specifically the {{{http://maven.apache.org/plugins/maven-site-plugin/}Maven Site Plugin}}, is the
  <doxia-site-renderer> which renders in HTML any documents wrote with supported markup syntax. It used
  {{{http://velocity.apache.org/}Velocity templates}} to customize the renderer and the

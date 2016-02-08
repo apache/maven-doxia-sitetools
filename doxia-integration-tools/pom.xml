@@ -32,7 +32,7 @@
   <artifactId>doxia-integration-tools</artifactId>
 
   <name>Doxia :: Integration Tools</name>
-  <description>A collection of tools to help the integration of Doxia Site Tools in Maven plugins.</description>
+  <description>A collection of tools to help the integration of Doxia Sitetools in Maven plugins.</description>
 
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
