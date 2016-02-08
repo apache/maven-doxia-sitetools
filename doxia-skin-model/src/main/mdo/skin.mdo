@@ -52,13 +52,20 @@ under the License.
         <!-- Build prerequisites                                                    -->
         <!-- ====================================================================== -->
 
-        <field xdoc.separator="blank">
+        <field>
           <name>prerequisites</name>
           <version>1.7.0+</version>
           <description>Describes the prerequisites in the build environment for using this skin.</description>
           <association>
             <type>Prerequisites</type>
           </association>
+        </field>
+        <field xdoc.separator="blank">
+          <name>encoding</name>
+          <version>1.7.0+</version>
+          <description>Encoding of text content, like the Velocity template itself.</description>
+          <type>String</type>
+          <required>false</required>
         </field>
       </fields>
       <codeSegments>

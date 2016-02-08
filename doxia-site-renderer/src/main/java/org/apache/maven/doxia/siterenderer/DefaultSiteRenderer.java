@@ -691,7 +691,11 @@ public class DefaultSiteRenderer
 
             try
             {
-                template = velocity.getEngine().getTemplate( templateName );
+                SkinModel skinModel = siteRenderingContext.getSkinModel();
+                String encoding = ( skinModel == null ) ? null : skinModel.getEncoding();
+
+                template = ( encoding == null ) ? velocity.getEngine().getTemplate( templateName )
+                                : velocity.getEngine().getTemplate( templateName, encoding );
             }
             catch ( Exception e )
             {
