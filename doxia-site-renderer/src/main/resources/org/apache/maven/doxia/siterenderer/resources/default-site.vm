@@ -572,7 +572,7 @@
     <div id="footer">
       <div class="xright">
       #if($decoration.body.footer)
-        $decoration.body.footer
+        $render.eval( $decoration.body.footer )
       #else
         Copyright &#169;#copyright()All rights reserved.#publishDate( "bottom" $decoration.publishDate $decoration.version )
       #end
