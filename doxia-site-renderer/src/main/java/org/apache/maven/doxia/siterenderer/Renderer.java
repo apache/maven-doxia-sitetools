@@ -83,7 +83,7 @@ public interface Renderer
      */
     SiteRenderingContext createContextForSkin( File skinFile, Map<String, ?> attributes, DecorationModel decoration,
                                                String defaultWindowTitle, Locale locale )
-        throws IOException;
+        throws RendererException, IOException;
 
     /**
      * Create a Site Rendering Context for a site using a local template.

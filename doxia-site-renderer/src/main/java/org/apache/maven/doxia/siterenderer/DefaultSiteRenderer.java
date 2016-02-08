@@ -54,7 +54,11 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.lang.ArrayUtils;
-
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.Restriction;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
 import org.apache.maven.doxia.parser.ParseException;
@@ -62,6 +66,8 @@ import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.PublishDate;
+import org.apache.maven.doxia.site.skin.SkinModel;
+import org.apache.maven.doxia.site.skin.io.xpp3.SkinXpp3Reader;
 import org.apache.maven.doxia.parser.module.ParserModule;
 import org.apache.maven.doxia.parser.module.ParserModuleManager;
 import org.apache.maven.doxia.parser.module.ParserModuleNotFoundException;
@@ -102,6 +108,7 @@ import org.codehaus.plexus.util.PropertyUtils;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.SiteResourceLoader;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
@@ -728,13 +735,14 @@ public class DefaultSiteRenderer
     public SiteRenderingContext createContextForSkin( File skinFile, Map<String, ?> attributes,
                                                       DecorationModel decoration, String defaultWindowTitle,
                                                       Locale locale )
-            throws IOException
+            throws IOException, RendererException
     {
         SiteRenderingContext context = createSiteRenderingContext( attributes, decoration, defaultWindowTitle, locale );
 
         context.setSkinJarFile( skinFile );
 
         ZipFile zipFile = getZipFile( skinFile );
+        InputStream in;
 
         try
         {
@@ -749,6 +757,33 @@ public class DefaultSiteRenderer
                 context.setTemplateClassLoader( getClass().getClassLoader() );
                 context.setUsingDefaultTemplate( true );
             }
+
+            ZipEntry skinDescriptorEntry = zipFile.getEntry( SkinModel.SKIN_DESCRIPTOR_LOCATION );
+            if ( skinDescriptorEntry != null )
+            {
+                in = zipFile.getInputStream( skinDescriptorEntry );
+
+                SkinModel skinModel = new SkinXpp3Reader().read( in );
+                context.setSkinModel( skinModel );
+
+                String toolsPrerequisite =
+                    skinModel.getPrerequisites() == null ? null : skinModel.getPrerequisites().getDoxiaSiteTools();
+
+                Package p = DefaultSiteRenderer.class.getPackage();
+                String current = ( p == null ) ? null : p.getSpecificationVersion();
+
+                if ( StringUtils.isNotBlank( toolsPrerequisite ) && ( current != null )
+                    && !matchVersion( current, toolsPrerequisite ) )
+                {
+                    throw new RendererException( "Cannot use skin: has " + toolsPrerequisite
+                        + " Doxia Site Tools prerequisite, but current is " + current );
+                }
+            }
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new RendererException( "Failed to parse " + SkinModel.SKIN_DESCRIPTOR_LOCATION
+                + " skin descriptor from " + skinFile, e );
         }
         finally
         {
@@ -756,6 +791,44 @@ public class DefaultSiteRenderer
         }
 
         return context;
+    }
+
+    boolean matchVersion( String current, String prerequisite )
+        throws RendererException
+    {
+        try
+        {
+            ArtifactVersion v = new DefaultArtifactVersion( current );
+            VersionRange vr = VersionRange.createFromVersionSpec( prerequisite );
+
+            boolean matched = false;
+            ArtifactVersion recommendedVersion = vr.getRecommendedVersion();
+            if ( recommendedVersion == null )
+            {
+                List<Restriction> restrictions = vr.getRestrictions();
+                for ( Restriction restriction : restrictions )
+                {
+                    if ( restriction.containsVersion( v ) )
+                    {
+                        matched = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // only singular versions ever have a recommendedVersion
+                @SuppressWarnings( "unchecked" )
+                int compareTo = recommendedVersion.compareTo( v );
+                matched = ( compareTo <= 0 );
+            }
+
+            return matched;
+        }
+        catch ( InvalidVersionSpecificationException e )
+        {
+            throw new RendererException( "Invalid skin doxia-site-tools prerequisite: " + prerequisite, e );
+        }
     }
 
     /** {@inheritDoc} */

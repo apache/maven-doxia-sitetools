@@ -280,6 +280,14 @@ public class DefaultSiteRendererTest
         assertEquals( expectedResult, renderResult );
     }
 
+    public void testMatchVersion()
+        throws Exception
+    {
+        DefaultSiteRenderer r = (DefaultSiteRenderer) renderer;
+        assertTrue( r.matchVersion( "1.7", "1.7" ) );
+        assertFalse( r.matchVersion( "1.7", "1.8" ) );
+    }
+
     private SiteRenderingContext getSiteRenderingContext( DecorationModel decoration, String siteDir, boolean validate )
     {
         SiteRenderingContext ctxt = new SiteRenderingContext();

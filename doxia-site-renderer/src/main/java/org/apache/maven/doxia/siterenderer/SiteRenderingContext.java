@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.skin.SkinModel;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
 
@@ -58,6 +59,8 @@ public class SiteRenderingContext
     private String defaultWindowTitle;
 
     private File skinJarFile;
+
+    private SkinModel skinModel;
 
     private boolean usingDefaultTemplate;
 
@@ -245,6 +248,26 @@ public class SiteRenderingContext
     public void setSkinJarFile( File skinJarFile )
     {
         this.skinJarFile = skinJarFile;
+    }
+
+    /**
+     * <p>Getter for the field <code>skinModel</code>.</p>
+     *
+     * @return a {@link SkinModel} object.
+     */
+    public SkinModel getSkinModel()
+    {
+        return skinModel;
+    }
+
+    /**
+     * <p>Setter for the field <code>skinModel</code>.</p>
+     *
+     * @param skinModel a {@link SkinModel} object.
+     */
+    public void setSkinModel( SkinModel skinModel )
+    {
+        this.skinModel = skinModel;
     }
 
     /**

@@ -37,6 +37,12 @@ under the License.
 
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact</artifactId>
+      <version>3.0</version>
+    </dependency>
+  
     <!-- doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
@@ -53,6 +59,10 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-decoration-model</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-skin-model</artifactId>
     </dependency>
     <!-- The modules are not in doxia core anymore so you have to state a dependency so that
          the component descriptor gets picked up. -->

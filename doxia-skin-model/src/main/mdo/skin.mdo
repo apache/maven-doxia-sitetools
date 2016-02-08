@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<model xmlns="http://modello.codehaus.org/MODELLO/1.4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.4.1 http://modello.codehaus.org/xsd/modello-1.4.1.xsd"
+  xml.namespace="http://maven.apache.org/SKIN/${version}"
+  xml.schemaLocation="http://maven.apache.org/xsd/skin-${version}.xsd">
+  <id>skin</id>
+  <name>Skin</name>
+  <description><![CDATA[
+    <p>This is a reference for the skin descriptor used in Doxia Site Tools, stored as <code>META-INF/maven/skin.xml</code>.</p>
+    <p>An XSD is available at:</p>
+    <ul>
+      <!-- There is no property filtering in Modello, this has to be updated manually. See DOXIASITETOOLS-98. -->
+      <li><a href="http://maven.apache.org/xsd/skin-1.7.0.xsd">http://maven.apache.org/xsd/skin-1.7.0.xsd</a></li>
+    </ul>
+    ]]></description>
+
+  <defaults>
+    <default>
+      <key>package</key>
+      <value>org.apache.maven.doxia.site.skin</value>
+    </default>
+  </defaults>
+
+  <classes>
+    <class rootElement="true" xml.tagName="skin" java.clone="deep">
+      <name>SkinModel</name>
+      <description><![CDATA[
+         The <code>&lt;skin&gt;</code> element is the root of the skin descriptor.
+      ]]></description>
+      <version>1.0.0+</version>
+      <fields>
+        <!-- ====================================================================== -->
+        <!-- Build prerequisites                                                    -->
+        <!-- ====================================================================== -->
+
+        <field xdoc.separator="blank">
+          <name>prerequisites</name>
+          <version>1.7.0+</version>
+          <description>Describes the prerequisites in the build environment for using this skin.</description>
+          <association>
+            <type>Prerequisites</type>
+          </association>
+        </field>
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <version>1.7.0+</version>
+          <code>
+            <![CDATA[
+    public static final String SKIN_DESCRIPTOR_LOCATION = "META-INF/maven/skin.xml";
+            ]]>
+          </code>
+        </codeSegment>
+      </codeSegments>
+    </class>
+    <class java.clone="deep">
+      <name>Prerequisites</name>
+      <version>1.7.0+</version>
+      <description>Describes the prerequisites a skin can have.</description>
+      <fields>
+        <field xml.tagName="doxia-site-tools">
+          <name>doxiaSiteTools</name>
+          <version>1.7.0+</version>
+          <type>String</type>
+          <defaultValue>1.7.0</defaultValue>
+          <description><![CDATA[
+            The minimum version of Doxia Site Tools required to use the resulting skin.
+            ]]>
+          </description>
+          <required>false</required>
+        </field>
+      </fields>
+    </class>
+  </classes>
+</model>

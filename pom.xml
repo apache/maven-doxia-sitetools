@@ -45,9 +45,10 @@ under the License.
 
   <modules>
     <module>doxia-decoration-model</module>
-    <module>doxia-doc-renderer</module>
+    <module>doxia-skin-model</module>
     <module>doxia-integration-tools</module>
     <module>doxia-site-renderer</module>
+    <module>doxia-doc-renderer</module>
   </modules>
 
   <scm>
@@ -131,6 +132,11 @@ under the License.
       <dependency>
         <groupId>org.apache.maven.doxia</groupId>
         <artifactId>doxia-decoration-model</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.doxia</groupId>
+        <artifactId>doxia-skin-model</artifactId>
         <version>${project.version}</version>
       </dependency>
       <!-- Plexus -->
