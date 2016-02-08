@@ -742,7 +742,7 @@ public class DefaultSiteRenderer
         context.setSkinJarFile( skinFile );
 
         ZipFile zipFile = getZipFile( skinFile );
-        InputStream in;
+        InputStream in = null;
 
         try
         {
@@ -787,8 +787,8 @@ public class DefaultSiteRenderer
         }
         finally
         {
-            closeZipFile( zipFile );
             IOUtil.close( in );
+            closeZipFile( zipFile );
         }
 
         return context;
