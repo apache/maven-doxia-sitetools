@@ -788,6 +788,7 @@ public class DefaultSiteRenderer
         finally
         {
             closeZipFile( zipFile );
+            IOUtil.close( in );
         }
 
         return context;
