@@ -96,7 +96,10 @@ public interface Renderer
      * @return a SiteRenderingContext.
      * @throws MalformedURLException if it bombs.
      * @since 1.7, had an additional skinFile parameter before
+     * @deprecated Deprecated without replacement, use skins only.
+     * @see #createContextForSkin(File, Map, DecorationModel, String, Locale)
      */
+    @Deprecated
     SiteRenderingContext createContextForTemplate( File templateFile, Map<String, ?> attributes,
                                                    DecorationModel decoration, String defaultWindowTitle,
                                                    Locale locale )

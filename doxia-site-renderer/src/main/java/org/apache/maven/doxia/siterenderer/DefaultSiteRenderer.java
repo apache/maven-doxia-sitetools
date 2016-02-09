@@ -843,6 +843,7 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
+    @Deprecated
     public SiteRenderingContext createContextForTemplate( File templateFile, Map<String, ?> attributes,
                                                           DecorationModel decoration, String defaultWindowTitle,
                                                           Locale locale )
