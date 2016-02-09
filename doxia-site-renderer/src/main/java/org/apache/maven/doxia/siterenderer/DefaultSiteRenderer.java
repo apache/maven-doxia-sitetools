@@ -830,7 +830,7 @@ public class DefaultSiteRenderer
 
             if ( getLogger().isDebugEnabled() )
             {
-                getLogger().debug( "Skin doxia-site-tools prerequisite: " + prerequisite + ", current: " + current
+                getLogger().debug( "Skin doxia-sitetools prerequisite: " + prerequisite + ", current: " + current
                     + ", matched = " + matched );
             }
 
@@ -838,7 +838,7 @@ public class DefaultSiteRenderer
         }
         catch ( InvalidVersionSpecificationException e )
         {
-            throw new RendererException( "Invalid skin doxia-site-tools prerequisite: " + prerequisite, e );
+            throw new RendererException( "Invalid skin doxia-sitetools prerequisite: " + prerequisite, e );
         }
     }
 
