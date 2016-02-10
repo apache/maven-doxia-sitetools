@@ -55,7 +55,7 @@ Doxia Sitetools - Site Renderer
   The Velocity context contains some variables related to rendering context that you can use:
 
 *---------------------------------+----------------------+-------------------------------+
-|| variable                       || type                || description                 ||
+|| Variable                       || Type                || Description                 ||
 *---------------------------------+----------------------+-------------------------------+
 | <<<alignedFileName>>>           | <<<String>>>         | The file name of the (html) document being rendered, relative to the document being rendered |
 *---------------------------------+----------------------+-------------------------------+
@@ -86,7 +86,7 @@ Doxia Sitetools - Site Renderer
 
 #set( $plexus = "http://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus" )
 *---------------------------------+------------------------------------------------------+-------------------------------+
-|| variable                       || type                                                || description                 ||
+|| Variable                       || Type                                                || Description                 ||
 *---------------------------------+------------------------------------------------------+-------------------------------+
 | <<<FileUtils>>>                 | {{{$plexus/util/FileUtils.html}<<<FileUtils>>>}}     |                               |
 *---------------------------------+------------------------------------------------------+-------------------------------+
@@ -104,7 +104,7 @@ Doxia Sitetools - Site Renderer
 
 #set( $generic = "http://velocity.apache.org/tools/releases/2.0/javadoc/org/apache/velocity/tools/generic" )
 *------------------+----------------------------------------------------------+-------------------------------+
-|| variable        || type                                                    || description                 ||
+|| Variable        || Type                                                    || Description                 ||
 *------------------+----------------------------------------------------------+-------------------------------+
 | <<<alternator>>> | {{{$generic/AlternatorTool.html}AlternatorTool}}         | For creating alternators to easily alternate over a set of values.
 *------------------+----------------------------------------------------------+-------------------------------+
@@ -112,7 +112,7 @@ Doxia Sitetools - Site Renderer
 *------------------+----------------------------------------------------------+-------------------------------+
 | <<<context>>>    | {{{$generic/ContextTool.html}ContextTool}}               | For convenient access to context data and metadata.
 *------------------+----------------------------------------------------------+-------------------------------+
-| <<<convert>>>    | {{{$generic/ConversionTool.html}ConversionTool}}         | For converting String values to richer object types.
+| <<<convert>>>    | {{{$generic/ConversionTool.html}ConversionTool}}         | For converting String values to richer object Types.
 *------------------+----------------------------------------------------------+-------------------------------+
 | <<<date>>>       | {{{$generic/ComparisonDateTool.html}ComparisonDateTool}} | For manipulating, formatting, and comparing dates.
 *------------------+----------------------------------------------------------+-------------------------------+
@@ -147,7 +147,7 @@ Doxia Sitetools - Site Renderer
   When <<<doxia-site-renderer>>> is used by <<<maven-site-plugin>>>, the following template properties are defined:
 
 *---------------------------------+----------------------+-------------------------------+
-|| variable                       || type                || description                 ||
+|| Variable                       || Type                || Description                 ||
 *---------------------------------+----------------------+-------------------------------+
 | <<<inputEncoding>>>             | <<<String>>>         |                               |
 *---------------------------------+----------------------+-------------------------------+
@@ -163,11 +163,11 @@ Doxia Sitetools - Site Renderer
 
 ** Site Template
 
-  When Velocity is processing the site template (be it from skin or local template), there are a few complementary variables
+  When Velocity is processing the site template (be it from skin or local template), there are a few complementary Variables
   available that give access to information taken from document being merged into the template:
 
 *---------------------------------+----------------------+-------------------------------+
-|| variable                       || type                || description                 ||
+|| Variable                       || Type                || Description                 ||
 *---------------------------------+----------------------+-------------------------------+
 | <<<authors>>>                   | <<<List\<String\>>>> | A list of authors from the source document |
 *---------------------------------+----------------------+-------------------------------+
