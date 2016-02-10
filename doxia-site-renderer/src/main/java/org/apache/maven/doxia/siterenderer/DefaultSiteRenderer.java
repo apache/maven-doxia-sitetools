@@ -645,10 +645,11 @@ public class DefaultSiteRenderer
 
             try
             {
-                // we support only ISO-8601 date
-                Date dateCreation = new SimpleDateFormat( "yyyy-MM-dd" ).parse( documentDate );
+                // we support only ISO 8601 date
+                Date creationDate = new SimpleDateFormat( "yyyy-MM-dd" ).parse( documentDate );
 
-                context.put( "dateCreation", sdf.format( dateCreation ) );
+                context.put( "creationDate", creationDate );
+                context.put( "dateCreation", sdf.format( creationDate ) );
             }
             catch ( java.text.ParseException e )
             {
