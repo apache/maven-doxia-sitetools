@@ -540,12 +540,8 @@ public class DefaultSiteRenderer
 
         context.put( "publishDate", siteRenderingContext.getPublishDate() );
 
-        DateFormat dateFormat = DateFormat.getDateInstance( DateFormat.DEFAULT, locale );
         PublishDate publishDate = siteRenderingContext.getDecoration().getPublishDate();
-        if ( publishDate != null && StringUtils.isNotBlank( publishDate.getFormat() ) )
-        {
-            dateFormat = new SimpleDateFormat( publishDate.getFormat(), locale );
-        }
+        DateFormat dateFormat = new SimpleDateFormat( publishDate.getFormat(), locale );
         context.put( "dateFormat", dateFormat );
 
         // doxiaSiteRendererVersion
