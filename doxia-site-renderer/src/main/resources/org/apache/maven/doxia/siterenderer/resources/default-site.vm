@@ -307,38 +307,16 @@
 #end
 ##
 #macro ( publishDate $position $decorationPublishDate $version )
-  #if ( $decorationPublishDate && $decorationPublishDate.format )
-    #set ( $format = $decorationPublishDate.format )
-  #else
-    #set ( $format = "yyyy-MM-dd" )
-  #end
-##
-  $dateFormat.applyPattern( $format )
-##
   #if ( $publishDate )
     #set ( $dateValue = $dateFormat.format( $publishDate ) )
   #elseif ( $decoration.custom.getChild( 'publishDate' ) )
     #set ( $dateValue = $decoration.custom.getChild( 'publishDate' ).getValue() )
-  #else  
+  #else
     #set ( $dateValue = $dateFormat.format( $currentDate ) )
   #end
 ##
-  #if ( $decorationPublishDate && $decorationPublishDate.position )
-    #set ( $datePosition = $decorationPublishDate.position )
-  #else
-    #set ( $datePosition = "left" )
-  #end
-##
-  #if ( $version )
-    #if ( $version.position )
-      #set ( $versionPosition = $version.position )
-    #else
-      #set ( $versionPosition = "left" )
-    #end
-  #else
-    #set ( $version = "" )
-    #set ( $versionPosition = "left" )
-  #end
+  #set ( $datePosition = $decorationPublishDate.position )
+  #set ( $versionPosition = $version.position )
 ##
   #set ( $breadcrumbs = $decoration.body.breadcrumbs )
   #set ( $links = $decoration.body.links )
@@ -473,7 +451,7 @@
   #if( $accountId && $accountId != "" )
     <!-- Google Analytics -->
     <script type="text/javascript">
-    
+
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', '$accountId']);
       _gaq.push(['_trackPageview']);
