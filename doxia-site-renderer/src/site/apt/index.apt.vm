@@ -57,27 +57,27 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 || Variable                       || Type                || Description                 ||
 *---------------------------------+----------------------+-------------------------------+
-| <<<alignedFileName>>>           | <<<String>>>         | The file name of the (html) document being rendered, relative to the document being rendered |
+| <<<alignedFileName>>>           | <<<String>>>         | The file name of the (HTML) document being rendered, relative to the document being rendered. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<decoration>>>                | {{{../doxia-decoration-model/apidocs/org/apache/maven/doxia/site/decoration/DecorationModel.html}<<<DecorationModel>>>}} | This is a model that represents the data in your <<<site.xml>>> |
+| <<<decoration>>>                | {{{../doxia-decoration-model/apidocs/org/apache/maven/doxia/site/decoration/DecorationModel.html}<<<DecorationModel>>>}} | This is a model that represents the data in your <<<site.xml>>>. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<currentDate>>>               | <<<Date>>>           | The date when the site is rendered |
+| <<<currentDate>>>               | <<<Date>>>           | <<Deprecated>>: use <<<date>>> or <<<date.systemDate>>>. The date when the site is rendered. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<currentFileName>>>           | <<<String>>>         | The file name of the (html) document being rendered, relative to the site root |
+| <<<currentFileName>>>           | <<<String>>>         | The file name of the (HTML) document being rendered, relative to the site root. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<dateFormat>>>                | <<<DateFormat>>>     | An instance of the date format as defined in <<<site.xml/publishDate/@format>>> (default: An instance of the default date format for the locale of the document being rendered |
+| <<<dateFormat>>>                | <<<DateFormat>>>     | <<Deprecated>>: use <<<date>>>, <<<date.format>>>, or <<<decoration.publishDate.format>>>. An instance of the date format as defined in <<<site.xml/publishDate/@format>>> (default: An instance of the default date format for the locale of the document being rendered. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<dateRevision>>>              | <<<String>>>         | The date when the site is rendered, in the format "yyyyMMdd" |
+| <<<dateRevision>>>              | <<<String>>>         | <<Deprecated>>: same as <<<currentDate>>>. The date when the site is rendered, in the format "yyyyMMdd". |
 *---------------------------------+----------------------+-------------------------------+
-| <<<doxiaSiteRendererVersion>>>  | <<<String>>>         | The version of Doxia Site Renderer in use |
+| <<<doxiaSiteRendererVersion>>>  | <<<String>>>         | The version of the Doxia Site Renderer in use. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<locale>>>                    | <<<Locale>>>         | The locale for the document being rendered |
+| <<<locale>>>                    | <<<Locale>>>         | The locale for the document being rendered. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<publishDate>>>               | <<<Date>>>           | An optional hardcoded publish date that has been set programmatically |
+| <<<publishDate>>>               | <<<Date>>>           | An optional hardcoded publish date that has been set programmatically. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<relativePath>>>              | <<<String>>>         | The path to the site root from the document being rendered |
+| <<<relativePath>>>              | <<<String>>>         | The path to the site root from the document being rendered. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<supportedLocales>>>          | <<<List\<Locale\>>>> | The list of locales that the site will contain |
+| <<<supportedLocales>>>          | <<<List\<Locale\>>>> | The list of locales that the site will contain. |
 *---------------------------------+----------------------+-------------------------------+
 
   There are also some tools for general use:
@@ -86,9 +86,9 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+------------------------------------------------------+-------------------------------+
 || Variable                       || Type                                                || Description                 ||
 *---------------------------------+------------------------------------------------------+-------------------------------+
-| <<<FileUtils>>>                 | {{{$plexus/util/FileUtils.html}<<<FileUtils>>>}}     |                               |
+| <<<FileUtils>>>                 | {{{$plexus/util/FileUtils.html}<<<FileUtils>>>}}     | <<Deprecated>>                |
 *---------------------------------+------------------------------------------------------+-------------------------------+
-| <<<i18n>>>                      | {{{$plexus/i18n/I18N.html}<<<I18N>>>}}               |                               |
+| <<<i18n>>>                      | {{{$plexus/i18n/I18N.html}<<<I18N>>>}}               | <<Deprecated>>: use <<<text>>>. |
 *---------------------------------+------------------------------------------------------+-------------------------------+
 | <<<PathTool>>>                  | {{{$plexus/util/PathTool.html}<<<PathTool>>>}}       |                               |
 *---------------------------------+------------------------------------------------------+-------------------------------+
@@ -151,7 +151,7 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<outputEncoding>>>            | <<<String>>>         |                               |
 *---------------------------------+----------------------+-------------------------------+
-| <<<project>>>                   | {{{/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html}<<<MavenProject>>>}} | The current project |
+| <<<project>>>                   | {{{/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html}<<<MavenProject>>>}} | The current project. |
 *---------------------------------+----------------------+-------------------------------+
 | <project properties>            | <<<String>>>         | Properties defined in POM are directly available. |
 *---------------------------------+----------------------+-------------------------------+
@@ -167,17 +167,17 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 || Variable                       || Type                || Description                 ||
 *---------------------------------+----------------------+-------------------------------+
-| <<<authors>>>                   | <<<List\<String\>>>> | A list of authors from the source document |
+| <<<authors>>>                   | <<<List\<String\>>>> | A list of authors from the source document. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<bodyContent>>>               | <<<String>>>         | HTML body content of the Doxia generated output |
+| <<<bodyContent>>>               | <<<String>>>         | HTML body content of the Doxia generated output. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<dateCreation>>>              | <<<String>>>         | The date specified in the source document, in the format "yyyyMMdd" |
+| <<<dateCreation>>>              | <<<String>>>         | The date specified in the source document, in the format "yyyyMMdd". |
 *---------------------------------+----------------------+-------------------------------+
-| <<<headContent>>>               | <<<String>>>         | HTML head content of the Doxia generated output                              |
+| <<<headContent>>>               | <<<String>>>         | HTML head content of the Doxia generated output. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<shortTitle>>>                | <<<String>>>         | The title of the document, excluding the project or site name |
+| <<<shortTitle>>>                | <<<String>>>         | The title of the document, excluding the project or site name. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<title>>>                     | <<<String>>>         | The title of the document, including the project or site name |
+| <<<title>>>                     | <<<String>>>         | The title of the document, including the project or site name. |
 *---------------------------------+----------------------+-------------------------------+
 
   See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html\#L528}DefaultSiteRenderer.createSiteTemplateVelocityContext(...)}}>>>
