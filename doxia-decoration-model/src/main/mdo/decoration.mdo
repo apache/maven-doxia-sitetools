@@ -406,9 +406,9 @@ under the License.
       <fields>
         <field>
           <name>head</name>
-          <description>Additional content (like Javascript) to include in the HEAD block of the generated pages.</description>
+          <description>Additional content (like JavaScript) to include in the HEAD block of the generated pages.</description>
           <version>1.0.0+</version>
-          <type>DOM</type>
+          <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>

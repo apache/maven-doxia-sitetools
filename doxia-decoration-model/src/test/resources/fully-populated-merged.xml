@@ -48,7 +48,9 @@ under the License.
 
   <body>
     <head>
+      <![CDATA[
       <meta name="blah" value="blah"/>
+      ]]>
     </head>
 
     <links>

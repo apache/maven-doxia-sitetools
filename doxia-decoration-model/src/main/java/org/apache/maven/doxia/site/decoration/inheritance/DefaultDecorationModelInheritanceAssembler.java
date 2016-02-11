@@ -211,13 +211,9 @@ public class DefaultDecorationModelInheritanceAssembler
                 pBody = new Body();
             }
 
-            if ( cBody.getHead() == null )
+            if ( cBody.getHead() == null && pBody.getHead() != null )
             {
                 cBody.setHead( pBody.getHead() );
-            }
-            else
-            {
-                cBody.setHead( Xpp3Dom.mergeXpp3Dom( (Xpp3Dom) cBody.getHead(), (Xpp3Dom) pBody.getHead() ) );
             }
 
             cBody.setLinks( mergeLinkItemLists( cBody.getLinks(), pBody.getLinks(), urlContainer, false ) );
