@@ -32,20 +32,22 @@ Using the SiteTool in a Mojo
 +-----
 ...
 import org.apache.maven.doxia.tools.SiteTool;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
 ...
 
 /**
  * Your own mojo.
  */
+@Mojo( name = "your-own" )
 public class YourOwnMojo extends AbstractMojo
 {
     ...
 
     /**
      * SiteTool.
-     *
-     * @component
      */
+    @Component
     protected SiteTool siteTool;
 
     ...
