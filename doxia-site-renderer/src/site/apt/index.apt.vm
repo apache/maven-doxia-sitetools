@@ -182,5 +182,5 @@ Doxia Sitetools - Site Renderer
 | <<<title>>>                     | <<<String>>>         | The title of the document, including the project or site name. |
 *---------------------------------+----------------------+-------------------------------+
 
-  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html\#L528}DefaultSiteRenderer.createSiteTemplateVelocityContext(...)}}>>>
+  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html\#L592}DefaultSiteRenderer.createSiteTemplateVelocityContext(...)}}>>>
   source for more details.
