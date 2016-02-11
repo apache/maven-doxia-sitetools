@@ -452,9 +452,9 @@ public class DefaultSiteTool
 
         // DecorationModel back to String to interpolate, then go back to DecorationModel
         String siteDescriptorContent = decorationModelToString( decorationModel );
-        System.out.println( "inherited : " + siteDescriptorContent );
+
         siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent );
-        System.out.println( "interpolated : " + siteDescriptorContent );
+
         decorationModel = readDecorationModel( siteDescriptorContent );
 
         if ( parentProject != null )
