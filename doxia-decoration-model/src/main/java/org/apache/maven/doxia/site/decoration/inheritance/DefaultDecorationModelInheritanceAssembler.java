@@ -331,7 +331,7 @@ public class DefaultDecorationModelInheritanceAssembler
             {
                 // if a parent item is found in child, ignore next items (case for breadcrumbs)
                 // merge ( "B > E", "A > B > C > D" ) -> "A > B > E" (notice missing "C > D")
-                // see http://jira.codehaus.org/browse/DOXIASITETOOLS-62
+                // see https://issues.apache.org/jira/browse/DOXIASITETOOLS-62
                 break;
             }
         }

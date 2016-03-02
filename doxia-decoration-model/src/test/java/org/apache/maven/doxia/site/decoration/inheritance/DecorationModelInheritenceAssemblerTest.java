@@ -806,7 +806,7 @@ public class DecorationModelInheritenceAssemblerTest
     }
 
     /**
-     * http://jira.codehaus.org/browse/DOXIASITETOOLS-62
+     * https://issues.apache.org/jira/browse/DOXIASITETOOLS-62
      */
     public void testBreadcrumbCutParentAfterDuplicate()
     {
