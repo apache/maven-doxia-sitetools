@@ -54,6 +54,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -701,7 +702,9 @@ public class DefaultSiteRenderer
 
             try
             {
-                template.merge( context, writer );
+                StringWriter sw = new StringWriter();
+                template.merge( context, sw );
+                writer.write( sw.toString().replaceAll( "\r?\n", SystemUtils.LINE_SEPARATOR ) );
             }
             catch ( Exception e )
             {
