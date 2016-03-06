@@ -110,7 +110,6 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.codehaus.plexus.velocity.SiteResourceLoader;
 import org.codehaus.plexus.velocity.VelocityComponent;
 
 /**
@@ -130,8 +129,7 @@ public class DefaultSiteRenderer
     // Requirements
     // ----------------------------------------------------------------------
 
-    @Requirement( hint = "doxia-site-renderer" ) // DOXIA-147: dedicated component configuration hand-written
-                                                 // in component.xml
+    @Requirement
     private VelocityComponent velocity;
 
     @Requirement
@@ -368,8 +366,6 @@ public class DefaultSiteRenderer
                 getLogger().debug( "Processing Velocity for " + renderingContext.getInputName() );
                 try
                 {
-                    SiteResourceLoader.setResource( resource );
-
                     Context vc = createDocumentVelocityContext( renderingContext, siteContext );
 
                     StringWriter sw = new StringWriter();
