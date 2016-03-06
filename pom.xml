@@ -161,20 +161,14 @@ under the License.
         <artifactId>plexus-utils</artifactId>
         <version>3.0.22</version>
       </dependency>
+      <!-- Test -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>3.8.2</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-component-annotations</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.2</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 
   <build>
     <resources>
@@ -290,7 +284,7 @@ under the License.
             <exclude>src/test/resources/dtd/xhtml-*.ent</exclude>
             <exclude>src/test/resources/dtd/xhtml1-transitional.dtd</exclude>
             <exclude>src/test/resources/xhtml-lat1.ent</exclude>
-          </excludes>            
+          </excludes>
         </configuration>
         <executions>
           <execution>
@@ -300,7 +294,7 @@ under the License.
             </goals>
           </execution>
         </executions>
-      </plugin>      
+      </plugin>
     </plugins>
   </build>
 
