@@ -723,14 +723,14 @@ under the License.
           <code>
             <![CDATA[
     /**
-     * @return the default skin <code>org.apache.maven.skins:maven-default-skin:1.1</code>.
+     * @return the default skin <code>org.apache.maven.skins:maven-default-skin:1.2</code>.
      */
     public static Skin getDefaultSkin()
     {
         Skin skin = new Skin();
         skin.setGroupId( "org.apache.maven.skins" );
         skin.setArtifactId( "maven-default-skin" );
-        skin.setVersion( "1.1" );
+        skin.setVersion( "1.2" );
         return skin;
     }
             ]]>
