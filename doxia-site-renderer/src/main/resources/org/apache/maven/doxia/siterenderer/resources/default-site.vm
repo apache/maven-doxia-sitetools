@@ -26,6 +26,8 @@
   #end
   #if ( $decoration.isLink( $href ) )
     #set ( $linkClass = ' class="externalLink"' )
+  #elseif( $target && $target == "_blank" )
+    #set ( $linkClass = ' class="newWindow"' )
   #else
     #set ( $linkClass = "" )
   #end
