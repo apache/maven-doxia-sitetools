@@ -26,6 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -91,21 +92,9 @@ public class DefaultSiteRendererTest
 
         renderer = (Renderer) lookup( Renderer.ROLE );
 
-        // copy the default-site.vm
-        InputStream is =
-            this.getResourceAsStream( "/org/apache/maven/doxia/siterenderer/resources/default-site.vm" );
-        assertNotNull( is );
-        OutputStream os = new FileOutputStream( new File( getBasedir(), "target/test-classes/default-site.vm" ) );
-        try
-        {
-            IOUtil.copy( is, os );
-            os.write( "\n\n\n\r\n\r\n\r\n".getBytes( "ISO-8859-1" ) );
-        }
-        finally
-        {
-            IOUtil.close( is );
-            IOUtil.close( os );
-        }
+        // copy the default-site.vm and default-site-macros.vm
+        copyVm( "default-site.vm", "\n\n\n\r\n\r\n\r\n" );
+        copyVm( "default-site-macros.vm", "" );
 
         InputStream skinIS = this.getResourceAsStream( "velocity-toolmanager.vm" );
         JarOutputStream jarOS = new JarOutputStream( new FileOutputStream( skinJar ) );
@@ -123,6 +112,24 @@ public class DefaultSiteRendererTest
 
         oldLocale = Locale.getDefault();
         Locale.setDefault( Locale.ENGLISH );
+    }
+
+    private void copyVm( String filename, String append )
+        throws IOException
+    {
+        InputStream is = this.getResourceAsStream( "/org/apache/maven/doxia/siterenderer/resources/" + filename );
+        assertNotNull( is );
+        OutputStream os = new FileOutputStream( new File( getBasedir(), "target/test-classes/" + filename ) );
+        try
+        {
+            IOUtil.copy( is, os );
+            os.write( append.getBytes( "ISO-8859-1" ) );
+        }
+        finally
+        {
+            IOUtil.close( is );
+            IOUtil.close( os );
+        }
     }
 
     /**
