@@ -391,20 +391,35 @@ public class DefaultSiteTool
      * @return the input content interpolated with deprecated tags 
      * @throws IOException
      */
-    private static String readSiteDescriptor( Reader reader )
+    private String readSiteDescriptor( Reader reader, String projectId )
         throws IOException
     {
         String siteDescriptorContent = IOUtil.toString( reader );
-    
+
         // This is to support the deprecated ${reports}, ${parentProject} and ${modules} tags.
         Properties props = new Properties();
         props.put( "reports", "<menu ref=\"reports\"/>\n" );
         props.put( "modules", "<menu ref=\"modules\"/>\n" );
         props.put( "parentProject", "<menu ref=\"parent\"/>" );
-    
+
+        // warn if interpolation required
+        for ( Object prop : props.keySet() )
+        {
+            if ( siteDescriptorContent.contains( "$" + prop ) )
+            {
+                getLogger().warn( "Site descriptor for " + projectId + " contains $" + prop
+                    + ": should be replaced with " + props.getProperty( (String) prop ) );
+            }
+            if ( siteDescriptorContent.contains( "${" + prop + "}" ) )
+            {
+                getLogger().warn( "Site descriptor for " + projectId + " contains ${" + prop
+                    + "}: should be replaced with " + props.getProperty( (String) prop ) );
+            }
+        }
+
         return StringUtils.interpolate( siteDescriptorContent, props );
     }
-
+    
     /** {@inheritDoc} */
     public DecorationModel getDecorationModel( File siteDirectory, Locale locale, MavenProject project,
                                                List<MavenProject> reactorProjects, ArtifactRepository localRepository,
@@ -436,7 +451,7 @@ public class DefaultSiteTool
             {
                 // Note the default is not a super class - it is used when nothing else is found
                 reader = ReaderFactory.newXmlReader( getClass().getResourceAsStream( "/default-site.xml" ) );
-                siteDescriptorContent = readSiteDescriptor( reader );
+                siteDescriptorContent = readSiteDescriptor( reader, "default-site.xml" );
             }
             catch ( IOException e )
             {
@@ -1099,7 +1114,7 @@ public class DefaultSiteTool
 
                 siteDescriptorReader = ReaderFactory.newXmlReader( siteDescriptor );
 
-                String siteDescriptorContent = readSiteDescriptor( siteDescriptorReader );
+                String siteDescriptorContent = readSiteDescriptor( siteDescriptorReader, project.getId() );
 
                 decoration = readDecorationModel( siteDescriptorContent );
                 decoration.setLastModified( siteDescriptor.lastModified() );
