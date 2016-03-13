@@ -398,8 +398,8 @@ public class DefaultSiteTool
 
         // This is to support the deprecated ${reports}, ${parentProject} and ${modules} tags.
         Properties props = new Properties();
-        props.put( "reports", "<menu ref=\"reports\"/>\n" );
-        props.put( "modules", "<menu ref=\"modules\"/>\n" );
+        props.put( "reports", "<menu ref=\"reports\"/>" );
+        props.put( "modules", "<menu ref=\"modules\"/>" );
         props.put( "parentProject", "<menu ref=\"parent\"/>" );
 
         // warn if interpolation required
