@@ -468,7 +468,7 @@ public class DefaultSiteTool
         // DecorationModel back to String to interpolate, then go back to DecorationModel
         String siteDescriptorContent = decorationModelToString( decorationModel );
 
-        siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent );
+        siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent, "project" );
 
         decorationModel = readDecorationModel( siteDescriptorContent );
 
@@ -497,11 +497,11 @@ public class DefaultSiteTool
     {
         checkNotNull( "props", props );
 
-        return getInterpolatedSiteDescriptorContent( aProject, siteDescriptorContent );
+        return getInterpolatedSiteDescriptorContent( aProject, siteDescriptorContent, "project" );
     }
 
     private String getInterpolatedSiteDescriptorContent( MavenProject aProject,
-                                                        String siteDescriptorContent )
+                                                        String siteDescriptorContent, String prefix )
         throws SiteToolException
     {
         checkNotNull( "aProject", aProject );
@@ -527,7 +527,7 @@ public class DefaultSiteTool
         try
         {
             // FIXME: this does not escape xml entities, see MSITE-226, PLXCOMP-118
-            return interpolator.interpolate( siteDescriptorContent, "project" );
+            return interpolator.interpolate( siteDescriptorContent, prefix );
         }
         catch ( InterpolationException e )
         {
@@ -1115,6 +1115,9 @@ public class DefaultSiteTool
                 siteDescriptorReader = ReaderFactory.newXmlReader( siteDescriptor );
 
                 String siteDescriptorContent = readSiteDescriptor( siteDescriptorReader, project.getId() );
+
+                // interpolate ${this.*}
+                siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent, "this" );
 
                 decoration = readDecorationModel( siteDescriptorContent );
                 decoration.setLastModified( siteDescriptor.lastModified() );

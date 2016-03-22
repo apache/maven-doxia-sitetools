@@ -27,8 +27,12 @@ under the License.
   </bannerLeft>
 
   <body>
+    <links>
+      <item name="${this.name}" href="${this.url}" />
+    </links>
     <breadcrumbs>
       <item name="Maven"  href="http://maven.apache.org/index.html" />
+      <item name="${this.name}" href="${this.url}" />
     </breadcrumbs>
   </body>
 </project>

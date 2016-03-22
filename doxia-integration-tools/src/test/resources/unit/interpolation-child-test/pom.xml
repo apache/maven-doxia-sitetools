@@ -23,7 +23,10 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.shared.its</groupId>
-  <artifactId>mshared-217-parent</artifactId>
+  <artifactId>mshared-217-child</artifactId>
   <version>1.0-SNAPSHOT</version>
+
+  <name>MSHARED-217 Child</name>
+  <url>http://maven.apache.org/mshared-217/child</url>
 
 </project>

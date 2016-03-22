@@ -35,6 +35,8 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.Skin;
 import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
+import org.apache.maven.model.DistributionManagement;
+import org.apache.maven.model.Site;
 import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.PlexusTestCase;
@@ -346,17 +348,11 @@ public class SiteToolTest
         assertNotNull( tool );
 
         SiteToolMavenProjectStub parentProject = new SiteToolMavenProjectStub( "interpolation-parent-test" );
-        parentProject.setGroupId( "org.apache.maven.shared.its" );
-        parentProject.setArtifactId( "mshared-217-parent" );
-        parentProject.setVersion( "1.0-SNAPSHOT" );
-        parentProject.setName( "MSHARED-217 Parent" );
+        parentProject.setDistgributionManagementSiteUrl( "dav:https://davs.codehaus.org/site" );
 
         SiteToolMavenProjectStub childProject = new SiteToolMavenProjectStub( "interpolation-child-test" );
         childProject.setParent( parentProject );
-        childProject.setGroupId( "org.apache.maven.shared.its" );
-        childProject.setArtifactId( "mshared-217-child" );
-        childProject.setVersion( "1.0-SNAPSHOT" );
-        childProject.setName( "MSHARED-217 Child" );
+        childProject.setDistgributionManagementSiteUrl( "dav:https://davs.codehaus.org/site/child" );
 
         List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList( parentProject );
 

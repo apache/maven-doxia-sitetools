@@ -29,7 +29,9 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Site;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
@@ -43,6 +45,8 @@ public class SiteToolMavenProjectStub
     private Build build;
 
     private File basedir;
+
+    private DistributionManagement distributionManagement;
 
     public SiteToolMavenProjectStub( String projectName )
     {
@@ -114,5 +118,18 @@ public class SiteToolMavenProjectStub
                                                                        new DefaultRepositoryLayout() );
 
         return Collections.singletonList( repository );
+    }
+
+    public void setDistgributionManagementSiteUrl( String url )
+    {
+        Site site = new Site();
+        site.setUrl( url );
+        distributionManagement = new DistributionManagement();
+        distributionManagement.setSite( site );
+    }
+
+    public DistributionManagement getDistributionManagement()
+    {
+        return distributionManagement;
     }
 }
