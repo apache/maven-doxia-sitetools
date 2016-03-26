@@ -383,7 +383,7 @@ public class SiteToolTest
         // late interpolation of project properties
         assertEquals( "my_property = from child pom.xml", links.next().getName() );
         // early interpolation of project properties: DOXIASITETOOLS-158
-        //assertEquals( "this.my_property = from parent pom.xml", links.next().getName() );
+        assertEquals( "this.my_property = from parent pom.xml", links.next().getName() );
     }
 
     private void writeModel( DecorationModel model, String to )

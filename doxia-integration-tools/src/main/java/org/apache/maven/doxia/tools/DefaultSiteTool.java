@@ -73,6 +73,8 @@ import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
+import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
+import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -522,17 +524,21 @@ public class DefaultSiteTool
                                          e );
         }
 
-        interpolator.addValueSource( new ObjectBasedValueSource( aProject ) );
-
-        if ( !isEarly )
+        if ( isEarly )
         {
+            interpolator.addValueSource( new PrefixedObjectValueSource( "this.", aProject ) );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource( "this.", aProject.getProperties() ) );
+        }
+        else
+        {
+            interpolator.addValueSource( new ObjectBasedValueSource( aProject ) );
             interpolator.addValueSource( new MapBasedValueSource( aProject.getProperties() ) );
         }
 
         try
         {
             // FIXME: this does not escape xml entities, see MSITE-226, PLXCOMP-118
-            return interpolator.interpolate( siteDescriptorContent, isEarly ? "this" : "project" );
+            return interpolator.interpolate( siteDescriptorContent, isEarly ? null : "project" );
         }
         catch ( InterpolationException e )
         {
