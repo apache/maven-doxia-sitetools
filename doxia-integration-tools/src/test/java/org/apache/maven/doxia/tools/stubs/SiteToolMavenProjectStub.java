@@ -24,6 +24,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
@@ -48,6 +49,8 @@ public class SiteToolMavenProjectStub
 
     private DistributionManagement distributionManagement;
 
+    private Properties properties;
+
     public SiteToolMavenProjectStub( String projectName )
     {
         basedir = new File( super.getBasedir() + "/src/test/resources/unit/" + projectName );
@@ -70,6 +73,7 @@ public class SiteToolMavenProjectStub
         setName( model.getName() );
         setUrl( model.getUrl() );
         setPackaging( model.getPackaging() );
+        setProperties( model.getProperties() );
 
         build = new Build();
         build.setFinalName( model.getArtifactId() );
@@ -106,6 +110,7 @@ public class SiteToolMavenProjectStub
         return basedir;
     }
 
+    /** {@inheritDoc} */
     public void setBasedir( File basedir )
     {
         this.basedir = basedir;
@@ -120,6 +125,18 @@ public class SiteToolMavenProjectStub
         return Collections.singletonList( repository );
     }
 
+    /** {@inheritDoc} */
+    public Properties getProperties()
+    {
+        return properties;
+    }
+
+    /** {@inheritDoc} */
+    public void setProperties( Properties properties )
+    {
+        this.properties = properties;
+    }
+
     public void setDistgributionManagementSiteUrl( String url )
     {
         Site site = new Site();
@@ -128,6 +145,7 @@ public class SiteToolMavenProjectStub
         distributionManagement.setSite( site );
     }
 
+    /** {@inheritDoc} */
     public DistributionManagement getDistributionManagement()
     {
         return distributionManagement;

@@ -25,14 +25,23 @@ under the License.
   <bannerLeft>
     <name>project.artifactId = ${project.artifactId}</name>
   </bannerLeft>
+  <bannerRight>
+    <name>this.artifactId = ${this.artifactId}</name>
+  </bannerRight>
 
   <body>
     <links>
-      <item name="${this.name}" href="${this.url}" />
+      <item name="this.name = ${this.name}" href="${this.url}" />
+      <!-- interpolation of env vars -->
+      <item name="PATH = ${PATH}" href="${this.url}" />
+      <!-- late interpolation of properties -->
+      <item name="my_property = ${my_property}" href="." />
+      <!-- early interpolation of properties -->
+      <item name="this.my_property = ${this.my_property}" href="." />
     </links>
     <breadcrumbs>
-      <item name="Maven"  href="http://maven.apache.org/index.html" />
-      <item name="${this.name}" href="${this.url}" />
+      <item name="Maven"  href="../index.html" />
+      <item name="project.name = ${project.name}" href="${this.url}" />
     </breadcrumbs>
   </body>
 </project>

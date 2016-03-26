@@ -20,11 +20,12 @@ package org.apache.maven.doxia.tools;
  */
 
 import java.io.File;
-
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,14 +34,16 @@ import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.decoration.LinkItem;
 import org.apache.maven.doxia.site.decoration.Skin;
+import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
-import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.model.Site;
 import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -360,7 +363,40 @@ public class SiteToolTest
                                                          Locale.getDefault(), childProject, reactorProjects,
                                                          getLocalRepo(), childProject.getRemoteArtifactRepositories() );
         assertNotNull( model );
+
+        writeModel( model, "unit/interpolation-child-test/effective-site.xml" );
+
         assertEquals( "MSHARED-217 Child", model.getName() );
+        // late (classical) interpolation
         assertEquals( "project.artifactId = mshared-217-child", model.getBannerLeft().getName() );
+        // early interpolation: DOXIASITETOOLS-158
+        assertEquals( "this.artifactId = mshared-217-parent", model.getBannerRight().getName() );
+        // href rebase
+        assertEquals( "../../index.html", model.getBody().getBreadcrumbs().iterator().next().getHref() );
+        Iterator<LinkItem> links = model.getBody().getLinks().iterator();
+        // early interpolation: DOXIASITETOOLS-158
+        assertEquals( "this.name = MSHARED-217 Parent", links.next().getName() );
+        // Env Var interpolation
+        String val = links.next().getName();
+        assertTrue( val.startsWith( "PATH = " ) );
+        assertFalse( val.contains( "${" ) );
+        // late interpolation of project properties
+        assertEquals( "my_property = from child pom.xml", links.next().getName() );
+        // early interpolation of project properties: DOXIASITETOOLS-158
+        //assertEquals( "this.my_property = from parent pom.xml", links.next().getName() );
+    }
+
+    private void writeModel( DecorationModel model, String to )
+        throws Exception
+    {
+        Writer writer = WriterFactory.newXmlWriter( getTestFile( "target/test-classes/" + to ) );
+        try
+        {
+            new DecorationXpp3Writer().write( writer, model );
+        }
+        finally
+        {
+            IOUtil.close( writer );
+        }
     }
 }

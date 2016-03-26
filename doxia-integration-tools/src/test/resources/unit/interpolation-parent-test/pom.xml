@@ -29,4 +29,7 @@ under the License.
   <name>MSHARED-217 Parent</name>
   <url>http://maven.apache.org/mshared-217</url>
 
+  <properties>
+    <my_property>from parent pom.xml</my_property>
+  </properties>
 </project>

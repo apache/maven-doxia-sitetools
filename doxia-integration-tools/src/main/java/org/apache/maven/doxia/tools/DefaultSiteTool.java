@@ -468,7 +468,8 @@ public class DefaultSiteTool
         // DecorationModel back to String to interpolate, then go back to DecorationModel
         String siteDescriptorContent = decorationModelToString( decorationModel );
 
-        siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent, "project" );
+        // "classical" late interpolation, after full inheritance
+        siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent, false );
 
         decorationModel = readDecorationModel( siteDescriptorContent );
 
@@ -497,11 +498,12 @@ public class DefaultSiteTool
     {
         checkNotNull( "props", props );
 
-        return getInterpolatedSiteDescriptorContent( aProject, siteDescriptorContent, "project" );
+        // "classical" late interpolation
+        return getInterpolatedSiteDescriptorContent( aProject, siteDescriptorContent, false );
     }
 
     private String getInterpolatedSiteDescriptorContent( MavenProject aProject,
-                                                        String siteDescriptorContent, String prefix )
+                                                        String siteDescriptorContent, boolean isEarly )
         throws SiteToolException
     {
         checkNotNull( "aProject", aProject );
@@ -522,12 +524,15 @@ public class DefaultSiteTool
 
         interpolator.addValueSource( new ObjectBasedValueSource( aProject ) );
 
-        interpolator.addValueSource( new MapBasedValueSource( aProject.getProperties() ) );
+        if ( !isEarly )
+        {
+            interpolator.addValueSource( new MapBasedValueSource( aProject.getProperties() ) );
+        }
 
         try
         {
             // FIXME: this does not escape xml entities, see MSITE-226, PLXCOMP-118
-            return interpolator.interpolate( siteDescriptorContent, prefix );
+            return interpolator.interpolate( siteDescriptorContent, isEarly ? "this" : "project" );
         }
         catch ( InterpolationException e )
         {
@@ -1102,7 +1107,7 @@ public class DefaultSiteTool
             siteDescriptor = getSiteDescriptor( siteDirectory, locale );
         }
 
-        // 2. read DecorationModel from site descriptor File
+        // 2. read DecorationModel from site descriptor File and do early interpolation (${this.*})
         DecorationModel decoration = null;
         Reader siteDescriptorReader = null;
         try
@@ -1116,8 +1121,8 @@ public class DefaultSiteTool
 
                 String siteDescriptorContent = readSiteDescriptor( siteDescriptorReader, project.getId() );
 
-                // interpolate ${this.*}
-                siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent, "this" );
+                // interpolate ${this.*} = early interpolation
+                siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent, true );
 
                 decoration = readDecorationModel( siteDescriptorContent );
                 decoration.setLastModified( siteDescriptor.lastModified() );
