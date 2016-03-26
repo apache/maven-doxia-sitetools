@@ -513,17 +513,6 @@ public class DefaultSiteTool
 
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
 
-        try
-        {
-            interpolator.addValueSource( new EnvarBasedValueSource() );
-        }
-        catch ( IOException e )
-        {
-            // Prefer logging?
-            throw new SiteToolException( "IOException: cannot interpolate environment properties: " + e.getMessage(),
-                                         e );
-        }
-
         if ( isEarly )
         {
             interpolator.addValueSource( new PrefixedObjectValueSource( "this.", aProject ) );
@@ -533,6 +522,17 @@ public class DefaultSiteTool
         {
             interpolator.addValueSource( new ObjectBasedValueSource( aProject ) );
             interpolator.addValueSource( new MapBasedValueSource( aProject.getProperties() ) );
+        }
+
+        try
+        {
+            interpolator.addValueSource( new EnvarBasedValueSource() );
+        }
+        catch ( IOException e )
+        {
+            // Prefer logging?
+            throw new SiteToolException( "IOException: cannot interpolate environment properties: " + e.getMessage(),
+                                         e );
         }
 
         try
