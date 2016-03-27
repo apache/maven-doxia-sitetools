@@ -43,7 +43,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
-public class DecorationModelInheritenceAssemblerTest
+public class DecorationModelInheritanceAssemblerTest
     extends TestCase
 {
     private DecorationModelInheritanceAssembler assembler = new DefaultDecorationModelInheritanceAssembler();
@@ -55,25 +55,25 @@ public class DecorationModelInheritenceAssemblerTest
      * @throws IOException
      * @throws XmlPullParserException
      */
-    public void testInheritence()
+    public void testInheritance()
         throws IOException, XmlPullParserException
     {
-        DecorationModel childModel = readModel( "child.xml" );
-        DecorationModel parentModel = readModel( "parent.xml" );
+        DecorationModel childModel = readModel( "inheritance-child.xml" );
+        DecorationModel parentModel = readModel( "inheritance-parent.xml" );
 
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/doxia",
                                             "http://maven.apache.org" );
-        DecorationModel mergedModel = readModel( "merged.xml" );
+        DecorationModel expectedModel = readModel( "inheritance-expected.xml" );
 
-        assertEquals( "Check result", mergedModel, childModel );
+        assertEquals( "Check result", expectedModel, childModel );
 
         // same with scp url, DOXIASITETOOLS-47
-        childModel = readModel( "child.xml" );
+        childModel = readModel( "inheritance-child.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia",
                                             "scp://people.apache.org" );
-        assertEquals( "Check scp result", mergedModel, childModel );
+        assertEquals( "Check scp result", expectedModel, childModel );
 
-        assertEquals( "Modified parent!", readModel( "parent.xml" ), parentModel );
+        assertEquals( "Modified parent!", readModel( "inheritance-parent.xml" ), parentModel );
     }
 
     /**
@@ -81,12 +81,12 @@ public class DecorationModelInheritenceAssemblerTest
      * @throws IOException
      * @throws XmlPullParserException
      */
-    public void testSuppressedInheritence()
+    public void testSuppressedInheritance()
             throws IOException, XmlPullParserException
     {
-        DecorationModel unassembledChildModel = readModel( "child-no-inheritance.xml" );
-        DecorationModel childModel = readModel( "child-no-inheritance.xml" );
-        DecorationModel parentModel = readModel( "parent.xml" );
+        DecorationModel unassembledChildModel = readModel( "inheritance-child-no-inheritance.xml" );
+        DecorationModel childModel = readModel( "inheritance-child-no-inheritance.xml" );
+        DecorationModel parentModel = readModel( "inheritance-parent.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/doxia",
                                             "http://maven.apache.org" );
         assertEquals( "Check result", unassembledChildModel, childModel );
