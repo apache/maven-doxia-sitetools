@@ -530,8 +530,8 @@ public class DefaultSiteTool
             catch ( IOException e )
             {
                 // Prefer logging?
-                throw new SiteToolException( "IOException: cannot interpolate environment properties: " + e.getMessage(),
-                                             e );
+                throw new SiteToolException( "IOException: cannot interpolate environment properties: "
+                    + e.getMessage(), e );
             }
         }
 
