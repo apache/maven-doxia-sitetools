@@ -74,6 +74,20 @@ public class DecorationModelInheritanceAssemblerTest
         assertEquals( "Check scp result", expectedModel, childModel );
 
         assertEquals( "Modified parent!", readModel( "inheritance-parent.xml" ), parentModel );
+
+        // late inheritance in links can't be rebased: check friendly message
+        parentModel.getBannerLeft().setHref( "${project.url}" );
+        childModel = readModel( "inheritance-child.xml" );
+        try
+        {
+            assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia",
+                                                "scp://people.apache.org" );
+            fail( "late interpolation in link should cause IllegalArgumentException" );
+        }
+        catch ( IllegalArgumentException iae )
+        {
+            assertTrue( iae.getMessage().startsWith( "site.xml late interpolation" ) );
+        }
     }
 
     /**
