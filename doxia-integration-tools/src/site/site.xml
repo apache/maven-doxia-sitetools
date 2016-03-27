@@ -32,6 +32,10 @@ under the License.
       <!--item name="FAQ" href="faq.html"/-->
     </menu>
 
+    <menu name="Reference">
+      <item name="site.xml Decoration Model" href="../doxia-decoration-model/decoration.html"/>
+    </menu>
+
     <menu ref="reports" />
   </body>
 </project>

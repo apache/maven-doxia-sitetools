@@ -38,3 +38,36 @@ Maven Doxia Integration Tools
 * Usage
 
   Instructions on how to use the integration of Doxia in Maven can be found {{{./usage.html}here}}.
+
+* <<<site.xml>>> Decoration Model Interpolation
+
+  Interpolation of {{{../doxia-decoration-model/decoration.html}<<<site.xml>>> decoration model}} injects
+  Maven project's information, replacing <<<$\{...\}>>> with calculated values
+  like it happens in {{{/ref/current/maven-model-builder/#Model_Interpolation}Maven model interpolation}}.
+
+  Interpolation can be <<late>> or <<early>>:
+
+  * with <<late>> interpolation, replacement happens <<after>> inheritance. This is the classical behaviour in Maven pom,
+
+  * with <<early>> interpolation, replacement happens <<before>> inheritance: this was the default behaviour for <<<project.*>>>
+  values until Doxia Sitetools 1.7, when these early and late interpolation definitions didn't exist.
+  Since Doxia Sitetools 1.7.1, early interpolation happens for <<<this.*>>> values.
+
+  []
+
+  Values are evaluated in sequence from different syntaxes:
+
+*-------------+--------------+--------------------+------------------+
+|| late value || early value || evaluation result || common examples ||
+*-------------+--------------+--------------------+------------------+
+| <<<project.*>>>\
+<<<*>>> (<deprecated>) | <<<this.*>>> | POM content (see {{{/ref/current/maven-model/maven.html}POM reference}}) | <<<$\{project.version\}>>>\
+              |              |                    | <<<$\{this.url\}>>>
+*-------------+--------------+--------------------+------------------+
+| <<<*>>> | <<<this.*>>> | model properties, such as project properties set in the pom | <<<$\{any.key\}>>>\
+              |              |                    | <<<$\{this.any.key\}>>>
+*-------------+--------------+--------------------+------------------+
+| <<<env.*>>>\
+<<<*>>>       | <<<env.*>>>\
+              | <<<*>>>      | environment variables | <<<$\{env.PATH\}>>>\
+*-------------+--------------+--------------------+------------------+

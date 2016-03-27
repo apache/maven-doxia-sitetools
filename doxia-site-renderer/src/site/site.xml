@@ -34,6 +34,11 @@
       <!--item name="FAQ" href="faq.html"/-->
     </menu>
 
+    <menu name="Reference">
+      <item name="site.xml Decoration Model" href="../doxia-decoration-model/decoration.html"/>
+      <item name="Skin Model" href="../doxia-skin-model/skin.html"/>
+    </menu>
+
     <menu ref="reports"/>
 
   </body>
