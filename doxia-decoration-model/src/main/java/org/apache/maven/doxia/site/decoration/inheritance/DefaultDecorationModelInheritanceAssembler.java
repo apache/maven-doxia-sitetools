@@ -55,7 +55,7 @@ public class DefaultDecorationModelInheritanceAssembler
 
         child.setCombineSelf( parent.getCombineSelf() );
 
-        URLContainer urlContainer = new URLContainer( parentBaseUrl, childBaseUrl );
+        URLRebaser urlContainer = new URLRebaser( parentBaseUrl, childBaseUrl );
 
         if ( child.getBannerLeft() == null && parent.getBannerLeft() != null )
         {
@@ -167,7 +167,7 @@ public class DefaultDecorationModelInheritanceAssembler
         banner.setSrc( relativizeLink( banner.getSrc(), baseUrl ) );
     }
 
-    private void rebaseBannerPaths( final Banner banner, final URLContainer urlContainer )
+    private void rebaseBannerPaths( final Banner banner, final URLRebaser urlContainer )
     {
         if ( banner.getHref() != null ) // it may be empty
         {
@@ -193,7 +193,7 @@ public class DefaultDecorationModelInheritanceAssembler
     }
 
     private void assembleBodyInheritance( final String name, final DecorationModel child, final DecorationModel parent,
-                                          final URLContainer urlContainer )
+                                          final URLRebaser urlContainer )
     {
         Body cBody = child.getBody();
         Body pBody = parent.getBody();
@@ -238,7 +238,7 @@ public class DefaultDecorationModelInheritanceAssembler
     }
 
     private List<Menu> mergeMenus( final List<Menu> childMenus, final List<Menu> parentMenus,
-                                   final URLContainer urlContainer )
+                                   final URLRebaser urlContainer )
     {
         List<Menu> menus = new ArrayList<Menu>( childMenus.size() + parentMenus.size() );
 
@@ -281,7 +281,7 @@ public class DefaultDecorationModelInheritanceAssembler
         }
     }
 
-    private void rebaseMenuPaths( final List<MenuItem> items, final URLContainer urlContainer )
+    private void rebaseMenuPaths( final List<MenuItem> items, final URLRebaser urlContainer )
     {
         for ( MenuItem item : items )
         {
@@ -295,7 +295,7 @@ public class DefaultDecorationModelInheritanceAssembler
         item.setHref( relativizeLink( item.getHref(), baseUrl ) );
     }
 
-    private void rebaseLinkItemPaths( final LinkItem item, final URLContainer urlContainer )
+    private void rebaseLinkItemPaths( final LinkItem item, final URLRebaser urlContainer )
     {
         item.setHref( urlContainer.rebaseLink( item.getHref() ) );
     }
@@ -306,14 +306,14 @@ public class DefaultDecorationModelInheritanceAssembler
         relativizeLinkItemPaths( logo, baseUrl );
     }
 
-    private void rebaseLogoPaths( final Logo logo, final URLContainer urlContainer )
+    private void rebaseLogoPaths( final Logo logo, final URLRebaser urlContainer )
     {
         logo.setImg( urlContainer.rebaseLink( logo.getImg() ) );
         rebaseLinkItemPaths( logo, urlContainer );
     }
 
     private List<LinkItem> mergeLinkItemLists( final List<LinkItem> childList, final List<LinkItem> parentList,
-                                               final URLContainer urlContainer, boolean cutParentAfterDuplicate )
+                                               final URLRebaser urlContainer, boolean cutParentAfterDuplicate )
     {
         List<LinkItem> items = new ArrayList<LinkItem>( childList.size() + parentList.size() );
 
@@ -348,7 +348,7 @@ public class DefaultDecorationModelInheritanceAssembler
     }
 
     private List<Logo> mergePoweredByLists( final List<Logo> childList, final List<Logo> parentList,
-                                            final URLContainer urlContainer )
+                                            final URLRebaser urlContainer )
     {
         List<Logo> logos = new ArrayList<Logo>( childList.size() + parentList.size() );
 
@@ -398,9 +398,10 @@ public class DefaultDecorationModelInheritanceAssembler
     }
 
     /**
-     * Contains an old and a new path.
+     * URL rebaser: based on an old and a new path, can rebase a link based on old path to a value based on the new
+     * path.
      */
-    public final class URLContainer
+    private static class URLRebaser
     {
 
         private final String oldPath;
@@ -408,12 +409,12 @@ public class DefaultDecorationModelInheritanceAssembler
         private final String newPath;
 
         /**
-         * Construct a URLContainer.
+         * Construct a URL rebaser.
          *
          * @param oldPath the old path.
          * @param newPath the new path.
          */
-        public URLContainer( final String oldPath, final String newPath )
+        public URLRebaser( final String oldPath, final String newPath )
         {
             this.oldPath = oldPath;
             this.newPath = newPath;
