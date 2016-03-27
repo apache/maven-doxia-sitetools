@@ -453,8 +453,8 @@ public class DefaultDecorationModelInheritanceAssembler
 
             if ( link.contains( "${project." ) )
             {
-                throw new IllegalArgumentException( "site.xml late interpolation ${project.*} expression found in link: '"
-                    + link + "'. Use early interpolation ${this.*}" );
+                throw new IllegalArgumentException( "site.xml late interpolation ${project.*} expression found"
+                    + " in link: '" + link + "'. Use early interpolation ${this.*}" );
             }
 
             final URIPathDescriptor oldPath = new URIPathDescriptor( getOldPath(), link );
