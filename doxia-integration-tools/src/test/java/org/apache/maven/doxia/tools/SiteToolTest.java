@@ -374,16 +374,25 @@ public class SiteToolTest
         // href rebase
         assertEquals( "../../index.html", model.getBody().getBreadcrumbs().iterator().next().getHref() );
         Iterator<LinkItem> links = model.getBody().getLinks().iterator();
+        // late interpolation of pom content (which happens first: properties can't override)
+        assertEquals( "project.name = MSHARED-217 Child", links.next().getName() );
+        assertEquals( "name = MSHARED-217 Child", links.next().getName() );
         // early interpolation: DOXIASITETOOLS-158
         assertEquals( "this.name = MSHARED-217 Parent", links.next().getName() );
-        // Env Var interpolation
-        String val = links.next().getName();
-        assertTrue( val.startsWith( "PATH = " ) );
-        assertFalse( val.contains( "${" ) );
+
         // late interpolation of project properties
         assertEquals( "my_property = from child pom.xml", links.next().getName() );
         // early interpolation of project properties: DOXIASITETOOLS-158
         assertEquals( "this.my_property = from parent pom.xml", links.next().getName() );
+
+        // Env Var interpolation
+        String envPath = links.next().getName();
+        assertTrue( envPath.startsWith( "env.PATH = " ) );
+        assertFalse( envPath.contains( "${" ) );
+        assertNotSame( "env.PATH = PATH property from pom", envPath );
+
+        // property overrides env
+        assertEquals( "PATH = PATH property from pom", links.next().getName() );
     }
 
     private void writeModel( DecorationModel model, String to )

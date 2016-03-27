@@ -31,5 +31,7 @@ under the License.
 
   <properties>
     <my_property>from child pom.xml</my_property>
+    <PATH>PATH property from pom</PATH>
+    <name>name property</name>
   </properties>
 </project>

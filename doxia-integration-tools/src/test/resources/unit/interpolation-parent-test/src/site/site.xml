@@ -31,13 +31,18 @@ under the License.
 
   <body>
     <links>
+      <!-- late interpolation from project model -->
+      <item name="project.name = ${project.name}" href="${this.url}" />
+      <item name="name = ${name}" href="${this.url}" />
+      <!-- early interpolation from project model -->
       <item name="this.name = ${this.name}" href="${this.url}" />
-      <!-- interpolation of env vars -->
-      <item name="PATH = ${PATH}" href="${this.url}" />
       <!-- late interpolation of properties -->
       <item name="my_property = ${my_property}" href="." />
       <!-- early interpolation of properties -->
       <item name="this.my_property = ${this.my_property}" href="." />
+      <!-- interpolation of env vars -->
+      <item name="env.PATH = ${env.PATH}" href="${this.url}" />
+      <item name="PATH = ${PATH}" href="${this.url}" /><!-- property interpolated before env var in child -->
     </links>
     <breadcrumbs>
       <item name="Maven"  href="../index.html" />

@@ -522,17 +522,17 @@ public class DefaultSiteTool
         {
             interpolator.addValueSource( new ObjectBasedValueSource( aProject ) );
             interpolator.addValueSource( new MapBasedValueSource( aProject.getProperties() ) );
-        }
 
-        try
-        {
-            interpolator.addValueSource( new EnvarBasedValueSource() );
-        }
-        catch ( IOException e )
-        {
-            // Prefer logging?
-            throw new SiteToolException( "IOException: cannot interpolate environment properties: " + e.getMessage(),
-                                         e );
+            try
+            {
+                interpolator.addValueSource( new EnvarBasedValueSource() );
+            }
+            catch ( IOException e )
+            {
+                // Prefer logging?
+                throw new SiteToolException( "IOException: cannot interpolate environment properties: " + e.getMessage(),
+                                             e );
+            }
         }
 
         try

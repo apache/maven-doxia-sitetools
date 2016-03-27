@@ -2,8 +2,9 @@
  Introduction
  ------
  Dennis Lundberg
+ Hervé Boutemy
  ------
- 2008-04-27
+ 2016-03-27
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -68,6 +69,5 @@ Maven Doxia Integration Tools
               |              |                    | <<<$\{this.any.key\}>>>
 *-------------+--------------+--------------------+------------------+
 | <<<env.*>>>\
-<<<*>>>       | <<<env.*>>>\
-              | <<<*>>>      | environment variables | <<<$\{env.PATH\}>>>\
+<<<*>>>       |              | environment variables | <<<$\{env.PATH\}>>>\
 *-------------+--------------+--------------------+------------------+

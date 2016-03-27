@@ -31,5 +31,6 @@ under the License.
 
   <properties>
     <my_property>from parent pom.xml</my_property>
+    <name>name property</name>
   </properties>
 </project>
