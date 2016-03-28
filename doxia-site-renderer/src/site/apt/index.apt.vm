@@ -161,7 +161,7 @@ Doxia Sitetools - Site Renderer
 
 ** Site Template
 
-  When Velocity is processing the site template (be it from skin or local template), there are a few complementary Variables
+  When Velocity is processing the site template (be it from skin or local template), there are a few complementary variables
   available that give access to information taken from document being merged into the template:
 
 *---------------------------------+----------------------+-------------------------------+
