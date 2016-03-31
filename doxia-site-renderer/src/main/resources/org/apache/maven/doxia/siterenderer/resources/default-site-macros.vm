@@ -338,7 +338,7 @@
           &nbsp;| <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
         #end
       </div>
-    #elseif ( $datePosition.equalsIgnoreCase("left") )
+    #elseif ( $datePosition.equalsIgnoreCase( "left" ) )
       <div class="xleft">
         <span id="publishDate">$i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateValue</span>
         #if ( $versionPosition.equalsIgnoreCase( $position ) )
@@ -356,7 +356,7 @@
       <div id="lastPublished">
         <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
       </div>
-    #elseif ( $versionPosition.equalsIgnoreCase("left") )
+    #elseif ( $versionPosition.equalsIgnoreCase( "left" ) )
       <div class="xleft">
         <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
         #if ( $breadcrumbs && $breadcrumbs.size() > 0 )

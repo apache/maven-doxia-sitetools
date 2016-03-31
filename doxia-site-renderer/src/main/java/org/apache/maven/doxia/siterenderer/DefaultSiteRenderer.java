@@ -631,17 +631,22 @@ public class DefaultSiteRenderer
 
         context.put( "bodyContent", siteRendererSink.getBody() );
 
-        SimpleDateFormat sdf = new SimpleDateFormat( "yyyyMMdd" );
-        if ( StringUtils.isNotEmpty( siteRendererSink.getDate() ) )
+        // document date (got from Doxia Sink date() API)
+        String documentDate = siteRendererSink.getDate();
+        if ( StringUtils.isNotEmpty( documentDate ) )
         {
-            String documentDate = siteRendererSink.getDate();
+            context.put( "documentDate", documentDate );
 
+            // deprecated variables that rework the document date, suppose one semantics over others
+            // (ie creation date, while it may be last modification date if the document writer decided so)
+            // see DOXIASITETOOLS-20 for the beginning and DOXIASITETOOLS-164 for the end of this story
             try
             {
                 // we support only ISO 8601 date
                 Date creationDate = new SimpleDateFormat( "yyyy-MM-dd" ).parse( documentDate );
 
                 context.put( "creationDate", creationDate );
+                SimpleDateFormat sdf = new SimpleDateFormat( "yyyyMMdd" );
                 context.put( "dateCreation", sdf.format( creationDate ) );
             }
             catch ( java.text.ParseException e )

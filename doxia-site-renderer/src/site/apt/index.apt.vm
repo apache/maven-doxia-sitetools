@@ -171,9 +171,11 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<bodyContent>>>               | <<<String>>>         | HTML body content of the Doxia generated output. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<dateCreation>>>              | <<<String>>>         | <<Deprecated>>: use <<<creationDate>>>. The date specified in the source document, in the format "yyyyMMdd". |
+| <<<dateCreation>>>              | <<<String>>>         | <<Deprecated>>: use <<<documentDate>>>. The date specified in the source document, in the format "yyyyMMdd". |
 *---------------------------------+----------------------+-------------------------------+
-| <<<creationDate>>>              | <<<Date>>>           | The date specified in the source document. |
+| <<<creationDate>>>              | <<<Date>>>           | <<Deprecated>>: use <<<documentDate>>>. The date specified in the source document. |
+*---------------------------------+----------------------+-------------------------------+
+| <<<documentDate>>>              | <<<String>>>         | The date specified in the source document: semantics has to be chosen by document writer (document creation date, or document last modification date, or ...), and format is not enforced. |
 *---------------------------------+----------------------+-------------------------------+
 | <<<headContent>>>               | <<<String>>>         | HTML head content of the Doxia generated output. |
 *---------------------------------+----------------------+-------------------------------+

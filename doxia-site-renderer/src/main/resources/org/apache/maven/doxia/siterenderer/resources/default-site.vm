@@ -31,11 +31,8 @@
 #foreach( $author in $authors )
       <meta name="author" content="$author" />
 #end
-#if ( $dateCreation )
-    <meta name="Date-Creation-yyyymmdd" content="$dateCreation" />
-#end
-#if ( $dateRevision )
-    <meta name="Date-Revision-yyyymmdd" content="$dateRevision" />
+#if ( $documentDate )
+    <meta name="date" content="$documentDate" />
 #end
 #if ( $locale )
     <meta http-equiv="Content-Language" content="$locale.language" />
