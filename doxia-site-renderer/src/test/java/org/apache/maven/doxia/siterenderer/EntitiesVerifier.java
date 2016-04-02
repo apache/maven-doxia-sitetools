@@ -101,7 +101,7 @@ public class EntitiesVerifier
 
         HtmlDivision div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttribute( "class" ), "section" );
+        assertEquals( "section", div.getAttribute( "class" ) );
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
@@ -109,83 +109,83 @@ public class EntitiesVerifier
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttribute( "name" ), "section_name_with_entities:____" );
+        assertEquals( "section_name_with_entities:____", a.getAttribute( "name" ) );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttribute( "class" ), "section" );
+        assertEquals( "section", div.getAttribute( "class" ) );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttribute( "class" ), "section" );
+        assertEquals( "section", div.getAttribute( "class" ) );
 
         HtmlHeading4 h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
-        assertEquals( h4.asText().trim(), "Entities" );
+        assertEquals( "Entities", h4.asText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttribute( "name" ), "Entities" );
+        assertEquals( "Entities", a.getAttribute( "name" ) );
 
         div = (HtmlDivision) elementIterator.next();
 
         HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
-        assertEquals( h3.asText().trim(), "Generic Entities: '&' '<' '>' '\"' '''" );
+        assertEquals( "Generic Entities: '&' '<' '>' '\"' '''", h3.asText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "'&' '<' '>' '\"' '''" );
+        assertEquals( "'&' '<' '>' '\"' '''", p.asText().trim() );
 
         div = (HtmlDivision) elementIterator.next();
 
         h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
-        assertEquals( h3.asText().trim(), "Local Entities: '\u0391' '\u0392' '\u0393' '\uD7ED'" );
+        assertEquals( "Local Entities: '\u0391' '\u0392' '\u0393' '\uD7ED'", h3.asText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "'\u0391' '\u0392' '\u0393' '\uD7ED\uD7ED' '\u0159\u0159' '\u0159'" );
+        assertEquals( "'\u0391' '\u0392' '\u0393' '\uD7ED\uD7ED' '\u0159\u0159' '\u0159'", p.asText().trim() );
 
         div = (HtmlDivision) elementIterator.next();
 
         h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
-        assertEquals( h3.asText().trim(), "DTD Entities: ' ' '\u00A1' '\u00A2'" );
+        assertEquals( "DTD Entities: ' ' '\u00A1' '\u00A2'", h3.asText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "' ' '\u00A1' '\u00A2'" );
+        assertEquals( "' ' '\u00A1' '\u00A2'", p.asText().trim() );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttribute( "class" ), "section" );
+        assertEquals( "section", div.getAttribute( "class" ) );
 
         h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
-        assertEquals( h4.asText().trim(), "CDATA" );
+        assertEquals( "CDATA", h4.asText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttribute( "name" ), "CDATA" );
+        assertEquals( "CDATA", a.getAttribute( "name" ) );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttribute( "class" ), "source" );
+        assertEquals( "source", div.getAttribute( "class" ) );
 
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
         assertNotNull( pre );
-        assertEquals( pre.asText().trim(), "<project xmlns:ant=\"jelly:ant\">" );
+        assertEquals( "<project xmlns:ant=\"jelly:ant\">", pre.asText().trim() );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "'&nbsp;' '&iexcl;'" );
+        assertEquals( "'&nbsp;' '&iexcl;'", p.asText().trim() );
 
         assertFalse( elementIterator.hasNext() );
     }

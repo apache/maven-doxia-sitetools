@@ -27,9 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlStyle;
 import com.gargoylesoftware.htmlunit.html.HtmlTitle;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -67,8 +65,8 @@ public class HeadVerifier
         // ----------------------------------------------------------------------
 
         HtmlMeta meta = (HtmlMeta) elementIterator.next();
-        assertEquals( meta.getAttribute( "http-equiv" ), "Content-Type" );
-        assertEquals( meta.getAttribute( "content" ), "text/html; charset=UTF-8" );
+        assertEquals( "Content-Type", meta.getAttribute( "http-equiv" ) );
+        assertEquals( "text/html; charset=UTF-8", meta.getAttribute( "content" ) );
 
         HtmlTitle title = (HtmlTitle) elementIterator.next();
         assertNotNull( title );
@@ -80,22 +78,22 @@ public class HeadVerifier
         assertNotNull( link );
 
         meta = (HtmlMeta) elementIterator.next();
-        assertEquals( meta.getAttribute( "name" ), "author" );
-        assertEquals( meta.getAttribute( "content" ).trim(), "John Doe" );
+        assertEquals( "author", meta.getAttribute( "name" ) );
+        assertEquals( "John Doe", meta.getAttribute( "content" ).trim() );
 
         meta = (HtmlMeta) elementIterator.next();
-        assertEquals( meta.getAttribute( "http-equiv" ), "Content-Language" );
-        assertEquals( meta.getAttribute( "content" ), "en" );
+        assertEquals( "Content-Language", meta.getAttribute( "http-equiv" ) );
+        assertEquals( "en", meta.getAttribute( "content" ) );
 
         meta = (HtmlMeta) elementIterator.next();
-        assertEquals( meta.getAttribute( "name" ), "description" );
-        assertEquals( meta.getAttribute( "content" ), "Free Web tutorials" );
+        assertEquals( "description", meta.getAttribute( "name" ) );
+        assertEquals( "Free Web tutorials", meta.getAttribute( "content" ) );
 
         meta = (HtmlMeta) elementIterator.next();
-        assertEquals( meta.getAttribute( "name" ), "keywords" );
-        assertEquals( meta.getAttribute( "content" ), "HTML,CSS,XML,JavaScript" );
+        assertEquals( "keywords", meta.getAttribute( "name" ) );
+        assertEquals( "HTML,CSS,XML,JavaScript", meta.getAttribute( "content" ) );
 
         HtmlBase base = (HtmlBase) elementIterator.next();
-        assertEquals( base.getAttribute( "href" ), "http://maven.apache.org/" );
+        assertEquals( "http://maven.apache.org/", base.getAttribute( "href" ) );
     }
 }

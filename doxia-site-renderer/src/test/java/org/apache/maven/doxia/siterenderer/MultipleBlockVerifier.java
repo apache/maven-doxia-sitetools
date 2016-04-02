@@ -30,7 +30,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
 
 import java.util.Iterator;
 
-
 /**
  *
  * @author ltheussl
@@ -59,15 +58,15 @@ public class MultipleBlockVerifier
 
         HtmlDivision div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
-        assertEquals( div.getAttribute( "class" ), "section" );
+        assertEquals( "section", div.getAttribute( "class" ) );
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
-        assertEquals( h2.asText().trim(), "section name" );
+        assertEquals( "section name", h2.asText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( a.getAttribute( "name" ), "section_name" );
+        assertEquals( "section_name", a.getAttribute( "name" ) );
 
         // ----------------------------------------------------------------------
         // Paragraph
@@ -75,7 +74,7 @@ public class MultipleBlockVerifier
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "text" );
+        assertEquals( "text", p.asText().trim() );
 
         // ----------------------------------------------------------------------
         // Unordered list
@@ -86,7 +85,7 @@ public class MultipleBlockVerifier
 
         HtmlListItem li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "list1" );
+        assertEquals( "list1", li.getFirstChild().asText().trim() );
 
         // ----------------------------------------------------------------------
         // Paragraph
@@ -94,7 +93,7 @@ public class MultipleBlockVerifier
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "text2" );
+        assertEquals( "text2", p.asText().trim() );
 
         // ----------------------------------------------------------------------
         // Unordered list
@@ -105,7 +104,7 @@ public class MultipleBlockVerifier
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( li.getFirstChild().asText().trim(), "list1" );
+        assertEquals( "list1", li.getFirstChild().asText().trim() );
 
         // ----------------------------------------------------------------------
         // Paragraph
@@ -113,7 +112,7 @@ public class MultipleBlockVerifier
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.asText().trim(), "text3" );
+        assertEquals( "text3", p.asText().trim() );
 
         // ----------------------------------------------------------------------
         // Unordered list
@@ -127,7 +126,7 @@ public class MultipleBlockVerifier
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( p.getFirstChild().asText().trim(), "list1" );
+        assertEquals( "list1", p.getFirstChild().asText().trim() );
 
         assertFalse( elementIterator.hasNext() );
     }
