@@ -84,10 +84,6 @@ public class HeadVerifier
         assertEquals( meta.getAttribute( "content" ).trim(), "John Doe" );
 
         meta = (HtmlMeta) elementIterator.next();
-        assertEquals( meta.getAttribute( "name" ), "Date-Revision-yyyymmdd" );
-        assertEquals( meta.getAttribute( "content" ), new SimpleDateFormat( "yyyyMMdd" ).format( new Date() ) );
-
-        meta = (HtmlMeta) elementIterator.next();
         assertEquals( meta.getAttribute( "http-equiv" ), "Content-Language" );
         assertEquals( meta.getAttribute( "content" ), "en" );
 
