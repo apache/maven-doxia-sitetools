@@ -1028,7 +1028,7 @@ public class DefaultSiteTool
             else
             {
                 getLogger().debug( "No site descriptor found for " + project.getId() + " for locale "
-                    + locale.getLanguage() );
+                    + locale.getLanguage() + ", trying without locale..." );
             }
         }
         catch ( ArtifactNotFoundException e )
@@ -1065,7 +1065,7 @@ public class DefaultSiteTool
             // we use zero length files to avoid re-resolution (see below)
             if ( result.length() == 0 )
             {
-                getLogger().debug( "No site descriptor found for " + project.getId() + " without locale" );
+                getLogger().debug( "No site descriptor found for " + project.getId() + " without locale." );
                 result = null;
             }
         }
@@ -1135,7 +1135,7 @@ public class DefaultSiteTool
             }
             else
             {
-                getLogger().debug( "No site descriptor found for " + project.getId() );
+                getLogger().debug( "No" + ( depth == 0 ? "" : ( " parent level " + depth ) ) +" site descriptor." );
             }
         }
         catch ( IOException e )
