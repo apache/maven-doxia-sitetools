@@ -1135,7 +1135,7 @@ public class DefaultSiteTool
             }
             else
             {
-                getLogger().debug( "No" + ( depth == 0 ? "" : ( " parent level " + depth ) ) +" site descriptor." );
+                getLogger().debug( "No" + ( depth == 0 ? "" : ( " parent level " + depth ) ) + " site descriptor." );
             }
         }
         catch ( IOException e )
