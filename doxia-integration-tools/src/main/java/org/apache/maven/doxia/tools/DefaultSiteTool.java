@@ -56,7 +56,6 @@ import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInherit
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.model.Model;
 import org.apache.maven.model.Site;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
@@ -480,7 +479,14 @@ public class DefaultSiteTool
             populateParentMenu( decorationModel, llocale, project, parentProject, true );
         }
 
-        populateModulesMenu( decorationModel, llocale, project, reactorProjects, localRepository, true );
+        try
+        {
+            populateModulesMenu( decorationModel, llocale, project, reactorProjects, localRepository, true );
+        }
+        catch ( IOException e )
+        {
+            throw new SiteToolException( "Error while populating modules menu: " + e.getMessage(), e );
+        }
 
         if ( decorationModel.getBannerLeft() == null )
         {
@@ -733,11 +739,12 @@ public class DefaultSiteTool
      * @param localRepository the Maven local repository, not null.
      * @param keepInheritedRefs used for inherited references.
      * @throws SiteToolException if any
+     * @throws IOException 
      */
     private void populateModulesMenu( DecorationModel decorationModel, Locale locale, MavenProject project,
                                      List<MavenProject> reactorProjects, ArtifactRepository localRepository,
                                      boolean keepInheritedRefs )
-        throws SiteToolException
+        throws SiteToolException, IOException
     {
         checkNotNull( "project", project );
         checkNotNull( "reactorProjects", reactorProjects );
@@ -766,42 +773,69 @@ public class DefaultSiteTool
                 menu.setName( i18n.getString( "site-tool", llocale, "decorationModel.menu.projectmodules" ) );
             }
 
-            getLogger().debug( "Attempting to load module information from local filesystem" );
-
-            // Not running reactor - search for the projects manually
-            List<Model> models = new ArrayList<Model>( project.getModules().size() );
             for ( String module : (List<String>) project.getModules() )
             {
-                Model model;
-                File f = new File( project.getBasedir(), module + "/pom.xml" );
-                if ( f.exists() )
-                {
-                    try
-                    {
-                        model = mavenProjectBuilder.build( f, localRepository, null ).getModel();
-                    }
-                    catch ( ProjectBuildingException e )
-                    {
-                        throw new SiteToolException( "Unable to read local module-POM", e );
-                    }
-                }
-                else
-                {
-                    getLogger().warn( "No filesystem module-POM available" );
+                MavenProject moduleProject = getModuleFromReactor( project, reactorProjects, module );
 
-                    model = new Model();
-                    model.setName( module );
-                    setDistMgmntSiteUrl( model, module );
+                if ( moduleProject == null )
+                {
+                    getLogger().warn( "Module " + module
+                        + " not found in reactor: loading locally" );
+
+                    File f = new File( project.getBasedir(), module + "/pom.xml" );
+                    if ( f.exists() )
+                    {
+                        try
+                        {
+                            moduleProject = mavenProjectBuilder.build( f, localRepository, null );
+                        }
+                        catch ( ProjectBuildingException e )
+                        {
+                            throw new SiteToolException( "Unable to read local module-POM", e );
+                        }
+                    }
+                    else
+                    {
+                        getLogger().warn( "No filesystem module-POM available" );
+    
+                        moduleProject = new MavenProject();
+                        moduleProject.setName( module );
+                        moduleProject.setDistributionManagement( new DistributionManagement() );
+                        moduleProject.getDistributionManagement().setSite( new Site() );
+                        moduleProject.getDistributionManagement().getSite().setUrl( module );
+                    }
                 }
-                models.add( model );
+
+                String siteUrl = getDistMgmntSiteUrl( moduleProject );
+                String itemName =
+                    ( moduleProject.getName() == null ) ? moduleProject.getArtifactId() : moduleProject.getName();
+
+                appendMenuItem( project, menu, itemName, siteUrl, moduleProject.getArtifactId() );
             }
-            populateModulesMenuItemsFromModels( project, models, menu );
         }
         else if ( decorationModel.getMenuRef( "modules" ).getInherit() == null )
         {
             // only remove if project has no modules AND menu is not inherited, see MSHARED-174
             decorationModel.removeMenuRef( "modules" );
         }
+    }
+
+    private static MavenProject getModuleFromReactor( MavenProject project, List<MavenProject> reactorProjects,
+                                                      String module )
+        throws IOException
+    {
+        File moduleBasedir = new File( project.getBasedir(), module ).getCanonicalFile();
+
+        for ( MavenProject reactorProject : reactorProjects )
+        {
+            if ( moduleBasedir.equals( reactorProject.getBasedir() ) )
+            {
+                return reactorProject;
+            }
+        }
+
+        // module not found in reactor
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -1322,22 +1356,6 @@ public class DefaultSiteTool
 
     /**
      * @param project not null
-     * @param models not null
-     * @param menu not null
-     */
-    private void populateModulesMenuItemsFromModels( MavenProject project, List<Model> models, Menu menu )
-    {
-        for ( Model model : models )
-        {
-            String reactorUrl = getDistMgmntSiteUrl( model );
-            String name = ( model.getName() == null ) ? model.getArtifactId() : model.getName();
-
-            appendMenuItem( project, menu, name, reactorUrl, model.getArtifactId() );
-        }
-    }
-
-    /**
-     * @param project not null
      * @param menu not null
      * @param name not null
      * @param href could be null
@@ -1426,17 +1444,6 @@ public class DefaultSiteTool
         return getDistMgmntSiteUrl( project.getDistributionManagement() );
     }
 
-    /**
-     * Return distributionManagement.site.url if defined, null otherwise.
-     *
-     * @param model not null
-     * @return could be null
-     */
-    private static String getDistMgmntSiteUrl( Model model )
-    {
-        return getDistMgmntSiteUrl( model.getDistributionManagement() );
-    }
-
     private static String getDistMgmntSiteUrl( DistributionManagement distMgmnt )
     {
         if ( distMgmnt != null && distMgmnt.getSite() != null && distMgmnt.getSite().getUrl() != null )
@@ -1462,21 +1469,6 @@ public class DefaultSiteTool
         {
             return url; // this will then throw somewhere else
         }
-    }
-
-    private static void setDistMgmntSiteUrl( Model model, String url )
-    {
-        if ( model.getDistributionManagement() == null )
-        {
-            model.setDistributionManagement( new DistributionManagement() );
-        }
-
-        if ( model.getDistributionManagement().getSite() == null )
-        {
-            model.getDistributionManagement().setSite( new Site() );
-        }
-
-        model.getDistributionManagement().getSite().setUrl( url );
     }
 
     private void checkNotNull( String name, Object value )
