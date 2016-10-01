@@ -117,7 +117,8 @@ public class DefaultSiteTool
     protected DecorationModelInheritanceAssembler assembler;
 
     /**
-     * Project builder.
+     * Project builder (deprecated in Maven 3: should use ProjectBuilder, which will avoid
+     * issues like DOXIASITETOOLS-166)
      */
     @Requirement
     protected MavenProjectBuilder mavenProjectBuilder;
