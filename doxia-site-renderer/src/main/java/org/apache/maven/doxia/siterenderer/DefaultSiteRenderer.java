@@ -78,7 +78,9 @@ import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.tools.Scope;
 import org.apache.velocity.tools.ToolManager;
+import org.apache.velocity.tools.config.ConfigurationUtils;
 import org.apache.velocity.tools.config.EasyFactoryConfiguration;
+import org.apache.velocity.tools.config.FactoryConfiguration;
 import org.apache.velocity.tools.generic.AlternatorTool;
 import org.apache.velocity.tools.generic.ClassTool;
 import org.apache.velocity.tools.generic.ComparisonDateTool;
@@ -149,6 +151,8 @@ public class DefaultSiteRenderer
     private static final String DEFAULT_TEMPLATE = RESOURCE_DIR + "/default-site.vm";
 
     private static final String SKIN_TEMPLATE_LOCATION = "META-INF/maven/site.vm";
+
+    private static final String TOOLS_LOCATION = "META-INF/maven/site-tools.xml";
 
     // ----------------------------------------------------------------------
     // Renderer implementation
@@ -496,6 +500,13 @@ public class DefaultSiteRenderer
             .tool( ResourceTool.class ).property( "bundles", new String[] { "site-renderer" } )
             .tool( SortTool.class )
             .tool( XmlTool.class );
+
+        FactoryConfiguration customConfig = ConfigurationUtils.findInClasspath( TOOLS_LOCATION );
+
+        if ( customConfig != null )
+        {
+            config.addConfiguration( customConfig );
+        }
 
         ToolManager manager = new ToolManager( false, false );
         manager.configure( config );

@@ -137,6 +137,9 @@ Doxia Sitetools - Site Renderer
 | <<<xml>>>        | {{{$generic/XmlTool.html}XmlTool}}                       | For reading/navigating XML files. This uses dom4j under the covers and provides complete XPath support.
 *------------------+----------------------------------------------------------+-------------------------------+
 
+  If you intend to use custom Velocity tools, add them to the Maven Site Plugin's dependency list and make sure
+  that they have a bundled configuration file in <<</META-INF/maven/site-tools.xml>>>.
+
   See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html\#L470}DefaultSiteRenderer.createToolManagedVelocityContext(...)}}>>>
   source for more details and the {{{http://velocity.apache.org/tools/devel/summary.html}tools usage summary}}.
 
