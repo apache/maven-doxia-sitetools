@@ -33,7 +33,6 @@ under the License.
 
   <name>Doxia :: Site Renderer</name>
   <description>The Site Renderer handles the rendering of sites, merging site decoration with document content.</description>
-  <url>http://maven.apache.org/doxia/doxia-sitetools/doxia-site-renderer/</url>
 
 
   <dependencies>
