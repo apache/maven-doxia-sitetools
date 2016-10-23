@@ -56,7 +56,7 @@ import org.xml.sax.EntityResolver;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @author <a href="mailto:evenisse@codehaus.org>Emmanuel Venisse</a>
+ * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  * @version $Id$
  */
 public class DefaultSiteRendererTest
@@ -230,6 +230,7 @@ public class DefaultSiteRendererTest
 
         String renderResult = writer.toString();
         String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
+        expectedResult = StringUtils.unifyLineSeparators( expectedResult );
         assertEquals( expectedResult, renderResult );
     }
 
@@ -257,6 +258,7 @@ public class DefaultSiteRendererTest
 
         String renderResult = writer.toString();
         String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
+        expectedResult = StringUtils.unifyLineSeparators( expectedResult );
         assertEquals( expectedResult, renderResult );
     }
 
@@ -283,6 +285,7 @@ public class DefaultSiteRendererTest
         renderer.generateDocument( writer, sink, siteRenderingContext );
         String renderResult = writer.toString();
         String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
+        expectedResult = StringUtils.unifyLineSeparators( expectedResult );
         assertEquals( expectedResult, renderResult );
     }
 
