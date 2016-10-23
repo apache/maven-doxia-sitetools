@@ -39,10 +39,6 @@ under the License.
   <url>https://maven.apache.org/doxia/doxia-sitetools/</url>
   <inceptionYear>2005</inceptionYear>
 
-  <prerequisites>
-    <maven>2.2.1</maven>
-  </prerequisites>
-
   <modules>
     <module>doxia-decoration-model</module>
     <module>doxia-skin-model</module>
