@@ -76,6 +76,9 @@ import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.util.XmlValidator;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.exception.VelocityException;
 import org.apache.velocity.tools.Scope;
 import org.apache.velocity.tools.ToolManager;
 import org.apache.velocity.tools.config.ConfigurationUtils;
@@ -707,9 +710,19 @@ public class DefaultSiteRenderer
                 template = ( encoding == null ) ? velocity.getEngine().getTemplate( templateName )
                                 : velocity.getEngine().getTemplate( templateName, encoding );
             }
-            catch ( Exception e )
+            catch ( ParseErrorException pee )
             {
-                throw new RendererException( "Could not find the site decoration template '" + templateName + "'", e );
+                throw new RendererException( "Velocity parsing error while reading the site decoration template '"
+                    + templateName + "'", pee );
+            }
+            catch ( ResourceNotFoundException rnfe )
+            {
+                throw new RendererException( "Could not find the site decoration template '" + templateName + "'",
+                                             rnfe );
+            }
+            catch ( VelocityException ve )
+            {
+                throw new RendererException( "Velocity error while getting site decoration template.", ve );
             }
 
             try
@@ -718,9 +731,13 @@ public class DefaultSiteRenderer
                 template.merge( context, sw );
                 writer.write( sw.toString().replaceAll( "\r?\n", SystemUtils.LINE_SEPARATOR ) );
             }
-            catch ( Exception e )
+            catch ( VelocityException ve )
             {
-                throw new RendererException( "Error while merging site decoration template.", e );
+                throw new RendererException( "Velocity error while merging site decoration template.", ve );
+            }
+            catch ( IOException ioe )
+            {
+                throw new RendererException( "IO exception while merging site decoration template.", ioe );
             }
         }
         finally
