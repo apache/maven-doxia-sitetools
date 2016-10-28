@@ -701,6 +701,7 @@ public class DefaultSiteRenderer
         try
         {
             Template template;
+            File skin = siteRenderingContext.getSkinJarFile();
 
             try
             {
@@ -713,16 +714,17 @@ public class DefaultSiteRenderer
             catch ( ParseErrorException pee )
             {
                 throw new RendererException( "Velocity parsing error while reading the site decoration template '"
-                    + templateName + "'", pee );
+                    + templateName + "'" + ( ( skin == null ) ? "" : ( " from " + skin.getName() + " skin" ) ), pee );
             }
             catch ( ResourceNotFoundException rnfe )
             {
-                throw new RendererException( "Could not find the site decoration template '" + templateName + "'",
-                                             rnfe );
+                throw new RendererException( "Could not find the site decoration template '" + templateName + "'"
+                    + ( ( skin == null ) ? "" : ( " in " + skin.getName() + " skin" ) ), rnfe );
             }
             catch ( VelocityException ve )
             {
-                throw new RendererException( "Velocity error while getting site decoration template.", ve );
+                throw new RendererException( "Velocity error while getting site decoration template"
+                    + ( ( skin == null ) ? "" : ( " from " + skin.getName() + " skin" ) ), ve );
             }
 
             try
