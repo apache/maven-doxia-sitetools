@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.skin.SkinModel;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -58,7 +59,7 @@ public class SiteRenderingContext
 
     private String defaultWindowTitle;
 
-    private File skinJarFile;
+    private Artifact skin;
 
     private SkinModel skinModel;
 
@@ -231,23 +232,23 @@ public class SiteRenderingContext
     }
 
     /**
-     * <p>Getter for the field <code>skinJarFile</code>.</p>
+     * <p>Getter for the field <code>skin</code>.</p>
      *
-     * @return a {@link java.io.File} object.
+     * @return a {@link Artifact} object.
      */
-    public File getSkinJarFile()
+    public Artifact getSkin()
     {
-        return skinJarFile;
+        return skin;
     }
 
     /**
      * <p>Setter for the field <code>skinJarFile</code>.</p>
      *
-     * @param skinJarFile a {@link java.io.File} object.
+     * @param skin an {@link Artifact} object.
      */
-    public void setSkinJarFile( File skinJarFile )
+    public void setSkin( Artifact skin )
     {
-        this.skinJarFile = skinJarFile;
+        this.skin = skin;
     }
 
     /**

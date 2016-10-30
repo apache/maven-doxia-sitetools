@@ -257,6 +257,8 @@ under the License.
                 <!-- DOXIA-511 -->
                 <exclude>org/apache/maven/doxia/docrenderer/AbstractDocumentRenderer</exclude>
                 <exclude>org/apache/maven/doxia/docrenderer/itext/AbstractITextRender</exclude>
+                <!-- DOXIASITETOOLS-170 -->
+                <exlcude>org/apache/maven/doxia/siterenderer/SiteRenderingContext</exlcude>
               </excludes>
             </configuration>
           </execution>

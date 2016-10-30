@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 
@@ -73,15 +74,16 @@ public interface Renderer
     /**
      * Create a Site Rendering Context for a site using a skin.
      *
-     * @param skinFile
+     * @param skin
      * @param attributes
      * @param decoration
      * @param defaultWindowTitle
      * @param locale
      * @return a SiteRenderingContext.
      * @throws java.io.IOException if it bombs.
+     * @since 1.7.3 was previously with skin as File instead of Artifact
      */
-    SiteRenderingContext createContextForSkin( File skinFile, Map<String, ?> attributes, DecorationModel decoration,
+    SiteRenderingContext createContextForSkin( Artifact skin, Map<String, ?> attributes, DecorationModel decoration,
                                                String defaultWindowTitle, Locale locale )
         throws RendererException, IOException;
 

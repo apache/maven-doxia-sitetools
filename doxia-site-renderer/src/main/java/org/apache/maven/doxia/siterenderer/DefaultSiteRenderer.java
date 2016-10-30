@@ -55,6 +55,7 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -701,7 +702,7 @@ public class DefaultSiteRenderer
         try
         {
             Template template;
-            File skin = siteRenderingContext.getSkinJarFile();
+            Artifact skin = siteRenderingContext.getSkin();
 
             try
             {
@@ -713,18 +714,15 @@ public class DefaultSiteRenderer
             }
             catch ( ParseErrorException pee )
             {
-                throw new RendererException( "Velocity parsing error while reading the site decoration template '"
-                    + templateName + "'" + ( ( skin == null ) ? "" : ( " from " + skin.getName() + " skin" ) ), pee );
+                throw new RendererException( "Velocity parsing error while reading the site decoration template "
+                    + ( ( skin == null ) ? ( "'" + templateName + "'" ) : ( "from " + skin.getId() + " skin" ) ),
+                                             pee );
             }
             catch ( ResourceNotFoundException rnfe )
             {
-                throw new RendererException( "Could not find the site decoration template '" + templateName + "'"
-                    + ( ( skin == null ) ? "" : ( " in " + skin.getName() + " skin" ) ), rnfe );
-            }
-            catch ( VelocityException ve )
-            {
-                throw new RendererException( "Velocity error while getting site decoration template"
-                    + ( ( skin == null ) ? "" : ( " from " + skin.getName() + " skin" ) ), ve );
+                throw new RendererException( "Could not find the site decoration template "
+                    + ( ( skin == null ) ? ( "'" + templateName + "'" ) : ( "from " + skin.getId() + " skin" ) ),
+                                             rnfe );
             }
 
             try
@@ -767,16 +765,16 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public SiteRenderingContext createContextForSkin( File skinFile, Map<String, ?> attributes,
+    public SiteRenderingContext createContextForSkin( Artifact skin, Map<String, ?> attributes,
                                                       DecorationModel decoration, String defaultWindowTitle,
                                                       Locale locale )
             throws IOException, RendererException
     {
         SiteRenderingContext context = createSiteRenderingContext( attributes, decoration, defaultWindowTitle, locale );
 
-        context.setSkinJarFile( skinFile );
+        context.setSkin( skin );
 
-        ZipFile zipFile = getZipFile( skinFile );
+        ZipFile zipFile = getZipFile( skin.getFile() );
         InputStream in = null;
 
         try
@@ -784,7 +782,7 @@ public class DefaultSiteRenderer
             if ( zipFile.getEntry( SKIN_TEMPLATE_LOCATION ) != null )
             {
                 context.setTemplateName( SKIN_TEMPLATE_LOCATION );
-                context.setTemplateClassLoader( new URLClassLoader( new URL[]{skinFile.toURI().toURL()} ) );
+                context.setTemplateClassLoader( new URLClassLoader( new URL[]{skin.getFile().toURI().toURL()} ) );
             }
             else
             {
@@ -818,7 +816,7 @@ public class DefaultSiteRenderer
         catch ( XmlPullParserException e )
         {
             throw new RendererException( "Failed to parse " + SkinModel.SKIN_DESCRIPTOR_LOCATION
-                + " skin descriptor from " + skinFile, e );
+                + " skin descriptor from " + skin.getId() + " skin", e );
         }
         finally
         {
@@ -900,9 +898,9 @@ public class DefaultSiteRenderer
     public void copyResources( SiteRenderingContext siteRenderingContext, File outputDirectory )
         throws IOException
     {
-        if ( siteRenderingContext.getSkinJarFile() != null )
+        if ( siteRenderingContext.getSkin() != null )
         {
-            ZipFile file = getZipFile( siteRenderingContext.getSkinJarFile() );
+            ZipFile file = getZipFile( siteRenderingContext.getSkin().getFile() );
 
             try
             {
