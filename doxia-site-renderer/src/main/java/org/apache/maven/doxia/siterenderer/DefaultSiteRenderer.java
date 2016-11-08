@@ -803,7 +803,7 @@ public class DefaultSiteRenderer
                     skinModel.getPrerequisites() == null ? null : skinModel.getPrerequisites().getDoxiaSitetools();
 
                 Package p = DefaultSiteRenderer.class.getPackage();
-                String current = ( p == null ) ? null : p.getSpecificationVersion();
+                String current = ( p == null ) ? null : p.getImplementationVersion();
 
                 if ( StringUtils.isNotBlank( toolsPrerequisite ) && ( current != null )
                     && !matchVersion( current, toolsPrerequisite ) )
