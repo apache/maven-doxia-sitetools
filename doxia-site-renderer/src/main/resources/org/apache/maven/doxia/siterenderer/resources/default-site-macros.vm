@@ -91,18 +91,40 @@
         <div id="$id">
     #end
 ##
-    #if( $banner.src )
-        #set ( $src = $banner.src )
-        #if ( !$decoration.isLink( $src ) )
-            #set ( $src = $PathTool.calculateLink( $src, $relativePath ) )
-            #set ( $src = $src.replaceAll( '\\', '/' ) )
-        #end
-        #if ( $banner.alt )
-            #set ( $alt = $banner.alt )
-        #else
-            #set ( $alt = $banner.name )
-        #end
-        <img src="$src" alt="$alt"#if( $banner.title ) title="$banner.title"#end />
+  #if( $banner.src )
+    #set ( $src = $banner.src )
+      #if ( !$decoration.isLink( $src ) )
+        #set ( $src = $PathTool.calculateLink( $src, $relativePath ) )
+        #set ( $src = $src.replaceAll( '\\', '/' ) )
+      #end
+      #if ( $banner.alt )
+        #set ( $alt = ' alt="' + $banner.alt + '"' )
+      #elseif ( $banner.name )
+        #set ( $alt = ' alt="' + $banner.name + '"' )
+      #else
+        #set ( $alt = ' alt=""' )
+      #end
+      #if( $banner.border )
+        #set ( $imgBorder = ' border="' + $banner.border + '"' )
+      #else
+        #set ( $imgBorder = "" )
+      #end
+      #if( $banner.width )
+        #set ( $imgWidth = ' width="' + $banner.width + '"' )
+      #else
+        #set ( $imgWidth = "" )
+      #end
+      #if( $banner.height )
+        #set ( $imgHeight = ' height="' + $banner.height + '"' )
+      #else
+        #set ( $imgHeight = "" )
+      #end
+      #if( $banner.title ) 
+        #set ( $bannerTitle=' title="' + $banner.title + '"' ) 
+      #else
+        #set ( $bannerTitle="" )
+      #end
+      <img src="$src" $alt$bannerTitle$imgBorder$imgWidth$imgHeight/>
     #else
         $banner.name
     #end
