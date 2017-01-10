@@ -119,8 +119,8 @@
       #else
         #set ( $imgHeight = "" )
       #end
-      #if( $banner.title ) 
-        #set ( $bannerTitle=' title="' + $banner.title + '"' ) 
+      #if( $banner.title )
+        #set ( $bannerTitle=' title="' + $banner.title + '"' )
       #else
         #set ( $bannerTitle="" )
       #end
