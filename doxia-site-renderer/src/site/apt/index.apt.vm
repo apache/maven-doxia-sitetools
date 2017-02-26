@@ -59,7 +59,7 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<alignedFileName>>>           | <<<String>>>         | The file name of the (HTML) document being rendered, relative to the document being rendered. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<decoration>>>                | {{{../doxia-decoration-model/apidocs/org/apache/maven/doxia/site/decoration/DecorationModel.html}<<<DecorationModel>>>}} | This is a model that represents the data in your <<<site.xml>>>. |
+| <<<decoration>>>                | {{{../doxia-decoration-model/apidocs/org/apache/maven/doxia/site/decoration/DecorationModel.html}<<<DecorationModel>>>}} | This is a model that represents the data in your {{{../doxia-decoration-model/decoration.html}<<<site.xml>>>}}. |
 *---------------------------------+----------------------+-------------------------------+
 | <<<currentDate>>>               | <<<Date>>>           | <<Deprecated>>: use <<<date>>> or <<<date.systemDate>>>. The date when the site is rendered. |
 *---------------------------------+----------------------+-------------------------------+
