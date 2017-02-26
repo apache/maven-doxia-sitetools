@@ -28,7 +28,8 @@
 
 Doxia Sitetool Decoration Model
 
- This is strictly the model for Doxia Sitetool Decoration Model, used in maven-site-plugin as <<<site.xml>>>.
+ This is strictly the model for Doxia Sitetool Decoration Model, used in maven-site-plugin as <<<site.xml>>> to inject
+ parameters into decoration template: see {{{../doxia-site-renderer/}Doxia Site Renderer}} for more details on site rendering.
 
  The following are generated from this model:
 
@@ -44,3 +45,4 @@ Doxia Sitetool Decoration Model
  <<<DecorationModelInheritanceAssembler>>> ({{{./apidocs/org/apache/maven/doxia/site/decoration/inheritance/DecorationModelInheritanceAssembler.html}javadoc}})
  with its <<<DefaultDecorationModelInheritanceAssembler>>> implementation
  ({{{./xref/org/apache/maven/doxia/site/decoration/inheritance/DefaultDecorationModelInheritanceAssembler.html}source}}).
+
