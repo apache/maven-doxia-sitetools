@@ -29,7 +29,7 @@
 
 Doxia Sitetools - Site Renderer
 
-  The Site Renderer handles the rendering of sites, assembling a common site decoration (also called <a skin>)
+  The Site Renderer handles the rendering of sites, assembling a common site decoration template (also called <a skin>)
   with a collection of documents.
 
   Documents can be dynamically generated with {{{/doxia/doxia/doxia-sink-api/}Doxia Sink API}}, like Maven reports,
@@ -41,8 +41,8 @@ Doxia Sitetools - Site Renderer
 
 * Doxia Site Skins
 
-  A default site decoration is included (see <<<default-site.vm>>>), but other decorations can be used at will, either
-  as a standalone template or packaged in a {{{../doxia-skin-descriptor}<<skin>> artifact}}.
+  A default site decoration template is included (see <<<default-site.vm>>>), but other decoration templates can be used at will,
+  either as a standalone template or packaged in a {{{../doxia-skin-descriptor}<<skin>> artifact}}.
 
   Maven team provides {{{/skins/}a collection of skins}} for projects use.
 
