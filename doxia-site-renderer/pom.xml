@@ -31,7 +31,7 @@ under the License.
 
   <artifactId>doxia-site-renderer</artifactId>
 
-  <name>Doxia :: Site Renderer</name>
+  <name>Doxia Sitetools :: Site Renderer</name>
   <description>The Site Renderer handles the rendering of sites, merging site decoration with document content.</description>
 
 
