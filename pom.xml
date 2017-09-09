@@ -224,6 +224,11 @@ under the License.
             </excludes>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-metadata</artifactId>
+          <version>1.7.1</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -380,6 +385,15 @@ under the License.
           </plugin>
         </plugins>
       </reporting>
+    </profile>
+    <profile>
+      <id>jigsaw</id>
+      <activation>
+        <jdk>[1.9,)</jdk>
+      </activation>
+      <properties>
+        <clirr.skip>true</clirr.skip>
+      </properties>
     </profile>
   </profiles>
 </project>
