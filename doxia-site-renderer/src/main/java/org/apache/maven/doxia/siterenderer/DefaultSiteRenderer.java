@@ -352,29 +352,29 @@ public class DefaultSiteRenderer
     }
 
     /** {@inheritDoc} */
-    public void renderDocument( Writer writer, RenderingContext renderingContext, SiteRenderingContext siteContext )
+    public void renderDocument( Writer writer, RenderingContext docRenderingContext, SiteRenderingContext siteContext )
             throws RendererException, FileNotFoundException, UnsupportedEncodingException
     {
-        SiteRendererSink sink = new SiteRendererSink( renderingContext );
+        SiteRendererSink sink = new SiteRendererSink( docRenderingContext );
 
-        File doc = new File( renderingContext.getBasedir(), renderingContext.getInputName() );
+        File doc = new File( docRenderingContext.getBasedir(), docRenderingContext.getInputName() );
 
         Reader reader = null;
         try
         {
             String resource = doc.getAbsolutePath();
 
-            Parser parser = doxia.getParser( renderingContext.getParserId() );
+            Parser parser = doxia.getParser( docRenderingContext.getParserId() );
             // DOXIASITETOOLS-146 don't render comments from source markup
             parser.setEmitComments( false );
 
             // TODO: DOXIA-111: the filter used here must be checked generally.
-            if ( renderingContext.getAttribute( "velocity" ) != null )
+            if ( docRenderingContext.getAttribute( "velocity" ) != null )
             {
-                getLogger().debug( "Processing Velocity for " + renderingContext.getInputName() );
+                getLogger().debug( "Processing Velocity for " + docRenderingContext.getInputName() );
                 try
                 {
-                    Context vc = createDocumentVelocityContext( renderingContext, siteContext );
+                    Context vc = createDocumentVelocityContext( docRenderingContext, siteContext );
 
                     StringWriter sw = new StringWriter();
 
@@ -390,7 +390,7 @@ public class DefaultSiteRenderer
                             siteContext.getProcessedContentOutput().mkdirs();
                         }
 
-                        String input = renderingContext.getInputName();
+                        String input = docRenderingContext.getInputName();
                         File outputFile = new File( siteContext.getProcessedContentOutput(),
                                                     input.substring( 0, input.length() - 3 ) );
 
@@ -446,7 +446,7 @@ public class DefaultSiteRenderer
             {
                 throw new RendererException( "Error getting a parser for '" + doc + "'" );
             }
-            doxia.parse( reader, renderingContext.getParserId(), sink );
+            doxia.parse( reader, docRenderingContext.getParserId(), sink );
         }
         catch ( ParserNotFoundException e )
         {
@@ -671,6 +671,9 @@ public class DefaultSiteRenderer
                     + " (expected yyyy-MM-dd format), ignoring!" );
             }
         }
+
+        // document rendering context, to get eventual inputName
+        context.put( "docRenderingContext", siteRendererSink.getRenderingContext() );
 
         return context;
     }

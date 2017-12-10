@@ -316,9 +316,9 @@ public class SiteRendererSink
     }
 
     /**
-     * <p>Getter for the field <code>renderingContext</code>.</p>
+     * <p>Getter for the field <code>renderingContext</code> containing the document rendering context.</p>
      *
-     * @return the current rendering context
+     * @return the current document rendering context
      * @since 1.1
      */
     public RenderingContext getRenderingContext()

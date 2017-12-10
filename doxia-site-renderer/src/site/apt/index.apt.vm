@@ -140,7 +140,7 @@ Doxia Sitetools - Site Renderer
   If you intend to use custom Velocity tools, add them to the Maven Site Plugin's dependency list and make sure
   that they have a bundled configuration file in <<</META-INF/maven/site-tools.xml>>>.
 
-  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html\#L470}DefaultSiteRenderer.createToolManagedVelocityContext(...)}}>>>
+  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html\#L476}DefaultSiteRenderer.createToolManagedVelocityContext(...)}}>>>
   source for more details and the {{{http://velocity.apache.org/tools/devel/summary.html}tools usage summary}}.
 
 ** Maven Site Plugin
@@ -186,6 +186,8 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<title>>>                     | <<<String>>>         | The title of the document, including the project or site name. |
 *---------------------------------+----------------------+-------------------------------+
+| <<<docRenderingContext>>>       | {{{./apidocs/org/apache/maven/doxia/siterenderer/RenderingContext.html}<<<RenderingContext>>>}} | (since 1.8) The document rendering context. |
+*---------------------------------+----------------------+-------------------------------+
 
-  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html\#L592}DefaultSiteRenderer.createSiteTemplateVelocityContext(...)}}>>>
+  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html\#L604}DefaultSiteRenderer.createSiteTemplateVelocityContext(...)}}>>>
   source for more details.

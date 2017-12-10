@@ -47,10 +47,10 @@ public class DoxiaDocumentRenderer
     }
 
     /** {@inheritDoc} */
-    public void renderDocument( Writer writer, Renderer renderer, SiteRenderingContext siteRenderingContext )
+    public void renderDocument( Writer writer, Renderer siteRenderer, SiteRenderingContext siteRenderingContext )
         throws RendererException, FileNotFoundException, UnsupportedEncodingException
     {
-        renderer.renderDocument( writer, renderingContext, siteRenderingContext );
+        siteRenderer.renderDocument( writer, renderingContext, siteRenderingContext );
     }
 
     /** {@inheritDoc} */

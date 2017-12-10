@@ -35,13 +35,13 @@ public interface DocumentRenderer
      * Render a document.
      *
      * @param writer the Writer.
-     * @param renderer the Renderer.
+     * @param siteRenderer the site Renderer.
      * @param siteRenderingContext the SiteRenderingContext.
      * @throws org.apache.maven.doxia.siterenderer.RendererException if it bombs.
      * @throws java.io.FileNotFoundException if it bombs.
      * @throws java.io.UnsupportedEncodingException if it bombs.
      */
-    void renderDocument( Writer writer, Renderer renderer, SiteRenderingContext siteRenderingContext )
+    void renderDocument( Writer writer, Renderer siteRenderer, SiteRenderingContext siteRenderingContext )
         throws RendererException, FileNotFoundException, UnsupportedEncodingException;
 
     /**

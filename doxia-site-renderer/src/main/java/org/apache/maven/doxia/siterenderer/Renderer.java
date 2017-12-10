@@ -61,10 +61,11 @@ public interface Renderer
         throws RendererException, IOException;
 
     /**
-     * Generate a document output from a Doxia SiteRenderer Sink.
+     * Generate a document output from a Doxia SiteRenderer Sink, i.e. merge the document content into
+     * the site template.
      *
      * @param writer the Writer to use.
-     * @param sink the Site Renderer Sink to receive the Doxia events.
+     * @param sink the Site Renderer Sink that received the Doxia events during document content rendering.
      * @param siteRenderingContext the SiteRenderingContext to use.
      * @throws RendererException if it bombs.
      */
@@ -146,12 +147,12 @@ public interface Renderer
      * {@link DoxiaDocumentRenderer}.
      *
      * @param writer the writer to render the document to.
-     * @param renderingContext the document's rendering context, which is expected to have a non-null parser id.
+     * @param docRenderingContext the document's rendering context, which is expected to have a non-null parser id.
      * @param siteContext the site's rendering context
      * @throws RendererException if it bombs.
      * @throws FileNotFoundException if it bombs.
      * @throws UnsupportedEncodingException if it bombs.
      */
-    void renderDocument( Writer writer, RenderingContext renderingContext, SiteRenderingContext siteContext )
+    void renderDocument( Writer writer, RenderingContext docRenderingContext, SiteRenderingContext siteContext )
         throws RendererException, FileNotFoundException, UnsupportedEncodingException;
 }

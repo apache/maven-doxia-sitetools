@@ -19,23 +19,24 @@ We have the following keys in the context:
   15. dateRevision
   16. decoration
   17. display
-  18. doxiaSiteRendererVersion
-  19. esc
-  20. field
-  21. headContent
-  22. i18n
-  23. link
-  24. locale
-  25. loop
-  26. math
-  27. number
-  28. plexus
-  29. publishDate
-  30. relativePath
-  31. render
-  32. shortTitle
-  33. sorter
-  34. supportedLocales
-  35. text
-  36. title
-  37. xml
+  18. docRenderingContext
+  19. doxiaSiteRendererVersion
+  20. esc
+  21. field
+  22. headContent
+  23. i18n
+  24. link
+  25. locale
+  26. loop
+  27. math
+  28. number
+  29. plexus
+  30. publishDate
+  31. relativePath
+  32. render
+  33. shortTitle
+  34. sorter
+  35. supportedLocales
+  36. text
+  37. title
+  38. xml
