@@ -470,7 +470,7 @@ public class DefaultSiteRenderer
             IOUtil.close( reader );
         }
 
-        generateDocument( writer, sink, siteContext );
+        mergeDocumentIntoSite( writer, (DocumentContent) sink, siteContext );
     }
 
     /**
@@ -605,22 +605,22 @@ public class DefaultSiteRenderer
      * Create a Velocity Context for the site template decorating the document. In addition to all the informations
      * from the document, this context contains data gathered in {@link SiteRendererSink} during document rendering.
      *
-     * @param siteRendererSink the site renderer sink for the document
+     * @param content the document content to be merged into the template
      * @param siteRenderingContext the site rendering context
      * @return
      */
-    protected Context createSiteTemplateVelocityContext( SiteRendererSink siteRendererSink,
+    protected Context createSiteTemplateVelocityContext( DocumentContent content,
                                                          SiteRenderingContext siteRenderingContext )
     {
         // first get the context from document
-        Context context = createDocumentVelocityContext( siteRendererSink.getRenderingContext(), siteRenderingContext );
+        Context context = createDocumentVelocityContext( content.getRenderingContext(), siteRenderingContext );
 
         // then add data objects from rendered document
 
         // Add infos from document
-        context.put( "authors", siteRendererSink.getAuthors() );
+        context.put( "authors", content.getAuthors() );
 
-        context.put( "shortTitle", siteRendererSink.getTitle() );
+        context.put( "shortTitle", content.getTitle() );
 
         // DOXIASITETOOLS-70: Prepend the project name to the title, if any
         String title = "";
@@ -638,16 +638,16 @@ public class DefaultSiteRenderer
         {
             title += " &#x2013; "; // Symbol Name: En Dash, Html Entity: &ndash;
         }
-        title += siteRendererSink.getTitle();
+        title += content.getTitle();
 
         context.put( "title", title );
 
-        context.put( "headContent", siteRendererSink.getHead() );
+        context.put( "headContent", content.getHead() );
 
-        context.put( "bodyContent", siteRendererSink.getBody() );
+        context.put( "bodyContent", content.getBody() );
 
         // document date (got from Doxia Sink date() API)
-        String documentDate = siteRendererSink.getDate();
+        String documentDate = content.getDate();
         if ( StringUtils.isNotEmpty( documentDate ) )
         {
             context.put( "documentDate", documentDate );
@@ -667,13 +667,13 @@ public class DefaultSiteRenderer
             catch ( java.text.ParseException e )
             {
                 getLogger().warn( "Could not parse date '" + documentDate + "' from "
-                    + siteRendererSink.getRenderingContext().getInputName()
+                    + content.getRenderingContext().getInputName()
                     + " (expected yyyy-MM-dd format), ignoring!" );
             }
         }
 
         // document rendering context, to get eventual inputName
-        context.put( "docRenderingContext", siteRendererSink.getRenderingContext() );
+        context.put( "docRenderingContext", content.getRenderingContext() );
 
         return context;
     }
@@ -682,12 +682,20 @@ public class DefaultSiteRenderer
     public void generateDocument( Writer writer, SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
             throws RendererException
     {
+        mergeDocumentIntoSite( writer, sink, siteRenderingContext );
+    }
+
+    /** {@inheritDoc} */
+    public void mergeDocumentIntoSite( Writer writer, DocumentContent content,
+                                           SiteRenderingContext siteRenderingContext )
+        throws RendererException
+    {
         String templateName = siteRenderingContext.getTemplateName();
 
         getLogger().debug( "Processing Velocity for template " + templateName + " on "
-            + sink.getRenderingContext().getInputName() );
+            + content.getRenderingContext().getInputName() );
 
-        Context context = createSiteTemplateVelocityContext( sink, siteRenderingContext );
+        Context context = createSiteTemplateVelocityContext( content, siteRenderingContext );
 
         ClassLoader old = null;
 

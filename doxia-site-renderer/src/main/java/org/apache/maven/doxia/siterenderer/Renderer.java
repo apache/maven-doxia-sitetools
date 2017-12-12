@@ -69,7 +69,21 @@ public interface Renderer
      * @param siteRenderingContext the SiteRenderingContext to use.
      * @throws RendererException if it bombs.
      */
+    @Deprecated
     void generateDocument( Writer writer, SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
+        throws RendererException;
+
+    /**
+     * Generate a document output integrated in a site from a document content,
+     * i.e. merge the document content into the site template.
+     *
+     * @param writer the Writer to use.
+     * @param content the document content to be merged
+     * @param siteRenderingContext the SiteRenderingContext to use.
+     * @throws RendererException if it bombs.
+     * @since 1.8
+     */
+    void mergeDocumentIntoSite( Writer writer, DocumentContent content, SiteRenderingContext siteRenderingContext )
         throws RendererException;
 
     /**

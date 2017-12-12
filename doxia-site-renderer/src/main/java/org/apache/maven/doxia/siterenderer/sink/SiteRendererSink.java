@@ -31,6 +31,7 @@ import javax.swing.text.html.HTML.Attribute;
 import org.apache.maven.doxia.module.xhtml.XhtmlSink;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
+import org.apache.maven.doxia.siterenderer.DocumentContent;
 import org.apache.maven.doxia.siterenderer.RenderingContext;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.codehaus.plexus.util.StringUtils;
@@ -41,17 +42,11 @@ import org.codehaus.plexus.util.StringUtils;
  * into skin or template: title, date, authors, head, body 
  *
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
- * @version $Id$
- * @see #getTitle()
- * @see #getDate()
- * @see #getAuthors()
- * @see #getHead()
- * @see #getBody()
  */
 @SuppressWarnings( "checkstyle:methodname" )
 public class SiteRendererSink
     extends XhtmlSink
-    implements Sink, org.codehaus.doxia.sink.Sink
+    implements Sink, org.codehaus.doxia.sink.Sink, DocumentContent
 {
     private String date = "";
 
@@ -124,16 +119,6 @@ public class SiteRendererSink
         resetTextBuffer();
     }
 
-    /**
-     * <p>Getter for the field <code>title</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getTitle()
-    {
-        return title;
-    }
-
     /** {@inheritDoc} */
     @Override
     public void author()
@@ -155,16 +140,6 @@ public class SiteRendererSink
         resetTextBuffer();
     }
 
-    /**
-     * <p>Getter for the field <code>authors</code>.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    public List<String> getAuthors()
-    {
-        return authors;
-    }
-
     /** {@inheritDoc} */
     @Override
     public void date()
@@ -182,16 +157,6 @@ public class SiteRendererSink
         }
 
         resetTextBuffer();
-    }
-
-    /**
-     * <p>Getter for the field <code>date</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getDate()
-    {
-        return date;
     }
 
     /**
@@ -216,28 +181,6 @@ public class SiteRendererSink
     public void body()
     {
         // nop
-    }
-
-    /**
-     * <p>getBody.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getBody()
-    {
-        return writer.toString();
-    }
-
-    /**
-     * <p>getHead.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     *
-     * @since 1.1.1
-     */
-    public String getHead()
-    {
-        return headWriter.toString();
     }
 
     /** {@inheritDoc} */
@@ -315,17 +258,6 @@ public class SiteRendererSink
         super.onSectionTitle_( depth );
     }
 
-    /**
-     * <p>Getter for the field <code>renderingContext</code> containing the document rendering context.</p>
-     *
-     * @return the current document rendering context
-     * @since 1.1
-     */
-    public RenderingContext getRenderingContext()
-    {
-        return renderingContext;
-    }
-
     /** {@inheritDoc} */
     @Override
     public void text( String text )
@@ -375,5 +307,43 @@ public class SiteRendererSink
         {
             super.write( txt );
         }
+    }
+
+    // DocumentContent interface
+
+    /** {@inheritDoc} */
+    public String getTitle()
+    {
+        return title;
+    }
+
+    /** {@inheritDoc} */
+    public List<String> getAuthors()
+    {
+        return authors;
+    }
+
+    /** {@inheritDoc} */
+    public String getDate()
+    {
+        return date;
+    }
+
+    /** {@inheritDoc} */
+    public String getBody()
+    {
+        return writer.toString();
+    }
+
+    /** {@inheritDoc} */
+    public String getHead()
+    {
+        return headWriter.toString();
+    }
+
+    /** {@inheritDoc} */
+    public RenderingContext getRenderingContext()
+    {
+        return renderingContext;
     }
 }
