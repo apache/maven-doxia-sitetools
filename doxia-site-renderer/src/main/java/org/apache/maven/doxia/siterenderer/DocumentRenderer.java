@@ -24,19 +24,18 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 
 /**
- * Renders a page, whatever the source is: a Doxia source file, a report or anything else.
+ * Renders a page in a site, whatever the source is: a Doxia source file, a report or anything else.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @version $Id$
  */
 public interface DocumentRenderer
 {
     /**
-     * Render a document.
+     * Render a document in a site.
      *
-     * @param writer the Writer.
-     * @param siteRenderer the site Renderer.
-     * @param siteRenderingContext the SiteRenderingContext.
+     * @param writer the Writer for the document output.
+     * @param siteRenderer the site renderer to merge document content to.
+     * @param siteRenderingContext the site rendering context.
      * @throws org.apache.maven.doxia.siterenderer.RendererException if it bombs.
      * @throws java.io.FileNotFoundException if it bombs.
      * @throws java.io.UnsupportedEncodingException if it bombs.
@@ -66,7 +65,7 @@ public interface DocumentRenderer
     boolean isOverwrite();
     
     /**
-     * Whether this document is an external report.
+     * Whether this document is an external report, independent from the site templating.
      * 
      * @return {@code true} if report is external, otherwise {@code false}
      * @since 1.7
