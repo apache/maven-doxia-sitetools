@@ -36,7 +36,6 @@ import java.util.Iterator;
  * Verify the <code>site/xdoc/entityTest.xml</code>
  *
  * @author ltheussl
- * @version $Id$
  */
 public class EntitiesVerifier
     extends AbstractVerifier

@@ -28,7 +28,6 @@ import org.codehaus.plexus.util.ReaderFactory;
  * Context when processing Velocity files using a {@link java.util.HashMap} for data storage.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id$
  * @since 1.1.2
  */
 public class DocumentRendererContext

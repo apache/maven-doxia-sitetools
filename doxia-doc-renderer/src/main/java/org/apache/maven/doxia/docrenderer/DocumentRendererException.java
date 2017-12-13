@@ -23,7 +23,6 @@ package org.apache.maven.doxia.docrenderer;
  * A <code>document</code> renderer exception
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id$
  * @since 1.1
  */
 public class DocumentRendererException

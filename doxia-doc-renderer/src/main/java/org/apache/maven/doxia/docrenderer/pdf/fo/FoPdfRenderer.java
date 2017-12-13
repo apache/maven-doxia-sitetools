@@ -53,7 +53,6 @@ import org.xml.sax.SAXParseException;
  * PDF renderer that uses Doxia's FO module.
  *
  * @author ltheussl
- * @version $Id$
  * @since 1.1
  */
 @Component( role = PdfRenderer.class, hint = "fo" )

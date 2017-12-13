@@ -26,7 +26,6 @@ import junit.framework.TestCase;
  * just returns the old path.
  *
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
- * @version $Id$
  */
 public class Doxia91Test
     extends TestCase

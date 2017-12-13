@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id$
  */
 public class DefaultSiteToolTest
     extends TestCase

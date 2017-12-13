@@ -23,7 +23,6 @@ package org.apache.maven.doxia.tools;
  * An exception occurring during the execution of this tool.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id$
  */
 public class SiteToolException
     extends Exception

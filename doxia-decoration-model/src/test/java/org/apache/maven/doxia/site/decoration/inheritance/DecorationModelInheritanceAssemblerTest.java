@@ -41,7 +41,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * Test the inheritance assembler.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @version $Id$
  */
 public class DecorationModelInheritanceAssemblerTest
     extends TestCase

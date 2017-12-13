@@ -29,7 +29,6 @@ import java.io.Writer;
  * a non-null parserId and extension.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @version $Id$
  */
 public class DoxiaDocumentRenderer
     implements DocumentRenderer

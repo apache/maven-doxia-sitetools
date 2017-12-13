@@ -30,7 +30,6 @@ import junit.framework.TestCase;
  * Test the PathDescriptor creation under various circumstances.
  *
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
- * @version $Id$
  */
 public class PathDescriptorTest
     extends TestCase

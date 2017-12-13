@@ -40,7 +40,6 @@ import java.util.List;
  * Verify javascript code.
  *
  * @author ltheussl
- * @version $Id$
  */
 public class JavascriptVerifier
     extends AbstractVerifier

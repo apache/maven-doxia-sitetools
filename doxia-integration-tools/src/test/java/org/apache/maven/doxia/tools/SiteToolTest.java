@@ -47,7 +47,6 @@ import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id$
  */
 public class SiteToolTest
     extends PlexusTestCase

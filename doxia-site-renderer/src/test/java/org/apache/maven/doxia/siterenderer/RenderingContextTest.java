@@ -27,7 +27,6 @@ import org.codehaus.plexus.PlexusTestCase;
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 20 oct. 07
- * @version $Id$
  */
 public class RenderingContextTest
     extends PlexusTestCase

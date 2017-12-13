@@ -29,7 +29,6 @@ import org.apache.maven.reporting.MavenReport;
  * Sorts reports.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @version $Id$
  * @todo move to reporting API?
  * @todo allow reports to define their order in some other way?
  */

@@ -37,7 +37,6 @@ import org.codehaus.plexus.util.WriterFactory;
  * Context for a site rendering.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @version $Id$
  */
 public class SiteRenderingContext
 {

@@ -35,7 +35,6 @@ import org.apache.maven.reporting.MavenReport;
  * like <code>DecorationModel</code>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id$
  */
 public interface SiteTool
 {

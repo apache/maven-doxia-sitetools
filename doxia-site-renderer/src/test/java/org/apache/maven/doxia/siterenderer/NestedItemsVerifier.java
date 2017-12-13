@@ -38,7 +38,6 @@ import java.util.Iterator;
 /**
  *
  * @author ltheussl
- * @version $Id$
  */
 public class NestedItemsVerifier
     extends AbstractVerifier

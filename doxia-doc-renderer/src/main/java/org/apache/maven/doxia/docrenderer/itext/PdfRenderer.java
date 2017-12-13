@@ -25,7 +25,6 @@ import org.apache.maven.doxia.docrenderer.DocRenderer;
  * PDF renderer interface for the <code>iText</code> framework
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id$
  * @deprecated since 1.1, use an implementation of {@link org.apache.maven.doxia.docrenderer.DocumentRenderer}.
  */
 @SuppressWarnings( "checkstyle:interfaceistype" )

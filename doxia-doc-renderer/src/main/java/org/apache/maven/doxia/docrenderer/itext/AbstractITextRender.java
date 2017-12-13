@@ -75,7 +75,6 @@ import com.lowagie.text.ElementTags;
  * Abstract <code>document</code> render with the <code>iText</code> framework
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id$
  * @deprecated since 1.1, use an implementation of {@link org.apache.maven.doxia.docrenderer.DocumentRenderer}.
  */
 public abstract class AbstractITextRender

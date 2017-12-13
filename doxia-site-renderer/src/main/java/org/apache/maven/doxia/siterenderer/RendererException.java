@@ -23,7 +23,6 @@ package org.apache.maven.doxia.siterenderer;
  * <p>RendererException class.</p>
  *
  * @author Emmanuel Venisse
- * @version $Id$
  */
 public class RendererException
     extends Exception

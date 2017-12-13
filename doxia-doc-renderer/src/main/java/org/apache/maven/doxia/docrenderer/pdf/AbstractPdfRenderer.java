@@ -32,7 +32,6 @@ import org.apache.maven.doxia.parser.module.ParserModule;
  * Abstract pdf renderer, this doesn't depend on the framework.
  *
  * @author ltheussl
- * @version $Id$
  * @since 1.1
  */
 public abstract class AbstractPdfRenderer

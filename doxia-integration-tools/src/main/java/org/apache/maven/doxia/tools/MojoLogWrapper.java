@@ -25,7 +25,6 @@ import org.apache.maven.doxia.logging.Log;
  * Wrap a Mojo logger into a Doxia logger.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id$
  * @since 1.1
  * @see org.apache.maven.plugin.logging.Log
  */

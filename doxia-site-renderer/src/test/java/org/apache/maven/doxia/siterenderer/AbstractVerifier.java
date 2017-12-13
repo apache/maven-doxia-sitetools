@@ -30,7 +30,6 @@ import org.codehaus.plexus.PlexusTestCase;
  * Abstract base class for verifiers.
  *
  * @author ltheussl
- * @version $Id$
  */
 public abstract class AbstractVerifier
     extends PlexusTestCase

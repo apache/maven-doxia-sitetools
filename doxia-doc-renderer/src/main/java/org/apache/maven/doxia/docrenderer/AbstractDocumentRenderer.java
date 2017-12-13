@@ -67,7 +67,6 @@ import org.codehaus.plexus.velocity.VelocityComponent;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @author ltheussl
- * @version $Id$
  * @since 1.1
  */
 public abstract class AbstractDocumentRenderer

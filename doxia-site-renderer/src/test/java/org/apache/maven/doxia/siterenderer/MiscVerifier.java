@@ -31,7 +31,6 @@ import java.util.Iterator;
 /**
  *
  * @author ltheussl
- * @version $Id$
  */
 public class MiscVerifier
     extends AbstractVerifier

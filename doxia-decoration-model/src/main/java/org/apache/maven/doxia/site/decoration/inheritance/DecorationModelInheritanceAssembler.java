@@ -25,7 +25,6 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
  * Manage inheritance of the decoration model.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @version $Id$
  */
 public interface DecorationModelInheritanceAssembler
 {

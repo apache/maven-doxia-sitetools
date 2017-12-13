@@ -38,7 +38,6 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
- * @version $Id$
  */
 @Component( role = DecorationModelInheritanceAssembler.class )
 public class DefaultDecorationModelInheritanceAssembler

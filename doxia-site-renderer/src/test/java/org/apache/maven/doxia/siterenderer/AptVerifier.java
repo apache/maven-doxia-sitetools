@@ -37,7 +37,6 @@ import java.util.Iterator;
  * Verifies apt transformations.
  *
  * @author ltheussl
- * @version $Id$
  */
 public class AptVerifier
     extends AbstractVerifier

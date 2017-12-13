@@ -26,7 +26,6 @@ import junit.framework.TestCase;
 /**
  *
  * @author ltheussl
- * @version $Id$
  */
 public class PathUtilsTest
     extends TestCase

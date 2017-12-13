@@ -35,7 +35,6 @@ import java.util.List;
  * Verify correct rendering of <code>site/xdoc/head.xml</code>.
  *
  * @author ltheussl
- * @version $Id$
  */
 public class HeadVerifier
     extends AbstractVerifier

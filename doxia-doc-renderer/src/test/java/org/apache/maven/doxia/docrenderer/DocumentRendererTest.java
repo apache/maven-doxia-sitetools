@@ -30,7 +30,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id$
  * @since 1.1.1
  */
 public class DocumentRendererTest

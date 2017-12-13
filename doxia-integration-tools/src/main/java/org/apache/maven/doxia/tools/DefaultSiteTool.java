@@ -81,7 +81,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * Default implementation of the site tool.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id$
  */
 @Component( role = SiteTool.class )
 public class DefaultSiteTool

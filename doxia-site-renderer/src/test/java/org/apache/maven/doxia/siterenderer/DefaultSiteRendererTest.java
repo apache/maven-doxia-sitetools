@@ -59,7 +59,6 @@ import org.xml.sax.EntityResolver;
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
- * @version $Id$
  */
 public class DefaultSiteRendererTest
     extends PlexusTestCase

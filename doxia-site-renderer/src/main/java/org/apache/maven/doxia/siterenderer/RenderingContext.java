@@ -30,7 +30,6 @@ import org.codehaus.plexus.util.StringUtils;
  * The rendering context of a document.
  *
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
- * @version $Id$
  * @since 1.5 (was since 1.1 in o.a.m.d.sink.render)
  */
 public class RenderingContext

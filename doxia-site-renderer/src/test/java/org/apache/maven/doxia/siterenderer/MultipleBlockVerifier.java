@@ -33,7 +33,6 @@ import java.util.Iterator;
 /**
  *
  * @author ltheussl
- * @version $Id$
  */
 public class MultipleBlockVerifier
     extends AbstractVerifier
