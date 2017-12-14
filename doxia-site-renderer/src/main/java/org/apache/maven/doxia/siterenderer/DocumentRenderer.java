@@ -27,6 +27,7 @@ import java.io.Writer;
  * Renders a page in a site, whatever the source is: a Doxia source file, a report or anything else.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @see RenderingContext document rendering context
  */
 public interface DocumentRenderer
 {

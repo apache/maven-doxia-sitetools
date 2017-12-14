@@ -32,7 +32,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @since 1.5 (was since 1.1 in o.a.m.d.sink.render)
  */
-public class RenderingContext
+public class RenderingContext // TODO rename to DocumentRenderingContext
 {
     private final File basedir;
 
@@ -50,7 +50,7 @@ public class RenderingContext
 
     /**
      * <p>
-     * Constructor for RenderingContext when document is not rendered from a Doxia source.
+     * Constructor for RenderingContext when document is not rendered from a Doxia markup source.
      * </p>
      *
      * @param basedir the pseudo-source base directory.
@@ -64,14 +64,15 @@ public class RenderingContext
 
     /**
      * <p>
-     * Constructor for RenderingContext.
+     * Constructor for document RenderingContext.
      * </p>
      *
-     * @param basedir the source base directory.
+     * @param basedir the source base directory (not null, pseudo value when not a Doxia source).
      * @param document the source document name.
      * @param parserId the Doxia module parser id associated to this document, may be null if document not rendered from
      *            a Doxia source.
-     * @param extension the source document filename extension.
+     * @param extension the source document filename extension, may be null if document not rendered from
+     *            a Doxia source.
      */
     public RenderingContext( File basedir, String document, String parserId, String extension )
     {
@@ -83,10 +84,11 @@ public class RenderingContext
 
         if ( StringUtils.isNotEmpty( extension ) )
         {
-            // here we now the parserId we can play with this
-            // index.xml -> index.html
-            // index.xml.vm -> index.html
-            // download.apt.vm --> download.html
+            // document comes from a Doxia source: see DoxiaDocumentRenderer
+            // here we know the parserId and extension, we can play with this to get output name from document:
+            // - index.xml -> index.html
+            // - index.xml.vm -> index.html
+            // - download.apt.vm --> download.html
             if ( DefaultSiteRenderer.endsWithIgnoreCase( document, ".vm" ) )
             {
                 document = document.substring( 0, document.length() - 3 );
@@ -96,8 +98,11 @@ public class RenderingContext
         }
         else
         {
+            // document does not come from a Doxia source but direct Sink API
+            // just make sure output name ends in .html
             this.outputName = document.substring( 0, document.lastIndexOf( '.' ) ).replace( '\\', '/' ) + ".html";
         }
+
         this.relativePath = PathTool.getRelativePath( basedir.getPath(), new File( basedir, inputName ).getPath() );
     }
 
@@ -122,9 +127,10 @@ public class RenderingContext
     }
 
     /**
-     * <p>Getter for the field <code>outputName</code>.</p>
+     * Get html output name, relative to site root.
      *
-     * @return a {@link java.lang.String} object.
+     * @return html output name
+     * @see PathTool#getRelativePath(String)
      */
     public String getOutputName()
     {
@@ -132,9 +138,9 @@ public class RenderingContext
     }
 
     /**
-     * <p>Getter for the field <code>parserId</code>.</p>
+     * Get the parserId when document comes from a Doxia source.
      *
-     * @return a {@link java.lang.String} object.
+     * @return parser id, or <code>null</code> if not froma DOxia source.
      */
     public String getParserId()
     {
@@ -142,9 +148,9 @@ public class RenderingContext
     }
 
     /**
-     * <p>Getter for the field <code>relativePath</code>.</p>
+     * Get the relative path to site root.
      *
-     * @return a {@link java.lang.String} object.
+     * @return the relative path to site root
      */
     public String getRelativePath()
     {
@@ -174,9 +180,9 @@ public class RenderingContext
     }
 
     /**
-     * <p>Getter for the field <code>extension</code>.</p>
+     * Get the source document filename extension (when a Doxia source)
      *
-     * @return a {@link java.lang.String} object.
+     * @return the source document filename extension when a Doxia source, or <code>null</code> if not a Doxia source
      */
     public String getExtension()
     {

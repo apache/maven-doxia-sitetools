@@ -39,7 +39,7 @@ import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
  *
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  */
-public interface Renderer
+public interface Renderer // TODO rename to SiteRenderer
 {
     /**
      * Plexus lookup role.
