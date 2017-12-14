@@ -67,7 +67,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
     @Deprecated
     public RenderingContext( File basedir, String document, String parserId, String extension )
     {
-        this( basedir, document, parserId, extension, false);
+        this( basedir, document, parserId, extension, false );
     }
 
     /**
