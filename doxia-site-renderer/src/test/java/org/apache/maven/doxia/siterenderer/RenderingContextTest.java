@@ -47,7 +47,7 @@ public class RenderingContextTest
         assertEquals( "file.with.dot.in.name.html", renderingContext.getOutputName() );
         assertEquals( ".", renderingContext.getRelativePath() );
 
-        renderingContext = new RenderingContext( baseDir, docName );
+        renderingContext = new RenderingContext( baseDir, docName ); // not Doxia source
         assertEquals( "file.with.dot.in.name.html", renderingContext.getOutputName() );
         assertEquals( ".", renderingContext.getRelativePath() );
 
@@ -62,6 +62,15 @@ public class RenderingContextTest
         renderingContext = new RenderingContext( baseDir, docName, "", "apt" );
         assertEquals( "download.html", renderingContext.getOutputName() );
         assertEquals( ".", renderingContext.getRelativePath() );
+
+        docName = "path/file.apt";
+        renderingContext = new RenderingContext( baseDir, docName, "", "apt" );
+        assertEquals( "path/file.html", renderingContext.getOutputName() );
+        assertEquals( "..", renderingContext.getRelativePath() );
+
+        renderingContext = new RenderingContext( baseDir, docName );
+        assertEquals( "path/file.html", renderingContext.getOutputName() );
+        assertEquals( "..", renderingContext.getRelativePath() );
     }
 
 }
