@@ -48,6 +48,8 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
 
     private Map<String, String> attributes;
 
+    private final boolean editable;
+
     /**
      * <p>
      * Constructor for RenderingContext when document is not rendered from a Doxia markup source.
@@ -59,7 +61,13 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      */
     public RenderingContext( File basedir, String document )
     {
-        this( basedir, document, null, null );
+        this( basedir, document, null, null, false );
+    }
+
+    @Deprecated
+    public RenderingContext( File basedir, String document, String parserId, String extension )
+    {
+        this( basedir, document, parserId, extension, false);
     }
 
     /**
@@ -74,7 +82,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @param extension the source document filename extension, may be null if document not rendered from
      *            a Doxia source.
      */
-    public RenderingContext( File basedir, String document, String parserId, String extension )
+    public RenderingContext( File basedir, String document, String parserId, String extension, boolean editable )
     {
         this.basedir = basedir;
         this.extension = extension;
@@ -85,6 +93,8 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
         if ( StringUtils.isNotEmpty( extension ) )
         {
             // document comes from a Doxia source: see DoxiaDocumentRenderer
+            this.editable = editable;
+
             // here we know the parserId and extension, we can play with this to get output name from document:
             // - index.xml -> index.html
             // - index.xml.vm -> index.html
@@ -99,7 +109,8 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
         else
         {
             // document does not come from a Doxia source but direct Sink API
-            // just make sure output name ends in .html
+            this.editable = false;
+            // make sure output name ends in .html
             this.outputName = document.substring( 0, document.lastIndexOf( '.' ) ).replace( '\\', '/' ) + ".html";
         }
 
@@ -187,5 +198,14 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
     public String getExtension()
     {
         return extension;
+    }
+
+    /**
+     * Is the source document editable?
+     * @return <code>true</code> if comes from an editable Doxia source (not generated one).
+     */
+    public boolean isEditable()
+    {
+        return editable;
     }
 }

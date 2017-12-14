@@ -67,8 +67,8 @@ public interface Renderer // TODO rename to SiteRenderer
      * @param sink the Site Renderer Sink that received the Doxia events during document content rendering.
      * @param siteRenderingContext the SiteRenderingContext to use.
      * @throws RendererException if it bombs.
+     * @deprecated since 1.8, use mergeDocumentIntoSite
      */
-    @Deprecated
     void generateDocument( Writer writer, SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
         throws RendererException;
 
@@ -151,8 +151,22 @@ public interface Renderer // TODO rename to SiteRenderer
      * @return the Doxia document renderers in a Map keyed by output file name.
      * @throws IOException if it bombs.
      * @throws RendererException if it bombs.
+     * @deprecated since 1.8, use locateDocumentFiles with editable parameter
      */
     Map<String, DocumentRenderer> locateDocumentFiles( SiteRenderingContext siteRenderingContext )
+        throws IOException, RendererException;
+
+    /**
+     * Locate Doxia document source files in the site source context.
+     *
+     * @param siteRenderingContext
+     * @param mark Doxia document renderer as editable? (should not mark editable if generated Doxia source)
+     * @return the Doxia document renderers in a Map keyed by output file name.
+     * @throws IOException if it bombs.
+     * @throws RendererException if it bombs.
+     * @since 1.8
+     */
+    Map<String, DocumentRenderer> locateDocumentFiles( SiteRenderingContext siteRenderingContext, boolean editable )
         throws IOException, RendererException;
 
     /**

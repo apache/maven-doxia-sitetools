@@ -165,6 +165,14 @@ public class DefaultSiteRenderer
     public Map<String, DocumentRenderer> locateDocumentFiles( SiteRenderingContext siteRenderingContext )
             throws IOException, RendererException
     {
+        return locateDocumentFiles( siteRenderingContext, false );
+    }
+
+    /** {@inheritDoc} */
+    public Map<String, DocumentRenderer> locateDocumentFiles( SiteRenderingContext siteRenderingContext,
+                                                              boolean editable )
+        throws IOException, RendererException
+    {
         Map<String, DocumentRenderer> files = new LinkedHashMap<String, DocumentRenderer>();
         Map<String, String> moduleExcludes = siteRenderingContext.getModuleExcludes();
 
@@ -181,7 +189,7 @@ public class DefaultSiteRenderer
 
                     String excludes = ( moduleExcludes == null ) ? null : moduleExcludes.get( module.getParserId() );
 
-                    addModuleFiles( moduleBasedir, module, excludes, files );
+                    addModuleFiles( moduleBasedir, module, excludes, files, editable );
                 }
             }
         }
@@ -195,7 +203,7 @@ public class DefaultSiteRenderer
 
                 String excludes = ( moduleExcludes == null ) ? null : moduleExcludes.get( module.getParserId() );
 
-                addModuleFiles( module.getBasedir(), parserModule, excludes, files );
+                addModuleFiles( module.getBasedir(), parserModule, excludes, files, editable );
             }
             catch ( ParserModuleNotFoundException e )
             {
@@ -222,7 +230,7 @@ public class DefaultSiteRenderer
     }
 
     private void addModuleFiles( File moduleBasedir, ParserModule module, String excludes,
-                                 Map<String, DocumentRenderer> files )
+                                 Map<String, DocumentRenderer> files, boolean editable )
             throws IOException, RendererException
     {
         if ( !moduleBasedir.exists() || ArrayUtils.isEmpty( module.getExtensions() ) )
@@ -246,7 +254,7 @@ public class DefaultSiteRenderer
             for ( String doc : docs )
             {
                 RenderingContext context =
-                        new RenderingContext( moduleBasedir, doc, module.getParserId(), extension );
+                        new RenderingContext( moduleBasedir, doc, module.getParserId(), extension, editable );
 
                 // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
                 if ( endsWithIgnoreCase( doc, ".vm" ) )
