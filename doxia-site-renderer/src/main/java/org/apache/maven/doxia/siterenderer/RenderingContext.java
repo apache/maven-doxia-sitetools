@@ -28,6 +28,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * The rendering context of a document.
+ * If not rendered from a Doxia markup source, parserId and extension will be null.
  *
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @since 1.5 (was since 1.1 in o.a.m.d.sink.render)
@@ -50,6 +51,14 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
 
     private final boolean editable;
 
+    private final String generator;
+
+    @Deprecated
+    public RenderingContext( File basedir, String document )
+    {
+        this( basedir, document, null, null, false, null );
+    }
+
     /**
      * <p>
      * Constructor for RenderingContext when document is not rendered from a Doxia markup source.
@@ -58,16 +67,23 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @param basedir the pseudo-source base directory.
      * @param document the pseudo-source document name: will be used to compute output name (same name with extension
      *            replaced with <code>.html</code>).
+     * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
+     * @since 1.8
      */
-    public RenderingContext( File basedir, String document )
+    public RenderingContext( File basedir, String document, String generator )
     {
-        this( basedir, document, null, null, false );
+        this( basedir, document, null, null, false, generator );
     }
 
     @Deprecated
     public RenderingContext( File basedir, String document, String parserId, String extension )
     {
-        this( basedir, document, parserId, extension, false );
+        this( basedir, document, parserId, extension, false, null );
+    }
+
+    public RenderingContext( File basedir, String document, String parserId, String extension, boolean editable )
+    {
+        this( basedir, document, parserId, extension, editable, null );
     }
 
     /**
@@ -81,13 +97,18 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      *            a Doxia source.
      * @param extension the source document filename extension, may be null if document not rendered from
      *            a Doxia source.
+     * @param editable is the document editable as source, i.e. not generated?
+     * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
+     * @since 1.8
      */
-    public RenderingContext( File basedir, String document, String parserId, String extension, boolean editable )
+    public RenderingContext( File basedir, String document, String parserId, String extension, boolean editable,
+                             String generator )
     {
         this.basedir = basedir;
-        this.extension = extension;
         this.inputName = document;
         this.parserId = parserId;
+        this.extension = extension;
+        this.generator = generator;
         this.attributes = new HashMap<String, String>();
 
         if ( StringUtils.isNotEmpty( extension ) )
@@ -207,5 +228,14 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
     public boolean isEditable()
     {
         return editable;
+    }
+
+    /**
+     * What is the generator (if any)?
+     * @return <code>null</code> if no known generator
+     */
+    public String getGenerator()
+    {
+        return generator;
     }
 }
