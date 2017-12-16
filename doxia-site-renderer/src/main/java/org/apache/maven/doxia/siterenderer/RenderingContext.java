@@ -37,6 +37,8 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
 {
     private final File basedir;
 
+    private final String basedirRelativePath;
+
     private final String inputName;
 
     private final String outputName;
@@ -56,7 +58,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
     @Deprecated
     public RenderingContext( File basedir, String document )
     {
-        this( basedir, document, null, null, false, null );
+        this( basedir, null, document, null, null, false, null );
     }
 
     /**
@@ -72,18 +74,19 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      */
     public RenderingContext( File basedir, String document, String generator )
     {
-        this( basedir, document, null, null, false, generator );
+        this( basedir, null, document, null, null, false, generator );
     }
 
     @Deprecated
     public RenderingContext( File basedir, String document, String parserId, String extension )
     {
-        this( basedir, document, parserId, extension, false, null );
+        this( basedir, null, document, parserId, extension, false, null );
     }
 
-    public RenderingContext( File basedir, String document, String parserId, String extension, boolean editable )
+    public RenderingContext( File basedir, String basedirRelativePath, String document, String parserId,
+                             String extension, boolean editable )
     {
-        this( basedir, document, parserId, extension, editable, null );
+        this( basedir, basedirRelativePath, document, parserId, extension, editable, null );
     }
 
     /**
@@ -92,6 +95,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * </p>
      *
      * @param basedir the source base directory (not null, pseudo value when not a Doxia source).
+     * @param basedirRelativePath the relative path from root (null if not Doxia source)
      * @param document the source document name.
      * @param parserId the Doxia module parser id associated to this document, may be null if document not rendered from
      *            a Doxia source.
@@ -101,10 +105,11 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
      * @since 1.8
      */
-    public RenderingContext( File basedir, String document, String parserId, String extension, boolean editable,
-                             String generator )
+    public RenderingContext( File basedir, String basedirRelativePath, String document, String parserId,
+                             String extension, boolean editable, String generator )
     {
         this.basedir = basedir;
+        this.basedirRelativePath = basedirRelativePath;
         this.inputName = document;
         this.parserId = parserId;
         this.extension = extension;
@@ -223,7 +228,9 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
 
     /**
      * Is the source document editable?
+     *
      * @return <code>true</code> if comes from an editable Doxia source (not generated one).
+     * @since 1.8
      */
     public boolean isEditable()
     {
@@ -231,11 +238,46 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
     }
 
     /**
+     * Is the document rendered from a Doxia source?
+     *
+     * @return <code>true</code> if comes from a Doxia source.
+     * @since 1.8
+     */
+    public boolean isDoxiaSource()
+    {
+        return StringUtils.isNotEmpty( extension );
+    }
+
+    /**
      * What is the generator (if any)?
+     *
      * @return <code>null</code> if no known generator
+     * @since 1.8
      */
     public String getGenerator()
     {
         return generator;
+    }
+
+    /**
+     * Get the relative path of basedir (when a Doxia source)
+     *
+     * @return the relative path of basedir when a Doxia source, or <code>null</code> if not a Doxia source
+     * @since 1.8
+     */
+    public String getBasedirRelativePath()
+    {
+        return basedirRelativePath;
+    }
+
+    /**
+     * Get the relative path to Doxia source from build root.
+     *
+     * @return the relative path to Doxia source from build root, or <code>null</code> if not a Doxia source
+     * @since 1.8
+     */
+    public String getDoxiaSourcePath()
+    {
+        return isDoxiaSource() ? ( basedirRelativePath + '/' + inputName ) : null;
     }
 }

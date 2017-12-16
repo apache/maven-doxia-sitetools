@@ -189,7 +189,8 @@ public class DefaultSiteRenderer
 
                     String excludes = ( moduleExcludes == null ) ? null : moduleExcludes.get( module.getParserId() );
 
-                    addModuleFiles( moduleBasedir, module, excludes, files, editable );
+                    addModuleFiles( siteRenderingContext.getRootDirectory(), moduleBasedir, module, excludes, files,
+                                    editable );
                 }
             }
         }
@@ -203,7 +204,8 @@ public class DefaultSiteRenderer
 
                 String excludes = ( moduleExcludes == null ) ? null : moduleExcludes.get( module.getParserId() );
 
-                addModuleFiles( module.getBasedir(), parserModule, excludes, files, editable );
+                addModuleFiles( siteRenderingContext.getRootDirectory(), module.getBasedir(), parserModule, excludes,
+                                files, editable );
             }
             catch ( ParserModuleNotFoundException e )
             {
@@ -229,7 +231,7 @@ public class DefaultSiteRenderer
         return filtered;
     }
 
-    private void addModuleFiles( File moduleBasedir, ParserModule module, String excludes,
+    private void addModuleFiles( File rootDir, File moduleBasedir, ParserModule module, String excludes,
                                  Map<String, DocumentRenderer> files, boolean editable )
             throws IOException, RendererException
     {
@@ -237,6 +239,9 @@ public class DefaultSiteRenderer
         {
             return;
         }
+
+        String moduleRelativePath =
+            PathTool.getRelativeFilePath( rootDir.getAbsolutePath(), moduleBasedir.getAbsolutePath() );
 
         List<String> allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", excludes, false );
 
@@ -253,8 +258,8 @@ public class DefaultSiteRenderer
 
             for ( String doc : docs )
             {
-                RenderingContext context =
-                        new RenderingContext( moduleBasedir, doc, module.getParserId(), extension, editable );
+                RenderingContext context = new RenderingContext( moduleBasedir, moduleRelativePath, doc,
+                                                                 module.getParserId(), extension, editable );
 
                 // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
                 if ( endsWithIgnoreCase( doc, ".vm" ) )

@@ -162,10 +162,12 @@ public class DefaultSiteRendererTest
             .read( new FileReader( getTestFile( "src/test/resources/site/site.xml" ) ) );
 
         SiteRenderingContext ctxt = getSiteRenderingContext( decoration, "src/test/resources/site", false );
-        renderer.render( renderer.locateDocumentFiles( ctxt ).values(), ctxt, getTestFile( OUTPUT ) );
+        ctxt.setRootDirectory( getTestFile( "" ) );
+        renderer.render( renderer.locateDocumentFiles( ctxt, true ).values(), ctxt, getTestFile( OUTPUT ) );
 
         ctxt = getSiteRenderingContext( decoration, "src/test/resources/site-validate", true );
-        renderer.render( renderer.locateDocumentFiles( ctxt ).values(), ctxt, getTestFile( OUTPUT ) );
+        ctxt.setRootDirectory( getTestFile( "" ) );
+        renderer.render( renderer.locateDocumentFiles( ctxt, true ).values(), ctxt, getTestFile( OUTPUT ) );
 
         // ----------------------------------------------------------------------
         // Verify specific pages
@@ -197,7 +199,8 @@ public class DefaultSiteRendererTest
         DocumentRenderer docRenderer = mock( DocumentRenderer.class );
         when( docRenderer.isExternalReport() ).thenReturn( true );
         when( docRenderer.getOutputName() ).thenReturn( "external/index" );
-        when( docRenderer.getRenderingContext() ).thenReturn( new RenderingContext( new File( "" ), "index.html" )  );
+        when( docRenderer.getRenderingContext() ).thenReturn( new RenderingContext( new File( "" ), "index.html",
+                                                                                    "generator:external" ) );
 
         SiteRenderingContext context = new SiteRenderingContext();
 
@@ -225,9 +228,9 @@ public class DefaultSiteRendererTest
         siteRenderingContext.setTemplateProperties( attributes );
 
         siteRenderingContext.setTemplateName( "org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm" );
-        RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
+        RenderingContext context = new RenderingContext( new File( "" ), "document.html", "generator" );
         SiteRendererSink sink = new SiteRendererSink( context );
-        renderer.generateDocument( writer, sink, siteRenderingContext );
+        renderer.mergeDocumentIntoSite( writer, sink, siteRenderingContext );
 
         String renderResult = writer.toString();
         String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
@@ -253,9 +256,9 @@ public class DefaultSiteRendererTest
         SiteRenderingContext siteRenderingContext =
             renderer.createContextForTemplate( templateFile, attributes, new DecorationModel(),
                                                "defaultWindowTitle", Locale.ENGLISH );
-        RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
+        RenderingContext context = new RenderingContext( new File( "" ), "document.html", "generator" );
         SiteRendererSink sink = new SiteRendererSink( context );
-        renderer.generateDocument( writer, sink, siteRenderingContext );
+        renderer.mergeDocumentIntoSite( writer, sink, siteRenderingContext );
 
         String renderResult = writer.toString();
         String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
@@ -283,9 +286,9 @@ public class DefaultSiteRendererTest
         SiteRenderingContext siteRenderingContext =
             renderer.createContextForSkin( skin, attributes, new DecorationModel(), "defaultWindowTitle",
                                            Locale.ENGLISH );
-        RenderingContext context = new RenderingContext( new File( "" ), "document.html" );
+        RenderingContext context = new RenderingContext( new File( "" ), "document.html", "generator" );
         SiteRendererSink sink = new SiteRendererSink( context );
-        renderer.generateDocument( writer, sink, siteRenderingContext );
+        renderer.mergeDocumentIntoSite( writer, sink, siteRenderingContext );
         String renderResult = writer.toString();
         String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
         expectedResult = StringUtils.unifyLineSeparators( expectedResult );
