@@ -60,7 +60,7 @@ under the License.
             <model>src/main/mdo/decoration.mdo</model>
           </models>
           <!-- TODO Do not forget to update the version in the decoration description. See DOXIASITETOOLS-98. -->
-          <version>1.7.0</version>
+          <version>1.8.0</version>
           <firstVersion>1.0.0</firstVersion>
         </configuration>
         <executions>

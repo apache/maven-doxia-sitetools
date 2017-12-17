@@ -29,7 +29,7 @@ under the License.
     <p>An XSD is available at:</p>
     <ul>
       <!-- There is no property filtering in Modello, this has to be updated manually. See DOXIASITETOOLS-98. -->
-      <li><a href="http://maven.apache.org/xsd/decoration-1.7.0.xsd">http://maven.apache.org/xsd/decoration-1.7.0.xsd</a></li>
+      <li><a href="http://maven.apache.org/xsd/decoration-1.8.0.xsd">http://maven.apache.org/xsd/decoration-1.8.0.xsd</a></li>
     </ul>
     ]]></description>
 
@@ -121,6 +121,15 @@ under the License.
             <type>Version</type>
           </association>
           <identifier>true</identifier>
+        </field>
+        <field>
+          <name>edit</name>
+          <description><![CDATA[
+            The base url to edit Doxia document sources.
+            In general, <code>${project.scm.url}</code> value should do the job. 
+          ]]></description>
+          <version>1.8.0+</version>
+          <type>String</type>
         </field>
         <field>
           <name>poweredBy</name>

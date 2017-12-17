@@ -280,4 +280,16 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
     {
         return isDoxiaSource() ? ( basedirRelativePath + '/' + inputName ) : null;
     }
+
+    /**
+     * Get url of the Doxia source calculate from given base url.
+     *
+     * @param base the base url to use
+     * @return the resulting url
+     * @since 1.8
+     */
+    public String getDoxiaSourcePath( String base )
+    {
+        return PathTool.calculateLink( getDoxiaSourcePath(), base );
+    }
 }

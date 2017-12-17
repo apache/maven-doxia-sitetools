@@ -58,7 +58,12 @@
     </div>
     <div id="breadcrumbs">
       #publishDate( "left" $decoration.publishDate $decoration.version )
-      <div class="xright">#links( $decoration.body.links )#publishDate( "right" $decoration.publishDate $decoration.version )</div>
+      <div class="xright">#links( $decoration.body.links )
+#*    *##if( $decoration.edit && $docRenderingContext.editable )
+        <li class="pull-right"><a href="$docRenderingContext.getDoxiaSourcePath( $decoration.edit )">[edit]</a></li>
+#*    *##end
+      #publishDate( "right" $decoration.publishDate $decoration.version )
+      </div>
       <div class="clear">
         <hr/>
       </div>
