@@ -20,6 +20,7 @@ package org.apache.maven.doxia.site.decoration;
  */
 
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Decoration model utilities.
@@ -59,5 +60,56 @@ public class DecorationUtils
             }
         }
         return false;
+    }
+
+    /**
+     * Helper to get decoration custom DOM element by simply specifying a dotted path.
+     *
+     * @param custom the custom DOM element
+     * @param path the dotted path to the child
+     * @return <code>null</code> if any element in the path does not exist
+     * @since 1.8
+     */
+    public static Xpp3Dom getCustomChild( Xpp3Dom custom, String path )
+    {
+        String[] elements = path.split( "\\." );
+        for ( String element : elements )
+        {
+            if ( custom == null )
+            {
+                return null;
+            }
+            custom = custom.getChild( element );
+        }
+        return custom;
+    }
+
+    /**
+     * Helper to get decoration custom DOM element value by simply specifying a dotted path.
+     *
+     * @param custom the custom DOM element
+     * @param path the dotted path to the child
+     * @return the element value or <code>null</code> if any element in the path does not exist
+     * @since 1.8
+     */
+    public static String getCustomValue( Xpp3Dom custom, String path )
+    {
+        custom = getCustomChild( custom, path );
+        return ( custom == null ) ? null : custom.getValue();
+    }
+
+    /**
+     * Helper to get decoration custom DOM element value by simply specifying a dotted path.
+     *
+     * @param custom the custom DOM element
+     * @param path the dotted path to the child
+     * @param defaultValue default value
+     * @return the element value or the default value if any element in the path does not exist
+     * @since 1.8
+     */
+    public static String getCustomValue( Xpp3Dom custom, String path, String defaultValue )
+    {
+        custom = getCustomChild( custom, path );
+        return ( custom == null ) ? defaultValue : custom.getValue();
     }
 }

@@ -25,7 +25,8 @@ under the License.
   <id>decoration</id>
   <name>Decoration</name>
   <description><![CDATA[
-    <p>This is a reference for the site decoration descriptor used in Doxia Sitetools, also known as <code>site.xml</code>.</p>
+    <p>This is a reference for the site decoration descriptor used in Doxia Sitetools, also known as <code>site.xml</code>:
+    it is used to configure a site template (aka skin).</p>
     <p>An XSD is available at:</p>
     <ul>
       <!-- There is no property filtering in Modello, this has to be updated manually. See DOXIASITETOOLS-98. -->
@@ -290,6 +291,37 @@ under the License.
     public boolean isLink( String href )
     {
         return DecorationUtils.isLink( href );
+    }
+          </code>
+        </codeSegment>
+        <codeSegment>
+          <version>1.8.0+</version>
+          <code>
+    /**
+     * @since 1.8
+     * @see DecorationUtils#getCustomChild
+     */
+    public Object getCustomChild( String path )
+    {
+        return DecorationUtils.getCustomChild( (org.codehaus.plexus.util.xml.Xpp3Dom) custom, path );
+    }
+
+    /**
+     * @since 1.8
+     * @see DecorationUtils#getCustomValue
+     */
+    public String getCustomValue( String path )
+    {
+        return DecorationUtils.getCustomValue( (org.codehaus.plexus.util.xml.Xpp3Dom) custom, path );
+    }
+
+    /**
+     * @since 1.8
+     * @see DecorationUtils#getCustomValue
+     */
+    public String getCustomValue( String path, String defaultValue )
+    {
+        return DecorationUtils.getCustomValue( (org.codehaus.plexus.util.xml.Xpp3Dom) custom, path, defaultValue );
     }
           </code>
         </codeSegment>
