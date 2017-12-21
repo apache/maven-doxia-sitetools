@@ -124,6 +124,12 @@ under the License.
       <groupId>org.apache.velocity</groupId>
       <artifactId>velocity</artifactId>
       <version>1.5</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- misc -->
@@ -153,6 +159,25 @@ under the License.
             </property>
           </systemProperties>
         </configuration>
+      </plugin>
+      <plugin><!-- TODO remove when minimum Java set to 7 -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-bytecode-version</id>
+            <configuration>
+              <rules>
+                <enforceBytecodeVersion>
+                  <excludes>
+                    <exclude>org.apache.maven.doxia:doxia-module-markdown</exclude>
+                    <exclude>org.nibor.autolink:autolink</exclude>
+                  </excludes>
+                </enforceBytecodeVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

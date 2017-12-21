@@ -108,7 +108,8 @@ public class EntitiesVerifier
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
-        assertEquals( "section_name_with_entities:____", a.getAttribute( "name" ) );
+        assertEquals( "section_name_with_entities:_.27.26.27_.27.CE.91.27_.27.C2.A0.27_.27.3F.3F.27",
+                      a.getAttribute( "name" ) );
 
         div = (HtmlDivision) elementIterator.next();
         assertNotNull( div );
