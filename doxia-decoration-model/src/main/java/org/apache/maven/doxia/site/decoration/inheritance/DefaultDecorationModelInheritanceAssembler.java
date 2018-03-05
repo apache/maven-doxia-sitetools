@@ -78,6 +78,11 @@ public class DefaultDecorationModelInheritanceAssembler
             child.setVersion( parent.getVersion().clone() );
         }
 
+        if ( child.getEdit() == null && parent.getEdit() != null )
+        {
+            child.setEdit( parent.getEdit() );
+        }
+
         if ( child.getSkin() == null && parent.getSkin() != null )
         {
             child.setSkin( parent.getSkin().clone() );
