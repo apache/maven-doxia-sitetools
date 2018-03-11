@@ -45,6 +45,13 @@ under the License.
       <item name="nestedItems" href="/nestedItems.html"/>
       <item name="entities, cdata, comment" href="/entityTest.html"/>
       <item name="javascript alert" href="/javascript.html"/>
+      <item name="sub-menu" href="/confluence/link.html" collapse="true">
+        <item name="nested-list" href="/confluence/nested-list.html"/>
+        <item name="sub-sub-menu" href="/confluence/section.html" collapse="true">
+          <item name="table" href="/confluence/table.html"/>
+          <item name="test" href="/confluence/test.html"/>
+        </item>
+      </item>
     </menu>
   </body>
 </project>
