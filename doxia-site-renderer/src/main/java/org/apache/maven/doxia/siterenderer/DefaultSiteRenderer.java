@@ -397,22 +397,7 @@ public class DefaultSiteRenderer
                     if ( siteContext.getProcessedContentOutput() != null )
                     {
                         // save Velocity processing result, ie the Doxia content that will be parsed after
-                        if ( !siteContext.getProcessedContentOutput().exists() )
-                        {
-                            siteContext.getProcessedContentOutput().mkdirs();
-                        }
-
-                        String input = docRenderingContext.getInputName();
-                        File outputFile = new File( siteContext.getProcessedContentOutput(),
-                                                    input.substring( 0, input.length() - 3 ) );
-
-                        File outputParent = outputFile.getParentFile();
-                        if ( !outputParent.exists() )
-                        {
-                            outputParent.mkdirs();
-                        }
-
-                        FileUtils.fileWrite( outputFile, siteContext.getInputEncoding(), doxiaContent );
+                        saveVelocityProcessedContent( docRenderingContext, siteContext, doxiaContent );
                     }
 
                     reader = new StringReader( doxiaContent );
@@ -483,6 +468,28 @@ public class DefaultSiteRenderer
         }
 
         mergeDocumentIntoSite( writer, (DocumentContent) sink, siteContext );
+    }
+
+    private void saveVelocityProcessedContent( RenderingContext docRenderingContext, SiteRenderingContext siteContext,
+                                               String doxiaContent )
+        throws IOException
+    {
+        if ( !siteContext.getProcessedContentOutput().exists() )
+        {
+            siteContext.getProcessedContentOutput().mkdirs();
+        }
+
+        String input = docRenderingContext.getInputName();
+        File outputFile = new File( siteContext.getProcessedContentOutput(),
+                                    input.substring( 0, input.length() - 3 ) );
+
+        File outputParent = outputFile.getParentFile();
+        if ( !outputParent.exists() )
+        {
+            outputParent.mkdirs();
+        }
+
+        FileUtils.fileWrite( outputFile, siteContext.getInputEncoding(), doxiaContent );
     }
 
     /**
