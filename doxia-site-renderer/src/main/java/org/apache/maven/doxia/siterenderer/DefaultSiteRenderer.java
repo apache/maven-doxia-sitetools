@@ -383,7 +383,7 @@ public class DefaultSiteRenderer
             // TODO: DOXIA-111: the filter used here must be checked generally.
             if ( docRenderingContext.getAttribute( "velocity" ) != null )
             {
-                getLogger().debug( "Processing Velocity for " + docRenderingContext.getInputName() );
+                getLogger().debug( "Processing Velocity for " + docRenderingContext.getDoxiaSourcePath() );
                 try
                 {
                     Context vc = createDocumentVelocityContext( docRenderingContext, siteContext );
@@ -402,16 +402,10 @@ public class DefaultSiteRenderer
 
                     reader = new StringReader( doxiaContent );
                 }
-                catch ( Exception e )
+                catch ( VelocityException e )
                 {
-                    if ( getLogger().isDebugEnabled() )
-                    {
-                        getLogger().error( "Error parsing " + resource + " as a velocity template, using as text.", e );
-                    }
-                    else
-                    {
-                        getLogger().error( "Error parsing " + resource + " as a velocity template, using as text." );
-                    }
+                    throw new RendererException( "Error parsing " + docRenderingContext.getDoxiaSourcePath()
+                        + " as a Velocity template: " + e.getMessage(), e );
                 }
 
                 if ( parser.getType() == Parser.XML_TYPE && siteContext.isValidate() )
@@ -439,10 +433,6 @@ public class DefaultSiteRenderer
             }
             sink.enableLogging( new PlexusLoggerWrapper( getLogger() ) );
 
-            if ( reader == null ) // can happen if velocity throws above
-            {
-                throw new RendererException( "Error getting a parser for '" + doc + "'" );
-            }
             doxia.parse( reader, docRenderingContext.getParserId(), sink );
         }
         catch ( ParserNotFoundException e )
