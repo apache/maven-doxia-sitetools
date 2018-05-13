@@ -28,7 +28,8 @@ import java.util.Set;
 
 import javax.swing.text.html.HTML.Attribute;
 
-import org.apache.maven.doxia.module.xhtml.XhtmlSink;
+import org.apache.maven.doxia.markup.HtmlMarkup;
+import org.apache.maven.doxia.module.xhtml5.Xhtml5Sink;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.siterenderer.DocumentContent;
@@ -45,7 +46,7 @@ import org.codehaus.plexus.util.StringUtils;
  */
 @SuppressWarnings( "checkstyle:methodname" )
 public class SiteRendererSink
-    extends XhtmlSink
+    extends Xhtml5Sink
     implements Sink, org.codehaus.doxia.sink.Sink, DocumentContent
 {
     private String date = "";
@@ -93,6 +94,9 @@ public class SiteRendererSink
         this.writer = writer;
         this.headWriter = new StringWriter();
         this.renderingContext = renderingContext;
+
+        /* the template is expected to have used the main tag, which can be used only once */
+        super.contentStack.push( HtmlMarkup.MAIN );
     }
 
     /** {@inheritDoc} */
@@ -111,7 +115,7 @@ public class SiteRendererSink
      * {@inheritDoc}
      *
      * Reset text buffer, since text content before title mustn't be in title.
-     * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#title()
+     * @see org.apache.maven.doxia.module.xhtml5.Xhtml5Sink#title()
      */
     @Override
     public void title()
@@ -163,7 +167,7 @@ public class SiteRendererSink
      * {@inheritDoc}
      *
      * Do nothing.
-     * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#body_()
+     * @see org.apache.maven.doxia.module.xhtml5.Xhtml5Sink#body_()
      */
     @Override
     public void body_()
@@ -175,7 +179,7 @@ public class SiteRendererSink
      * {@inheritDoc}
      *
      * Do nothing.
-     * @see org.apache.maven.doxia.module.xhtml.XhtmlSink#body()
+     * @see org.apache.maven.doxia.module.xhtml5.Xhtml5Sink#body()
      */
     @Override
     public void body()

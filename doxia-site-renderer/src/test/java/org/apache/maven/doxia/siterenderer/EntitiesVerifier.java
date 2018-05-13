@@ -98,9 +98,8 @@ public class EntitiesVerifier
         //
         // ----------------------------------------------------------------------
 
-        HtmlDivision div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
-        assertEquals( "section", div.getAttribute( "class" ) );
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        HtmlElement section = (HtmlElement) elementIterator.next();
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
@@ -111,13 +110,13 @@ public class EntitiesVerifier
         assertEquals( "section_name_with_entities:_.27.26.27_.27.CE.91.27_.27.C2.A0.27_.27.3F.3F.27",
                       a.getAttribute( "name" ) );
 
-        div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
-        assertEquals( "section", div.getAttribute( "class" ) );
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
 
-        div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
-        assertEquals( "section", div.getAttribute( "class" ) );
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
 
         HtmlHeading4 h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
@@ -127,7 +126,9 @@ public class EntitiesVerifier
         assertNotNull( a );
         assertEquals( "Entities", a.getAttribute( "name" ) );
 
-        div = (HtmlDivision) elementIterator.next();
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
 
         HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
@@ -139,7 +140,9 @@ public class EntitiesVerifier
         assertNotNull( p );
         assertEquals( "'&' '<' '>' '\"' '''", p.asText().trim() );
 
-        div = (HtmlDivision) elementIterator.next();
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
 
         h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
@@ -151,7 +154,9 @@ public class EntitiesVerifier
         assertNotNull( p );
         assertEquals( "'\u0391' '\u0392' '\u0393' '\uD7ED\uD7ED' '\u0159\u0159' '\u0159'", p.asText().trim() );
 
-        div = (HtmlDivision) elementIterator.next();
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
 
         h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
@@ -163,9 +168,9 @@ public class EntitiesVerifier
         assertNotNull( p );
         assertEquals( "' ' '\u00A1' '\u00A2'", p.asText().trim() );
 
-        div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
-        assertEquals( "section", div.getAttribute( "class" ) );
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
 
         h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
@@ -175,9 +180,9 @@ public class EntitiesVerifier
         assertNotNull( a );
         assertEquals( "CDATA", a.getAttribute( "name" ) );
 
-        div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
-        assertEquals( "source", div.getAttribute( "class" ) );
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
 
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
         assertNotNull( pre );

@@ -59,8 +59,8 @@ public class FaqVerifier
         //
         // ----------------------------------------------------------------------
 
-        HtmlDivision div = (HtmlDivision) elementIterator.next();
-        assertEquals( "section", div.getAttribute( "class" ) );
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        HtmlElement section = (HtmlElement) elementIterator.next();
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertEquals( "Oft Asked Questions", h2.asText().trim() );
@@ -104,8 +104,8 @@ public class FaqVerifier
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#disable-reports", a.getAttribute( "href" ) );
 
-        div = (HtmlDivision) elementIterator.next();
-        assertEquals( "section", div.getAttribute( "class" ) );
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
 
         h2 = (HtmlHeading2) elementIterator.next();
         assertEquals( "Contributing", h2.asText().trim() );
@@ -157,8 +157,8 @@ public class FaqVerifier
         assertEquals( "[top]", a.asText().trim() );
 
 
-        div = (HtmlDivision) elementIterator.next();
-        assertEquals( "section", div.getAttribute( "class" ) );
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
 
         h2 = (HtmlHeading2) elementIterator.next();
         assertEquals( "Using Maven", h2.asText().trim() );
@@ -179,10 +179,10 @@ public class FaqVerifier
         p = (HtmlParagraph) elementIterator.next();
 
         element = elementIterator.next();
-        assertEquals( "tt", element.getTagName() );
+        assertEquals( "code", element.getTagName() );
         assertEquals( "<source></source>", element.asText().trim() );
 
-        div = (HtmlDivision) elementIterator.next();
+        HtmlDivision div = (HtmlDivision) elementIterator.next();
         assertEquals( "source", div.getAttribute( "class" ) );
 
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();

@@ -1,5 +1,7 @@
 package org.apache.maven.doxia.siterenderer;
 
+import java.util.Iterator;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -33,8 +35,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
 
-import java.util.Iterator;
-
 /**
  *
  * @author ltheussl
@@ -60,9 +60,9 @@ public class NestedItemsVerifier
         // Verify link
         // ----------------------------------------------------------------------
 
-        HtmlDivision div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
-        assertEquals( "section", div.getAttribute( "class" ) );
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        HtmlElement section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
@@ -75,13 +75,14 @@ public class NestedItemsVerifier
         // ----------------------------------------------------------------------
         // Unordered lists
         // ----------------------------------------------------------------------
-        div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
-        assertEquals( "section", div.getAttribute( "class" ) );
 
-        div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
-        assertEquals( "section", div.getAttribute( "class" ) );
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
+
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
 
         HtmlHeading4 h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
@@ -169,9 +170,10 @@ public class NestedItemsVerifier
         // ----------------------------------------------------------------------
         // Ordered lists
         // ----------------------------------------------------------------------
-        div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
-        assertEquals( "section", div.getAttribute( "class" ) );
+
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
 
         h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
@@ -255,9 +257,10 @@ public class NestedItemsVerifier
         // ----------------------------------------------------------------------
         // Definition lists
         // ----------------------------------------------------------------------
-        div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
-        assertEquals( "section", div.getAttribute( "class" ) );
+
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
 
         h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );

@@ -55,9 +55,9 @@ public class MultipleBlockVerifier
         // Verify link
         // ----------------------------------------------------------------------
 
-        HtmlDivision div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
-        assertEquals( "section", div.getAttribute( "class" ) );
+        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
+        HtmlElement section = (HtmlElement) elementIterator.next();
+        assertNotNull( section );
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );

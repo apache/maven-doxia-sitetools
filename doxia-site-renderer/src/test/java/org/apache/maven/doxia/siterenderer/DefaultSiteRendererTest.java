@@ -163,10 +163,12 @@ public class DefaultSiteRendererTest
 
         SiteRenderingContext ctxt = getSiteRenderingContext( decoration, "src/test/resources/site", false );
         ctxt.setRootDirectory( getTestFile( "" ) );
+        renderer.copyResources( ctxt, getTestFile( OUTPUT ) );
         renderer.render( renderer.locateDocumentFiles( ctxt, true ).values(), ctxt, getTestFile( OUTPUT ) );
 
         ctxt = getSiteRenderingContext( decoration, "src/test/resources/site-validate", true );
         ctxt.setRootDirectory( getTestFile( "" ) );
+        renderer.copyResources( ctxt, getTestFile( OUTPUT ) );
         renderer.render( renderer.locateDocumentFiles( ctxt, true ).values(), ctxt, getTestFile( OUTPUT ) );
 
         // ----------------------------------------------------------------------
@@ -513,10 +515,10 @@ public class DefaultSiteRendererTest
     public void validatePages()
         throws Exception
     {
-        new XhtmlValidatorTest().validateGeneratedPages();
+        new Xhtml5ValidatorTest().validateGeneratedPages();
     }
 
-    protected static class XhtmlValidatorTest
+    protected static class Xhtml5ValidatorTest
         extends AbstractXmlValidator
     {
         /**
@@ -527,6 +529,7 @@ public class DefaultSiteRendererTest
         public void validateGeneratedPages()
             throws Exception
         {
+        	setValidate( false );
             setUp();
             testValidateFiles();
             tearDown();
@@ -546,7 +549,8 @@ public class DefaultSiteRendererTest
         /** {@inheritDoc} */
         protected EntityResolver getEntityResolver()
         {
-            return new XhtmlEntityResolver();
+        	/* HTML5 restricts use of entities to XML only */
+            return null;
         }
 
         /** {@inheritDoc} */
