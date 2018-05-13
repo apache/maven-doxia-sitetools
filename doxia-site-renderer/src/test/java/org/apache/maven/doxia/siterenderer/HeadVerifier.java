@@ -1,5 +1,7 @@
 package org.apache.maven.doxia.siterenderer;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -50,9 +52,7 @@ public class HeadVerifier
         HtmlElement html = page.getDocumentElement();
         assertNotNull( html );
 
-        List<String> tagNames = new ArrayList<String>( 2 );
-        tagNames.add( "head" );
-        List<HtmlElement> heads = html.getHtmlElementsByTagNames( tagNames );
+        List<HtmlElement> heads = html.getElementsByTagName( "head" );
         assertEquals( 1, heads.size() );
         HtmlElement head = heads.get( 0 );
         assertNotNull( head );
