@@ -418,7 +418,7 @@ public class DefaultDecorationModelInheritanceAssembler
          * @param oldPath the old path.
          * @param newPath the new path.
          */
-        public URLRebaser( final String oldPath, final String newPath )
+        URLRebaser( final String oldPath, final String newPath )
         {
             this.oldPath = oldPath;
             this.newPath = newPath;
