@@ -172,6 +172,7 @@ under the License.
                   <excludes>
                     <exclude>org.apache.maven.doxia:doxia-module-markdown</exclude>
                     <exclude>org.nibor.autolink:autolink</exclude>
+                    <exclude>com.vladsch.flexmark:*</exclude>
                   </excludes>
                 </enforceBytecodeVersion>
               </rules>
