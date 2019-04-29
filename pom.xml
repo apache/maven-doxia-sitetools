@@ -285,11 +285,9 @@ under the License.
             </goals>
             <configuration>
               <rules>
-<!--
                 <enforceBytecodeVersion>
                   <maxJdkVersion>${maven.compiler.target}</maxJdkVersion>
                 </enforceBytecodeVersion>
--->
               </rules>
               <fail>true</fail>
             </configuration>
