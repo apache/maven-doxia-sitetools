@@ -529,7 +529,7 @@ public class DefaultSiteRendererTest
         public void validateGeneratedPages()
             throws Exception
         {
-        	setValidate( false );
+            setValidate( false );
             setUp();
             testValidateFiles();
             tearDown();
@@ -549,7 +549,7 @@ public class DefaultSiteRendererTest
         /** {@inheritDoc} */
         protected EntityResolver getEntityResolver()
         {
-        	/* HTML5 restricts use of entities to XML only */
+            /* HTML5 restricts use of entities to XML only */
             return null;
         }
 
