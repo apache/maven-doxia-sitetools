@@ -179,7 +179,7 @@ public class FaqVerifier
         p = (HtmlParagraph) elementIterator.next();
 
         element = elementIterator.next();
-        assertEquals( "tt", element.getTagName() );
+        assertEquals( "code", element.getTagName() );
         assertEquals( "<source></source>", element.asText().trim() );
 
         div = (HtmlDivision) elementIterator.next();
