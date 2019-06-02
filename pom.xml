@@ -69,6 +69,7 @@ under the License.
   </distributionManagement>
 
   <properties>
+    <javaVersion>7</javaVersion>
     <doxiaVersion>1.8</doxiaVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
   </properties>
