@@ -149,7 +149,6 @@ under the License.
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>1.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
