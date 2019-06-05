@@ -28,6 +28,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlScript;
+import com.gargoylesoftware.htmlunit.html.HtmlSection;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -78,8 +79,7 @@ public class JavascriptVerifier
         //
         // ----------------------------------------------------------------------
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        HtmlElement section = (HtmlElement) elementIterator.next();
+        HtmlSection section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();

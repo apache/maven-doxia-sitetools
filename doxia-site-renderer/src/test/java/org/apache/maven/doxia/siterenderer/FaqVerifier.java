@@ -31,6 +31,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlOrderedList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
+import com.gargoylesoftware.htmlunit.html.HtmlSection;
 
 import java.util.Iterator;
 
@@ -59,8 +60,7 @@ public class FaqVerifier
         //
         // ----------------------------------------------------------------------
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        HtmlElement section = (HtmlElement) elementIterator.next();
+        HtmlSection section = (HtmlSection) elementIterator.next();
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertEquals( "Oft Asked Questions", h2.asText().trim() );
@@ -104,8 +104,7 @@ public class FaqVerifier
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#disable-reports", a.getAttribute( "href" ) );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
 
         h2 = (HtmlHeading2) elementIterator.next();
         assertEquals( "Contributing", h2.asText().trim() );
@@ -157,8 +156,7 @@ public class FaqVerifier
         assertEquals( "[top]", a.asText().trim() );
 
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
 
         h2 = (HtmlHeading2) elementIterator.next();
         assertEquals( "Using Maven", h2.asText().trim() );

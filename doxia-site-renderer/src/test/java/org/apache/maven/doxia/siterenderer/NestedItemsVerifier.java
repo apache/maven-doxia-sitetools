@@ -33,6 +33,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlListItem;
 import com.gargoylesoftware.htmlunit.html.HtmlOrderedList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
+import com.gargoylesoftware.htmlunit.html.HtmlSection;
 import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
 
 /**
@@ -60,8 +61,7 @@ public class NestedItemsVerifier
         // Verify link
         // ----------------------------------------------------------------------
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        HtmlElement section = (HtmlElement) elementIterator.next();
+        HtmlSection section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
@@ -76,12 +76,10 @@ public class NestedItemsVerifier
         // Unordered lists
         // ----------------------------------------------------------------------
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         HtmlHeading4 h4 = (HtmlHeading4) elementIterator.next();
@@ -171,8 +169,7 @@ public class NestedItemsVerifier
         // Ordered lists
         // ----------------------------------------------------------------------
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         h4 = (HtmlHeading4) elementIterator.next();
@@ -258,8 +255,7 @@ public class NestedItemsVerifier
         // Definition lists
         // ----------------------------------------------------------------------
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         h4 = (HtmlHeading4) elementIterator.next();

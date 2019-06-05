@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlHeading3;
 import com.gargoylesoftware.htmlunit.html.HtmlItalic;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
+import com.gargoylesoftware.htmlunit.html.HtmlSection;
 import com.gargoylesoftware.htmlunit.html.HtmlTeletype;
 
 import java.util.Iterator;
@@ -60,8 +61,7 @@ public class AptVerifier
         //
         // ----------------------------------------------------------------------
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        HtmlElement section = (HtmlElement) elementIterator.next();
+        HtmlSection section = (HtmlSection) elementIterator.next();
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
@@ -105,8 +105,7 @@ public class AptVerifier
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "/index.html", a.getAttribute( "href" ) );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         h2 = (HtmlHeading2) elementIterator.next();
@@ -128,8 +127,7 @@ public class AptVerifier
         assertEquals( "code", code.getTagName() );
         assertEquals( "mono", code.asText().trim() );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
@@ -166,8 +164,7 @@ public class AptVerifier
         assertEquals( "code", code.getTagName() );
         assertEquals( "mono", code.asText().trim() );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         h2 = (HtmlHeading2) elementIterator.next();
@@ -176,8 +173,7 @@ public class AptVerifier
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "No_Default_Anchor_in_Section_Title_with_Explicit_Anchor", a.getAttribute( "name" ) );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
     }
 }

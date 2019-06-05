@@ -29,6 +29,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlMeta;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
+import com.gargoylesoftware.htmlunit.html.HtmlSection;
 
 import java.util.Iterator;
 
@@ -98,8 +99,7 @@ public class EntitiesVerifier
         //
         // ----------------------------------------------------------------------
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        HtmlElement section = (HtmlElement) elementIterator.next();
+        HtmlSection section = (HtmlSection) elementIterator.next();
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
@@ -110,12 +110,10 @@ public class EntitiesVerifier
         assertEquals( "section_name_with_entities:_.27.26.27_.27.CE.91.27_.27.C2.A0.27_.27.3F.3F.27",
                       a.getAttribute( "name" ) );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         HtmlHeading4 h4 = (HtmlHeading4) elementIterator.next();
@@ -126,8 +124,7 @@ public class EntitiesVerifier
         assertNotNull( a );
         assertEquals( "Entities", a.getAttribute( "name" ) );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
@@ -140,8 +137,7 @@ public class EntitiesVerifier
         assertNotNull( p );
         assertEquals( "'&' '<' '>' '\"' '''", p.asText().trim() );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         h3 = (HtmlHeading3) elementIterator.next();
@@ -154,8 +150,7 @@ public class EntitiesVerifier
         assertNotNull( p );
         assertEquals( "'\u0391' '\u0392' '\u0393' '\uD835\uDFED\uD835\uDFED' '\u0159\u0159' '\u0159'", p.asText().trim() );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         h3 = (HtmlHeading3) elementIterator.next();
@@ -168,8 +163,7 @@ public class EntitiesVerifier
         assertNotNull( p );
         assertEquals( "' ' '\u00A1' '\u00A2'", p.asText().trim() );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         h4 = (HtmlHeading4) elementIterator.next();
@@ -180,9 +174,8 @@ public class EntitiesVerifier
         assertNotNull( a );
         assertEquals( "CDATA", a.getAttribute( "name" ) );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
-        assertNotNull( section );
+        HtmlDivision div = (HtmlDivision) elementIterator.next();
+        assertNotNull( div );
 
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
         assertNotNull( pre );

@@ -31,6 +31,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
 import com.gargoylesoftware.htmlunit.html.HtmlS;
+import com.gargoylesoftware.htmlunit.html.HtmlSection;
 import com.gargoylesoftware.htmlunit.html.HtmlSubscript;
 import com.gargoylesoftware.htmlunit.html.HtmlSuperscript;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
@@ -68,8 +69,7 @@ public class AttributesVerifier
         //
         // ----------------------------------------------------------------------
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        HtmlElement section = (HtmlElement) elementIterator.next();
+        HtmlSection section = (HtmlSection) elementIterator.next();
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
@@ -191,15 +191,13 @@ public class AttributesVerifier
         pre = (HtmlPreformattedText) elementIterator.next();
         assertEquals( "pretty", pre.getAttribute( "id" ) );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         h2 = (HtmlHeading2) elementIterator.next();
         assertEquals( "Section without id", h2.asText().trim() );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Section_without_id", a.getAttribute( "name" ) );
 
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
         assertEquals( "Subsection without id", h3.asText().trim() );
         a = (HtmlAnchor) elementIterator.next();
@@ -207,8 +205,7 @@ public class AttributesVerifier
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "section-id", a.getAttribute( "name" ) );
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         h2 = (HtmlHeading2) elementIterator.next();
         assertEquals( "Section with id", h2.asText().trim() );
         a = (HtmlAnchor) elementIterator.next();
@@ -216,8 +213,7 @@ public class AttributesVerifier
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "subsection-id", a.getAttribute( "name" ) );
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         h3 = (HtmlHeading3) elementIterator.next();
         assertEquals( "Subsection with id", h3.asText().trim() );
         a = (HtmlAnchor) elementIterator.next();
@@ -225,8 +221,7 @@ public class AttributesVerifier
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "foo", a.getAttribute( "name" ) );
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertEquals( "bar", section.getAttribute( "class" ) );
         assertEquals( "foo", section.getAttribute( "id" ) );
         h2 = (HtmlHeading2) elementIterator.next();
@@ -237,8 +232,7 @@ public class AttributesVerifier
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "subfoo", a.getAttribute( "name" ) );
-        /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
-        section = (HtmlElement) elementIterator.next();
+        section = (HtmlSection) elementIterator.next();
         assertEquals( "subbar", section.getAttribute( "class" ) );
         assertEquals( "subfoo", section.getAttribute( "id" ) );
         h3 = (HtmlHeading3) elementIterator.next();
