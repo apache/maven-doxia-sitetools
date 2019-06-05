@@ -31,7 +31,7 @@ under the License.
 
   <groupId>org.apache.maven.doxia</groupId>
   <artifactId>doxia-sitetools</artifactId>
-  <version>1.8.2-SNAPSHOT</version>
+  <version>1.9-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Doxia Sitetools</name>
@@ -69,7 +69,8 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.8</doxiaVersion>
+    <javaVersion>7</javaVersion>
+    <doxiaVersion>1.9</doxiaVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
   </properties>
 
@@ -135,6 +136,12 @@ under the License.
         <groupId>org.apache.maven.doxia</groupId>
         <artifactId>doxia-skin-model</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <!-- Commons -->
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.6</version>
       </dependency>
       <!-- Plexus -->
       <dependency>
