@@ -142,6 +142,12 @@ under the License.
         <artifactId>doxia-skin-model</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <!-- Commons -->
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.6</version>
+      </dependency>
       <!-- Plexus -->
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
