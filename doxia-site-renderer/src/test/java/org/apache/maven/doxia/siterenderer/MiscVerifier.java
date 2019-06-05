@@ -24,6 +24,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParameter;
+import com.gargoylesoftware.htmlunit.html.HtmlUnknownElement;
 
 import java.util.Iterator;
 
@@ -53,7 +54,7 @@ public class MiscVerifier
         //
         // ----------------------------------------------------------------------
 
-        HtmlApplet applet = (HtmlApplet) elementIterator.next();
+        HtmlUnknownElement applet = (HtmlUnknownElement) elementIterator.next();
         assertEquals( "org.micro.applet.Main", applet.getAttribute( "code" ) );
         assertEquals( "micro-applet.jar", applet.getAttribute( "archive" ) );
 

@@ -77,7 +77,7 @@ public class FaqVerifier
         assertEquals( "Contributing", element.asText().trim() );
 
         HtmlOrderedList ol = (HtmlOrderedList) elementIterator.next();
-        assertEquals( "One stupid question & a silly answer?", ol.getFirstChild().asText().trim() );
+        assertEquals( "One stupid question & a silly answer?", ol.getFirstChild().getNextSibling().asText().trim() );
 
         HtmlListItem li = (HtmlListItem) elementIterator.next();
         assertEquals( "One stupid question & a silly answer?", li.getFirstChild().asText().trim() );
@@ -95,7 +95,7 @@ public class FaqVerifier
         assertEquals( "Using Maven", element.asText().trim() );
 
         ol = (HtmlOrderedList) elementIterator.next();
-        assertEquals( "How do I disable a report on my site?", ol.getFirstChild().asText().trim() );
+        assertEquals( "How do I disable a report on my site?", ol.getFirstChild().getNextSibling().asText().trim() );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );

@@ -49,7 +49,7 @@ public class EntitiesVerifier
 
         HtmlMeta author = (HtmlMeta) page.getElementsByName( "author" ).get( 0 );
         assertNotNull( author );
-        assertTrue( author.toString().indexOf( "Ligature &#198;" ) > 0 );
+        assertTrue( author.toString().indexOf( "Ligature \u00C6" ) > 0 );
         assertEquals( "Ligature \u00C6", author.getContentAttribute() );
 
         author = (HtmlMeta) page.getElementsByName( "author" ).get( 1 );
@@ -64,7 +64,7 @@ public class EntitiesVerifier
 
         author = (HtmlMeta) page.getElementsByName( "author" ).get( 3 );
         assertNotNull( author );
-        assertTrue( author.toString().indexOf( "Greater than &gt;" ) > 0 );
+        assertTrue( author.toString().indexOf( "Greater than >" ) > 0 );
         assertEquals( "Greater than >", author.getContentAttribute() );
 
         author = (HtmlMeta) page.getElementsByName( "author" ).get( 4 );
@@ -84,7 +84,7 @@ public class EntitiesVerifier
 
         author = (HtmlMeta) page.getElementsByName( "author" ).get( 7 );
         assertNotNull( author );
-        assertTrue( author.toString().indexOf( "test&#169;email.com" ) > 0 );
+        assertTrue( author.toString().indexOf( "test\u00A9email.com" ) > 0 );
         assertEquals( "test\u00A9email.com", author.getContentAttribute() );
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
@@ -103,7 +103,7 @@ public class EntitiesVerifier
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
-        assertEquals( h2.asText().trim(), "section name with entities: '&' '\u0391' ' ' '\uD7ED'" );
+        assertEquals( h2.asText().trim(), "section name with entities: '&' '\u0391' ' ' '\uD835\uDFED'" );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -146,13 +146,13 @@ public class EntitiesVerifier
 
         h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
-        assertEquals( "Local Entities: '\u0391' '\u0392' '\u0393' '\uD7ED'", h3.asText().trim() );
+        assertEquals( "Local Entities: '\u0391' '\u0392' '\u0393' '\uD835\uDFED'", h3.asText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "'\u0391' '\u0392' '\u0393' '\uD7ED\uD7ED' '\u0159\u0159' '\u0159'", p.asText().trim() );
+        assertEquals( "'\u0391' '\u0392' '\u0393' '\uD835\uDFED\uD835\uDFED' '\u0159\u0159' '\u0159'", p.asText().trim() );
 
         /* cannot use HtmlSection until https://sourceforge.net/p/htmlunit/bugs/1961/ is fixed */
         section = (HtmlElement) elementIterator.next();
