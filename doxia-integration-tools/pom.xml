@@ -119,7 +119,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-interpolation</artifactId>
-      <version>1.14</version>
+      <version>1.25</version>
     </dependency>
 
     <!-- test -->
