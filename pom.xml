@@ -315,7 +315,7 @@ under the License.
           <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>extra-enforcer-rules</artifactId>
-            <version>1.0-beta-6</version>
+            <version>1.2</version>
             <scope>compile</scope>
           </dependency>
         </dependencies>
