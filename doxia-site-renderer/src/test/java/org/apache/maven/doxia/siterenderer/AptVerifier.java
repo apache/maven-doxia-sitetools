@@ -110,7 +110,7 @@ public class AptVerifier
         h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
         // Note: htmlunit strips the white space, actual result is ok
-        assertEquals( "Section formatting: italicboldmono", h2.asText().trim() );
+        assertEquals( "Section formatting: italic bold mono", h2.asText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Section_formatting:_italic_bold_mono", a.getAttribute( "name" ) );
@@ -133,7 +133,7 @@ public class AptVerifier
         HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
         // Note: htmlunit strips the white space, actual result is ok
-        assertEquals( "SubSection formatting: italicboldmono", h3.asText().trim() );
+        assertEquals( "SubSection formatting: italic bold mono", h3.asText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "SubSection_formatting:_italic_bold_mono", a.getAttribute( "name" ) );

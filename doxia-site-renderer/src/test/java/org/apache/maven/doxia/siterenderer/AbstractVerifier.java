@@ -52,6 +52,7 @@ public abstract class AbstractVerifier
 
         // HtmlUnit
         WebClient webClient = new WebClient();
+        webClient.getOptions().setCssEnabled( false );
 
         return (HtmlPage) webClient.getPage( file.toURI().toURL() );
     }
