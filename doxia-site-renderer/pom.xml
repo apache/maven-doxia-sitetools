@@ -115,7 +115,6 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-velocity</artifactId>
-      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -126,7 +125,6 @@ under the License.
     <dependency>
       <groupId>org.apache.velocity</groupId>
       <artifactId>velocity</artifactId>
-      <version>1.7</version>
     </dependency>
     <dependency>
       <groupId>org.apache.velocity</groupId>
