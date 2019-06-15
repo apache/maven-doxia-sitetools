@@ -77,6 +77,11 @@ public class HeadVerifier
         assertNotNull( link );
 
         meta = (HtmlMeta) elementIterator.next();
+        assertEquals( "Unexpected meta entry found generated resource " + file, "generator", meta.getAttribute( "name" ) );
+        String generator = meta.getAttribute("content");
+        assertEquals("Unexpected value found for generator meta entry in generated resource " + file, "Apache Maven Doxia Site Renderer", generator);
+
+        meta = (HtmlMeta) elementIterator.next();
         assertEquals( "author", meta.getAttribute( "name" ) );
         assertEquals( "John Doe", meta.getAttribute( "content" ).trim() );
 
