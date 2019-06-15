@@ -490,3 +490,8 @@ $indent      </ul>##
     </script>
 #**##end
 #end
+##
+#macro( generatedBy )
+Apache Maven Doxia Site Renderer#if( $doxiaSiteRendererVersion ) $doxiaSiteRendererVersion#end
+#end
+##
