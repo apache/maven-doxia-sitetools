@@ -40,9 +40,6 @@
 #if ( $documentDate )
     <meta name="date" content="$documentDate" />
 #end
-#if ( $locale )
-    <meta http-equiv="Content-Language" content="$locale.language" />
-#end
 #if( $decoration.body.head )
 #**#$render.eval( $decoration.body.head )
 #end

@@ -1,7 +1,5 @@
 package org.apache.maven.doxia.siterenderer;
 
-import com.gargoylesoftware.htmlunit.html.DomElement;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -29,7 +27,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlStyle;
 import com.gargoylesoftware.htmlunit.html.HtmlTitle;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -51,6 +48,8 @@ public class HeadVerifier
 
         HtmlElement html = page.getDocumentElement();
         assertNotNull( html );
+
+        assertEquals( "en", html.getAttribute( "lang" ) );
 
         List<HtmlElement> heads = html.getElementsByTagName( "head" );
         assertEquals( 1, heads.size() );
@@ -84,10 +83,6 @@ public class HeadVerifier
         meta = (HtmlMeta) elementIterator.next();
         assertEquals( "author", meta.getAttribute( "name" ) );
         assertEquals( "John Doe", meta.getAttribute( "content" ).trim() );
-
-        meta = (HtmlMeta) elementIterator.next();
-        assertEquals( "Content-Language", meta.getAttribute( "http-equiv" ) );
-        assertEquals( "en", meta.getAttribute( "content" ) );
 
         meta = (HtmlMeta) elementIterator.next();
         assertEquals( "description", meta.getAttribute( "name" ) );
