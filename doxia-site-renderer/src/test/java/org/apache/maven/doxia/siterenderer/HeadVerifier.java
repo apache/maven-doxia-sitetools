@@ -63,17 +63,10 @@ public class HeadVerifier
         // ----------------------------------------------------------------------
 
         HtmlMeta meta = (HtmlMeta) elementIterator.next();
-        assertEquals( "Content-Type", meta.getAttribute( "http-equiv" ) );
-        assertEquals( "text/html; charset=UTF-8", meta.getAttribute( "content" ) );
+        assertEquals( "UTF-8", meta.getAttribute( "charset" ) );
 
-        HtmlTitle title = (HtmlTitle) elementIterator.next();
-        assertNotNull( title );
-
-        HtmlStyle style = (HtmlStyle) elementIterator.next();
-        assertNotNull( style );
-
-        HtmlLink link = (HtmlLink) elementIterator.next();
-        assertNotNull( link );
+        // Skip viewport
+        elementIterator.next();
 
         meta = (HtmlMeta) elementIterator.next();
         assertEquals( "Unexpected meta entry found generated resource " + file, "generator", meta.getAttribute( "name" ) );
@@ -83,6 +76,18 @@ public class HeadVerifier
         meta = (HtmlMeta) elementIterator.next();
         assertEquals( "author", meta.getAttribute( "name" ) );
         assertEquals( "John Doe", meta.getAttribute( "content" ).trim() );
+
+        HtmlTitle title = (HtmlTitle) elementIterator.next();
+        assertNotNull( title );
+
+        HtmlLink link = (HtmlLink) elementIterator.next();
+        assertNotNull( link );
+        link = (HtmlLink) elementIterator.next();
+        assertNotNull( link );
+        link = (HtmlLink) elementIterator.next();
+        assertNotNull( link );
+        link = (HtmlLink) elementIterator.next();
+        assertNotNull( link );
 
         meta = (HtmlMeta) elementIterator.next();
         assertEquals( "description", meta.getAttribute( "name" ) );
