@@ -204,14 +204,6 @@ under the License.
     </resources>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <configuration>
-            <tagBase>https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/tags</tagBase>
-            <autoVersionSubmodules>true</autoVersionSubmodules>
-          </configuration>
-        </plugin>
         <!-- TODO need to upgrade to last version or Maven parent version -->
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
