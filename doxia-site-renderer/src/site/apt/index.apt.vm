@@ -42,7 +42,7 @@ Doxia Sitetools - Site Renderer
 * Doxia Site Skins
 
   A default site decoration template is included (see <<<default-site.vm>>>), but other decoration templates can be used at will,
-  either as a standalone template or packaged in a {{{../doxia-skin-descriptor}<<skin>> artifact}}.
+  either as a standalone template or packaged in a {{{../doxia-skin-model/}<<skin>> artifact}}.
 
   Maven team provides {{{/skins/}a collection of skins}} for projects use.
 
