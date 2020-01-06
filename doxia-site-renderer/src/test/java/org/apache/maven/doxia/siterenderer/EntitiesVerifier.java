@@ -70,7 +70,6 @@ public class EntitiesVerifier
 
         author = (HtmlMeta) page.getElementsByName( "author" ).get( 4 );
         assertNotNull( author );
-        assertTrue( author.getContentAttribute().equals( "Apostrophe '" ) );
         assertEquals( "Apostrophe '", author.getContentAttribute() );
 
         author = (HtmlMeta) page.getElementsByName( "author" ).get( 5 );

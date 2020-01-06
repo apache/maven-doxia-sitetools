@@ -23,16 +23,17 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
-
 import org.apache.maven.doxia.sink.impl.AbstractSink;
 import org.codehaus.plexus.util.IOUtil;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class SkinResourceLoaderTest
-    extends TestCase
 {
     private SkinResourceLoader skinResourceLoader = new SkinResourceLoader();
 
+    @Test
     public void testNormalizeNewline() throws Exception
     {
         String EOL = AbstractSink.EOL;

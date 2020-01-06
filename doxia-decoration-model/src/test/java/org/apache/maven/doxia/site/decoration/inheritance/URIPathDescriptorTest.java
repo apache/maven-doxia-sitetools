@@ -22,7 +22,9 @@ package org.apache.maven.doxia.site.decoration.inheritance;
 
 import java.net.URI;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -31,7 +33,6 @@ import junit.framework.TestCase;
  * @since 1.2
  */
 public class URIPathDescriptorTest
-    extends TestCase
 {
     private static final String BASE_URL = "http://maven.apache.org/";
 
@@ -40,6 +41,7 @@ public class URIPathDescriptorTest
      *
      * @throws Exception
      */
+    @Test
     public void testConstructor()
         throws Exception
     {
@@ -92,6 +94,7 @@ public class URIPathDescriptorTest
      *
      * @throws Exception
      */
+    @Test
     public void testResolveLink()
         throws Exception
     {
@@ -135,13 +138,15 @@ public class URIPathDescriptorTest
      *
      * @throws Exception
      */
+    @Test
     public void testRebaseLink()
         throws Exception
     {
         URIPathDescriptor oldPath = new URIPathDescriptor( BASE_URL, "source" );
         assertEquals( "../source", oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
         assertEquals( "http://maven.apache.org/source", oldPath.rebaseLink( null ).toString() );
-        assertEquals( "http://maven.apache.org/source", oldPath.rebaseLink( "C:/Documents and Settings/" ).toString() );
+        assertEquals( "http://maven.apache.org/source",
+                oldPath.rebaseLink( "C:/Documents and Settings/" ).toString() );
 
         oldPath = new URIPathDescriptor( BASE_URL, "./" );
         assertEquals( "", oldPath.rebaseLink( "http://maven.apache.org/" ).toString() );
@@ -150,11 +155,12 @@ public class URIPathDescriptorTest
         assertEquals( "", oldPath.rebaseLink( "http://maven.apache.org/" ).toString() );
 
         oldPath = new URIPathDescriptor( BASE_URL, "source/index.html" );
-        assertEquals( "../source/index.html", oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
+        assertEquals( "../source/index.html",
+                oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
 
         oldPath = new URIPathDescriptor( BASE_URL, "source/index.html?var=foo&amp;var2=bar" );
         assertEquals( "../source/index.html?var=foo&amp;var2=bar",
-            oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
+                oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
 
         oldPath = new URIPathDescriptor( "scp://people.apache.org/", "source" );
         assertEquals( "../source", oldPath.rebaseLink( "scp://people.apache.org/doxia" ).toString() );
@@ -164,7 +170,7 @@ public class URIPathDescriptorTest
 
         oldPath = new URIPathDescriptor( BASE_URL, "index.html?var=foo&amp;var2=bar" );
         assertEquals( "../index.html?var=foo&amp;var2=bar",
-            oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
+                oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
 
         oldPath = new URIPathDescriptor( "http://jakarta.apache.org/", "banner/left" );
         assertEquals( "http://jakarta.apache.org/banner/left", oldPath.rebaseLink( BASE_URL ).toString() );
@@ -174,13 +180,16 @@ public class URIPathDescriptorTest
         assertEquals( "../user", oldPath.rebaseLink( "file:/Users/target" ).toString() );
 
         oldPath = new URIPathDescriptor( "file:///C:/Documents%20and%20Settings/", "source" );
-        assertEquals( "../source", oldPath.rebaseLink( "file:///C:/Documents%20and%20Settings/target" ).toString() );
+        assertEquals( "../source",
+                oldPath.rebaseLink( "file:///C:/Documents%20and%20Settings/target" ).toString() );
 
         oldPath = new URIPathDescriptor( "file://C:/Documents%20and%20Settings/", "source" );
-        assertEquals( "../source", oldPath.rebaseLink( "file://C:/Documents%20and%20Settings/target" ).toString() );
+        assertEquals( "../source",
+                oldPath.rebaseLink( "file://C:/Documents%20and%20Settings/target" ).toString() );
 
         oldPath = new URIPathDescriptor( "file:/C:/Documents%20and%20Settings/", "source" );
-        assertEquals( "../source", oldPath.rebaseLink( "file:/C:/Documents%20and%20Settings/target" ).toString() );
+        assertEquals( "../source",
+                oldPath.rebaseLink( "file:/C:/Documents%20and%20Settings/target" ).toString() );
     }
 
     /**
@@ -188,6 +197,7 @@ public class URIPathDescriptorTest
      *
      * @throws Exception
      */
+    @Test
     public void testRelativizeLink()
         throws Exception
     {
@@ -239,6 +249,7 @@ public class URIPathDescriptorTest
      *
      * @throws Exception
      */
+    @Test
     public void testSameSite()
         throws Exception
     {

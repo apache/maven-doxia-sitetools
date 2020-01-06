@@ -21,18 +21,21 @@ package org.apache.maven.doxia.site.decoration.inheritance;
 
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  *
  * @author ltheussl
  */
 public class PathUtilsTest
-    extends TestCase
 {
     private static final String SLASH = File.separator;
 
     /** @throws Exception */
+    @Test
     public void testConvertPath()
         throws Exception
     {
@@ -43,13 +46,13 @@ public class PathUtilsTest
     }
 
     /** @throws Exception */
+    @Test
     public void testGetRelativePath()
         throws Exception
     {
         PathDescriptor oldPath = new PathDescriptor( "/tmp/foo", "base" );
         PathDescriptor newPath = new PathDescriptor( "/tmp", "target" );
-        assertEquals( ".." + SLASH + ".." + SLASH + "target",
-                PathUtils.getRelativePath( oldPath, newPath ) );
+        assertEquals( ".." + SLASH + ".." + SLASH + "target", PathUtils.getRelativePath( oldPath, newPath ) );
 
         oldPath = new PathDescriptor( (String) null, "base" );
         assertNull( PathUtils.getRelativePath( oldPath, newPath ) );
@@ -61,6 +64,7 @@ public class PathUtilsTest
     }
 
     /** @throws Exception */
+    @Test
     public void testRelativePathScpBase()
         throws Exception
     {

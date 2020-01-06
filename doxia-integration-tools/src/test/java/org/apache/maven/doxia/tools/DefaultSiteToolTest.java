@@ -19,20 +19,23 @@ package org.apache.maven.doxia.tools;
  * under the License.
  */
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
 public class DefaultSiteToolTest
-    extends TestCase
 {
     /**
      * test getNormalizedPath().
      */
+    @Test
     public void testGetNormalizedPath()
     {
-        assertEquals( null, DefaultSiteTool.getNormalizedPath( null ) );
+        assertNull( DefaultSiteTool.getNormalizedPath( null ) );
         assertEquals( "", DefaultSiteTool.getNormalizedPath( "" ) );
         assertEquals( "", DefaultSiteTool.getNormalizedPath( "." ) );
         assertEquals( "", DefaultSiteTool.getNormalizedPath( "./" ) );
@@ -50,6 +53,7 @@ public class DefaultSiteToolTest
         assertEquals( "index.html", DefaultSiteTool.getNormalizedPath( "./foo/../index.html" ) );
 
         // note: space is preserved and double slash is removed!
-        assertEquals( "file:/Documents and Settings/", DefaultSiteTool.getNormalizedPath( "file://Documents and Settings/" ) );
+        assertEquals( "file:/Documents and Settings/",
+                DefaultSiteTool.getNormalizedPath( "file://Documents and Settings/" ) );
     }
 }

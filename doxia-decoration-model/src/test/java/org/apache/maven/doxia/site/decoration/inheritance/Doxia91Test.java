@@ -19,18 +19,20 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  * under the License.
  */
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
- * Testcase for DOXIA-91 problems. All tests make sure that a passed in null will not generate any path conversion but
+ * Tests for DOXIA-91 problems. All tests make sure that a passed in null will not generate any path conversion but
  * just returns the old path.
  *
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
  */
 public class Doxia91Test
-    extends TestCase
 {
     /** @throws Exception */
+    @Test
     public void testOldPathNull()
         throws Exception
     {
@@ -43,6 +45,7 @@ public class Doxia91Test
     }
 
     /** @throws Exception */
+    @Test
     public void testNewPathNull()
         throws Exception
     {
@@ -55,6 +58,7 @@ public class Doxia91Test
     }
 
     /** @throws Exception */
+    @Test
     public void testBothPathNull()
         throws Exception
     {

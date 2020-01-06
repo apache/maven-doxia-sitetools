@@ -21,11 +21,13 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * under the License.
  */
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class DecorationUtilsTest
-    extends TestCase
 {
+    @Test
     public void testIsLink()
     {
         assertFalse( DecorationUtils.isLink( null ) );
@@ -39,6 +41,7 @@ public class DecorationUtilsTest
         assertTrue( DecorationUtils.isLink( "any-protocol://" ) );
     }
 
+    @Test
     public void testGetCustomChild()
     {
         Xpp3Dom dom = new Xpp3Dom( "root" );

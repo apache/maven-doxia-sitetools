@@ -86,7 +86,6 @@ public class DocumentRendererTest
         renderAggregatedImpl( "itext" );
     }
 
-    @SuppressWarnings ( "unchecked" )
     private void renderImpl( String implementation )
         throws Exception
     {
@@ -102,7 +101,6 @@ public class DocumentRendererTest
 
         docRenderer.render( siteDirectoryFile, outputDirectory, null );
 
-        @SuppressWarnings ( "unchecked" )
         List<String> files =
             FileUtils.getFileNames( new File( siteDirectoryFile, "apt" ), "**/*.apt",
                                     FileUtils.getDefaultExcludesAsString(), false );

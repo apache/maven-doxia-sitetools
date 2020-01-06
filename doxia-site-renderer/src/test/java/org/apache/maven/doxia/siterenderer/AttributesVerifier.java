@@ -98,7 +98,7 @@ public class AttributesVerifier
         assertEquals( "Project", img.getAttribute( "alt" ) );
 
         // test object identity to distinguish the case ATTRIBUTE_VALUE_EMPTY
-        assertTrue( img.getAttribute( "dummy" ) == HtmlElement.ATTRIBUTE_NOT_DEFINED );
+        assertSame( img.getAttribute( "dummy" ), HtmlElement.ATTRIBUTE_NOT_DEFINED );
 
         HtmlTable table = (HtmlTable) elementIterator.next();
         assertEquals( "1", table.getAttribute( "border" ) );

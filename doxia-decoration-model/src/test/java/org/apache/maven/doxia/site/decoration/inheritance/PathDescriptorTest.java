@@ -24,7 +24,9 @@ import java.io.File;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Test the PathDescriptor creation under various circumstances.
@@ -32,9 +34,9 @@ import junit.framework.TestCase;
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
  */
 public class PathDescriptorTest
-    extends TestCase
 {
     /** @throws Exception */
+    @Test
     public void testAbsPath()
         throws Exception
     {
@@ -53,6 +55,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testRelPath()
         throws Exception
     {
@@ -71,6 +74,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testEmptyAbsPath()
         throws Exception
     {
@@ -89,6 +93,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testEmptyRelPath()
         throws Exception
     {
@@ -107,6 +112,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testNullPath()
         throws Exception
     {
@@ -125,6 +131,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testNullBaseAbsPath()
         throws Exception
     {
@@ -144,6 +151,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testNullBaseRelPath()
         throws Exception
     {
@@ -163,6 +171,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testNullBaseEmptyAbsPath()
         throws Exception
     {
@@ -182,6 +191,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testNullBaseEmptyRelPath()
         throws Exception
     {
@@ -201,6 +211,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testNullBaseNullPath()
         throws Exception
     {
@@ -220,6 +231,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testUrlBaseAbsPath()
         throws Exception
     {
@@ -239,6 +251,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testUrlBaseRelPath()
         throws Exception
     {
@@ -258,6 +271,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testUrlBaseEmptyAbsPath()
         throws Exception
     {
@@ -277,6 +291,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testUrlBaseEmptyRelPath()
         throws Exception
     {
@@ -296,6 +311,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testUrlBaseNullPath()
         throws Exception
     {
@@ -315,6 +331,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testFileBaseAbsPath()
         throws Exception
     {
@@ -343,6 +360,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testFileBaseRelPath()
         throws Exception
     {
@@ -371,6 +389,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testFileBaseEmptyAbsPath()
         throws Exception
     {
@@ -399,6 +418,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testFileBaseEmptyRelPath()
         throws Exception
     {
@@ -427,6 +447,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testFileBaseNullPath()
         throws Exception
     {
@@ -467,6 +488,7 @@ public class PathDescriptorTest
 */
 
     /** @throws Exception */
+    @Test
     public void testPathBaseAbsPath()
         throws Exception
     {
@@ -495,6 +517,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testPathBaseRelPath()
         throws Exception
     {
@@ -523,6 +546,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testPathBaseEmptyAbsPath()
         throws Exception
     {
@@ -551,6 +575,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testPathBaseEmptyRelPath()
         throws Exception
     {
@@ -579,6 +604,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testPathBaseNullPath()
         throws Exception
     {
@@ -607,6 +633,7 @@ public class PathDescriptorTest
     }
 
     /** @throws Exception */
+    @Test
     public void testPathRelBase()
         throws Exception
     {
