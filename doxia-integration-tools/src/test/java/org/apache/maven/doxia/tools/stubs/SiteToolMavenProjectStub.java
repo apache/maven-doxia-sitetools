@@ -118,7 +118,7 @@ public class SiteToolMavenProjectStub
     /** {@inheritDoc} */
     public List<ArtifactRepository> getRemoteArtifactRepositories()
     {
-        ArtifactRepository repository = new DefaultArtifactRepository( "central", "http://repo1.maven.org/maven2",
+        ArtifactRepository repository = new DefaultArtifactRepository( "central", "https://repo1.maven.org/maven2",
                                                                        new DefaultRepositoryLayout() );
 
         return Collections.singletonList( repository );

@@ -259,7 +259,7 @@ public class SiteToolTest
         assertEquals( "http://maven.apache.org/images/maven-small.gif", model.getBannerRight().getSrc() );
         assertNull( model.getBannerRight().getHref() );
 
-        // model from repo: http://repo1.maven.org/maven2/org/apache/maven/maven-site/1.0/maven-site-1.0-site.xml
+        // model from repo: https://repo1.maven.org/maven2/org/apache/maven/maven-site/1.0/maven-site-1.0-site.xml
         // TODO Enable this test as soon as we haven a site.xml with head content as string
         /*project.setBasedir( null );
         project.setGroupId( "org.apache.maven" );
