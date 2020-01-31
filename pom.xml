@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>33</version>
+    <version>34</version>
     <relativePath>../../pom/maven/pom.xml</relativePath>
   </parent>
 
@@ -72,6 +72,7 @@ under the License.
     <javaVersion>7</javaVersion>
     <doxiaVersion>1.9</doxiaVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
+    <project.build.outputTimestamp>2020-01-31T19:04:00Z</project.build.outputTimestamp>
   </properties>
 
   <dependencyManagement>
@@ -239,11 +240,6 @@ under the License.
               <exclude>src/test/resources/xhtml-lat1.ent</exclude>
             </excludes>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-component-metadata</artifactId>
-          <version>1.7.1</version>
         </plugin>
       </plugins>
     </pluginManagement>
