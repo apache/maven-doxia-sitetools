@@ -70,7 +70,7 @@ under the License.
 
   <properties>
     <javaVersion>7</javaVersion>
-    <doxiaVersion>1.9</doxiaVersion>
+    <doxiaVersion>1.9.1</doxiaVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
     <project.build.outputTimestamp>2020-01-31T19:04:00Z</project.build.outputTimestamp>
   </properties>
