@@ -34,6 +34,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -233,7 +234,10 @@ public class DefaultSiteRendererTest
         renderer.mergeDocumentIntoSite( writer, sink, siteRenderingContext );
 
         String renderResult = writer.toString();
-        String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
+        String expectedResult =
+            IOUtils.toString(
+                getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ),
+                StandardCharsets.UTF_8 );
         expectedResult = StringUtils.unifyLineSeparators( expectedResult );
         assertEquals( expectedResult, renderResult );
     }
@@ -261,8 +265,8 @@ public class DefaultSiteRendererTest
         renderer.mergeDocumentIntoSite( writer, sink, siteRenderingContext );
 
         String renderResult = writer.toString();
-        String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
-        expectedResult = StringUtils.unifyLineSeparators( expectedResult );
+        InputStream in = getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" );
+        String expectedResult = StringUtils.unifyLineSeparators( IOUtils.toString( in, StandardCharsets.UTF_8 ) );
         assertEquals( expectedResult, renderResult );
     }
 
@@ -290,8 +294,10 @@ public class DefaultSiteRendererTest
         SiteRendererSink sink = new SiteRendererSink( context );
         renderer.mergeDocumentIntoSite( writer, sink, siteRenderingContext );
         String renderResult = writer.toString();
-        String expectedResult = IOUtils.toString( getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ) );
-        expectedResult = StringUtils.unifyLineSeparators( expectedResult );
+        String expectedResult = StringUtils.unifyLineSeparators(
+            IOUtils.toString(
+                getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ),
+                StandardCharsets.UTF_8 ) );
         assertEquals( expectedResult, renderResult );
     }
 

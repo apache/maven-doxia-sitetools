@@ -60,46 +60,47 @@ public class JavascriptVerifier
         assertTrue( jsTest.exists() );
 
         // HtmlUnit
-        WebClient webClient = new WebClient();
-        webClient.getOptions().setCssEnabled( false );
-
-        final List<String> collectedAlerts = new ArrayList<String>( 4 );
-        webClient.setAlertHandler( new CollectingAlertHandler( collectedAlerts ) );
-
-        HtmlPage page = (HtmlPage) webClient.getPage( jsTest.toURI().toURL() );
-        assertNotNull( page );
-
-        HtmlElement element = page.getHtmlElementById( "contentBox" );
-        assertNotNull( element );
-        HtmlDivision division = (HtmlDivision) element;
-        assertNotNull( division );
-
-        Iterator<HtmlElement> elementIterator = division.getHtmlElementDescendants().iterator();
-
-        // ----------------------------------------------------------------------
-        //
-        // ----------------------------------------------------------------------
-
-        HtmlSection section = (HtmlSection) elementIterator.next();
-        assertNotNull( section );
-
-        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
-        assertNotNull( h2 );
-        assertEquals( "Test", h2.asText().trim() );
-
-        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertNotNull( a );
-        assertEquals( "Test", a.getAttribute( "name" ) );
-
-        HtmlParagraph p = (HtmlParagraph) elementIterator.next();
-        assertNotNull( p );
-        assertEquals( "You should see a JavaScript alert...", p.asText().trim() );
-
-        HtmlScript script = (HtmlScript) elementIterator.next();
-        assertNotNull( script  );
-        assertEquals( "text/javascript", script.getAttribute( "type" ) );
-        assertEquals( "", script.asText().trim() );
-        final List<String> expectedAlerts = Collections.singletonList( "Hello!" );
-        assertEquals( expectedAlerts, collectedAlerts );
+        try ( WebClient webClient = new WebClient() ) {
+            webClient.getOptions().setCssEnabled( false );
+    
+            final List<String> collectedAlerts = new ArrayList<String>( 4 );
+            webClient.setAlertHandler( new CollectingAlertHandler( collectedAlerts ) );
+    
+            HtmlPage page = (HtmlPage) webClient.getPage( jsTest.toURI().toURL() );
+            assertNotNull( page );
+    
+            HtmlElement element = page.getHtmlElementById( "contentBox" );
+            assertNotNull( element );
+            HtmlDivision division = (HtmlDivision) element;
+            assertNotNull( division );
+    
+            Iterator<HtmlElement> elementIterator = division.getHtmlElementDescendants().iterator();
+    
+            // ----------------------------------------------------------------------
+            //
+            // ----------------------------------------------------------------------
+    
+            HtmlSection section = (HtmlSection) elementIterator.next();
+            assertNotNull( section );
+    
+            HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
+            assertNotNull( h2 );
+            assertEquals( "Test", h2.asText().trim() );
+    
+            HtmlAnchor a = (HtmlAnchor) elementIterator.next();
+            assertNotNull( a );
+            assertEquals( "Test", a.getAttribute( "name" ) );
+    
+            HtmlParagraph p = (HtmlParagraph) elementIterator.next();
+            assertNotNull( p );
+            assertEquals( "You should see a JavaScript alert...", p.asText().trim() );
+    
+            HtmlScript script = (HtmlScript) elementIterator.next();
+            assertNotNull( script  );
+            assertEquals( "text/javascript", script.getAttribute( "type" ) );
+            assertEquals( "", script.asText().trim() );
+            List<String> expectedAlerts = Collections.singletonList( "Hello!" );
+            assertEquals( expectedAlerts, collectedAlerts );
+        }
     }
 }
