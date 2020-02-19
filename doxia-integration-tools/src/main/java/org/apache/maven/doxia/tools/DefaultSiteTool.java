@@ -126,7 +126,6 @@ public class DefaultSiteTool
     // Public methods
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
     public Artifact getSkinArtifactFromRepository( ArtifactRepository localRepository,
                                                    List<ArtifactRepository> remoteArtifactRepositories,
                                                    DecorationModel decoration )
@@ -174,7 +173,6 @@ public class DefaultSiteTool
         return artifact;
     }
 
-    /** {@inheritDoc} */
     public Artifact getDefaultSkinArtifact( ArtifactRepository localRepository,
                                             List<ArtifactRepository> remoteArtifactRepositories )
         throws SiteToolException
@@ -182,11 +180,35 @@ public class DefaultSiteTool
         return getSkinArtifactFromRepository( localRepository, remoteArtifactRepositories, new DecorationModel() );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * This method is not implemented according to the URI specification and has many weird
+     * corner cases where it doesn't do the right thing. Please consider using a better 
+     * implemented method from a different library such as org.apache.http.client.utils.URIUtils#resolve.
+     */
+    @Deprecated
     public String getRelativePath( String to, String from )
     {
         checkNotNull( "to", to );
         checkNotNull( "from", from );
+        
+        if (to.contains(":") && from.contains(":")) {
+	        String toScheme = to.substring(0, to.indexOf( ':' ));
+	        String fromScheme = from.substring( 0, from.indexOf( ':' ) );
+	        if ( !toScheme.equals( fromScheme ) ) 
+	        {
+	        	return to; 
+	        }
+        }
+        else // at least one is not absolute
+        {
+        	return to;
+        }
+        
+        
+        // check for multiple colons; java.net.URL can't handle these
+        if ( colonCount( to ) > 1 || colonCount( from ) > 1 ) {
+        	return to;
+        }
 
         URL toUrl = null;
         URL fromUrl = null;
@@ -207,6 +229,7 @@ public class DefaultSiteTool
             catch ( MalformedURLException e1 )
             {
                 getLogger().warn( "Unable to load a URL for '" + to + "': " + e.getMessage() );
+                return to;
             }
         }
 
@@ -223,6 +246,7 @@ public class DefaultSiteTool
             catch ( MalformedURLException e1 )
             {
                 getLogger().warn( "Unable to load a URL for '" + from + "': " + e.getMessage() );
+                return to;
             }
         }
 
@@ -270,6 +294,18 @@ public class DefaultSiteTool
         }
 
         return relativePath;
+    }
+
+    private static int colonCount( String s )
+    {
+	     int count = 0;
+	     for ( char c : s.toCharArray() ) {
+	    	 if ( c == ':' )
+	    	 {
+	    		 count++;
+	    	 }
+	     }
+	     return count;
     }
 
     private static String getRelativeFilePath( final String oldPath, final String newPath )
@@ -1496,7 +1532,7 @@ public class DefaultSiteTool
         final Properties properties = new Properties();
         final String corePomProperties = "META-INF/maven/org.apache.maven/maven-core/pom.properties";
         final InputStream in = MavenProject.class.getClassLoader().getResourceAsStream( corePomProperties );
-       try
+        try
         {
             properties.load( in );
         }
