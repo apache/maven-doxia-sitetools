@@ -78,7 +78,7 @@ public class DefaultSiteToolTest
     public void testGetRelativePath()
     {
         assertEquals(
-            ".." + File.pathSeparator + "bar.html",
+            ".." + File.separator + "bar.html",
             tool.getRelativePath("http://example.com/foo/bar.html", "http://example.com/foo/baz.html"));
     }
 
