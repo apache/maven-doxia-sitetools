@@ -24,7 +24,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlLink;
 import com.gargoylesoftware.htmlunit.html.HtmlMeta;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlStyle;
 import com.gargoylesoftware.htmlunit.html.HtmlTitle;
 
 import java.util.Iterator;
@@ -71,7 +70,8 @@ public class HeadVerifier
         meta = (HtmlMeta) elementIterator.next();
         assertEquals( "Unexpected meta entry found generated resource " + file, "generator", meta.getAttribute( "name" ) );
         String generator = meta.getAttribute("content");
-        assertEquals("Unexpected value found for generator meta entry in generated resource " + file, "Apache Maven Doxia Site Renderer", generator);
+        assertTrue("Unexpected value found for generator meta entry in generated resource " + file,
+            generator.startsWith( "Apache Maven Doxia Site Renderer"));
 
         meta = (HtmlMeta) elementIterator.next();
         assertEquals( "author", meta.getAttribute( "name" ) );
