@@ -30,7 +30,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlItalic;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlSection;
-import com.gargoylesoftware.htmlunit.html.HtmlTeletype;
 
 import java.util.Iterator;
 

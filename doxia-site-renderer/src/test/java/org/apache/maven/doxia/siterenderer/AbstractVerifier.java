@@ -51,10 +51,11 @@ public abstract class AbstractVerifier
         assertTrue( file.exists() );
 
         // HtmlUnit
-        WebClient webClient = new WebClient();
-        webClient.getOptions().setCssEnabled( false );
-
-        return (HtmlPage) webClient.getPage( file.toURI().toURL() );
+        try (WebClient webClient = new WebClient()) {
+            webClient.getOptions().setCssEnabled( false );
+    
+            return (HtmlPage) webClient.getPage( file.toURI().toURL() );
+        }
     }
 
     /**
