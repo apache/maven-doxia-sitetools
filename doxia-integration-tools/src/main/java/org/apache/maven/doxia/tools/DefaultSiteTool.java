@@ -191,13 +191,14 @@ public class DefaultSiteTool
         checkNotNull( "to", to );
         checkNotNull( "from", from );
         
-        if (to.contains(":") && from.contains(":")) {
-	        String toScheme = to.substring(0, to.lastIndexOf( ':' ));
-	        String fromScheme = from.substring( 0, from.lastIndexOf( ':' ) );
-	        if ( !toScheme.equals( fromScheme ) ) 
-	        {
-	        	return to; 
-	        }
+        if ( to.contains( ":" ) && from.contains( ":" ) )
+        {
+            String toScheme = to.substring( 0, to.lastIndexOf( ':' ) );
+            String fromScheme = from.substring( 0, from.lastIndexOf( ':' ) );
+            if ( !toScheme.equals( fromScheme ) ) 
+            {
+                return to; 
+            }
         }
         
         URL toUrl = null;
