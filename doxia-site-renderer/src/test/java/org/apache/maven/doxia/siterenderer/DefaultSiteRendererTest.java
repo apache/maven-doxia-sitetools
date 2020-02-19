@@ -297,7 +297,7 @@ public class DefaultSiteRendererTest
         String expectedResult = StringUtils.unifyLineSeparators(
             IOUtils.toString(
                 getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ),
-                StandardCharsets.UTF_8));
+                StandardCharsets.UTF_8 ));
         assertEquals( expectedResult, renderResult );
     }
 
