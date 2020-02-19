@@ -236,8 +236,8 @@ public class DefaultSiteRendererTest
         String renderResult = writer.toString();
         String expectedResult =
             IOUtils.toString(
-                getClass().getResourceAsStream("velocity-toolmanager.expected.txt"),
-                StandardCharsets.UTF_8);
+                getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ),
+                StandardCharsets.UTF_8 );
         expectedResult = StringUtils.unifyLineSeparators( expectedResult );
         assertEquals( expectedResult, renderResult );
     }
@@ -296,7 +296,7 @@ public class DefaultSiteRendererTest
         String renderResult = writer.toString();
         String expectedResult = StringUtils.unifyLineSeparators(
             IOUtils.toString(
-                getClass().getResourceAsStream("velocity-toolmanager.expected.txt"),
+                getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" ),
                 StandardCharsets.UTF_8));
         assertEquals( expectedResult, renderResult );
     }

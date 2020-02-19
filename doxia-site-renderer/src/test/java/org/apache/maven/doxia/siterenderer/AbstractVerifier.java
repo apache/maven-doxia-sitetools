@@ -51,7 +51,7 @@ public abstract class AbstractVerifier
         assertTrue( file.exists() );
 
         // HtmlUnit
-        try (WebClient webClient = new WebClient()) {
+        try ( WebClient webClient = new WebClient() ) {
             webClient.getOptions().setCssEnabled( false );
     
             return (HtmlPage) webClient.getPage( file.toURI().toURL() );
@@ -63,7 +63,7 @@ public abstract class AbstractVerifier
      *
      * @param file the file to verify.
      *
-     * @throws java.lang.Exception if something goes wrong;
+     * @throws java.lang.Exception if something goes wrong
      */
     public abstract void verify( String file )
             throws Exception;

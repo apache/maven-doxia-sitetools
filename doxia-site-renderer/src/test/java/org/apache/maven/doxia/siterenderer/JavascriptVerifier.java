@@ -60,7 +60,7 @@ public class JavascriptVerifier
         assertTrue( jsTest.exists() );
 
         // HtmlUnit
-        try (WebClient webClient = new WebClient()) {
+        try ( WebClient webClient = new WebClient() ) {
             webClient.getOptions().setCssEnabled( false );
     
             final List<String> collectedAlerts = new ArrayList<String>( 4 );
