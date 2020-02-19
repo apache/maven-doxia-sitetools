@@ -155,12 +155,11 @@ public class SiteToolTest
 
         String to = "http://maven.apache.org/downloads.html";
         String from = "http://maven.apache.org/index.html";
-        // FIXME! assertEquals( "downloads.html", tool.getRelativePath( to, from ) );
 
         // MSITE-600, MSHARED-203
         to = "file:///tmp/bloop";
         from = "scp://localhost:/tmp/blop";
-        // FIXME! assertEquals( tool.getRelativePath( to, from ), to );
+        assertEquals( tool.getRelativePath( to, from ), to );
 
         // note: 'tmp' is the host here which is probably not the intention, but at least the result is correct
         to = "file://tmp/bloop";

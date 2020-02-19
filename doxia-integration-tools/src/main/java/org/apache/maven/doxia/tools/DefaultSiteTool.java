@@ -192,24 +192,14 @@ public class DefaultSiteTool
         checkNotNull( "from", from );
         
         if (to.contains(":") && from.contains(":")) {
-	        String toScheme = to.substring(0, to.indexOf( ':' ));
-	        String fromScheme = from.substring( 0, from.indexOf( ':' ) );
+	        String toScheme = to.substring(0, to.lastIndexOf( ':' ));
+	        String fromScheme = from.substring( 0, from.lastIndexOf( ':' ) );
 	        if ( !toScheme.equals( fromScheme ) ) 
 	        {
 	        	return to; 
 	        }
         }
-        else // at least one is not absolute
-        {
-        	return to;
-        }
         
-        
-        // check for multiple colons; java.net.URL can't handle these
-        if ( colonCount( to ) > 1 || colonCount( from ) > 1 ) {
-        	return to;
-        }
-
         URL toUrl = null;
         URL fromUrl = null;
 
@@ -294,18 +284,6 @@ public class DefaultSiteTool
         }
 
         return relativePath;
-    }
-
-    private static int colonCount( String s )
-    {
-	     int count = 0;
-	     for ( char c : s.toCharArray() ) {
-	    	 if ( c == ':' )
-	    	 {
-	    		 count++;
-	    	 }
-	     }
-	     return count;
     }
 
     private static String getRelativeFilePath( final String oldPath, final String newPath )
