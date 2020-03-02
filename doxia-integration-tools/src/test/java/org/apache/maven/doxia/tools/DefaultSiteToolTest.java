@@ -23,12 +23,28 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.junit.Before;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
 public class DefaultSiteToolTest
 {
+	
+    private DefaultSiteTool tool = new DefaultSiteTool();
+    
+    @Before 
+    public void setUp() {
+    	Logger logger =  new ConsoleLogger(Logger.LEVEL_WARN, "tool");
+        tool.enableLogging(logger);
+    }
+	
     /**
      * test getNormalizedPath().
      */
@@ -55,5 +71,46 @@ public class DefaultSiteToolTest
         // note: space is preserved and double slash is removed!
         assertEquals( "file:/Documents and Settings/",
                 DefaultSiteTool.getNormalizedPath( "file://Documents and Settings/" ) );
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testGetRelativePath()
+    {
+        assertEquals(
+            ".." + File.separator + "bar.html",
+            tool.getRelativePath("http://example.com/foo/bar.html", "http://example.com/foo/baz.html"));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testGetRelativePath_same()
+    {
+        assertTrue(
+          tool.getRelativePath( "http://example.com/foo/bar.html", "http://example.com/foo/bar.html" ).isEmpty() );
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testGetRelativePath_differentSchemes() {
+        assertEquals(
+          "scp://example.com/foo/bar.html",
+          tool.getRelativePath( "scp://example.com/foo/bar.html", "http://example.com/foo/bar.html" ) );
+      assertEquals(
+        "file:///tmp/bloop",
+         tool.getRelativePath( "file:///tmp/bloop", "scp://localhost:/tmp/blop" ) );
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testGetRelativePath_differentDomains() {
+        assertEquals(
+          "https://example.org/bar.html",
+          tool.getRelativePath( "https://example.org/bar.html", "https://example.com/bar.html" ) );
+        assertEquals(
+          "dav:https://nexus2.mysite.net:123/nexus/content/sites/site/mysite-child/2.0.0/",
+          tool.getRelativePath(
+            "dav:https://nexus2.mysite.net:123/nexus/content/sites/site/mysite-child/2.0.0/",
+            "dav:https://nexus1.mysite.net:123/nexus/content/sites/site/mysite-parent/1.0.0/" ));
     }
 }
