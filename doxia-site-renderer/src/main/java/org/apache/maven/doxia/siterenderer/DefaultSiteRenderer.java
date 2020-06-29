@@ -441,8 +441,14 @@ public class DefaultSiteRenderer
         }
         catch ( ParseException e )
         {
-            throw new RendererException( "Error parsing '"
-                    + doc + "': line [" + e.getLineNumber() + "] " + e.getMessage(), e );
+            StringBuilder errorMsgBuilder = new StringBuilder();
+            errorMsgBuilder.append( "Error parsing '" ).append( doc ).append( "': " );
+            if ( e.getLineNumber() > 0 )
+            {
+                errorMsgBuilder.append( "line [" ).append( e.getLineNumber() ).append( "] " );
+            }
+            errorMsgBuilder.append( e.getMessage() );
+            throw new RendererException( errorMsgBuilder.toString(), e );
         }
         catch ( IOException e )
         {
