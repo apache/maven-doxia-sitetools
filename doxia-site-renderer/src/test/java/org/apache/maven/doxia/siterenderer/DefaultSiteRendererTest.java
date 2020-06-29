@@ -21,9 +21,7 @@ package org.apache.maven.doxia.siterenderer;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,6 +33,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +45,10 @@ import java.util.zip.ZipEntry;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.doxia.Doxia;
+import org.apache.maven.doxia.parser.ParseException;
+import org.apache.maven.doxia.parser.Parser;
+import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
@@ -54,7 +57,9 @@ import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
+import org.mockito.Mockito;
 import org.xml.sax.EntityResolver;
 
 /**
@@ -145,6 +150,76 @@ public class DefaultSiteRendererTest
         super.tearDown();
 
         Locale.setDefault( oldLocale );
+    }
+
+    /**
+     * @throws Exception if something goes wrong.
+     */
+    public void testRenderExceptionMessageWhenLineNumberIsNotAvailable()
+        throws Exception
+    {
+        final File testBasedir = getTestFile( "src/test/resources/site/xdoc" );
+        final String testDocumentName = "head.xml";
+        final String exceptionMessage = "parse error occurred";
+
+        Doxia doxiaInstance = (Doxia) lookup( Doxia.class );
+        Doxia doxiaSpy = spy( doxiaInstance );
+        Mockito.doThrow( new ParseException( exceptionMessage ) )
+                .when( doxiaSpy )
+                .parse( Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any() );
+        Renderer renderer = (Renderer) lookup( Renderer.class );
+        ReflectionUtils.setVariableValueInObject( renderer, "doxia", doxiaSpy );
+
+        RenderingContext renderingContext = new RenderingContext( testBasedir, "", testDocumentName, "xdoc", "",
+                false );
+
+        try
+        {
+            renderer.renderDocument( null, renderingContext, new SiteRenderingContext() );
+            fail( "should fail with exception" );
+        }
+        catch ( RendererException e )
+        {
+            assertEquals(
+                    String.format( "Error parsing '%s%s%s': %s",
+                            testBasedir.getAbsolutePath(), File.separator, testDocumentName, exceptionMessage ),
+                    e.getMessage() );
+        }
+    }
+
+    /**
+     * @throws Exception if something goes wrong.
+     */
+    public void testRenderExceptionMessageWhenLineNumberIsAvailable()
+        throws Exception
+    {
+        final File testBasedir = getTestFile( "src/test/resources/site/xdoc" );
+        final String testDocumentName = "head.xml";
+        final String exceptionMessage = "parse error occurred";
+
+        Doxia doxiaInstance = (Doxia) lookup( Doxia.class );
+        Doxia doxiaSpy = spy( doxiaInstance );
+        Mockito.doThrow( new ParseException( exceptionMessage, 42, 36 ) )
+                .when( doxiaSpy )
+                .parse( Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any() );
+        Renderer renderer = (Renderer) lookup( Renderer.class );
+        ReflectionUtils.setVariableValueInObject( renderer, "doxia", doxiaSpy );
+
+        RenderingContext renderingContext = new RenderingContext( testBasedir, "", testDocumentName, "xdoc", "",
+                false );
+
+        try
+        {
+            renderer.renderDocument( null, renderingContext, new SiteRenderingContext() );
+            fail( "should fail with exception" );
+        }
+        catch ( RendererException e )
+        {
+            assertEquals(
+                    String.format( "Error parsing '%s%s%s': line [42] %s",
+                            testBasedir.getAbsolutePath(), File.separator, testDocumentName, exceptionMessage ),
+                    e.getMessage() );
+        }
     }
 
     /**
