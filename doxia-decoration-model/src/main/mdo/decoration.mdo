@@ -610,7 +610,7 @@ under the License.
         <field xml.attribute="true">
           <name>inheritAsRef</name>
           <description><![CDATA[
-            If this is a reference, setting <inheritAsRef>true</inheritAsRef> means that it will be populated
+            If this is a reference, setting {@literal <inheritAsRef>true</inheritAsRef>} means that it will be populated
             in the project, whereas if it is false, it is populated in the parent and then inherited.
           ]]></description>
           <version>1.0.0+</version>

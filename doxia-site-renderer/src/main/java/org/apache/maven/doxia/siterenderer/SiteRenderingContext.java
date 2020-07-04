@@ -463,7 +463,7 @@ public class SiteRenderingContext
     /**
      * Set the root directory.
      *
-     * @param rootDirectory
+     * @param rootDirectory the root directory
      * @since 1.8
      */
     public void setRootDirectory( File rootDirectory )

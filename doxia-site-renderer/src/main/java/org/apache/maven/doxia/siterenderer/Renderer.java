@@ -77,7 +77,7 @@ public interface Renderer // TODO rename to SiteRenderer
      * i.e. merge the document content into the site template.
      *
      * @param writer the Writer to use.
-     * @param content the document content to be merged
+     * @param content the document content to be merged.
      * @param siteRenderingContext the SiteRenderingContext to use.
      * @throws RendererException if it bombs.
      * @since 1.8
@@ -88,12 +88,13 @@ public interface Renderer // TODO rename to SiteRenderer
     /**
      * Create a Site Rendering Context for a site using a skin.
      *
-     * @param skin
-     * @param attributes
-     * @param decoration
-     * @param defaultWindowTitle
-     * @param locale
+     * @param skin a skin
+     * @param attributes attributes to use
+     * @param decoration a decoration model
+     * @param defaultWindowTitle default window title
+     * @param locale locale to use
      * @return a SiteRenderingContext.
+     * @throws RendererException if it bombs.
      * @throws java.io.IOException if it bombs.
      * @since 1.7.3 was previously with skin as File instead of Artifact
      */
@@ -104,16 +105,16 @@ public interface Renderer // TODO rename to SiteRenderer
     /**
      * Create a Site Rendering Context for a site using a local template.
      *
-     * @param templateFile
-     * @param attributes
-     * @param decoration
-     * @param defaultWindowTitle
-     * @param locale
+     * @param templateFile template file
+     * @param attributes attributes to use
+     * @param decoration a decoration model
+     * @param defaultWindowTitle default window title
+     * @param locale locale to use
      * @return a SiteRenderingContext.
      * @throws MalformedURLException if it bombs.
      * @since 1.7, had an additional skinFile parameter before
      * @deprecated Deprecated without replacement, use skins only.
-     * @see #createContextForSkin(File, Map, DecorationModel, String, Locale)
+     * @see #createContextForSkin(Artifact, Map, DecorationModel, String, Locale)
      */
     @Deprecated
     SiteRenderingContext createContextForTemplate( File templateFile, Map<String, ?> attributes,
@@ -124,9 +125,9 @@ public interface Renderer // TODO rename to SiteRenderer
     /**
      * Copy resource files.
      *
-     * @param siteRenderingContext
-     * @param resourcesDirectory
-     * @param outputDirectory
+     * @param siteRenderingContext the SiteRenderingContext to use
+     * @param resourcesDirectory resources directory as file
+     * @param outputDirectory output directory as file
      * @throws IOException if it bombs.
      * @deprecated since 1.7, use copyResources without resourcesDirectory parameter
      */
@@ -136,8 +137,8 @@ public interface Renderer // TODO rename to SiteRenderer
     /**
      * Copy resource files from skin, template, and site resources.
      *
-     * @param siteRenderingContext
-     * @param outputDirectory
+     * @param siteRenderingContext the SiteRenderingContext to use.
+     * @param outputDirectory output directory as file
      * @throws IOException if it bombs.
      * @since 1.7
      */
@@ -147,7 +148,7 @@ public interface Renderer // TODO rename to SiteRenderer
     /**
      * Locate Doxia document source files in the site source context.
      *
-     * @param siteRenderingContext
+     * @param siteRenderingContext the SiteRenderingContext to use
      * @return the Doxia document renderers in a Map keyed by output file name.
      * @throws IOException if it bombs.
      * @throws RendererException if it bombs.
@@ -159,8 +160,8 @@ public interface Renderer // TODO rename to SiteRenderer
     /**
      * Locate Doxia document source files in the site source context.
      *
-     * @param siteRenderingContext
-     * @param mark Doxia document renderer as editable? (should not mark editable if generated Doxia source)
+     * @param siteRenderingContext the SiteRenderingContext to use
+     * @param editable Doxia document renderer as editable? (should not set editable if generated Doxia source)
      * @return the Doxia document renderers in a Map keyed by output file name.
      * @throws IOException if it bombs.
      * @throws RendererException if it bombs.

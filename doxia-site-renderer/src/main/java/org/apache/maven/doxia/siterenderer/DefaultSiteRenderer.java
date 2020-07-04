@@ -536,9 +536,9 @@ public class DefaultSiteRenderer
     /**
      * Create a Velocity Context for a Doxia document, containing every information about rendered document.
      *
-     * @param sink the site renderer sink for the document
+     * @param renderingContext the document's RenderingContext
      * @param siteRenderingContext the site rendering context
-     * @return
+     * @return a Velocity tools managed context
      */
     protected Context createDocumentVelocityContext( RenderingContext renderingContext,
                                                      SiteRenderingContext siteRenderingContext )
@@ -622,7 +622,7 @@ public class DefaultSiteRenderer
      *
      * @param content the document content to be merged into the template
      * @param siteRenderingContext the site rendering context
-     * @return
+     * @return a Velocity tools managed context
      */
     protected Context createSiteTemplateVelocityContext( DocumentContent content,
                                                          SiteRenderingContext siteRenderingContext )
