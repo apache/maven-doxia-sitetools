@@ -89,7 +89,7 @@ public interface SiteTool
     /**
      * Interpolating several expressions in the site descriptor content. Actually, the expressions can be in
      * the project, the environment variables and the specific properties like <code>encoding</code>.
-     * <p/>
+     * <p>
      * For instance:
      * <dl>
      * <dt>${project.name}</dt>

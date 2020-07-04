@@ -291,10 +291,10 @@ public abstract class AbstractITextRender
     }
 
     /**
-     * Generate an ouput file with the iText framework
+     * Generate an output file from the contents of an input with the iText framework
      *
-     * @param iTextFile
-     * @param iTextOutput
+     * @param iTextFile input file
+     * @param iTextOutput output file
      * @throws org.apache.maven.doxia.docrenderer.DocumentRendererException if any
      * @throws java.io.IOException if any
      */
