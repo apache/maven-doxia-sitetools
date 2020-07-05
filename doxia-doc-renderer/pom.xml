@@ -57,6 +57,18 @@ under the License.
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-module-fo</artifactId>
       <version>${doxiaVersion}</version>
+      <!-- TODO remove with upgrade to 1.9.2 -->
+      <exclusions>
+        <!-- exclude JAI - missing on Maven Central -->
+        <exclusion>
+          <groupId>javax.media</groupId>
+          <artifactId>jai-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.media</groupId>
+          <artifactId>jai-codec</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- The modules are not in doxia core anymore so you have to state a dependency so that
          the component descriptor gets picked up. -->
@@ -143,25 +155,6 @@ under the License.
             </property>
           </systemProperties>
         </configuration>
-      </plugin>
-      <plugin><!-- TODO remove when minimum Java set to 7 -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>enforce-bytecode-version</id>
-            <configuration>
-              <rules>
-                <enforceBytecodeVersion>
-                  <excludes>
-                    <exclude>org.apache.maven.doxia:doxia-module-markdown</exclude>
-                    <exclude>org.nibor.autolink:autolink</exclude>
-                  </excludes>
-                </enforceBytecodeVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
