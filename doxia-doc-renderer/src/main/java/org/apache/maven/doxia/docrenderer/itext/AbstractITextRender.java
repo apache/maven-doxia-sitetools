@@ -56,6 +56,7 @@ import org.apache.maven.doxia.parser.module.ParserModuleManager;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.xml.utils.DefaultErrorHandler;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -87,14 +88,10 @@ public abstract class AbstractITextRender
 
     private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     protected ParserModuleManager parserModuleManager;
 
-    /**
-     * @plexus.requirement
-     */
+    @Requirement
     protected Doxia doxia;
 
     static
