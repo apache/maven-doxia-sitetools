@@ -209,7 +209,7 @@ under the License.
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>clirr-maven-plugin</artifactId>
           <configuration>
-            <comparisonVersion>1.1</comparisonVersion>
+            <comparisonVersion>1.9</comparisonVersion>
           </configuration>
         </plugin>
         <plugin>
@@ -275,16 +275,6 @@ under the License.
             </goals>
             <configuration>
               <excludes>
-                <exclude>org/apache/maven/doxia/site/decoration/*</exclude>
-                <exclude>org/apache/maven/doxia/site/decoration/inheritance/*URLContainer</exclude>
-                <!-- DOXIASITETOOLS-85 RenderingContext package changed -->
-                <exclude>org/apache/maven/doxia/siterenderer/*Renderer</exclude>
-                <exclude>org/apache/maven/doxia/siterenderer/sink/*</exclude>
-                <!-- DOXIA-511 -->
-                <exclude>org/apache/maven/doxia/docrenderer/AbstractDocumentRenderer</exclude>
-                <exclude>org/apache/maven/doxia/docrenderer/itext/AbstractITextRender</exclude>
-                <!-- DOXIASITETOOLS-170 -->
-                <exlcude>org/apache/maven/doxia/siterenderer/SiteRenderingContext</exlcude>
               </excludes>
             </configuration>
           </execution>
