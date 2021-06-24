@@ -111,7 +111,6 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.PathTool;
-import org.codehaus.plexus.util.PropertyUtils;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
@@ -574,19 +573,23 @@ public class DefaultSiteRenderer
         // doxiaSiteRendererVersion
         InputStream inputStream = this.getClass().getResourceAsStream( "/META-INF/"
             + "maven/org.apache.maven.doxia/doxia-site-renderer/pom.properties" );
-        Properties properties = PropertyUtils.loadProperties( inputStream );
         if ( inputStream == null )
         {
             getLogger().debug( "pom.properties for doxia-site-renderer could not be found." );
         }
-        else if ( properties == null )
-        {
-            getLogger().debug( "Failed to load pom.properties, so doxiaVersion is not available"
-                + " in the Velocity context." );
-        }
         else
         {
-            context.put( "doxiaSiteRendererVersion", properties.getProperty( "version" ) );
+            Properties properties = new Properties();
+            try ( InputStream in = inputStream )
+            {
+                properties.load( in );
+                context.put( "doxiaSiteRendererVersion", properties.getProperty( "version" ) );
+            }
+            catch ( IOException e )
+            {
+                getLogger().debug( "Failed to load pom.properties, so doxiaVersion is not available"
+                        + " in the Velocity context." );
+            }
         }
 
         // Add user properties
