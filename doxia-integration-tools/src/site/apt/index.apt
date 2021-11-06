@@ -51,8 +51,8 @@ Maven Doxia Integration Tools
   * with <<late>> interpolation, replacement happens <<after>> inheritance. This is the classical behaviour in Maven pom,
 
   * with <<early>> interpolation, replacement happens <<before>> inheritance: this was the default behaviour for <<<project.*>>>
-  values until Doxia Sitetools 1.7, when these early and late interpolation definitions didn't exist.
-  Since Doxia Sitetools 1.7.1, early interpolation happens for <<<this.*>>> values.
+  values until Doxia Sitetools 1.7 (used in {{{/plugins/maven-site-plugin/history.html} Maven Site Plugin 3.5}}), when these early and late interpolation definitions didn't exist.
+  Since Doxia Sitetools 1.7.1 (used in {{{/plugins/maven-site-plugin/history.html} Maven Site Plugin 3.5.1}}), early interpolation happens for <<<this.*>>> values.
 
   []
 

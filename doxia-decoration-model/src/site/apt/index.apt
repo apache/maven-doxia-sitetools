@@ -46,3 +46,6 @@ Doxia Sitetool Decoration Model
  with its <<<DefaultDecorationModelInheritanceAssembler>>> implementation
  ({{{./xref/org/apache/maven/doxia/site/decoration/inheritance/DefaultDecorationModelInheritanceAssembler.html}source}}).
 
+* Interpolation
+
+ Interpolation is not done here: see {{{../doxia-integration-tools/} Doxia Integration Tools}} documentation for more details.
