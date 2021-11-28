@@ -79,6 +79,7 @@ import com.lowagie.text.ElementTags;
  * @author ltheussl
  * @since 1.1
  */
+@Deprecated
 @Component( role = PdfRenderer.class, hint = "itext" )
 public class ITextPdfRenderer
     extends AbstractPdfRenderer
@@ -611,7 +612,7 @@ public class ITextPdfRenderer
                     {
                         String doc = href + "." + extension;
                         File source = new File( moduleBasedir, doc );
-    
+
                         // Velocity file?
                         if ( !source.exists() )
                         {
@@ -625,7 +626,7 @@ public class ITextPdfRenderer
                             }
                             source = new File( moduleBasedir, doc );
                         }
-    
+
                         if ( source.exists() )
                         {
                             String outputITextName = doc.substring( 0, doc.lastIndexOf( '.' ) + 1 ) + "xml";
@@ -635,7 +636,7 @@ public class ITextPdfRenderer
                             {
                                 outputITextFileTmp.getParentFile().mkdirs();
                             }
-    
+
                             iTextFiles.add( outputITextFileTmp );
                             parse( source, module, outputITextFileTmp, context );
                         }

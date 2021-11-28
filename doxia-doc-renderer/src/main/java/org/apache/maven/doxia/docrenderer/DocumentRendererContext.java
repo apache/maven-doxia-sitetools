@@ -30,6 +30,7 @@ import org.codehaus.plexus.util.ReaderFactory;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @since 1.1.2
  */
+@Deprecated
 public class DocumentRendererContext
 {
     private String inputEncoding = ReaderFactory.UTF_8;

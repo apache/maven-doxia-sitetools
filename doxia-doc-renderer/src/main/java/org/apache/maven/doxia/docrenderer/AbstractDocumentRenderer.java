@@ -69,6 +69,7 @@ import org.codehaus.plexus.velocity.VelocityComponent;
  * @author ltheussl
  * @since 1.1
  */
+@Deprecated
 public abstract class AbstractDocumentRenderer
     extends AbstractLogEnabled
     implements DocumentRenderer

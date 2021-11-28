@@ -32,6 +32,7 @@ import org.apache.maven.doxia.document.DocumentModel;
  * @author ltheussl
  * @since 1.1
  */
+@Deprecated
 public interface DocumentRenderer
 {
     /** Plexus lookup role. */

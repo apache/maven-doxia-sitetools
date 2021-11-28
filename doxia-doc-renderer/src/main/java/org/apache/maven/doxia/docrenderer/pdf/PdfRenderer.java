@@ -30,6 +30,7 @@ import org.apache.maven.doxia.docrenderer.DocumentRendererException;
  * @author ltheussl
  * @since 1.1
  */
+@Deprecated
 public interface PdfRenderer
     extends DocumentRenderer
 {

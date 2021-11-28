@@ -34,6 +34,7 @@ import org.apache.maven.doxia.parser.module.ParserModule;
  * @author ltheussl
  * @since 1.1
  */
+@Deprecated
 public abstract class AbstractPdfRenderer
     extends AbstractDocumentRenderer
     implements PdfRenderer

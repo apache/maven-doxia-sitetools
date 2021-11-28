@@ -28,6 +28,7 @@ import java.io.IOException;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @deprecated Since 1.1, use {@link DocumentRenderer} instead.
  */
+@Deprecated
 public interface DocRenderer
 {
     /** Plexus lookup. */
