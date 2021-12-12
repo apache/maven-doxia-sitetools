@@ -69,7 +69,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.11</doxiaVersion>
+    <doxiaVersion>1.11.1</doxiaVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
     <project.build.outputTimestamp>2021-12-10T20:38:39Z</project.build.outputTimestamp>
   </properties>
