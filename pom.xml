@@ -31,7 +31,7 @@ under the License.
 
   <groupId>org.apache.maven.doxia</groupId>
   <artifactId>doxia-sitetools</artifactId>
-  <version>1.11.1</version>
+  <version>1.11.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Doxia Sitetools</name>
@@ -51,7 +51,7 @@ under the License.
     <connection>scm:git:https://gitbox.apache.org/repos/asf/maven-doxia-sitetools.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/maven-doxia-sitetools.git</developerConnection>
     <url>https://github.com/apache/maven-doxia-sitetools/tree/${project.scm.tag}</url>
-    <tag>doxia-sitetools-1.11.1</tag>
+    <tag>master</tag>
   </scm>
   <issueManagement>
     <system>jira</system>
@@ -71,7 +71,7 @@ under the License.
   <properties>
     <doxiaVersion>1.11.1</doxiaVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
-    <project.build.outputTimestamp>2021-12-12T17:08:08Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2021-12-12T17:08:52Z</project.build.outputTimestamp>
   </properties>
 
   <dependencyManagement>
