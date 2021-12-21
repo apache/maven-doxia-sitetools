@@ -432,7 +432,7 @@ public class DefaultSiteRenderer
             }
             sink.enableLogging( new PlexusLoggerWrapper( getLogger() ) );
 
-            doxia.parse( reader, docRenderingContext.getParserId(), sink );
+            doxia.parse( reader, docRenderingContext.getParserId(), sink, docRenderingContext.getInputName() );
         }
         catch ( ParserNotFoundException e )
         {
