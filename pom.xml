@@ -44,7 +44,6 @@ under the License.
     <module>doxia-skin-model</module>
     <module>doxia-integration-tools</module>
     <module>doxia-site-renderer</module>
-    <module>doxia-doc-renderer</module>
   </modules>
 
   <scm>
@@ -345,10 +344,6 @@ under the License.
                 <group>
                   <title>Doxia Integration Tools</title>
                   <packages>org.apache.maven.doxia.tools*</packages>
-                </group>
-                <group>
-                  <title>Doxia Document Renderer</title>
-                  <packages>org.apache.maven.doxia.docrenderer*</packages>
                 </group>
               </groups>
             </configuration>
