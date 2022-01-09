@@ -34,10 +34,6 @@
   <name>Doxia Sitetools :: Integration Tools</name>
   <description>A collection of tools to help the integration of Doxia Sitetools in Maven plugins.</description>
 
-  <properties>
-    <mavenVersion>2.2.1</mavenVersion>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>

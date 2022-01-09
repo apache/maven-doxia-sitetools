@@ -45,9 +45,9 @@ import java.util.zip.ZipEntry;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.parser.ParseException;
-import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
@@ -359,7 +359,8 @@ public class DefaultSiteRendererTest
          */
         attributes.put( "doxiaSiteRendererVersion", "1.7-bogus" );
 
-        Artifact skin = new DefaultArtifact( "org.group", "artifact", "1.1", null, "jar", "", null );
+        Artifact skin = new DefaultArtifact( "org.group", "artifact",
+            VersionRange.createFromVersion( "1.1" ), null, "jar", "", null );
         skin.setFile( skinFile );
         SiteRenderingContext siteRenderingContext =
             renderer.createContextForSkin( skin, attributes, new DecorationModel(), "defaultWindowTitle",
