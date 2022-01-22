@@ -32,15 +32,11 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -66,7 +62,6 @@ import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.PublishDate;
 import org.apache.maven.doxia.site.skin.SkinModel;
 import org.apache.maven.doxia.site.skin.io.xpp3.SkinXpp3Reader;
 import org.apache.maven.doxia.parser.module.ParserModule;
@@ -103,7 +98,6 @@ import org.apache.velocity.tools.generic.XmlTool;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -142,9 +136,6 @@ public class DefaultSiteRenderer
 
     @Requirement
     private Doxia doxia;
-
-    @Requirement
-    private I18N i18n;
 
     @Requirement
     private PlexusContainer plexus;
@@ -560,15 +551,7 @@ public class DefaultSiteRenderer
         context.put( "locale", locale );
         context.put( "supportedLocales", Collections.unmodifiableList( siteRenderingContext.getSiteLocales() ) );
 
-        context.put( "currentDate", new Date() );
-        SimpleDateFormat sdf = new SimpleDateFormat( "yyyyMMdd" );
-        context.put( "dateRevision", sdf.format( new Date() ) );
-
         context.put( "publishDate", siteRenderingContext.getPublishDate() );
-
-        PublishDate publishDate = siteRenderingContext.getDecoration().getPublishDate();
-        DateFormat dateFormat = new SimpleDateFormat( publishDate.getFormat(), locale );
-        context.put( "dateFormat", dateFormat );
 
         // doxiaSiteRendererVersion
         InputStream inputStream = this.getClass().getResourceAsStream( "/META-INF/"
@@ -609,11 +592,7 @@ public class DefaultSiteRenderer
 
         context.put( "PathTool", new PathTool() );
 
-        context.put( "FileUtils", new FileUtils() );
-
         context.put( "StringUtils", new StringUtils() );
-
-        context.put( "i18n", i18n );
 
         context.put( "plexus", plexus );
         return context;
@@ -641,54 +620,34 @@ public class DefaultSiteRenderer
         context.put( "shortTitle", content.getTitle() );
 
         // DOXIASITETOOLS-70: Prepend the project name to the title, if any
-        String title = "";
+        StringBuilder title = new StringBuilder();
         if ( siteRenderingContext.getDecoration() != null
                 && siteRenderingContext.getDecoration().getName() != null )
         {
-            title = siteRenderingContext.getDecoration().getName();
+            title.append( siteRenderingContext.getDecoration().getName() );
         }
         else if ( siteRenderingContext.getDefaultWindowTitle() != null )
         {
-            title = siteRenderingContext.getDefaultWindowTitle();
+            title.append( siteRenderingContext.getDefaultWindowTitle() );
         }
 
-        if ( title.length() > 0 )
+        if ( title.length() > 0 && StringUtils.isNotEmpty( content.getTitle() ) )
         {
-            title += " &#x2013; "; // Symbol Name: En Dash, Html Entity: &ndash;
+            title.append( " &#x2013; " ); // Symbol Name: En Dash, Html Entity: &ndash;
         }
-        title += content.getTitle();
+        if ( StringUtils.isNotEmpty( content.getTitle() ) )
+        {
+            title.append( content.getTitle() );
+        }
 
-        context.put( "title", title );
+        context.put( "title", title.length() > 0 ? title.toString() : null );
 
         context.put( "headContent", content.getHead() );
 
         context.put( "bodyContent", content.getBody() );
 
         // document date (got from Doxia Sink date() API)
-        String documentDate = content.getDate();
-        if ( StringUtils.isNotEmpty( documentDate ) )
-        {
-            context.put( "documentDate", documentDate );
-
-            // deprecated variables that rework the document date, suppose one semantics over others
-            // (ie creation date, while it may be last modification date if the document writer decided so)
-            // see DOXIASITETOOLS-20 for the beginning and DOXIASITETOOLS-164 for the end of this story
-            try
-            {
-                // we support only ISO 8601 date
-                Date creationDate = new SimpleDateFormat( "yyyy-MM-dd" ).parse( documentDate );
-
-                context.put( "creationDate", creationDate );
-                SimpleDateFormat sdf = new SimpleDateFormat( "yyyyMMdd" );
-                context.put( "dateCreation", sdf.format( creationDate ) );
-            }
-            catch ( java.text.ParseException e )
-            {
-                LOGGER.warn( "Could not parse date '" + documentDate + "' from "
-                    + content.getRenderingContext().getInputName()
-                    + " (expected yyyy-MM-dd format), ignoring!" );
-            }
-        }
+        context.put( "documentDate", content.getDate() );
 
         // document rendering context, to get eventual inputName
         context.put( "docRenderingContext", content.getRenderingContext() );
@@ -898,21 +857,6 @@ public class DefaultSiteRenderer
         {
             throw new RendererException( "Invalid skin doxia-sitetools prerequisite: " + prerequisite, e );
         }
-    }
-
-    /** {@inheritDoc} */
-    @Deprecated
-    public SiteRenderingContext createContextForTemplate( File templateFile, Map<String, ?> attributes,
-                                                          DecorationModel decoration, String defaultWindowTitle,
-                                                          Locale locale )
-            throws MalformedURLException
-    {
-        SiteRenderingContext context = createSiteRenderingContext( attributes, decoration, defaultWindowTitle, locale );
-
-        context.setTemplateName( templateFile.getName() );
-        context.setTemplateClassLoader( new URLClassLoader( new URL[]{templateFile.getParentFile().toURI().toURL()} ) );
-
-        return context;
     }
 
     /** {@inheritDoc} */

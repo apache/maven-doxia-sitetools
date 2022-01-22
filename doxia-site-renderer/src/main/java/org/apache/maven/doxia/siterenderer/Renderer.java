@@ -24,14 +24,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 
 /**
  * <p>Site Renderer interface: render a collection of documents into a site, ie decored with a site template
@@ -58,19 +56,6 @@ public interface Renderer // TODO rename to SiteRenderer
     void render( Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext,
                  File outputDirectory )
         throws RendererException, IOException;
-
-    /**
-     * Generate a document output from a Doxia SiteRenderer Sink, i.e. merge the document content into
-     * the site template.
-     *
-     * @param writer the Writer to use.
-     * @param sink the Site Renderer Sink that received the Doxia events during document content rendering.
-     * @param siteRenderingContext the SiteRenderingContext to use.
-     * @throws RendererException if it bombs.
-     * @deprecated since 1.8, use mergeDocumentIntoSite
-     */
-    void generateDocument( Writer writer, SiteRendererSink sink, SiteRenderingContext siteRenderingContext )
-        throws RendererException;
 
     /**
      * Generate a document output integrated in a site from a document content,
@@ -103,38 +88,6 @@ public interface Renderer // TODO rename to SiteRenderer
         throws RendererException, IOException;
 
     /**
-     * Create a Site Rendering Context for a site using a local template.
-     *
-     * @param templateFile template file
-     * @param attributes attributes to use
-     * @param decoration a decoration model
-     * @param defaultWindowTitle default window title
-     * @param locale locale to use
-     * @return a SiteRenderingContext.
-     * @throws MalformedURLException if it bombs.
-     * @since 1.7, had an additional skinFile parameter before
-     * @deprecated Deprecated without replacement, use skins only.
-     * @see #createContextForSkin(Artifact, Map, DecorationModel, String, Locale)
-     */
-    @Deprecated
-    SiteRenderingContext createContextForTemplate( File templateFile, Map<String, ?> attributes,
-                                                   DecorationModel decoration, String defaultWindowTitle,
-                                                   Locale locale )
-        throws MalformedURLException;
-
-    /**
-     * Copy resource files.
-     *
-     * @param siteRenderingContext the SiteRenderingContext to use
-     * @param resourcesDirectory resources directory as file
-     * @param outputDirectory output directory as file
-     * @throws IOException if it bombs.
-     * @deprecated since 1.7, use copyResources without resourcesDirectory parameter
-     */
-    void copyResources( SiteRenderingContext siteRenderingContext, File resourcesDirectory, File outputDirectory )
-        throws IOException;
-
-    /**
      * Copy resource files from skin, template, and site resources.
      *
      * @param siteRenderingContext the SiteRenderingContext to use.
@@ -144,18 +97,6 @@ public interface Renderer // TODO rename to SiteRenderer
      */
     void copyResources( SiteRenderingContext siteRenderingContext, File outputDirectory )
         throws IOException;
-
-    /**
-     * Locate Doxia document source files in the site source context.
-     *
-     * @param siteRenderingContext the SiteRenderingContext to use
-     * @return the Doxia document renderers in a Map keyed by output file name.
-     * @throws IOException if it bombs.
-     * @throws RendererException if it bombs.
-     * @deprecated since 1.8, use locateDocumentFiles with editable parameter
-     */
-    Map<String, DocumentRenderer> locateDocumentFiles( SiteRenderingContext siteRenderingContext )
-        throws IOException, RendererException;
 
     /**
      * Locate Doxia document source files in the site source context.

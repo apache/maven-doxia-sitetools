@@ -32,7 +32,7 @@ Maven Doxia Integration Tools
 
   This shared component has some utilities that are useful when integrating Doxia in Maven,
   mainly for site generation and report creation.
-  
+
   The main entry point is the
   {{{./apidocs/org/apache/maven/doxia/tools/SiteTool.html}SiteTool}} Plexus component.
 
@@ -58,16 +58,15 @@ Maven Doxia Integration Tools
 
   Values are evaluated in sequence from different syntaxes:
 
-*-------------+--------------+--------------------+------------------+
-|| late value || early value || evaluation result || common examples ||
-*-------------+--------------+--------------------+------------------+
-| <<<project.*>>>\
-<<<*>>> (<deprecated>) | <<<this.*>>> | POM content (see {{{/ref/current/maven-model/maven.html}POM reference}}) | <<<$\{project.version\}>>>\
-              |              |                    | <<<$\{this.url\}>>>
-*-------------+--------------+--------------------+------------------+
-| <<<*>>> | <<<this.*>>> | model properties, such as project properties set in the pom | <<<$\{any.key\}>>>\
-              |              |                    | <<<$\{this.any.key\}>>>
-*-------------+--------------+--------------------+------------------+
+*-----------------+--------------+--------------------+------------------+
+|| late value     || early value || evaluation result || common examples ||
+*-----------------+--------------+--------------------+------------------+
+| <<<project.*>>> | <<<this.*>>> | POM content (see {{{/ref/current/maven-model/maven.html}POM reference}}) | <<<$\{project.version\}>>>\
+                  |              |                    | <<<$\{this.url\}>>>
+*-----------------+--------------+--------------------+------------------+
+| <<<*>>>         | <<<this.*>>> | model properties, such as project properties set in the pom | <<<$\{any.key\}>>>\
+                  |              |                    | <<<$\{this.any.key\}>>>
+*-----------------+--------------+--------------------+------------------+
 | <<<env.*>>>\
-<<<*>>>       |              | environment variables | <<<$\{env.PATH\}>>>\
-*-------------+--------------+--------------------+------------------+
+<<<*>>>           |              | environment variables | <<<$\{env.PATH\}>>>
+*-----------------+--------------+--------------------+------------------+

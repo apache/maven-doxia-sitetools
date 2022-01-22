@@ -49,9 +49,9 @@ public class SiteRendererSink
     extends Xhtml5Sink
     implements Sink, DocumentContent
 {
-    private String date = "";
+    private String date;
 
-    private String title = "";
+    private String title;
 
     private List<String> authors = new ArrayList<String>();
 
@@ -336,13 +336,17 @@ public class SiteRendererSink
     /** {@inheritDoc} */
     public String getBody()
     {
-        return writer.toString();
+        String body = writer.toString();
+
+        return body.length() > 0 ? body : null;
     }
 
     /** {@inheritDoc} */
     public String getHead()
     {
-        return headWriter.toString();
+        String head = headWriter.toString();
+
+        return head.length() > 0 ? head : null;
     }
 
     /** {@inheritDoc} */
