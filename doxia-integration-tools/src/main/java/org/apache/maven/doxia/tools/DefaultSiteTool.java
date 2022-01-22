@@ -401,43 +401,6 @@ public class DefaultSiteTool
         }
     }
 
-    /**
-     * Read site descriptor content from Reader, adding support for deprecated <code>${reports}</code>,
-     * <code>${parentProject}</code> and <code>${modules}</code> tags.
-     *
-     * @param reader
-     * @return the input content interpolated with deprecated tags
-     * @throws IOException
-     */
-    private String readSiteDescriptor( Reader reader, String projectId )
-        throws IOException
-    {
-        String siteDescriptorContent = IOUtil.toString( reader );
-
-        // This is to support the deprecated ${reports}, ${parentProject} and ${modules} tags.
-        Properties props = new Properties();
-        props.put( "reports", "<menu ref=\"reports\"/>" );
-        props.put( "modules", "<menu ref=\"modules\"/>" );
-        props.put( "parentProject", "<menu ref=\"parent\"/>" );
-
-        // warn if interpolation required
-        for ( Object prop : props.keySet() )
-        {
-            if ( siteDescriptorContent.contains( "$" + prop ) )
-            {
-                LOGGER.warn( "Site descriptor for " + projectId + " contains $" + prop
-                    + ": should be replaced with " + props.getProperty( (String) prop ) );
-            }
-            if ( siteDescriptorContent.contains( "${" + prop + "}" ) )
-            {
-                LOGGER.warn( "Site descriptor for " + projectId + " contains ${" + prop
-                    + "}: should be replaced with " + props.getProperty( (String) prop ) );
-            }
-        }
-
-        return StringUtils.interpolate( siteDescriptorContent, props );
-    }
-
     /** {@inheritDoc} */
     public DecorationModel getDecorationModel( File siteDirectory, Locale locale, MavenProject project,
                                                List<MavenProject> reactorProjects, ArtifactRepository localRepository,
@@ -469,7 +432,7 @@ public class DefaultSiteTool
             {
                 // Note the default is not a super class - it is used when nothing else is found
                 reader = ReaderFactory.newXmlReader( getClass().getResourceAsStream( "/default-site.xml" ) );
-                siteDescriptorContent = readSiteDescriptor( reader, "default-site.xml" );
+                siteDescriptorContent = IOUtil.toString( reader );
             }
             catch ( IOException e )
             {
@@ -1176,7 +1139,7 @@ public class DefaultSiteTool
 
                 siteDescriptorReader = ReaderFactory.newXmlReader( siteDescriptor );
 
-                String siteDescriptorContent = readSiteDescriptor( siteDescriptorReader, project.getId() );
+                String siteDescriptorContent = IOUtil.toString( siteDescriptorReader );
 
                 // interpolate ${this.*} = early interpolation
                 siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent, true );

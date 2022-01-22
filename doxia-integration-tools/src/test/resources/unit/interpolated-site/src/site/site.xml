@@ -38,6 +38,6 @@ under the License.
       <item name="Test ${project.name}" href="/test.html"/>
       <item name="Test ${JAVA_HOME}" href="/test.html"/>
     </menu>
-    ${reports}
+    <menu ref="reports"/>
   </body>
 </project>

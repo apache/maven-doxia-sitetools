@@ -40,6 +40,6 @@ under the License.
     <menu name="Overview">
       <item name="Test" href="/test.html"/>
     </menu>
-    ${reports}
+    <menu ref="reports"/>
   </body>
 </project>
