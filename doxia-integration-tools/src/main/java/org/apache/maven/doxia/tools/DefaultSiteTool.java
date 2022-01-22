@@ -64,7 +64,6 @@ import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
@@ -76,6 +75,8 @@ import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of the site tool.
@@ -84,9 +85,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 @Component( role = SiteTool.class )
 public class DefaultSiteTool
-    extends AbstractLogEnabled
     implements SiteTool
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger( DefaultSiteTool.class );
+
     // ----------------------------------------------------------------------
     // Components
     // ----------------------------------------------------------------------
@@ -182,7 +184,7 @@ public class DefaultSiteTool
 
     /**
      * This method is not implemented according to the URI specification and has many weird
-     * corner cases where it doesn't do the right thing. Please consider using a better 
+     * corner cases where it doesn't do the right thing. Please consider using a better
      * implemented method from a different library such as org.apache.http.client.utils.URIUtils#resolve.
      */
     @Deprecated
@@ -190,17 +192,17 @@ public class DefaultSiteTool
     {
         checkNotNull( "to", to );
         checkNotNull( "from", from );
-        
+
         if ( to.contains( ":" ) && from.contains( ":" ) )
         {
             String toScheme = to.substring( 0, to.lastIndexOf( ':' ) );
             String fromScheme = from.substring( 0, from.lastIndexOf( ':' ) );
-            if ( !toScheme.equals( fromScheme ) ) 
+            if ( !toScheme.equals( fromScheme ) )
             {
-                return to; 
+                return to;
             }
         }
-        
+
         URL toUrl = null;
         URL fromUrl = null;
 
@@ -219,7 +221,7 @@ public class DefaultSiteTool
             }
             catch ( MalformedURLException e1 )
             {
-                getLogger().warn( "Unable to load a URL for '" + to + "': " + e.getMessage() );
+                LOGGER.warn( "Unable to load a URL for '" + to + "': " + e.getMessage() );
                 return to;
             }
         }
@@ -236,7 +238,7 @@ public class DefaultSiteTool
             }
             catch ( MalformedURLException e1 )
             {
-                getLogger().warn( "Unable to load a URL for '" + from + "': " + e.getMessage() );
+                LOGGER.warn( "Unable to load a URL for '" + from + "': " + e.getMessage() );
                 return to;
             }
         }
@@ -279,9 +281,9 @@ public class DefaultSiteTool
             relativePath = to;
         }
 
-        if ( getLogger().isDebugEnabled() && !relativePath.toString().equals( to ) )
+        if ( LOGGER.isDebugEnabled() && !relativePath.toString().equals( to ) )
         {
-            getLogger().debug( "Mapped url: " + to + " to relative path: " + relativePath );
+            LOGGER.debug( "Mapped url: " + to + " to relative path: " + relativePath );
         }
 
         return relativePath;
@@ -385,7 +387,7 @@ public class DefaultSiteTool
         }
         catch ( ArtifactNotFoundException e )
         {
-            getLogger().debug( "ArtifactNotFoundException: Unable to locate site descriptor: " + e );
+            LOGGER.debug( "ArtifactNotFoundException: Unable to locate site descriptor: " + e );
             return null;
         }
         catch ( ArtifactResolutionException e )
@@ -404,7 +406,7 @@ public class DefaultSiteTool
      * <code>${parentProject}</code> and <code>${modules}</code> tags.
      *
      * @param reader
-     * @return the input content interpolated with deprecated tags 
+     * @return the input content interpolated with deprecated tags
      * @throws IOException
      */
     private String readSiteDescriptor( Reader reader, String projectId )
@@ -423,19 +425,19 @@ public class DefaultSiteTool
         {
             if ( siteDescriptorContent.contains( "$" + prop ) )
             {
-                getLogger().warn( "Site descriptor for " + projectId + " contains $" + prop
+                LOGGER.warn( "Site descriptor for " + projectId + " contains $" + prop
                     + ": should be replaced with " + props.getProperty( (String) prop ) );
             }
             if ( siteDescriptorContent.contains( "${" + prop + "}" ) )
             {
-                getLogger().warn( "Site descriptor for " + projectId + " contains ${" + prop
+                LOGGER.warn( "Site descriptor for " + projectId + " contains ${" + prop
                     + "}: should be replaced with " + props.getProperty( (String) prop ) );
             }
         }
 
         return StringUtils.interpolate( siteDescriptorContent, props );
     }
-    
+
     /** {@inheritDoc} */
     public DecorationModel getDecorationModel( File siteDirectory, Locale locale, MavenProject project,
                                                List<MavenProject> reactorProjects, ArtifactRepository localRepository,
@@ -449,7 +451,7 @@ public class DefaultSiteTool
 
         final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale;
 
-        getLogger().debug( "Computing decoration model of " + project.getId() + " for locale " + llocale );
+        LOGGER.debug( "Computing decoration model of " + project.getId() + " for locale " + llocale );
 
         Map.Entry<DecorationModel, MavenProject> result =
             getDecorationModel( 0, siteDirectory, llocale, project, reactorProjects, localRepository, repositories );
@@ -458,7 +460,7 @@ public class DefaultSiteTool
 
         if ( decorationModel == null )
         {
-            getLogger().debug( "Using default site descriptor" );
+            LOGGER.debug( "Using default site descriptor" );
 
             String siteDescriptorContent;
 
@@ -594,7 +596,7 @@ public class DefaultSiteTool
                 {
                     parentProject = reactorProject;
 
-                    getLogger().debug( "Parent project " + origParent.getId() + " picked from reactor" );
+                    LOGGER.debug( "Parent project " + origParent.getId() + " picked from reactor" );
                     break;
                 }
             }
@@ -624,14 +626,14 @@ public class DefaultSiteTool
                         {
                             parentProject = mavenProject;
 
-                            getLogger().debug( "Parent project " + origParent.getId() + " loaded from a relative path: "
+                            LOGGER.debug( "Parent project " + origParent.getId() + " loaded from a relative path: "
                                 + relativePath );
                         }
                     }
                 }
                 catch ( ProjectBuildingException e )
                 {
-                    getLogger().info( "Unable to load parent project " + origParent.getId() + " from a relative path: "
+                    LOGGER.info( "Unable to load parent project " + origParent.getId() + " from a relative path: "
                         + e.getMessage() );
                 }
             }
@@ -643,11 +645,11 @@ public class DefaultSiteTool
                     parentProject = mavenProjectBuilder.buildFromRepository( aProject.getParentArtifact(), aProject
                         .getRemoteArtifactRepositories(), localRepository );
 
-                    getLogger().debug( "Parent project " + origParent.getId() + " loaded from repository" );
+                    LOGGER.debug( "Parent project " + origParent.getId() + " loaded from repository" );
                 }
                 catch ( ProjectBuildingException e )
                 {
-                    getLogger().warn( "Unable to load parent project " + origParent.getId() + " from repository: "
+                    LOGGER.warn( "Unable to load parent project " + origParent.getId() + " from repository: "
                         + e.getMessage() );
                 }
             }
@@ -658,7 +660,7 @@ public class DefaultSiteTool
 
                 parentProject = origParent;
 
-                getLogger().debug( "Parent project " + origParent.getId() + " picked from original value" );
+                LOGGER.debug( "Parent project " + origParent.getId() + " picked from original value" );
             }
         }
         return parentProject;
@@ -727,7 +729,7 @@ public class DefaultSiteTool
         // Only add the parent menu if we were able to find a URL for it
         if ( parentUrl == null )
         {
-            getLogger().warn( "Unable to find a URL to the parent project. The parent menu will NOT be added." );
+            LOGGER.warn( "Unable to find a URL to the parent project. The parent menu will NOT be added." );
         }
         else
         {
@@ -754,7 +756,7 @@ public class DefaultSiteTool
      * @param localRepository the Maven local repository, not null.
      * @param keepInheritedRefs used for inherited references.
      * @throws SiteToolException if any
-     * @throws IOException 
+     * @throws IOException
      */
     private void populateModulesMenu( DecorationModel decorationModel, Locale locale, MavenProject project,
                                      List<MavenProject> reactorProjects, ArtifactRepository localRepository,
@@ -794,7 +796,7 @@ public class DefaultSiteTool
 
                 if ( moduleProject == null )
                 {
-                    getLogger().warn( "Module " + module
+                    LOGGER.warn( "Module " + module
                         + " not found in reactor: loading locally" );
 
                     File f = new File( project.getBasedir(), module + "/pom.xml" );
@@ -811,8 +813,8 @@ public class DefaultSiteTool
                     }
                     else
                     {
-                        getLogger().warn( "No filesystem module-POM available" );
-    
+                        LOGGER.warn( "No filesystem module-POM available" );
+
                         moduleProject = new MavenProject();
                         moduleProject.setName( module );
                         moduleProject.setDistributionManagement( new DistributionManagement() );
@@ -926,9 +928,9 @@ public class DefaultSiteTool
 
             if ( !Arrays.asList( Locale.getAvailableLocales() ).contains( locale ) )
             {
-                if ( getLogger().isWarnEnabled() )
+                if ( LOGGER.isWarnEnabled() )
                 {
-                    getLogger().warn( "The locale defined by '" + locale
+                    LOGGER.warn( "The locale defined by '" + locale
                         + "' is not available in this Java Virtual Machine ("
                         + System.getProperty( "java.version" )
                         + " from " + System.getProperty( "java.vendor" ) + ") - IGNORING" );
@@ -941,9 +943,9 @@ public class DefaultSiteTool
                 && ( !i18n.getBundle( "site-tool", locale ).getLocale().getLanguage()
                     .equals( locale.getLanguage() ) ) )
             {
-                if ( getLogger().isWarnEnabled() )
+                if ( LOGGER.isWarnEnabled() )
                 {
-                    getLogger().warn( "The locale '" + locale + "' (" + locale.getDisplayName( Locale.ENGLISH )
+                    LOGGER.warn( "The locale '" + locale + "' (" + locale.getDisplayName( Locale.ENGLISH )
                         + ") is not currently supported by Maven Site - IGNORING."
                         + "\nContributions are welcome and greatly appreciated!"
                         + "\nIf you want to contribute a new translation, please visit "
@@ -994,9 +996,9 @@ public class DefaultSiteTool
         final int maxTokens = 3;
         if ( tokenizer.countTokens() > maxTokens )
         {
-            if ( getLogger().isWarnEnabled() )
+            if ( LOGGER.isWarnEnabled() )
             {
-                getLogger().warn( "Invalid java.util.Locale format for '" + localeCode + "' entry - IGNORING" );
+                LOGGER.warn( "Invalid java.util.Locale format for '" + localeCode + "' entry - IGNORING" );
             }
             return null;
         }
@@ -1076,13 +1078,13 @@ public class DefaultSiteTool
             }
             else
             {
-                getLogger().debug( "No site descriptor found for " + project.getId() + " for locale "
+                LOGGER.debug( "No site descriptor found for " + project.getId() + " for locale "
                     + locale.getLanguage() + ", trying without locale..." );
             }
         }
         catch ( ArtifactNotFoundException e )
         {
-            getLogger().debug( "Unable to locate site descriptor for locale " + locale.getLanguage() + ": " + e );
+            LOGGER.debug( "Unable to locate site descriptor for locale " + locale.getLanguage() + ": " + e );
 
             // we can afford to write an empty descriptor here as we don't expect it to turn up later in the remote
             // repository, because the parent was already released (and snapshots are updated automatically if changed)
@@ -1114,7 +1116,7 @@ public class DefaultSiteTool
             // we use zero length files to avoid re-resolution (see below)
             if ( result.length() == 0 )
             {
-                getLogger().debug( "No site descriptor found for " + project.getId() + " without locale." );
+                LOGGER.debug( "No site descriptor found for " + project.getId() + " without locale." );
                 result = null;
             }
         }
@@ -1169,7 +1171,7 @@ public class DefaultSiteTool
         {
             if ( siteDescriptor != null && siteDescriptor.exists() )
             {
-                getLogger().debug( "Reading" + ( depth == 0 ? "" : ( " parent level " + depth ) )
+                LOGGER.debug( "Reading" + ( depth == 0 ? "" : ( " parent level " + depth ) )
                     + " site descriptor from " + siteDescriptor );
 
                 siteDescriptorReader = ReaderFactory.newXmlReader( siteDescriptor );
@@ -1184,7 +1186,7 @@ public class DefaultSiteTool
             }
             else
             {
-                getLogger().debug( "No" + ( depth == 0 ? "" : ( " parent level " + depth ) ) + " site descriptor." );
+                LOGGER.debug( "No" + ( depth == 0 ? "" : ( " parent level " + depth ) ) + " site descriptor." );
             }
         }
         catch ( IOException e )
@@ -1198,13 +1200,13 @@ public class DefaultSiteTool
         }
 
         // 3. look for parent project
-        MavenProject parentProject = getParentProject( project, reactorProjects, localRepository ); 
+        MavenProject parentProject = getParentProject( project, reactorProjects, localRepository );
 
         // 4. merge with parent project DecorationModel
         if ( parentProject != null && ( decoration == null || decoration.isMergeParent() ) )
         {
             depth++;
-            getLogger().debug( "Looking for site descriptor of level " + depth + " parent project: "
+            LOGGER.debug( "Looking for site descriptor of level " + depth + " parent project: "
                 + parentProject.getId() );
 
             File parentSiteDirectory = null;
@@ -1240,9 +1242,9 @@ public class DefaultSiteTool
             // Merge the parent and child DecorationModels
             String projectDistMgmnt = getDistMgmntSiteUrl( project );
             String parentDistMgmnt = getDistMgmntSiteUrl( parentProject );
-            if ( getLogger().isDebugEnabled() )
+            if ( LOGGER.isDebugEnabled() )
             {
-                getLogger().debug( "Site decoration model inheritance: assembling child with level " + depth
+                LOGGER.debug( "Site decoration model inheritance: assembling child with level " + depth
                     + " parent: distributionManagement.site.url child = " + projectDistMgmnt + " and parent = "
                     + parentDistMgmnt );
             }

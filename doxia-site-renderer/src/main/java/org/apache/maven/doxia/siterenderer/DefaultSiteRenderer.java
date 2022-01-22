@@ -104,7 +104,6 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -115,6 +114,8 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.VelocityComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>DefaultSiteRenderer class.</p>
@@ -125,9 +126,10 @@ import org.codehaus.plexus.velocity.VelocityComponent;
  */
 @Component( role = Renderer.class )
 public class DefaultSiteRenderer
-    extends AbstractLogEnabled
     implements Renderer
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger( DefaultSiteRenderer.class );
+
     // ----------------------------------------------------------------------
     // Requirements
     // ----------------------------------------------------------------------
@@ -296,9 +298,9 @@ public class DefaultSiteRenderer
                                 + doc + "' clashes with existing '" + originalDoc + "'." );
                         }
 
-                        if ( getLogger().isWarnEnabled() )
+                        if ( LOGGER.isWarnEnabled() )
                         {
-                            getLogger().warn( "File '" + module.getSourceDirectory() + File.separator + doc
+                            LOGGER.warn( "File '" + module.getSourceDirectory() + File.separator + doc
                                 + "' could clash with existing '" + originalDoc + "'." );
                         }
                     }
@@ -332,9 +334,9 @@ public class DefaultSiteRenderer
                     outputFile.getParentFile().mkdirs();
                 }
 
-                if ( getLogger().isDebugEnabled() )
+                if ( LOGGER.isDebugEnabled() )
                 {
-                    getLogger().debug( "Generating " + outputFile );
+                    LOGGER.debug( "Generating " + outputFile );
                 }
 
                 Writer writer = null;
@@ -353,9 +355,9 @@ public class DefaultSiteRenderer
             }
             else
             {
-                if ( getLogger().isDebugEnabled() )
+                if ( LOGGER.isDebugEnabled() )
                 {
-                    getLogger().debug( inputFile + " unchanged, not regenerating..." );
+                    LOGGER.debug( inputFile + " unchanged, not regenerating..." );
                 }
             }
         }
@@ -381,7 +383,7 @@ public class DefaultSiteRenderer
             // TODO: DOXIA-111: the filter used here must be checked generally.
             if ( docRenderingContext.getAttribute( "velocity" ) != null )
             {
-                getLogger().debug( "Processing Velocity for " + docRenderingContext.getDoxiaSourcePath() );
+                LOGGER.debug( "Processing Velocity for " + docRenderingContext.getDoxiaSourcePath() );
                 try
                 {
                     Context vc = createDocumentVelocityContext( docRenderingContext, siteContext );
@@ -573,7 +575,7 @@ public class DefaultSiteRenderer
             + "maven/org.apache.maven.doxia/doxia-site-renderer/pom.properties" );
         if ( inputStream == null )
         {
-            getLogger().debug( "pom.properties for doxia-site-renderer could not be found." );
+            LOGGER.debug( "pom.properties for doxia-site-renderer could not be found." );
         }
         else
         {
@@ -585,7 +587,7 @@ public class DefaultSiteRenderer
             }
             catch ( IOException e )
             {
-                getLogger().debug( "Failed to load pom.properties, so doxiaVersion is not available"
+                LOGGER.debug( "Failed to load pom.properties, so doxiaVersion is not available"
                         + " in the Velocity context." );
             }
         }
@@ -682,7 +684,7 @@ public class DefaultSiteRenderer
             }
             catch ( java.text.ParseException e )
             {
-                getLogger().warn( "Could not parse date '" + documentDate + "' from "
+                LOGGER.warn( "Could not parse date '" + documentDate + "' from "
                     + content.getRenderingContext().getInputName()
                     + " (expected yyyy-MM-dd format), ignoring!" );
             }
@@ -708,7 +710,7 @@ public class DefaultSiteRenderer
     {
         String templateName = siteRenderingContext.getTemplateName();
 
-        getLogger().debug( "Processing Velocity for template " + templateName + " on "
+        LOGGER.debug( "Processing Velocity for template " + templateName + " on "
             + content.getRenderingContext().getInputName() );
 
         Context context = createSiteTemplateVelocityContext( content, siteRenderingContext );
@@ -884,9 +886,9 @@ public class DefaultSiteRenderer
                 matched = ( compareTo <= 0 );
             }
 
-            if ( getLogger().isDebugEnabled() )
+            if ( LOGGER.isDebugEnabled() )
             {
-                getLogger().debug( "Skin doxia-sitetools prerequisite: " + prerequisite + ", current: " + current
+                LOGGER.debug( "Skin doxia-sitetools prerequisite: " + prerequisite + ", current: " + current
                     + ", matched = " + matched );
             }
 
@@ -1049,16 +1051,16 @@ public class DefaultSiteRenderer
             // Create the subdirectory css if it doesn't exist, DOXIA-151
             File cssDirectory = new File( outputDirectory, "/css/" );
             boolean created = cssDirectory.mkdirs();
-            if ( created && getLogger().isDebugEnabled() )
+            if ( created && LOGGER.isDebugEnabled() )
             {
-                getLogger().debug(
+                LOGGER.debug(
                     "The directory '" + cssDirectory.getAbsolutePath() + "' did not exist. It was created." );
             }
 
             // If the file is not there - create an empty file, DOXIA-86
-            if ( getLogger().isDebugEnabled() )
+            if ( LOGGER.isDebugEnabled() )
             {
-                getLogger().debug(
+                LOGGER.debug(
                     "The file '" + siteCssFile.getAbsolutePath() + "' does not exist. Creating an empty file." );
             }
             Writer writer = null;
@@ -1130,7 +1132,7 @@ public class DefaultSiteRenderer
     private Reader validate( Reader source, String resource )
             throws ParseException, IOException
     {
-        getLogger().debug( "Validating: " + resource );
+        LOGGER.debug( "Validating: " + resource );
 
         try
         {

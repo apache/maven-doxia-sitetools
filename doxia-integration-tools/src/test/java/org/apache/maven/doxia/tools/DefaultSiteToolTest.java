@@ -27,24 +27,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.junit.Before;
-
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
 public class DefaultSiteToolTest
 {
-	
+
     private DefaultSiteTool tool = new DefaultSiteTool();
-    
-    @Before 
-    public void setUp() {
-    	Logger logger =  new ConsoleLogger(Logger.LEVEL_WARN, "tool");
-        tool.enableLogging(logger);
-    }
-	
+
     /**
      * test getNormalizedPath().
      */

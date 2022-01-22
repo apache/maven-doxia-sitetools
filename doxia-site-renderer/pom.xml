@@ -42,6 +42,11 @@ under the License.
       <version>3.0</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
     <!-- doxia -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
@@ -95,12 +100,18 @@ under the License.
       <artifactId>plexus-i18n</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
+      <groupId>org.eclipse.sisu</groupId>
+      <artifactId>org.eclipse.sisu.plexus</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-velocity</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -165,7 +176,6 @@ under the License.
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
       <classifier>no_aop</classifier>
-      <version>4.2.2</version>
       <scope>test</scope>
     </dependency>
       <dependency>
@@ -196,6 +206,11 @@ under the License.
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>2.28.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
