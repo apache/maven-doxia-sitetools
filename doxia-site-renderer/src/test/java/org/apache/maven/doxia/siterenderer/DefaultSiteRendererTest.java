@@ -316,34 +316,6 @@ public class DefaultSiteRendererTest
         assertEquals( expectedResult, renderResult );
     }
 
-    public void testVelocityToolManagerForTemplate()
-        throws Exception
-    {
-        StringWriter writer = new StringWriter();
-
-        File templateFile =
-            new File( getBasedir(), "target/test-classes/org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm" );
-        Map<String, Object> attributes = new HashMap<String, Object>();
-
-        /*
-         * We need to add doxiaSiteRendererVersion manually because version property from pom.properties
-         * is not available at test time in some cases.
-         */
-        attributes.put( "doxiaSiteRendererVersion", "1.7-bogus" );
-
-        SiteRenderingContext siteRenderingContext =
-            renderer.createContextForTemplate( templateFile, attributes, new DecorationModel(),
-                                               "defaultWindowTitle", Locale.ENGLISH );
-        RenderingContext context = new RenderingContext( new File( "" ), "document.html", "generator" );
-        SiteRendererSink sink = new SiteRendererSink( context );
-        renderer.mergeDocumentIntoSite( writer, sink, siteRenderingContext );
-
-        String renderResult = writer.toString();
-        InputStream in = getClass().getResourceAsStream( "velocity-toolmanager.expected.txt" );
-        String expectedResult = StringUtils.unifyLineSeparators( IOUtils.toString( in, StandardCharsets.UTF_8 ) );
-        assertEquals( expectedResult, renderResult );
-    }
-
     public void testVelocityToolManagerForSkin()
         throws Exception
     {

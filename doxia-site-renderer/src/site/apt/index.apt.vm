@@ -61,13 +61,7 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<decoration>>>                | {{{../doxia-decoration-model/apidocs/org/apache/maven/doxia/site/decoration/DecorationModel.html}<<<DecorationModel>>>}} | This is a model that represents the data in your {{{../doxia-decoration-model/decoration.html}<<<site.xml>>>}}. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<currentDate>>>               | <<<Date>>>           | <<Deprecated>>: use <<<date>>> or <<<date.systemDate>>>. The date when the site is rendered. |
-*---------------------------------+----------------------+-------------------------------+
 | <<<currentFileName>>>           | <<<String>>>         | The file name of the (HTML) document being rendered, relative to the site root. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<dateFormat>>>                | <<<DateFormat>>>     | <<Deprecated>>: use <<<date>>>, <<<date.format>>>, or <<<decoration.publishDate.format>>>. An instance of the date format as defined in <<<site.xml/publishDate/@format>>> (default: An instance of the default date format for the locale of the document being rendered. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<dateRevision>>>              | <<<String>>>         | <<Deprecated>>: same as <<<currentDate>>>. The date when the site is rendered, in the format "yyyyMMdd". |
 *---------------------------------+----------------------+-------------------------------+
 | <<<doxiaSiteRendererVersion>>>  | <<<String>>>         | The version of the Doxia Site Renderer in use. |
 *---------------------------------+----------------------+-------------------------------+
@@ -85,10 +79,6 @@ Doxia Sitetools - Site Renderer
 #set( $plexus = "http://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus" )
 *---------------------------------+------------------------------------------------------+-------------------------------+
 || Variable                       || Type                                                || Description                 ||
-*---------------------------------+------------------------------------------------------+-------------------------------+
-| <<<FileUtils>>>                 | {{{$plexus/util/FileUtils.html}<<<FileUtils>>>}}     | <<Deprecated>>                |
-*---------------------------------+------------------------------------------------------+-------------------------------+
-| <<<i18n>>>                      | {{{$plexus/i18n/I18N.html}<<<I18N>>>}}               | <<Deprecated>>: use <<<text>>>. |
 *---------------------------------+------------------------------------------------------+-------------------------------+
 | <<<PathTool>>>                  | {{{$plexus/util/PathTool.html}<<<PathTool>>>}}       |                               |
 *---------------------------------+------------------------------------------------------+-------------------------------+
@@ -173,10 +163,6 @@ Doxia Sitetools - Site Renderer
 | <<<authors>>>                   | <<<List\<String\>>>> | A list of authors from the source document. |
 *---------------------------------+----------------------+-------------------------------+
 | <<<bodyContent>>>               | <<<String>>>         | HTML body content of the Doxia generated output. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<dateCreation>>>              | <<<String>>>         | <<Deprecated>>: use <<<documentDate>>>. The date specified in the source document, in the format "yyyyMMdd". |
-*---------------------------------+----------------------+-------------------------------+
-| <<<creationDate>>>              | <<<Date>>>           | <<Deprecated>>: use <<<documentDate>>>. The date specified in the source document. |
 *---------------------------------+----------------------+-------------------------------+
 | <<<documentDate>>>              | <<<String>>>         | The date specified in the source document: semantics has to be chosen by document writer (document creation date, or document last modification date, or ...), and format is not enforced. |
 *---------------------------------+----------------------+-------------------------------+

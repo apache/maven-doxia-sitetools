@@ -70,7 +70,6 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
-import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
 import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
@@ -506,7 +505,7 @@ public class DefaultSiteTool
         }
         else
         {
-            interpolator.addValueSource( new ObjectBasedValueSource( aProject ) );
+            interpolator.addValueSource( new PrefixedObjectValueSource( "project.", aProject ) );
             interpolator.addValueSource( new MapBasedValueSource( aProject.getProperties() ) );
 
             try
@@ -524,7 +523,7 @@ public class DefaultSiteTool
         try
         {
             // FIXME: this does not escape xml entities, see MSITE-226, PLXCOMP-118
-            return interpolator.interpolate( siteDescriptorContent, isEarly ? null : "project" );
+            return interpolator.interpolate( siteDescriptorContent );
         }
         catch ( InterpolationException e )
         {

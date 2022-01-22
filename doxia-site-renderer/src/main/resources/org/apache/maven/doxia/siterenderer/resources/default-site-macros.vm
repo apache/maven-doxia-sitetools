@@ -354,22 +354,22 @@ $indent      </ul>##
 ##
 #**##if ( $datePosition.equalsIgnoreCase( $position ) )
 #*  *##if ( ( $datePosition.equalsIgnoreCase( "right" ) ) || ( $datePosition.equalsIgnoreCase( "bottom" ) ) )
-        $prefix <span id="publishDate">$i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateValue</span>
+        $prefix <span id="publishDate">$text.get( "template.lastpublished" ): $dateValue</span>
 #*    *##if ( $versionPosition.equalsIgnoreCase( $position ) )
-         | <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
+         | <span id="projectVersion">$text.get( "template.version" ): ${project.version}</span>
 #*    *##end
 #*  *##elseif ( ( $datePosition.equalsIgnoreCase( "navigation-bottom" ) ) || ( $datePosition.equalsIgnoreCase( "navigation-top" ) ) )
       <div id="lastPublished">
-        <span id="publishDate">$i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateValue</span>
+        <span id="publishDate">$text.get( "template.lastpublished" ): $dateValue</span>
 #*      *##if ( $versionPosition.equalsIgnoreCase( $position ) )
-           | <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
+           | <span id="projectVersion">$text.get( "template.version" ): ${project.version}</span>
 #*      *##end
       </div>
 #*    *##elseif ( $datePosition.equalsIgnoreCase( "left" ) )
       <div class="xleft">
-        <span id="publishDate">$i18n.getString( "site-renderer", $locale, "template.lastpublished" ): $dateValue</span>
+        <span id="publishDate">$text.get( "template.lastpublished" ): $dateValue</span>
 #*      *##if ( $versionPosition.equalsIgnoreCase( $position ) )
-           | <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
+           | <span id="projectVersion">$text.get( "template.version" ): ${project.version}</span>
 #*      *##end
 #*      *##if ( $breadcrumbs && $breadcrumbs.size() > 0 )
           | #breadcrumbs( $breadcrumbs )
@@ -378,14 +378,14 @@ $indent      </ul>##
 #*  *##end
 #**##elseif ( $versionPosition.equalsIgnoreCase( $position ) )
 #*  *##if ( ( $versionPosition.equalsIgnoreCase( "right" ) ) || ( $versionPosition.equalsIgnoreCase( "bottom" ) ) )
-      $prefix <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
+      $prefix <span id="projectVersion">$text.get( "template.version" ): ${project.version}</span>
 #*  *##elseif ( ( $versionPosition.equalsIgnoreCase( "navigation-bottom" ) ) || ( $versionPosition.equalsIgnoreCase( "navigation-top" ) ) )
       <div id="lastPublished">
-        <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
+        <span id="projectVersion">$text.get( "template.version" ): ${project.version}</span>
       </div>
 #*  *##elseif ( $versionPosition.equalsIgnoreCase( "left" ) )
       <div class="xleft">
-        <span id="projectVersion">$i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}</span>
+        <span id="projectVersion">$text.get( "template.version" ): ${project.version}</span>
 #*      *##if ( $breadcrumbs && $breadcrumbs.size() > 0 )
           | #breadcrumbs( $breadcrumbs )
 #*      *##end
@@ -413,7 +413,7 @@ $indent      </ul>##
 #*    *##if( $item.name )
 #*      *##set ( $name = $item.name )
 #*    *##else
-#*      *##set ( $name = $i18n.getString( "site-renderer", $locale, "template.builtby" )  )
+#*      *##set ( $name = $text.get( "template.builtby" )  )
 #*      *##set ( $name = "${name} Maven"  )
 #*    *##end
 ##
@@ -461,13 +461,13 @@ $indent      </ul>##
       </a>
 #*  *##end
 #*  *##if( $poweredBy.isEmpty() )
-      <a href="http://maven.apache.org/" title="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" class="poweredBy">
-        <img class="poweredBy" alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png" />
+      <a href="http://maven.apache.org/" title="$text.get( "template.builtby" ) Maven" class="poweredBy">
+        <img class="poweredBy" alt="$text.get( "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png" />
       </a>
 #*  *##end
 #**##else
-    <a href="http://maven.apache.org/" title="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" class="poweredBy">
-      <img class="poweredBy" alt="$i18n.getString( "site-renderer", $locale, "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png" />
+    <a href="http://maven.apache.org/" title="$text.get( "template.builtby" ) Maven" class="poweredBy">
+      <img class="poweredBy" alt="$text.get( "template.builtby" ) Maven" src="$relativePath/images/logos/maven-feather.png" />
     </a>
 #**##end
 #end

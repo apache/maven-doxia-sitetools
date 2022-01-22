@@ -40,7 +40,9 @@
 #if ( $documentDate )
     <meta name="date" content="$documentDate" />
 #end
+#if ( $title )
     <title>$title</title>
+#end
     <link rel="stylesheet" href="$relativePath/css/maven-base.css" />
     <link rel="stylesheet" href="$relativePath/css/maven-theme.css" />
     <link rel="stylesheet" href="$relativePath/css/site.css" />

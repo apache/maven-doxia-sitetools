@@ -372,9 +372,9 @@ public class SiteToolTest
         // href rebase
         assertEquals( "../../index.html", model.getBody().getBreadcrumbs().iterator().next().getHref() );
         Iterator<LinkItem> links = model.getBody().getLinks().iterator();
-        // late interpolation of pom content (which happens first: properties can't override)
+        // late interpolation of pom content
         assertEquals( "project.name = MSHARED-217 Child", links.next().getName() );
-        assertEquals( "name = MSHARED-217 Child", links.next().getName() );
+        assertEquals( "name = name property", links.next().getName() );
         // early interpolation: DOXIASITETOOLS-158
         assertEquals( "this.name = MSHARED-217 Parent", links.next().getName() );
 

@@ -55,12 +55,6 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
 
     private final String generator;
 
-    @Deprecated
-    public RenderingContext( File basedir, String document )
-    {
-        this( basedir, null, document, null, null, false, null );
-    }
-
     /**
      * <p>
      * Constructor for RenderingContext when document is not rendered from a Doxia markup source.
@@ -75,12 +69,6 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
     public RenderingContext( File basedir, String document, String generator )
     {
         this( basedir, null, document, null, null, false, generator );
-    }
-
-    @Deprecated
-    public RenderingContext( File basedir, String document, String parserId, String extension )
-    {
-        this( basedir, null, document, parserId, extension, false, null );
     }
 
     public RenderingContext( File basedir, String basedirRelativePath, String document, String parserId,

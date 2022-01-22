@@ -1,4 +1,4 @@
-$esc.html('Maven 2 & 3')
+$esc.html('Maven 3 & 4')
 $display.truncate("This is a long string.", 10)
 
 We have the following keys in the context:
