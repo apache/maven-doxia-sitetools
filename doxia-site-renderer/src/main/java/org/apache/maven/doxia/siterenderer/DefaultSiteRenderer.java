@@ -62,7 +62,6 @@ import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException
 import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.Doxia;
-import org.apache.maven.doxia.logging.PlexusLoggerWrapper;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
@@ -430,7 +429,6 @@ public class DefaultSiteRenderer
                         reader = ReaderFactory.newReader( doc, siteContext.getInputEncoding() );
                 }
             }
-            sink.enableLogging( new PlexusLoggerWrapper( getLogger() ) );
 
             doxia.parse( reader, docRenderingContext.getParserId(), sink, docRenderingContext.getInputName() );
         }
@@ -1138,7 +1136,7 @@ public class DefaultSiteRenderer
         {
             String content = IOUtil.toString( new BufferedReader( source ) );
 
-            new XmlValidator( new PlexusLoggerWrapper( getLogger() ) ).validate( content );
+            new XmlValidator( ).validate( content );
 
             return new StringReader( content );
         }

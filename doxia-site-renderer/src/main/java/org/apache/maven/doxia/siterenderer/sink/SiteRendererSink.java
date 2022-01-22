@@ -40,14 +40,14 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * Sink for site rendering of a document, to allow later merge document's output with a template.
  * During raw Doxia rendering, content is stored in multiple fields for later use when incorporating
- * into skin or template: title, date, authors, head, body 
+ * into skin or template: title, date, authors, head, body
  *
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  */
 @SuppressWarnings( "checkstyle:methodname" )
 public class SiteRendererSink
     extends Xhtml5Sink
-    implements Sink, org.codehaus.doxia.sink.Sink, DocumentContent
+    implements Sink, DocumentContent
 {
     private String date = "";
 

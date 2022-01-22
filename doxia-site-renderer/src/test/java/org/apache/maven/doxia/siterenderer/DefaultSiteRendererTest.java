@@ -258,7 +258,6 @@ public class DefaultSiteRendererTest
         verifyFaqPage();
         verifyAttributes();
         verifyMisc();
-        verifyDocbookPageExists();
         verifyApt();
         verifyExtensionInFilename();
         verifyNewlines();
@@ -519,17 +518,6 @@ public class DefaultSiteRendererTest
     /**
      * @throws Exception if something goes wrong.
      */
-    public void verifyDocbookPageExists()
-        throws Exception
-    {
-        File output = getTestFile( "target/output/docbook.html" );
-        assertNotNull( output );
-        assertTrue( output.exists() );
-    }
-
-    /**
-     * @throws Exception if something goes wrong.
-     */
     public void verifyApt()
         throws Exception
     {
@@ -561,13 +549,6 @@ public class DefaultSiteRendererTest
         checkNewlines( FileUtils.fileRead( getTestFile( "target/output/apt.html" ), "ISO-8859-1" ) );
         checkNewlines( FileUtils.fileRead( getTestFile( "target/output/cdc.html" ), "ISO-8859-1" ) );
         checkNewlines( FileUtils.fileRead( getTestFile( "target/output/interpolation.html" ), "ISO-8859-1" ) );
-        /* confluence */
-        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/confluence/anchor.html" ), "ISO-8859-1" ) );
-        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/confluence/code.html" ), "ISO-8859-1" ) );
-        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/confluence/table.html" ), "ISO-8859-1" ) );
-        /* docbook */
-        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/docbook.html" ), "ISO-8859-1" ) );
-        checkNewlines( FileUtils.fileRead( getTestFile( "target/output/sdocbook_full.html" ), "ISO-8859-1" ) );
         /* fml */
         checkNewlines( FileUtils.fileRead( getTestFile( "target/output/faq.html" ), "ISO-8859-1" ) );
         /* xdoc */

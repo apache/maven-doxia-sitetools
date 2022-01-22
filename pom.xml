@@ -68,7 +68,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.11.1</doxiaVersion>
+    <doxiaVersion>2.0.0-M1</doxiaVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
     <project.build.outputTimestamp>2021-12-12T17:08:52Z</project.build.outputTimestamp>
   </properties>
@@ -76,11 +76,6 @@ under the License.
   <dependencyManagement>
     <dependencies>
       <!-- doxia -->
-      <dependency>
-        <groupId>org.apache.maven.doxia</groupId>
-        <artifactId>doxia-logging-api</artifactId>
-        <version>${doxiaVersion}</version>
-      </dependency>
       <dependency>
         <groupId>org.apache.maven.doxia</groupId>
         <artifactId>doxia-sink-api</artifactId>
@@ -94,16 +89,6 @@ under the License.
       <dependency>
         <groupId>org.apache.maven.doxia</groupId>
         <artifactId>doxia-module-apt</artifactId>
-        <version>${doxiaVersion}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.doxia</groupId>
-        <artifactId>doxia-module-confluence</artifactId>
-        <version>${doxiaVersion}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.doxia</groupId>
-        <artifactId>doxia-module-docbook-simple</artifactId>
         <version>${doxiaVersion}</version>
       </dependency>
       <dependency>
@@ -204,6 +189,7 @@ under the License.
     <pluginManagement>
       <plugins>
         <!-- TODO need to upgrade to last version or Maven parent version -->
+        <!--
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>clirr-maven-plugin</artifactId>
@@ -211,6 +197,7 @@ under the License.
             <comparisonVersion>1.9</comparisonVersion>
           </configuration>
         </plugin>
+         -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
@@ -263,6 +250,7 @@ under the License.
           </execution>
         </executions>
       </plugin>
+      <!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>clirr-maven-plugin</artifactId>
@@ -278,7 +266,7 @@ under the License.
             </configuration>
           </execution>
         </executions>
-      </plugin>
+      </plugin> -->
     </plugins>
   </build>
 
