@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>34</version>
+    <version>35-SNAPSHOT</version>
     <relativePath />
   </parent>
 
@@ -69,9 +69,9 @@ under the License.
 
   <properties>
     <javaVersion>8</javaVersion>
-    <doxiaVersion>2.0.0-M2</doxiaVersion>
+    <doxiaVersion>2.0.0-M2-SNAPSHOT</doxiaVersion>
     <slf4jVersion>1.7.32</slf4jVersion>
-    <mavenVersion>3.2.5</mavenVersion>
+    <mavenVersion>4.0.0-alpha-1-SNAPSHOT</mavenVersion>
     <aetherVersion>1.0.0.v20140518</aetherVersion>
     <wagonVersion>2.8</wagonVersion>
     <junitVersion>5.8.2</junitVersion>
