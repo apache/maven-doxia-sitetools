@@ -28,9 +28,6 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
  */
 public interface DecorationModelInheritanceAssembler
 {
-    /** Plexus lookup role. */
-    String ROLE = DecorationModelInheritanceAssembler.class.getName();
-
     /**
      * Manage inheritance of the decoration model between a parent and child.
      *

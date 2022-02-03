@@ -33,6 +33,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlSection;
 
 import java.util.Iterator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Verifies apt transformations.

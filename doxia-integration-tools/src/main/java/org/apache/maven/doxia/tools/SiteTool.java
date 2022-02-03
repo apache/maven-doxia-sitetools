@@ -38,9 +38,6 @@ import org.apache.maven.reporting.MavenReport;
  */
 public interface SiteTool
 {
-    /** Plexus Role */
-    String ROLE = SiteTool.class.getName();
-
     /**
      * The locale by default for a Maven Site
      * @see Locale#ENGLISH

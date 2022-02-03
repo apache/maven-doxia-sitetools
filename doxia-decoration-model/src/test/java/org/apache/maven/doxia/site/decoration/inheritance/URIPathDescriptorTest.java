@@ -22,9 +22,12 @@ package org.apache.maven.doxia.site.decoration.inheritance;
 
 import java.net.URI;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -32,18 +35,16 @@ import static org.junit.Assert.*;
  *
  * @since 1.2
  */
+@SuppressWarnings( "javadoc" )
 public class URIPathDescriptorTest
 {
     private static final String BASE_URL = "http://maven.apache.org/";
 
     /**
      * Test of constructor, of class URIPathDescriptor.
-     *
-     * @throws Exception
      */
     @Test
     public void testConstructor()
-        throws Exception
     {
         final String expected = BASE_URL + "doxia";
 
@@ -85,8 +86,8 @@ public class URIPathDescriptorTest
         compare = new URIPathDescriptor( "C:\\Foo\\bar", "bar" );
         assertEquals( "C:/Foo/bar/bar", compare.toString() ); // NOTE: C: is the scheme here!
 
-        assertFailure( "/doxia", BASE_URL );
-        assertFailure( "file:///C:/Documents and Settings/foo/", "bar" );
+        assertThrows( IllegalArgumentException.class, () -> new URIPathDescriptor( "/doxia", BASE_URL ) );
+        assertThrows( IllegalArgumentException.class, () -> new URIPathDescriptor( "file:///C:/Documents and Settings/foo/", "bar" ) );
     }
 
     /**
@@ -96,7 +97,6 @@ public class URIPathDescriptorTest
      */
     @Test
     public void testResolveLink()
-        throws Exception
     {
         final String expected = BASE_URL + "source";
 
@@ -135,12 +135,9 @@ public class URIPathDescriptorTest
 
     /**
      * Test of rebaseLink method, of class URIPathDescriptor.
-     *
-     * @throws Exception
      */
     @Test
     public void testRebaseLink()
-        throws Exception
     {
         URIPathDescriptor oldPath = new URIPathDescriptor( BASE_URL, "source" );
         assertEquals( "../source", oldPath.rebaseLink( "http://maven.apache.org/doxia/" ).toString() );
@@ -194,12 +191,9 @@ public class URIPathDescriptorTest
 
     /**
      * Test of relativizeLink method, of class URIPathDescriptor.
-     *
-     * @throws Exception
      */
     @Test
     public void testRelativizeLink()
-        throws Exception
     {
         URIPathDescriptor path = new URIPathDescriptor( BASE_URL, "source" );
         assertEquals( "source", path.relativizeLink().toString() );
@@ -279,16 +273,4 @@ public class URIPathDescriptorTest
         assertTrue( newPath.sameSite( new URI( "file:/C:/Documents%20and%20Settings/" ) ) );
     }
 
-    private static void assertFailure( final String base, final String link )
-    {
-        try
-        {
-            final URIPathDescriptor test = new URIPathDescriptor( base, link );
-            fail( "Should fail: " + test.toString() );
-        }
-        catch ( IllegalArgumentException ex )
-        {
-            assertNotNull( ex );
-        }
-    }
 }

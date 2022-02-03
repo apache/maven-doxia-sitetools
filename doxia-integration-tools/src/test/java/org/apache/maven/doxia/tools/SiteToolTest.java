@@ -19,6 +19,9 @@ package org.apache.maven.doxia.tools;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -40,24 +43,40 @@ import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
 import org.apache.maven.project.MavenProject;
 
-import org.codehaus.plexus.ContainerConfiguration;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
+import org.junit.jupiter.api.Test;
+
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
+@SuppressWarnings( "javadoc" )
+@PlexusTest
 public class SiteToolTest
-    extends PlexusTestCase
 {
-    @Override
-    protected void customizeContainerConfiguration( @SuppressWarnings( "unused" ) final ContainerConfiguration configuration )
-    {
-        configuration.setClassPathScanning( PlexusConstants.SCANNING_CACHE );
-    }
+
+    @Inject
+    private PlexusContainer container;
+
+    @Inject
+    private ArtifactRepositoryFactory artifactRepositoryFactory;
+
+    @Inject @Named( "default" )
+    private ArtifactRepositoryLayout defaultArtifactRepositoryLayout;
+
+    @Inject
+    private DefaultSiteTool tool;
 
     /**
      * @return the repo.
@@ -73,10 +92,6 @@ public class SiteToolTest
                                                                                  checksumPolicyFlag );
         ArtifactRepositoryPolicy releasesPolicy = new ArtifactRepositoryPolicy( true, updatePolicyFlag,
                                                                                 checksumPolicyFlag );
-        ArtifactRepositoryFactory artifactRepositoryFactory = (ArtifactRepositoryFactory) lookup( ArtifactRepositoryFactory.ROLE );
-        ArtifactRepositoryLayout defaultArtifactRepositoryLayout = (ArtifactRepositoryLayout) lookup(
-                                                                                                      ArtifactRepositoryLayout.ROLE,
-                                                                                                      "default" );
         return artifactRepositoryFactory.createArtifactRepository( "local", getTestFile( "target/local-repo" ).toURI().toURL()
             .toString(), defaultArtifactRepositoryLayout, snapshotsPolicy, releasesPolicy );
     }
@@ -95,10 +110,10 @@ public class SiteToolTest
     /**
      * @throws Exception
      */
+    @Test
     public void testGetDefaultSkinArtifact()
         throws Exception
     {
-        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
         assertNotNull( tool );
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );
@@ -108,10 +123,10 @@ public class SiteToolTest
     /**
      * @throws Exception
      */
+    @Test
     public void testGetSkinArtifactFromRepository()
         throws Exception
     {
-        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
         assertNotNull( tool );
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );
@@ -135,10 +150,11 @@ public class SiteToolTest
     /**
      * @throws Exception
      */
+    @Test
+    @SuppressWarnings( { "deprecation" } )
     public void testGetRelativePath()
         throws Exception
     {
-        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
         assertNotNull( tool );
 
         checkGetRelativePathDirectory( tool, "", "http://maven.apache.org", "http://maven.apache.org" );
@@ -177,16 +193,16 @@ public class SiteToolTest
         // Tests between files as described in MIDEA-102
         to = "C:/dev/voca/gateway/parser/gateway-parser.iml";
         from = "C:/dev/voca/gateway/";
-        assertEquals( "Child file using Windows drive letter",
-                      "parser" + File.separator + "gateway-parser.iml", tool.getRelativePath( to, from ) );
+        assertEquals( "parser" + File.separator + "gateway-parser.iml", tool.getRelativePath( to, from ),
+                      "Child file using Windows drive letter");
         to = "C:/foo/child";
         from = "C:/foo/master";
-        assertEquals( "Sibling directory using Windows drive letter",
-                      ".." + File.separator + "child", tool.getRelativePath( to, from ) );
+        assertEquals( ".." + File.separator + "child", tool.getRelativePath( to, from ),
+                      "Sibling directory using Windows drive letter" );
         to = "/myproject/myproject-module1";
         from = "/myproject/myproject";
-        assertEquals( "Sibling directory with similar name",
-                      ".." + File.separator + "myproject-module1", tool.getRelativePath( to, from ) );
+        assertEquals( ".." + File.separator + "myproject-module1", tool.getRelativePath( to, from ),
+                      "Sibling directory with similar name" );
 
         // Normalized paths as described in MSITE-284
         assertEquals( ".." + File.separator + "project-module-1" + File.separator + "src" + File.separator + "site",
@@ -202,10 +218,10 @@ public class SiteToolTest
     /**
      * @throws Exception
      */
+    @Test
     public void testGetSiteDescriptorFromBasedir()
         throws Exception
     {
-        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
         assertNotNull( tool );
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );
@@ -221,10 +237,10 @@ public class SiteToolTest
     /**
      * @throws Exception
      */
+    @Test
     public void testGetSiteDescriptorFromRepository()
         throws Exception
     {
-        DefaultSiteTool tool = (DefaultSiteTool) lookup( SiteTool.ROLE );
         assertNotNull( tool );
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );
@@ -243,10 +259,10 @@ public class SiteToolTest
     /**
      * @throws Exception
      */
+    @Test
     public void testGetDecorationModel()
         throws Exception
     {
-        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
         assertNotNull( tool );
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );
@@ -289,10 +305,10 @@ public class SiteToolTest
     /**
      * @throws Exception
      */
+    @Test
     public void testGetDefaultDecorationModel()
         throws Exception
     {
-        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
         assertNotNull( tool );
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "no-site-test" );
@@ -305,24 +321,23 @@ public class SiteToolTest
         assertNotNull( model );
     }
 
+    @Test
     public void testGetAvailableLocales()
                     throws Exception
     {
-        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
+        assertEquals( Collections.singletonList( SiteTool.DEFAULT_LOCALE ), tool.getSiteLocales( "en" ) );
 
-        assertEquals( Arrays.asList( new Locale[] { SiteTool.DEFAULT_LOCALE } ), tool.getSiteLocales( "en" ) );
-
-        assertEquals( Arrays.asList( new Locale[] { SiteTool.DEFAULT_LOCALE, Locale.FRENCH, Locale.ITALIAN } ),
+        assertEquals( Arrays.asList( SiteTool.DEFAULT_LOCALE, Locale.FRENCH, Locale.ITALIAN ),
                       tool.getSiteLocales( "en,fr,it" ) );
 
         // by default, only DEFAULT_LOCALE
-        assertEquals( Arrays.asList( new Locale[] { SiteTool.DEFAULT_LOCALE } ), tool.getSiteLocales( "" ) );
+        assertEquals( Collections.singletonList( SiteTool.DEFAULT_LOCALE ), tool.getSiteLocales( "" ) );
     }
 
+    @Test
     public void testGetInterpolatedSiteDescriptorContent()
         throws Exception
     {
-        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
         assertNotNull( tool );
 
         File pomXmlFile = getTestFile( "src/test/resources/unit/interpolated-site/pom.xml" );
@@ -340,9 +355,8 @@ public class SiteToolTest
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "interpolated-site" );
 
-        SiteTool siteTool = (SiteTool) lookup( SiteTool.ROLE );
         siteDescriptorContent =
-            siteTool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>(), project,
+            tool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>(), project,
                                                            siteDescriptorContent );
         assertNotNull( siteDescriptorContent );
         assertFalse( siteDescriptorContent.contains( "${project.name}" ) );
@@ -350,10 +364,10 @@ public class SiteToolTest
     }
 
     // MSHARED-217 -> DOXIATOOLS-34 -> DOXIASITETOOLS-118
+    @Test
     public void testDecorationModelInheritanceAndInterpolation()
         throws Exception
     {
-        SiteTool tool = (SiteTool) lookup( SiteTool.ROLE );
         assertNotNull( tool );
 
         SiteToolMavenProjectStub parentProject = new SiteToolMavenProjectStub( "interpolation-parent-test" );

@@ -19,6 +19,9 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -96,8 +99,6 @@ import org.apache.velocity.tools.generic.ResourceTool;
 import org.apache.velocity.tools.generic.SortTool;
 import org.apache.velocity.tools.generic.XmlTool;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -118,7 +119,7 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @since 1.0
  */
-@Component( role = Renderer.class )
+@Named
 public class DefaultSiteRenderer
     implements Renderer
 {
@@ -128,16 +129,16 @@ public class DefaultSiteRenderer
     // Requirements
     // ----------------------------------------------------------------------
 
-    @Requirement
+    @Inject
     private VelocityComponent velocity;
 
-    @Requirement
+    @Inject
     private ParserModuleManager parserModuleManager;
 
-    @Requirement
+    @Inject
     private Doxia doxia;
 
-    @Requirement
+    @Inject
     private PlexusContainer plexus;
 
     private static final String RESOURCE_DIR = "org/apache/maven/doxia/siterenderer/resources";

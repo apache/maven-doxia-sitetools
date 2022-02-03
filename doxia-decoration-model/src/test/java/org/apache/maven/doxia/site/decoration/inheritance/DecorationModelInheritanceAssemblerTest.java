@@ -34,18 +34,21 @@ import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test the inheritance assembler.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
+@SuppressWarnings( "javadoc" )
 public class DecorationModelInheritanceAssemblerTest
 {
-    private DecorationModelInheritanceAssembler assembler = new DefaultDecorationModelInheritanceAssembler();
+    private final DecorationModelInheritanceAssembler assembler = new DefaultDecorationModelInheritanceAssembler();
 
     private static final String NAME = "Name";
 
@@ -65,15 +68,15 @@ public class DecorationModelInheritanceAssemblerTest
                                             "http://maven.apache.org" );
         DecorationModel expectedModel = readModel( "inheritance-expected.xml" );
 
-        assertEquals( "Check result", expectedModel, childModel );
+        assertEquals( expectedModel, childModel, "Check result" );
 
         // same with scp url, DOXIASITETOOLS-47
         childModel = readModel( "inheritance-child.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia",
                                             "scp://people.apache.org" );
-        assertEquals( "Check scp result", expectedModel, childModel );
+        assertEquals( expectedModel, childModel, "Check scp result" );
 
-        assertEquals( "Modified parent!", readModel( "inheritance-parent.xml" ), parentModel );
+        assertEquals( readModel( "inheritance-parent.xml" ), parentModel, "Modified parent!" );
 
         // late inheritance in links can't be rebased: check friendly message
         parentModel.getBannerLeft().setHref( "${project.url}" );
@@ -104,7 +107,7 @@ public class DecorationModelInheritanceAssemblerTest
         DecorationModel parentModel = readModel( "inheritance-parent.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "http://maven.apache.org/doxia",
                                             "http://maven.apache.org" );
-        assertEquals( "Check result", unassembledChildModel, childModel );
+        assertEquals( unassembledChildModel, childModel, "Check result" );
 
         // 2 levels of inheritance
         DecorationModel childOfchildModel = new DecorationModel();
@@ -113,8 +116,8 @@ public class DecorationModelInheritanceAssemblerTest
         assembler.assembleModelInheritance( NAME, childOfchildModel, parentModel, "http://maven.apache.org/doxia",
                                             "http://maven.apache.org" );
         // check that the 3 breadcrumb items from parent.xml are not inherited
-        assertEquals( "child of child no inheritance: breadcrumbs count", 0,
-                childOfchildModel.getBody().getBreadcrumbs().size() );
+        assertEquals( 0, childOfchildModel.getBody().getBreadcrumbs().size(),
+                "child of child no inheritance: breadcrumbs count" );
     }
 
     /**
@@ -134,15 +137,15 @@ public class DecorationModelInheritanceAssemblerTest
                                             "http://maven.apache.org" );
         DecorationModel mergedModel = readModel( "empty.xml" );
 
-        assertEquals( "Check result", mergedModel, childModel );
+        assertEquals( mergedModel, childModel, "Check result" );
 
         // same with scp url, DOXIASITETOOLS-47
         childModel = readModel( "empty.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://people.apache.org/doxia",
                                             "scp://people.apache.org" );
-        assertEquals( "Check scp result", mergedModel, childModel );
+        assertEquals( mergedModel, childModel, "Check scp result" );
 
-        assertEquals( "Modified parent!", readModel( "empty.xml" ), parentModel );
+        assertEquals( readModel( "empty.xml" ), parentModel, "Modified parent!" );
     }
 
     /**
@@ -167,34 +170,30 @@ public class DecorationModelInheritanceAssemblerTest
                                             "scp://people.apache.org" );
         assertPathsNotResolvedForExternalUrls( childModel );
 
-        assertEquals( "Modified parent!", readModel( "external-urls.xml" ), parentModel );
+        assertEquals( readModel( "external-urls.xml" ), parentModel, "Modified parent!" );
     }
 
     private static void assertPathsNotResolvedForExternalUrls( final DecorationModel childModel )
     {
-        assertEquals( "check left banner href", "http://jakarta.apache.org/",
-                childModel.getBannerLeft().getHref() );
-        assertEquals( "check left banner image", "http://jakarta.apache.org/images/jakarta-logo.gif",
-                childModel.getBannerLeft().getSrc() );
+        assertEquals( "http://jakarta.apache.org/", childModel.getBannerLeft().getHref(), "check left banner href" );
+        assertEquals( "http://jakarta.apache.org/images/jakarta-logo.gif", childModel.getBannerLeft().getSrc(), "check left banner image" );
 
-        assertEquals( "check right banner href", "http://jakarta.apache.org/commons/sandbox",
-                childModel.getBannerRight().getHref() );
-        assertEquals( "check right banner image", "http://jakarta.apache.org/commons/images/logo.png",
-                childModel.getBannerRight().getSrc() );
+        assertEquals( "http://jakarta.apache.org/commons/sandbox", childModel.getBannerRight().getHref(), "check right banner href" );
+        assertEquals( "http://jakarta.apache.org/commons/images/logo.png", childModel.getBannerRight().getSrc(), "check right banner image" );
 
         Logo poweredBy = childModel.getPoweredBy().get( 0 );
-        assertEquals( "check powered by logo href", "http://tomcat.apache.org/", poweredBy.getHref() );
-        assertEquals( "check powered by logo image", "http://tomcat.apache.org/logo.gif", poweredBy.getImg() );
+        assertEquals( "http://tomcat.apache.org/", poweredBy.getHref(), "check powered by logo href" );
+        assertEquals( "http://tomcat.apache.org/logo.gif", poweredBy.getImg(), "check powered by logo image" );
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
-        assertEquals( "check breadcrumb href", "http://www.apache.org/", breadcrumb.getHref() );
+        assertEquals( "http://www.apache.org/", breadcrumb.getHref(), "check breadcrumb href" );
 
         LinkItem link = childModel.getBody().getLinks().get( 0 );
-        assertEquals( "check link href", "http://www.bouncycastle.org", link.getHref() );
+        assertEquals( "http://www.bouncycastle.org", link.getHref(), "check link href" );
 
         Menu menu = childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = menu.getItems().get( 0 );
-        assertEquals( "check menu item href", "http://www.apache.org/special/", menuItem.getHref() );
+        assertEquals( "http://www.apache.org/special/", menuItem.getHref(), "check menu item href" );
     }
 
     /**
@@ -219,32 +218,30 @@ public class DecorationModelInheritanceAssemblerTest
                                             "scp://people.apache.org" );
         assertPathsResolvedForRelativeUrls( childModel );
 
-        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
+        assertEquals( readModel( "relative-urls.xml" ), parentModel, "Modified parent!" );
     }
 
     private static void assertPathsResolvedForRelativeUrls( final DecorationModel childModel )
     {
-        assertEquals( "check left banner href", "../banner/left", childModel.getBannerLeft().getHref() );
-        assertEquals( "check left banner image", "../images/jakarta-logo.gif",
-                childModel.getBannerLeft().getSrc() );
+        assertEquals( "../banner/left", childModel.getBannerLeft().getHref(), "check left banner href" );
+        assertEquals( "../images/jakarta-logo.gif", childModel.getBannerLeft().getSrc(), "check left banner image" );
 
-        assertEquals( "check right banner href", "../banner/right/", childModel.getBannerRight().getHref() );
-        assertEquals( "check right banner image", "../commons/images/logo.png",
-                childModel.getBannerRight().getSrc() );
+        assertEquals( "../banner/right/", childModel.getBannerRight().getHref(), "check right banner href" );
+        assertEquals( "../commons/images/logo.png", childModel.getBannerRight().getSrc(), "check right banner image" );
 
         Logo poweredBy = childModel.getPoweredBy().get( 0 );
-        assertEquals( "check powered by logo href", "../tomcat", poweredBy.getHref() );
-        assertEquals( "check powered by logo image", "../tomcat/logo.gif", poweredBy.getImg() );
+        assertEquals( "../tomcat", poweredBy.getHref(), "check powered by logo href" );
+        assertEquals( "../tomcat/logo.gif", poweredBy.getImg(), "check powered by logo image" );
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
-        assertEquals( "check breadcrumb href", "../apache", breadcrumb.getHref() );
+        assertEquals( "../apache", breadcrumb.getHref(), "check breadcrumb href" );
 
         LinkItem link = childModel.getBody().getLinks().get( 0 );
-        assertEquals( "check link href", "../bouncycastle/", link.getHref() );
+        assertEquals( "../bouncycastle/", link.getHref(), "check link href" );
 
         Menu menu = childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = menu.getItems().get( 0 );
-        assertEquals( "check menu item href", "../special/", menuItem.getHref() );
+        assertEquals( "../special/", menuItem.getHref(), "check menu item href" );
     }
 
     /**
@@ -272,32 +269,30 @@ public class DecorationModelInheritanceAssemblerTest
         assembler.resolvePaths( childModel, "http://maven.apache.org/doxia" );
         assertPathsResolvedForSubsiteUrls( childModel );
 
-        assertEquals( "Modified parent!", readModel( "subsite-urls.xml" ), parentModel );
+        assertEquals( readModel( "subsite-urls.xml" ), parentModel, "Modified parent!" );
     }
 
     private static void assertPathsResolvedForSubsiteUrls( final DecorationModel childModel )
     {
-        assertEquals( "check left banner href", "../banner/left", childModel.getBannerLeft().getHref() );
-        assertEquals( "check left banner image", "../images/jakarta-logo.gif",
-                childModel.getBannerLeft().getSrc() );
+        assertEquals( "../banner/left", childModel.getBannerLeft().getHref(), "check left banner href" );
+        assertEquals( "../images/jakarta-logo.gif", childModel.getBannerLeft().getSrc(), "check left banner image" );
 
-        assertEquals( "check right banner href", "../banner/right/", childModel.getBannerRight().getHref() );
-        assertEquals( "check right banner image", "../commons/images/logo.png",
-                childModel.getBannerRight().getSrc() );
+        assertEquals( "../banner/right/", childModel.getBannerRight().getHref(), "check right banner href" );
+        assertEquals( "../commons/images/logo.png", childModel.getBannerRight().getSrc(), "check right banner image" );
 
         Logo poweredBy = childModel.getPoweredBy().get( 0 );
-        assertEquals( "check powered by logo href", "../tomcat", poweredBy.getHref() );
-        assertEquals( "check powered by logo image", "../tomcat/logo.gif", poweredBy.getImg() );
+        assertEquals( "../tomcat", poweredBy.getHref(), "check powered by logo href" );
+        assertEquals( "../tomcat/logo.gif", poweredBy.getImg(), "check powered by logo image" );
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
-        assertEquals( "check breadcrumb href", "../apache", breadcrumb.getHref() );
+        assertEquals( "../apache", breadcrumb.getHref(), "check breadcrumb href" );
 
         LinkItem link = childModel.getBody().getLinks().get( 0 );
-        assertEquals( "check link href", "../bouncycastle/", link.getHref() );
+        assertEquals( "../bouncycastle/", link.getHref(), "check link href" );
 
         Menu menu = childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = menu.getItems().get( 0 );
-        assertEquals( "check menu item href", "../special/", menuItem.getHref() );
+        assertEquals( "../special/", menuItem.getHref(), "check menu item href" );
     }
 
     /**
@@ -322,32 +317,30 @@ public class DecorationModelInheritanceAssemblerTest
                                             "scp://people.apache.org" );
         assertPathsResolvedForRelativeUrlsDepthOfTwo( childModel );
 
-        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
+        assertEquals( readModel( "relative-urls.xml" ), parentModel, "Modified parent!" );
     }
 
     private static void assertPathsResolvedForRelativeUrlsDepthOfTwo( final DecorationModel childModel )
     {
-        assertEquals( "check left banner href", "../../banner/left", childModel.getBannerLeft().getHref() );
-        assertEquals( "check left banner image", "../../images/jakarta-logo.gif",
-                childModel.getBannerLeft().getSrc() );
+        assertEquals( "../../banner/left", childModel.getBannerLeft().getHref(), "check left banner href" );
+        assertEquals( "../../images/jakarta-logo.gif", childModel.getBannerLeft().getSrc(), "check left banner image" );
 
-        assertEquals( "check right banner href", "../../banner/right/", childModel.getBannerRight().getHref() );
-        assertEquals( "check right banner image", "../../commons/images/logo.png",
-                childModel.getBannerRight().getSrc() );
+        assertEquals( "../../banner/right/", childModel.getBannerRight().getHref(), "check right banner href" );
+        assertEquals( "../../commons/images/logo.png", childModel.getBannerRight().getSrc(), "check right banner image" );
 
         Logo poweredBy = childModel.getPoweredBy().get( 0 );
-        assertEquals( "check powered by logo href", "../../tomcat", poweredBy.getHref() );
-        assertEquals( "check powered by logo image", "../../tomcat/logo.gif", poweredBy.getImg() );
+        assertEquals( "../../tomcat", poweredBy.getHref(), "check powered by logo href" );
+        assertEquals( "../../tomcat/logo.gif", poweredBy.getImg(), "check powered by logo image" );
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
-        assertEquals( "check breadcrumb href", "../../apache", breadcrumb.getHref() );
+        assertEquals( "../../apache", breadcrumb.getHref(), "check breadcrumb href" );
 
         LinkItem link = childModel.getBody().getLinks().get( 0 );
-        assertEquals( "check link href", "../../bouncycastle/", link.getHref() );
+        assertEquals( "../../bouncycastle/", link.getHref(), "check link href" );
 
         Menu menu = childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = menu.getItems().get( 0 );
-        assertEquals( "check menu item href", "../../special/", menuItem.getHref() );
+        assertEquals( "../../special/", menuItem.getHref(), "check menu item href" );
     }
 
     /**
@@ -372,32 +365,30 @@ public class DecorationModelInheritanceAssemblerTest
                                             "scp://people.apache.org/doxia/" );
         assertPathsResolvedForReverseRelativeUrls( childModel );
 
-        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
+        assertEquals( readModel( "relative-urls.xml" ), parentModel, "Modified parent!" );
     }
 
     private static void assertPathsResolvedForReverseRelativeUrls( final DecorationModel childModel )
     {
-        assertEquals( "check left banner href", "doxia/banner/left", childModel.getBannerLeft().getHref() );
-        assertEquals( "check left banner image", "doxia/images/jakarta-logo.gif",
-                childModel.getBannerLeft().getSrc() );
+        assertEquals( "doxia/banner/left", childModel.getBannerLeft().getHref(), "check left banner href" );
+        assertEquals( "doxia/images/jakarta-logo.gif", childModel.getBannerLeft().getSrc(), "check left banner image" );
 
-        assertEquals( "check right banner href", "doxia/banner/right/", childModel.getBannerRight().getHref() );
-        assertEquals( "check right banner image", "doxia/commons/images/logo.png",
-                childModel.getBannerRight().getSrc() );
+        assertEquals( "doxia/banner/right/", childModel.getBannerRight().getHref(), "check right banner href" );
+        assertEquals( "doxia/commons/images/logo.png", childModel.getBannerRight().getSrc(), "check right banner image" );
 
         Logo poweredBy = childModel.getPoweredBy().get( 0 );
-        assertEquals( "check powered by logo href", "doxia/tomcat", poweredBy.getHref() );
-        assertEquals( "check powered by logo image", "doxia/tomcat/logo.gif", poweredBy.getImg() );
+        assertEquals( "doxia/tomcat", poweredBy.getHref(), "check powered by logo href" );
+        assertEquals( "doxia/tomcat/logo.gif", poweredBy.getImg(), "check powered by logo image" );
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
-        assertEquals( "check breadcrumb href", "doxia/apache", breadcrumb.getHref() );
+        assertEquals( "doxia/apache", breadcrumb.getHref(), "check breadcrumb href" );
 
         LinkItem link = childModel.getBody().getLinks().get( 0 );
-        assertEquals( "check link href", "doxia/bouncycastle/", link.getHref() );
+        assertEquals( "doxia/bouncycastle/", link.getHref(), "check link href" );
 
         Menu menu = childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = menu.getItems().get( 0 );
-        assertEquals( "check menu item href", "doxia/special/", menuItem.getHref() );
+        assertEquals( "doxia/special/", menuItem.getHref(), "check menu item href" );
     }
 
     /**
@@ -422,33 +413,30 @@ public class DecorationModelInheritanceAssemblerTest
                                             "scp://people.apache.org/doxia/core/" );
         assertPathsResolvedForReverseRelativeUrlsDepthOfTwo( childModel );
 
-        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
+        assertEquals( readModel( "relative-urls.xml" ), parentModel, "Modified parent!" );
     }
 
     private static void assertPathsResolvedForReverseRelativeUrlsDepthOfTwo( final DecorationModel childModel )
     {
-        assertEquals( "check left banner href", "doxia/core/banner/left", childModel.getBannerLeft().getHref() );
-        assertEquals( "check left banner image", "doxia/core/images/jakarta-logo.gif",
-                childModel.getBannerLeft().getSrc() );
+        assertEquals( "doxia/core/banner/left", childModel.getBannerLeft().getHref(), "check left banner href" );
+        assertEquals( "doxia/core/images/jakarta-logo.gif", childModel.getBannerLeft().getSrc(), "check left banner image" );
 
-        assertEquals( "check right banner href", "doxia/core/banner/right/",
-                childModel.getBannerRight().getHref() );
-        assertEquals( "check right banner image", "doxia/core/commons/images/logo.png",
-                childModel.getBannerRight().getSrc() );
+        assertEquals( "doxia/core/banner/right/", childModel.getBannerRight().getHref(), "check right banner href" );
+        assertEquals( "doxia/core/commons/images/logo.png", childModel.getBannerRight().getSrc(), "check right banner image" );
 
         Logo poweredBy = childModel.getPoweredBy().get( 0 );
-        assertEquals( "check powered by logo href", "doxia/core/tomcat", poweredBy.getHref() );
-        assertEquals( "check powered by logo image", "doxia/core/tomcat/logo.gif", poweredBy.getImg() );
+        assertEquals( "doxia/core/tomcat", poweredBy.getHref(), "check powered by logo href" );
+        assertEquals( "doxia/core/tomcat/logo.gif", poweredBy.getImg(), "check powered by logo image" );
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
-        assertEquals( "check breadcrumb href", "doxia/core/apache", breadcrumb.getHref() );
+        assertEquals( "doxia/core/apache", breadcrumb.getHref(), "check breadcrumb href" );
 
         LinkItem link = childModel.getBody().getLinks().get( 0 );
-        assertEquals( "check link href", "doxia/core/bouncycastle/", link.getHref() );
+        assertEquals( "doxia/core/bouncycastle/", link.getHref(), "check link href" );
 
         Menu menu = childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = menu.getItems().get( 0 );
-        assertEquals( "check menu item href", "doxia/core/special/", menuItem.getHref() );
+        assertEquals( "doxia/core/special/", menuItem.getHref(), "check menu item href" );
     }
 
     /**
@@ -473,35 +461,30 @@ public class DecorationModelInheritanceAssemblerTest
                                             "http://jakarta.apache.org" );
         assertPathsResolvedForUnrelatedRelativeUrls( childModel );
 
-        assertEquals( "Modified parent!", readModel( "relative-urls.xml" ), parentModel );
+        assertEquals( readModel( "relative-urls.xml" ), parentModel, "Modified parent!" );
     }
 
     private static void assertPathsResolvedForUnrelatedRelativeUrls( final DecorationModel childModel )
     {
-        assertEquals( "check left banner href", "http://jakarta.apache.org/banner/left",
-                childModel.getBannerLeft().getHref() );
-        assertEquals( "check left banner image", "http://jakarta.apache.org/images/jakarta-logo.gif",
-                childModel.getBannerLeft().getSrc() );
+        assertEquals( "http://jakarta.apache.org/banner/left", childModel.getBannerLeft().getHref(), "check left banner href" );
+        assertEquals( "http://jakarta.apache.org/images/jakarta-logo.gif", childModel.getBannerLeft().getSrc(), "check left banner image" );
 
-        assertEquals( "check right banner href", "http://jakarta.apache.org/banner/right/",
-                childModel.getBannerRight().getHref() );
-        assertEquals( "check right banner image", "http://jakarta.apache.org/commons/images/logo.png",
-                childModel.getBannerRight().getSrc() );
+        assertEquals( "http://jakarta.apache.org/banner/right/", childModel.getBannerRight().getHref(), "check right banner href" );
+        assertEquals( "http://jakarta.apache.org/commons/images/logo.png", childModel.getBannerRight().getSrc(), "check right banner image" );
 
         Logo poweredBy = childModel.getPoweredBy().get( 0 );
-        assertEquals( "check powered by logo href", "http://jakarta.apache.org/tomcat", poweredBy.getHref() );
-        assertEquals( "check powered by logo image", "http://jakarta.apache.org/tomcat/logo.gif",
-                poweredBy.getImg() );
+        assertEquals( "http://jakarta.apache.org/tomcat", poweredBy.getHref(), "check powered by logo href" );
+        assertEquals( "http://jakarta.apache.org/tomcat/logo.gif", poweredBy.getImg(), "check powered by logo image" );
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get( 0 );
-        assertEquals( "check breadcrumb href", "http://jakarta.apache.org/apache", breadcrumb.getHref() );
+        assertEquals( "http://jakarta.apache.org/apache", breadcrumb.getHref(), "check breadcrumb href" );
 
         LinkItem link = childModel.getBody().getLinks().get( 0 );
-        assertEquals( "check link href", "http://jakarta.apache.org/bouncycastle/", link.getHref() );
+        assertEquals( "http://jakarta.apache.org/bouncycastle/", link.getHref(), "check link href" );
 
         Menu menu = childModel.getBody().getMenus().get( 0 );
         LinkItem menuItem = menu.getItems().get( 0 );
-        assertEquals( "check menu item href", "http://jakarta.apache.org/special/", menuItem.getHref() );
+        assertEquals( "http://jakarta.apache.org/special/", menuItem.getHref(), "check menu item href" );
     }
 
     /**
@@ -519,13 +502,13 @@ public class DecorationModelInheritanceAssemblerTest
                                             "http://maven.apache.org" );
         DecorationModel mergedModel = readModel( "empty.xml" );
 
-        assertEquals( "Check result", mergedModel, childModel );
+        assertEquals( mergedModel, childModel, "Check result" );
 
         // same with scp url, DOXIASITETOOLS-47
         childModel = readModel( "empty.xml" );
         assembler.assembleModelInheritance( NAME, childModel, null, "scp://people.apache.org/doxia",
                                             "scp://people.apache.org" );
-        assertEquals( "Check scp result", mergedModel, childModel );
+        assertEquals( mergedModel, childModel, "Check scp result" );
     }
 
     /**
@@ -544,15 +527,15 @@ public class DecorationModelInheritanceAssemblerTest
                                             "http://foo.apache.org" );
         DecorationModel mergedModel = readModel( "fully-populated-child.xml" );
 
-        assertEquals( "Check result", mergedModel, childModel );
+        assertEquals( mergedModel, childModel, "Check result" );
 
         // same with scp url, DOXIASITETOOLS-47
         childModel = readModel( "fully-populated-child.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://foo.apache.org/doxia",
                                             "scp://foo.apache.org" );
-        assertEquals( "Check scp result", mergedModel, childModel );
+        assertEquals( mergedModel, childModel, "Check scp result" );
 
-        assertEquals( "Modified parent!", readModel( "fully-populated-child.xml" ), parentModel );
+        assertEquals( readModel( "fully-populated-child.xml" ), parentModel, "Modified parent!" );
     }
 
     /**
@@ -571,21 +554,21 @@ public class DecorationModelInheritanceAssemblerTest
                                             "http://maven.apache.org" );
 
         DecorationModel unresolvedModel = readModel( "fully-populated-unresolved.xml" );
-        assertEquals( "Check result", unresolvedModel, childModel );
+        assertEquals( unresolvedModel, childModel, "Check result" );
 
         assembler.resolvePaths( childModel, "http://maven.apache.org/doxia" );
         DecorationModel mergedModel = readModel( "fully-populated-merged.xml" );
 
-        assertEquals( "Check result", mergedModel, childModel );
+        assertEquals( mergedModel, childModel, "Check result" );
 
         // same with scp url, DOXIASITETOOLS-47
         childModel = readModel( "empty.xml" );
         assembler.assembleModelInheritance( NAME, childModel, parentModel, "scp://maven.apache.org/doxia",
                                             "scp://maven.apache.org" );
         assembler.resolvePaths( childModel, "http://maven.apache.org/doxia" );
-        assertEquals( "Check scp result", mergedModel, childModel );
+        assertEquals( mergedModel, childModel, "Check scp result" );
 
-        assertEquals( "Modified parent!", readModel( "fully-populated-child.xml" ), parentModel );
+        assertEquals( readModel( "fully-populated-child.xml" ), parentModel, "Modified parent!" );
     }
 
     /**
@@ -602,7 +585,7 @@ public class DecorationModelInheritanceAssemblerTest
         assembler.resolvePaths( model, "http://foo.com/" );
         DecorationModel mergedModel = readModel( "external-urls.xml" );
 
-        assertEquals( "Check result", mergedModel, model );
+        assertEquals( mergedModel, model, "Check result" );
     }
 
     /**
@@ -620,7 +603,7 @@ public class DecorationModelInheritanceAssemblerTest
 
         DecorationModel resolvedModel = readModel( "relative-urls-resolved.xml" );
 
-        assertEquals( "Check result", resolvedModel, model );
+        assertEquals( resolvedModel, model, "Check result" );
     }
 
     /**
@@ -637,7 +620,7 @@ public class DecorationModelInheritanceAssemblerTest
         assembler.resolvePaths( model, "http://maven.apache.org/" );
 
         DecorationModel resolvedModel = readModel( "relative-urls-resolved.xml" );
-        assertEquals( "Check result", resolvedModel, model );
+        assertEquals( resolvedModel, model, "Check result" );
     }
 
 /* [MSITE-62] This is to test the ../ relative paths, which I am inclined not to use
@@ -649,7 +632,7 @@ public class DecorationModelInheritanceAssemblerTest
         assembler.resolvePaths( model, "http://maven.apache.org/foo" );
 
         DecorationModel resolvedModel = readModel( "subsite-relative-urls-resolved.xml" );
-        assertEquals( "Check result", resolvedModel, model );
+        assertEquals( resolvedModel, model, "Check result" );
     }
 
     public void testResolvingAllSiteChildUrlsMultipleLevels()
@@ -660,7 +643,7 @@ public class DecorationModelInheritanceAssemblerTest
         assembler.resolvePaths( model, "http://maven.apache.org/banner/right" );
 
         DecorationModel resolvedModel = readModel( "subsite-relative-urls-multiple-resolved.xml" );
-        assertEquals( "Check result", resolvedModel, model );
+        assertEquals( resolvedModel, model, "Check result" );
     }
 
     public void testResolvingAllSiteChildFilesystemUrls()
@@ -671,7 +654,7 @@ public class DecorationModelInheritanceAssemblerTest
         assembler.resolvePaths( model, "file://localhost/www/maven.apache.org/foo" );
 
         DecorationModel resolvedModel = readModel( "subsite-relative-urls-resolved.xml" );
-        assertEquals( "Check result", resolvedModel, model );
+        assertEquals( resolvedModel, model, "Check result" );
     }
 
 */
@@ -689,7 +672,7 @@ public class DecorationModelInheritanceAssemblerTest
         assembler.resolvePaths( model, "http://maven.apache.org" );
         DecorationModel mergedModel = readModel( "empty.xml" );
 
-        assertEquals( "Check result", mergedModel, model );
+        assertEquals( mergedModel, model, "Check result" );
     }
 
     /**
@@ -710,14 +693,11 @@ public class DecorationModelInheritanceAssemblerTest
         assembler.assembleModelInheritance( NAME, child, model, "http://maven.apache.org/doxia",
                                             "http://maven.apache.org" );
 
-        assertEquals( "Check size", 1, child.getBody().getLinks().size() );
-        assertEquals( "Check item", createLinkItem( "Foo", "http://foo.apache.org" ),
-                child.getBody().getLinks().get( 0 ) );
+        assertEquals( 1, child.getBody().getLinks().size(), "Check size" );
+        assertEquals( createLinkItem( "Foo", "http://foo.apache.org" ), child.getBody().getLinks().get( 0 ), "Check item" );
 
-        assertEquals( "Check size", 1, child.getPoweredBy().size() );
-        assertEquals( "Check item",
-                createLogo( "Foo", "http://foo.apache.org", "http://foo.apache.org/foo.jpg" ),
-                child.getPoweredBy().get( 0 ) );
+        assertEquals( 1, child.getPoweredBy().size(), "Check size" );
+        assertEquals( createLogo( "Foo", "http://foo.apache.org", "http://foo.apache.org/foo.jpg" ), child.getPoweredBy().get( 0 ), "Check item" );
     }
 
     /**
@@ -738,16 +718,13 @@ public class DecorationModelInheritanceAssemblerTest
         assembler.assembleModelInheritance( NAME, model, parent, "http://maven.apache.org/doxia",
                                             "http://maven.apache.org" );
 
-        assertEquals( "Check size", 1, model.getBody().getLinks().size() );
-        assertEquals( "Check item", createLinkItem( "Foo", "http://foo.apache.org" ),
-                model.getBody().getLinks().get( 0 ) );
+        assertEquals( 1, model.getBody().getLinks().size(), "Check size" );
+        assertEquals( createLinkItem( "Foo", "http://foo.apache.org" ), model.getBody().getLinks().get( 0 ), "Check item" );
 
-        assertEquals( "Check size", 1, model.getPoweredBy().size() );
-        assertEquals( "Check item",
-                createLogo( "Foo", "http://foo.apache.org", "http://foo.apache.org/foo.jpg" ),
-                model.getPoweredBy().get( 0 ) );
+        assertEquals( 1, model.getPoweredBy().size(), "Check size" );
+        assertEquals( createLogo( "Foo", "http://foo.apache.org", "http://foo.apache.org/foo.jpg" ), model.getPoweredBy().get( 0 ), "Check item" );
 
-        assertEquals( "Modified parent!", new DecorationModel(), parent );
+        assertEquals( new DecorationModel(), parent, "Modified parent!" );
     }
 
     /**
@@ -760,9 +737,8 @@ public class DecorationModelInheritanceAssemblerTest
         model.setBody( new Body() );
         model.getBody().addBreadcrumb( createLinkItem( "Foo", "http://foo.apache.org/${property}" ) );
         assembler.resolvePaths( model, "http://foo.apache.org" );
-        assertEquals( "Check size", 1, model.getBody().getBreadcrumbs().size() );
-        assertEquals( "Check item", createLinkItem( "Foo", "http://foo.apache.org/${property}" ),
-                model.getBody().getBreadcrumbs().get( 0 ) );
+        assertEquals( 1, model.getBody().getBreadcrumbs().size(), "Check size" );
+        assertEquals( createLinkItem( "Foo", "http://foo.apache.org/${property}" ), model.getBody().getBreadcrumbs().get( 0 ), "Check item" );
     }
 
     /**
@@ -775,8 +751,8 @@ public class DecorationModelInheritanceAssemblerTest
         model.setBody( new Body() );
         model.getBody().addBreadcrumb( createLinkItem( "Foo", null ) );
         assembler.resolvePaths( model, "http://foo.apache.org" );
-        assertEquals( "Check size", 1, model.getBody().getBreadcrumbs().size() );
-        assertEquals( "Check item", createLinkItem( "Foo", null ), model.getBody().getBreadcrumbs().get( 0 ) );
+        assertEquals( 1, model.getBody().getBreadcrumbs().size(), "Check size" );
+        assertEquals( createLinkItem( "Foo", null ), model.getBody().getBreadcrumbs().get( 0 ), "Check item" );
     }
 
     /**
@@ -846,9 +822,9 @@ public class DecorationModelInheritanceAssemblerTest
     private static void assertBreadcrumbsCorrect( final List<LinkItem> breadcrumbs, final String childName,
             final String parentHref )
     {
-        assertEquals( "Check size", 2, breadcrumbs.size() );
-        assertEquals( "Check parent item", createLinkItem( "Parent", parentHref ), breadcrumbs.get( 0 ) );
-        assertEquals( "Check child item", createLinkItem( childName, "index.html" ), breadcrumbs.get( 1 ) );
+        assertEquals( 2, breadcrumbs.size(), "Check size" );
+        assertEquals( createLinkItem( "Parent", parentHref ), breadcrumbs.get( 0 ), "Check parent item" );
+        assertEquals( createLinkItem( childName, "index.html" ), breadcrumbs.get( 1 ), "Check child item" );
     }
 
     /**
@@ -873,10 +849,10 @@ public class DecorationModelInheritanceAssemblerTest
                                             "http://maven.apache.org" );
 
         final List<LinkItem> breadcrumbs = child.getBody().getBreadcrumbs(); // expected: A > B > E
-        assertEquals( "Check size", 3, breadcrumbs.size() );
-        assertEquals( "Check item", createLinkItem( "A", null ), breadcrumbs.get( 0 ) );
-        assertEquals( "Check item", createLinkItem( "B", null ), breadcrumbs.get( 1 ) );
-        assertEquals( "Check item", createLinkItem( "E", null ), breadcrumbs.get( 2 ) );
+        assertEquals( 3, breadcrumbs.size(), "Check size" );
+        assertEquals( createLinkItem( "A", null ), breadcrumbs.get( 0 ), "Check item" );
+        assertEquals( createLinkItem( "B", null ), breadcrumbs.get( 1 ), "Check item" );
+        assertEquals( createLinkItem( "E", null ), breadcrumbs.get( 2 ), "Check item" );
     }
 
     /**
@@ -894,8 +870,7 @@ public class DecorationModelInheritanceAssemblerTest
 
         assembler.resolvePaths( model, "http://foo.apache.org" );
 
-        assertEquals( "Check banner", createBanner( "Left", null, "images/src.gif", "alt" ),
-                model.getBannerLeft() );
+        assertEquals( createBanner( "Left", null, "images/src.gif", "alt" ), model.getBannerLeft(), "Check banner" );
     }
 
     /**
@@ -909,8 +884,8 @@ public class DecorationModelInheritanceAssemblerTest
         model.setBody( new Body() );
         model.addPoweredBy( createLogo( "Foo", "http://foo.apache.org", null ) );
         assembler.resolvePaths( model, "http://foo.apache.org" );
-        assertEquals( "Check size", 1, model.getPoweredBy().size() );
-        assertEquals( "Check item", createLogo( "Foo", "./", null ), model.getPoweredBy().get( 0 ) );
+        assertEquals( 1, model.getPoweredBy().size(), "Check size" );
+        assertEquals( createLogo( "Foo", "./", null ), model.getPoweredBy().get( 0 ), "Check item" );
     }
 
     private static Banner createBanner( String name, String href, String src, String alt )

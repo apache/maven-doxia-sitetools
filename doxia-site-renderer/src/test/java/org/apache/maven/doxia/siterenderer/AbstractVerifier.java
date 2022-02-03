@@ -24,7 +24,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import java.io.File;
 
-import org.codehaus.plexus.PlexusTestCase;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Abstract base class for verifiers.
@@ -32,7 +34,6 @@ import org.codehaus.plexus.PlexusTestCase;
  * @author ltheussl
  */
 public abstract class AbstractVerifier
-    extends PlexusTestCase
 {
     /**
      * Get a HtmlPage from a file.
@@ -54,7 +55,7 @@ public abstract class AbstractVerifier
         try ( WebClient webClient = new WebClient() ) {
             webClient.getOptions().setCssEnabled( false );
     
-            return (HtmlPage) webClient.getPage( file.toURI().toURL() );
+            return webClient.getPage( file.toURI().toURL() );
         }
     }
 

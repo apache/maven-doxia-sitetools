@@ -27,6 +27,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlUnknownElement;
 
 import java.util.Iterator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 /**
  *

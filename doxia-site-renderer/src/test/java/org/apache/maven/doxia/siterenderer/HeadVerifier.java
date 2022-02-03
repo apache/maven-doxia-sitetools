@@ -29,6 +29,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlTitle;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * Verify correct rendering of <code>site/xdoc/head.xml</code>.
  *
@@ -68,9 +71,9 @@ public class HeadVerifier
         elementIterator.next();
 
         meta = (HtmlMeta) elementIterator.next();
-        assertEquals( "Unexpected meta entry found generated resource " + file, "generator", meta.getAttribute( "name" ) );
+        assertEquals( "generator", meta.getAttribute( "name" ), "Unexpected meta entry found generated resource " + file );
         String generator = meta.getAttribute("content");
-        assertEquals("Unexpected value found for generator meta entry in generated resource " + file, "Apache Maven Doxia Site Renderer", generator);
+        assertEquals("Apache Maven Doxia Site Renderer", generator, "Unexpected value found for generator meta entry in generated resource " + file );
 
         meta = (HtmlMeta) elementIterator.next();
         assertEquals( "author", meta.getAttribute( "name" ) );

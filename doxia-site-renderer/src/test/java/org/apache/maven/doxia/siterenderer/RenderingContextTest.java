@@ -21,15 +21,18 @@ package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
 
-import org.apache.maven.doxia.siterenderer.RenderingContext;
-import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
+
+import static org.codehaus.plexus.testing.PlexusExtension.getBasedir;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  * @since 20 oct. 07
  */
+@PlexusTest
 public class RenderingContextTest
-    extends PlexusTestCase
 {
 
     /**
@@ -37,6 +40,7 @@ public class RenderingContextTest
      *
      * @throws java.lang.Exception if any.
      */
+    @Test
     public void testFileNameWithDot()
         throws Exception
     {

@@ -19,6 +19,9 @@ package org.apache.maven.doxia.tools;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -62,8 +65,6 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.reporting.MavenReport;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -83,7 +84,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-@Component( role = SiteTool.class )
+@Named
 public class DefaultSiteTool
     implements SiteTool
 {
@@ -96,31 +97,31 @@ public class DefaultSiteTool
     /**
      * The component that is used to resolve additional artifacts required.
      */
-    @Requirement
+    @Inject
     private ArtifactResolver artifactResolver;
 
     /**
      * The component used for creating artifact instances.
      */
-    @Requirement
+    @Inject
     private ArtifactFactory artifactFactory;
 
     /**
      * Internationalization.
      */
-    @Requirement
+    @Inject
     protected I18N i18n;
 
     /**
      * The component for assembling inheritance.
      */
-    @Requirement
+    @Inject
     protected DecorationModelInheritanceAssembler assembler;
 
     /**
      * Project builder.
      */
-    @Requirement
+    @Inject
     protected ProjectBuilder projectBuilder;
 
     // ----------------------------------------------------------------------

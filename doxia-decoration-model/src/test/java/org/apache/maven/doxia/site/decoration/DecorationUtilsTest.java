@@ -1,6 +1,12 @@
 package org.apache.maven.doxia.site.decoration;
 
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,10 +26,6 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class DecorationUtilsTest
 {

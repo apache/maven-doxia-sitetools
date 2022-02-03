@@ -23,6 +23,8 @@ import java.io.File;
 
 import org.codehaus.plexus.util.FileUtils;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Verifies that there are no DOXIASITETOOLS-146 comments
  */
@@ -35,7 +37,7 @@ public class CommentsVerifier
     {
         String content = FileUtils.fileRead( new File( file ), "UTF-8" );
 
-        assertTrue( file + " should not contain 'DOXIASITETOOLS-146' text in comments",
-                    content.indexOf( "DOXIASITETOOLS-146" ) < 0 );
+        assertTrue( content.indexOf( "DOXIASITETOOLS-146" ) < 0,
+                    file + " should not contain 'DOXIASITETOOLS-146' text in comments" );
     }
 }

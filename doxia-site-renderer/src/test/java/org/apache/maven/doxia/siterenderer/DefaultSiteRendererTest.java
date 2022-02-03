@@ -19,6 +19,12 @@ package org.apache.maven.doxia.siterenderer;
  * under the License.
  */
 
+import javax.inject.Inject;
+
+import static org.codehaus.plexus.testing.PlexusExtension.getBasedir;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.*;
@@ -33,7 +39,6 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -53,21 +58,29 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.xsd.AbstractXmlValidator;
-import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.xml.sax.EntityResolver;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  */
+@PlexusTest
 public class DefaultSiteRendererTest
-    extends PlexusTestCase
 {
     /**
      * All output produced by this test will go here.
@@ -84,25 +97,25 @@ public class DefaultSiteRendererTest
      */
     private Locale oldLocale;
 
+    @Inject
+    private PlexusContainer container;
+
     private File skinJar = new File( getBasedir(), "target/test-classes/skin.jar" );
 
     /**
      * @throws java.lang.Exception if something goes wrong.
-     * @see org.codehaus.plexus.PlexusTestCase#setUp()
      */
-    @Override
+    @BeforeEach
     protected void setUp()
         throws Exception
     {
-        super.setUp();
-
-        renderer = (Renderer) lookup( Renderer.ROLE );
+        renderer = (Renderer) container.lookup( Renderer.class );
 
         // copy the default-site.vm and default-site-macros.vm
         copyVm( "default-site.vm", "\n\n\n\r\n\r\n\r\n" );
         copyVm( "default-site-macros.vm", "" );
 
-        InputStream skinIS = this.getResourceAsStream( "velocity-toolmanager.vm" );
+        InputStream skinIS = getClass().getResourceAsStream( "velocity-toolmanager.vm" );
         JarOutputStream jarOS = new JarOutputStream( new FileOutputStream( skinJar ) );
         try
         {
@@ -123,7 +136,7 @@ public class DefaultSiteRendererTest
     private void copyVm( String filename, String append )
         throws IOException
     {
-        InputStream is = this.getResourceAsStream( "/org/apache/maven/doxia/siterenderer/resources/" + filename );
+        InputStream is = getClass().getResourceAsStream( "/org/apache/maven/doxia/siterenderer/resources/" + filename );
         assertNotNull( is );
         OutputStream os = new FileOutputStream( new File( getBasedir(), "target/test-classes/" + filename ) );
         try
@@ -140,14 +153,12 @@ public class DefaultSiteRendererTest
 
     /**
      * @throws java.lang.Exception if something goes wrong.
-     * @see org.codehaus.plexus.PlexusTestCase#tearDown()
      */
-    @Override
+    @AfterEach
     protected void tearDown()
         throws Exception
     {
-        release( renderer );
-        super.tearDown();
+        container.release( renderer );
 
         Locale.setDefault( oldLocale );
     }
@@ -155,6 +166,7 @@ public class DefaultSiteRendererTest
     /**
      * @throws Exception if something goes wrong.
      */
+    @Test
     public void testRenderExceptionMessageWhenLineNumberIsNotAvailable()
         throws Exception
     {
@@ -162,12 +174,12 @@ public class DefaultSiteRendererTest
         final String testDocumentName = "head.xml";
         final String exceptionMessage = "parse error occurred";
 
-        Doxia doxiaInstance = (Doxia) lookup( Doxia.class );
+        Doxia doxiaInstance = container.lookup( Doxia.class );
         Doxia doxiaSpy = spy( doxiaInstance );
         Mockito.doThrow( new ParseException( exceptionMessage ) )
                 .when( doxiaSpy )
                 .parse( Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any(), Mockito.anyString() );
-        Renderer renderer = (Renderer) lookup( Renderer.class );
+        Renderer renderer = container.lookup( Renderer.class );
         ReflectionUtils.setVariableValueInObject( renderer, "doxia", doxiaSpy );
 
         RenderingContext renderingContext = new RenderingContext( testBasedir, "", testDocumentName, "xdoc", "",
@@ -190,6 +202,7 @@ public class DefaultSiteRendererTest
     /**
      * @throws Exception if something goes wrong.
      */
+    @Test
     public void testRenderExceptionMessageWhenLineNumberIsAvailable()
         throws Exception
     {
@@ -197,12 +210,12 @@ public class DefaultSiteRendererTest
         final String testDocumentName = "head.xml";
         final String exceptionMessage = "parse error occurred";
 
-        Doxia doxiaInstance = (Doxia) lookup( Doxia.class );
+        Doxia doxiaInstance = container.lookup( Doxia.class );
         Doxia doxiaSpy = spy( doxiaInstance );
         Mockito.doThrow( new ParseException( exceptionMessage, 42, 36 ) )
                 .when( doxiaSpy )
                 .parse( Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any(), Mockito.anyString() );
-        Renderer renderer = (Renderer) lookup( Renderer.class );
+        Renderer renderer = container.lookup( Renderer.class );
         ReflectionUtils.setVariableValueInObject( renderer, "doxia", doxiaSpy );
 
         RenderingContext renderingContext = new RenderingContext( testBasedir, "", testDocumentName, "xdoc", "",
@@ -225,6 +238,7 @@ public class DefaultSiteRendererTest
     /**
      * @throws Exception if something goes wrong.
      */
+    @Test
     public void testRender()
         throws Exception
     {
@@ -268,6 +282,7 @@ public class DefaultSiteRendererTest
         validatePages();
     }
 
+    @Test
     public void testExternalReport()
         throws Exception
     {
@@ -284,6 +299,7 @@ public class DefaultSiteRendererTest
         verify( docRenderer ).renderDocument( isNull( Writer.class ), eq( renderer ), eq( context ) );
     }
 
+    @Test
     public void testVelocityToolManager()
         throws Exception
     {
@@ -316,6 +332,7 @@ public class DefaultSiteRendererTest
         assertEquals( expectedResult, renderResult );
     }
 
+    @Test
     public void testVelocityToolManagerForSkin()
         throws Exception
     {
@@ -348,6 +365,7 @@ public class DefaultSiteRendererTest
         assertEquals( expectedResult, renderResult );
     }
 
+    @Test
     public void testMatchVersion()
         throws Exception
     {
@@ -360,7 +378,7 @@ public class DefaultSiteRendererTest
     {
         SiteRenderingContext ctxt = new SiteRenderingContext();
         ctxt.setTemplateName( "default-site.vm" );
-        ctxt.setTemplateClassLoader( getClassLoader() );
+        ctxt.setTemplateClassLoader( getClass().getClassLoader() );
         ctxt.setUsingDefaultTemplate( true );
         final Map<String, String> templateProp = new HashMap<String, String>();
         templateProp.put( "outputEncoding", "UTF-8" );
@@ -535,8 +553,8 @@ public class DefaultSiteRendererTest
     {
         int cr = StringUtils.countMatches( content, "\r" );
         int lf = StringUtils.countMatches( content, "\n" );
-        assertTrue( "Should contain only Windows or Unix newlines: cr = " + cr + ", lf = " + lf, ( cr == 0 )
-            || ( cr == lf ) );
+        assertTrue( ( cr == 0 ) || ( cr == lf ),
+                    "Should contain only Windows or Unix newlines: cr = " + cr + ", lf = " + lf);
     }
 
     /**
@@ -554,6 +572,7 @@ public class DefaultSiteRendererTest
     protected static class Xhtml5ValidatorTest
         extends AbstractXmlValidator
     {
+
         /**
          * Validate the generated documents.
          *
@@ -563,9 +582,14 @@ public class DefaultSiteRendererTest
             throws Exception
         {
             setValidate( false );
-            setUp();
-            testValidateFiles();
-            tearDown();
+            try
+            {
+                testValidateFiles();
+            }
+            finally
+            {
+                tearDown();
+            }
         }
 
         private static String[] getIncludes()

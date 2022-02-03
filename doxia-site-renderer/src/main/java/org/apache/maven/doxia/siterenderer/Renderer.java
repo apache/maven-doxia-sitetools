@@ -40,11 +40,6 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
 public interface Renderer // TODO rename to SiteRenderer
 {
     /**
-     * Plexus lookup role.
-     */
-    String ROLE = Renderer.class.getName();
-
-    /**
      * Render a collection of documents into a site.
      *
      * @param documents the documents to render.

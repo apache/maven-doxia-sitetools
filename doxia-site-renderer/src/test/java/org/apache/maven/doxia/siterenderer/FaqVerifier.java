@@ -35,6 +35,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlSection;
 
 import java.util.Iterator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  *
  * @author ltheussl

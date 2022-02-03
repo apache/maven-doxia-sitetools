@@ -36,6 +36,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlSection;
 import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  *
  * @author ltheussl
