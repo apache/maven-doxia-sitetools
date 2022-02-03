@@ -109,7 +109,7 @@ public class DefaultSiteRendererTest
     protected void setUp()
         throws Exception
     {
-        renderer = (Renderer) container.lookup( Renderer.class );
+        renderer = container.lookup( Renderer.class );
 
         // copy the default-site.vm and default-site-macros.vm
         copyVm( "default-site.vm", "\n\n\n\r\n\r\n\r\n" );
