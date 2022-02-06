@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -132,9 +133,9 @@ public class DefaultSiteTool
                                                    DecorationModel decoration )
         throws SiteToolException
     {
-        checkNotNull( "localRepository", localRepository );
-        checkNotNull( "remoteArtifactRepositories", remoteArtifactRepositories );
-        checkNotNull( "decoration", decoration );
+        Objects.requireNonNull( localRepository, "localRepository cannot be null" );
+        Objects.requireNonNull( remoteArtifactRepositories, "remoteArtifactRepositories cannot be null" );
+        Objects.requireNonNull( decoration, "decoration cannot be null" );
 
         Skin skin = decoration.getSkin();
 
@@ -159,16 +160,15 @@ public class DefaultSiteTool
         }
         catch ( InvalidVersionSpecificationException e )
         {
-            throw new SiteToolException( "InvalidVersionSpecificationException: The skin version '" + version
-                + "' is not valid: " + e.getMessage(), e );
+            throw new SiteToolException( "The skin version '" + version + "' is not valid", e );
         }
         catch ( ArtifactResolutionException e )
         {
-            throw new SiteToolException( "ArtifactResolutionException: Unable to find skin", e );
+            throw new SiteToolException( "Unable to find skin", e );
         }
         catch ( ArtifactNotFoundException e )
         {
-            throw new SiteToolException( "ArtifactNotFoundException: The skin does not exist: " + e.getMessage(), e );
+            throw new SiteToolException( "The skin does not exist", e );
         }
 
         return artifact;
@@ -189,8 +189,8 @@ public class DefaultSiteTool
     @Deprecated
     public String getRelativePath( String to, String from )
     {
-        checkNotNull( "to", to );
-        checkNotNull( "from", from );
+        Objects.requireNonNull( to, "to cannot be null" );
+        Objects.requireNonNull( from, "from cannot be null" );
 
         if ( to.contains( ":" ) && from.contains( ":" ) )
         {
@@ -220,7 +220,7 @@ public class DefaultSiteTool
             }
             catch ( MalformedURLException e1 )
             {
-                LOGGER.warn( "Unable to load a URL for '" + to + "': " + e.getMessage() );
+                LOGGER.warn( "Unable to load a URL for '" + to + "'", e );
                 return to;
             }
         }
@@ -237,7 +237,7 @@ public class DefaultSiteTool
             }
             catch ( MalformedURLException e1 )
             {
-                LOGGER.warn( "Unable to load a URL for '" + from + "': " + e.getMessage() );
+                LOGGER.warn( "Unable to load a URL for '" + from + "'", e );
                 return to;
             }
         }
@@ -346,7 +346,7 @@ public class DefaultSiteTool
     /** {@inheritDoc} */
     public File getSiteDescriptor( File siteDirectory, Locale locale )
     {
-        checkNotNull( "siteDirectory", siteDirectory );
+        Objects.requireNonNull( siteDirectory, "siteDirectory cannot be null" );
         final Locale llocale = ( locale == null ) ? new Locale( "" ) : locale;
 
         File siteDescriptor = new File( siteDirectory, "site_" + llocale.getLanguage() + ".xml" );
@@ -374,9 +374,9 @@ public class DefaultSiteTool
                                                  List<ArtifactRepository> repositories, Locale locale )
         throws SiteToolException
     {
-        checkNotNull( "project", project );
-        checkNotNull( "localRepository", localRepository );
-        checkNotNull( "repositories", repositories );
+        Objects.requireNonNull( project, "project cannot be null" );
+        Objects.requireNonNull( localRepository, "localRepository cannot be null" );
+        Objects.requireNonNull( repositories, "repositories cannot be null" );
 
         final Locale llocale = ( locale == null ) ? new Locale( "" ) : locale;
 
@@ -386,17 +386,16 @@ public class DefaultSiteTool
         }
         catch ( ArtifactNotFoundException e )
         {
-            LOGGER.debug( "ArtifactNotFoundException: Unable to locate site descriptor: " + e );
+            LOGGER.debug( "Unable to locate site descriptor", e );
             return null;
         }
         catch ( ArtifactResolutionException e )
         {
-            throw new SiteToolException( "ArtifactResolutionException: Unable to locate site descriptor: "
-                + e.getMessage(), e );
+            throw new SiteToolException( "Unable to locate site descriptor", e );
         }
         catch ( IOException e )
         {
-            throw new SiteToolException( "IOException: Unable to locate site descriptor: " + e.getMessage(), e );
+            throw new SiteToolException( "Unable to locate site descriptor", e );
         }
     }
 
@@ -406,10 +405,10 @@ public class DefaultSiteTool
                                                List<ArtifactRepository> repositories )
         throws SiteToolException
     {
-        checkNotNull( "project", project );
-        checkNotNull( "reactorProjects", reactorProjects );
-        checkNotNull( "localRepository", localRepository );
-        checkNotNull( "repositories", repositories );
+        Objects.requireNonNull( project, "project cannot be null" );
+        Objects.requireNonNull( reactorProjects, "reactorProjects cannot be null" );
+        Objects.requireNonNull( localRepository, "localRepository cannot be null" );
+        Objects.requireNonNull( repositories, "repositories cannot be null" );
 
         final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale;
 
@@ -435,7 +434,7 @@ public class DefaultSiteTool
             }
             catch ( IOException e )
             {
-                throw new SiteToolException( "Error reading default site descriptor: " + e.getMessage(), e );
+                throw new SiteToolException( "Error reading default site descriptor", e );
             }
             finally
             {
@@ -464,7 +463,7 @@ public class DefaultSiteTool
         }
         catch ( IOException e )
         {
-            throw new SiteToolException( "Error while populating modules menu: " + e.getMessage(), e );
+            throw new SiteToolException( "Error while populating modules menu", e );
         }
 
         if ( decorationModel.getBannerLeft() == null )
@@ -483,7 +482,7 @@ public class DefaultSiteTool
                                                         String siteDescriptorContent )
         throws SiteToolException
     {
-        checkNotNull( "props", props );
+        Objects.requireNonNull( props, "props cannot be null" );
 
         // "classical" late interpolation
         return getInterpolatedSiteDescriptorContent( aProject, siteDescriptorContent, false );
@@ -493,8 +492,8 @@ public class DefaultSiteTool
                                                         String siteDescriptorContent, boolean isEarly )
         throws SiteToolException
     {
-        checkNotNull( "aProject", aProject );
-        checkNotNull( "siteDescriptorContent", siteDescriptorContent );
+        Objects.requireNonNull( aProject, "aProject cannot be null" );
+        Objects.requireNonNull( siteDescriptorContent, "siteDescriptorContent cannot be null" );
 
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
 
@@ -515,8 +514,7 @@ public class DefaultSiteTool
             catch ( IOException e )
             {
                 // Prefer logging?
-                throw new SiteToolException( "IOException: cannot interpolate environment properties: "
-                    + e.getMessage(), e );
+                throw new SiteToolException( "Cannot interpolate environment properties", e );
             }
         }
 
@@ -527,7 +525,7 @@ public class DefaultSiteTool
         }
         catch ( InterpolationException e )
         {
-            throw new SiteToolException( "Cannot interpolate site descriptor: " + e.getMessage(), e );
+            throw new SiteToolException( "Cannot interpolate site descriptor", e );
         }
     }
 
@@ -535,9 +533,9 @@ public class DefaultSiteTool
     public MavenProject getParentProject( MavenProject aProject, List<MavenProject> reactorProjects,
                                           ArtifactRepository localRepository )
     {
-        checkNotNull( "aProject", aProject );
-        checkNotNull( "reactorProjects", reactorProjects );
-        checkNotNull( "localRepository", localRepository );
+        Objects.requireNonNull( aProject, "aProject cannot be null" );
+        Objects.requireNonNull( reactorProjects, "reactorProjects cannot be null" );
+        Objects.requireNonNull( localRepository, "localRepository cannot be null" );
 
         if ( isMaven3OrMore() )
         {
@@ -595,8 +593,7 @@ public class DefaultSiteTool
                 }
                 catch ( ProjectBuildingException e )
                 {
-                    LOGGER.info( "Unable to load parent project " + origParent.getId() + " from a relative path: "
-                        + e.getMessage() );
+                    LOGGER.info( "Unable to load parent project " + origParent.getId() + " from a relative path", e );
                 }
             }
 
@@ -611,8 +608,7 @@ public class DefaultSiteTool
                 }
                 catch ( ProjectBuildingException e )
                 {
-                    LOGGER.warn( "Unable to load parent project " + origParent.getId() + " from repository: "
-                        + e.getMessage() );
+                    LOGGER.warn( "Unable to load parent project " + origParent.getId() + " from repository", e );
                 }
             }
 
@@ -641,9 +637,9 @@ public class DefaultSiteTool
     private void populateParentMenu( DecorationModel decorationModel, Locale locale, MavenProject project,
                                     MavenProject parentProject, boolean keepInheritedRefs )
     {
-        checkNotNull( "decorationModel", decorationModel );
-        checkNotNull( "project", project );
-        checkNotNull( "parentProject", parentProject );
+        Objects.requireNonNull( decorationModel, "decorationModel cannot be null" );
+        Objects.requireNonNull( project, "project cannot be null" );
+        Objects.requireNonNull( parentProject, "parentProject cannot be null" );
 
         Menu menu = decorationModel.getMenuRef( "parent" );
 
@@ -725,10 +721,10 @@ public class DefaultSiteTool
                                      boolean keepInheritedRefs )
         throws SiteToolException, IOException
     {
-        checkNotNull( "project", project );
-        checkNotNull( "reactorProjects", reactorProjects );
-        checkNotNull( "localRepository", localRepository );
-        checkNotNull( "decorationModel", decorationModel );
+        Objects.requireNonNull( project, "project cannot be null" );
+        Objects.requireNonNull( reactorProjects, "reactorProjects cannot be null" );
+        Objects.requireNonNull( localRepository, "localRepository cannot be null" );
+        Objects.requireNonNull( decorationModel, "decorationModel cannot be null" );
 
         Menu menu = decorationModel.getMenuRef( "modules" );
 
@@ -770,12 +766,12 @@ public class DefaultSiteTool
                         }
                         catch ( ProjectBuildingException e )
                         {
-                            throw new SiteToolException( "Unable to read local module-POM", e );
+                            throw new SiteToolException( "Unable to read local module POM", e );
                         }
                     }
                     else
                     {
-                        LOGGER.warn( "No filesystem module-POM available" );
+                        LOGGER.warn( "No filesystem module POM available" );
 
                         moduleProject = new MavenProject();
                         moduleProject.setName( module );
@@ -821,8 +817,8 @@ public class DefaultSiteTool
     public void populateReportsMenu( DecorationModel decorationModel, Locale locale,
                                      Map<String, List<MavenReport>> categories )
     {
-        checkNotNull( "decorationModel", decorationModel );
-        checkNotNull( "categories", categories );
+        Objects.requireNonNull( decorationModel, "decorationModel cannot be null" );
+        Objects.requireNonNull( categories, "categories cannot be null" );
 
         Menu menu = decorationModel.getMenuRef( "reports" );
 
@@ -1046,7 +1042,7 @@ public class DefaultSiteTool
         }
         catch ( ArtifactNotFoundException e )
         {
-            LOGGER.debug( "Unable to locate site descriptor for locale " + locale.getLanguage() + ": " + e );
+            LOGGER.debug( "Unable to locate site descriptor for locale " + locale.getLanguage(), e );
 
             // we can afford to write an empty descriptor here as we don't expect it to turn up later in the remote
             // repository, because the parent was already released (and snapshots are updated automatically if changed)
@@ -1116,8 +1112,7 @@ public class DefaultSiteTool
             }
             catch ( SiteToolException e )
             {
-                throw new SiteToolException( "The site descriptor cannot be resolved from the repository: "
-                    + e.getMessage(), e );
+                throw new SiteToolException( "The site descriptor cannot be resolved from the repository", e );
             }
         }
         else
@@ -1447,14 +1442,6 @@ public class DefaultSiteTool
         catch ( MalformedURLException ex )
         {
             return url; // this will then throw somewhere else
-        }
-    }
-
-    private void checkNotNull( String name, Object value )
-    {
-        if ( value == null )
-        {
-            throw new IllegalArgumentException( "The parameter '" + name + "' cannot be null." );
         }
     }
 

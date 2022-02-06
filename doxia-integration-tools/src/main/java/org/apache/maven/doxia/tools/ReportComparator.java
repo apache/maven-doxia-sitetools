@@ -22,6 +22,7 @@ package org.apache.maven.doxia.tools;
 import java.text.Collator;
 import java.util.Comparator;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.maven.reporting.MavenReport;
 
@@ -45,11 +46,7 @@ public class ReportComparator
      */
     public ReportComparator( Locale locale )
     {
-        if ( locale == null )
-        {
-            throw new IllegalArgumentException( "locale should be defined" );
-        }
-        this.locale = locale;
+        this.locale = Objects.requireNonNull( locale, "locale cannot be null" );
     }
 
     /** {@inheritDoc} */

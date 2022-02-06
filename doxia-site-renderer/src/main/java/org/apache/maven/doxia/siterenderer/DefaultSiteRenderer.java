@@ -200,7 +200,7 @@ public class DefaultSiteRenderer
             }
             catch ( ParserModuleNotFoundException e )
             {
-                throw new RendererException( "Unable to find module: " + e.getMessage(), e );
+                throw new RendererException( "Unable to find module", e );
             }
         }
         return files;
@@ -396,7 +396,7 @@ public class DefaultSiteRenderer
                 catch ( VelocityException e )
                 {
                     throw new RendererException( "Error parsing " + docRenderingContext.getDoxiaSourcePath()
-                        + " as a Velocity template: " + e.getMessage(), e );
+                        + " as a Velocity template", e );
                 }
 
                 if ( parser.getType() == Parser.XML_TYPE && siteContext.isValidate() )
@@ -427,22 +427,21 @@ public class DefaultSiteRenderer
         }
         catch ( ParserNotFoundException e )
         {
-            throw new RendererException( "Error getting a parser for '" + doc + "': " + e.getMessage(), e );
+            throw new RendererException( "Error getting a parser for '" + doc + "'", e );
         }
         catch ( ParseException e )
         {
             StringBuilder errorMsgBuilder = new StringBuilder();
-            errorMsgBuilder.append( "Error parsing '" ).append( doc ).append( "': " );
+            errorMsgBuilder.append( "Error parsing '" ).append( doc ).append( "'" );
             if ( e.getLineNumber() > 0 )
             {
-                errorMsgBuilder.append( "line [" ).append( e.getLineNumber() ).append( "] " );
+                errorMsgBuilder.append( ", line " ).append( e.getLineNumber() );
             }
-            errorMsgBuilder.append( e.getMessage() );
             throw new RendererException( errorMsgBuilder.toString(), e );
         }
         catch ( IOException e )
         {
-            throw new RendererException( "IOException when processing '" + doc + "'", e );
+            throw new RendererException( "Error while processing '" + doc + "'", e );
         }
         finally
         {

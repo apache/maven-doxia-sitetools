@@ -181,8 +181,8 @@ public class DefaultSiteRendererTest
         catch ( RendererException e )
         {
             assertEquals(
-                    String.format( "Error parsing '%s%s%s': %s",
-                            testBasedir.getAbsolutePath(), File.separator, testDocumentName, exceptionMessage ),
+                    String.format( "Error parsing '%s%s%s'",
+                            testBasedir.getAbsolutePath(), File.separator, testDocumentName ),
                     e.getMessage() );
         }
     }
@@ -216,8 +216,8 @@ public class DefaultSiteRendererTest
         catch ( RendererException e )
         {
             assertEquals(
-                    String.format( "Error parsing '%s%s%s': line [42] %s",
-                            testBasedir.getAbsolutePath(), File.separator, testDocumentName, exceptionMessage ),
+                    String.format( "Error parsing '%s%s%s', line 42",
+                            testBasedir.getAbsolutePath(), File.separator, testDocumentName ),
                     e.getMessage() );
         }
     }
