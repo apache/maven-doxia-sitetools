@@ -21,7 +21,6 @@ package org.apache.maven.doxia.tools;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -35,7 +34,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.apache.commons.io.FilenameUtils;
@@ -45,7 +43,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.site.decoration.Banner;
@@ -58,9 +55,12 @@ import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
@@ -118,11 +118,10 @@ public class DefaultSiteTool
     protected DecorationModelInheritanceAssembler assembler;
 
     /**
-     * Project builder (deprecated in Maven 3: should use ProjectBuilder, which will avoid
-     * issues like DOXIASITETOOLS-166)
+     * Project builder.
      */
     @Requirement
-    protected MavenProjectBuilder mavenProjectBuilder;
+    protected ProjectBuilder projectBuilder;
 
     // ----------------------------------------------------------------------
     // Public methods
@@ -537,91 +536,7 @@ public class DefaultSiteTool
         Objects.requireNonNull( reactorProjects, "reactorProjects cannot be null" );
         Objects.requireNonNull( localRepository, "localRepository cannot be null" );
 
-        if ( isMaven3OrMore() )
-        {
-            // no need to make voodoo with Maven 3: job already done
-            return aProject.getParent();
-        }
-
-        MavenProject parentProject = null;
-
-        MavenProject origParent = aProject.getParent();
-        if ( origParent != null )
-        {
-            for ( MavenProject reactorProject : reactorProjects )
-            {
-                if ( reactorProject.getGroupId().equals( origParent.getGroupId() )
-                    && reactorProject.getArtifactId().equals( origParent.getArtifactId() )
-                    && reactorProject.getVersion().equals( origParent.getVersion() ) )
-                {
-                    parentProject = reactorProject;
-
-                    LOGGER.debug( "Parent project " + origParent.getId() + " picked from reactor" );
-                    break;
-                }
-            }
-
-            if ( parentProject == null && aProject.getBasedir() != null
-                && StringUtils.isNotEmpty( aProject.getModel().getParent().getRelativePath() ) )
-            {
-                try
-                {
-                    String relativePath = aProject.getModel().getParent().getRelativePath();
-
-                    File pomFile = new File( aProject.getBasedir(), relativePath );
-
-                    if ( pomFile.isDirectory() )
-                    {
-                        pomFile = new File( pomFile, "pom.xml" );
-                    }
-                    pomFile = new File( getNormalizedPath( pomFile.getPath() ) );
-
-                    if ( pomFile.isFile() )
-                    {
-                        MavenProject mavenProject = mavenProjectBuilder.build( pomFile, localRepository, null );
-
-                        if ( mavenProject.getGroupId().equals( origParent.getGroupId() )
-                            && mavenProject.getArtifactId().equals( origParent.getArtifactId() )
-                            && mavenProject.getVersion().equals( origParent.getVersion() ) )
-                        {
-                            parentProject = mavenProject;
-
-                            LOGGER.debug( "Parent project " + origParent.getId() + " loaded from a relative path: "
-                                + relativePath );
-                        }
-                    }
-                }
-                catch ( ProjectBuildingException e )
-                {
-                    LOGGER.info( "Unable to load parent project " + origParent.getId() + " from a relative path", e );
-                }
-            }
-
-            if ( parentProject == null )
-            {
-                try
-                {
-                    parentProject = mavenProjectBuilder.buildFromRepository( aProject.getParentArtifact(), aProject
-                        .getRemoteArtifactRepositories(), localRepository );
-
-                    LOGGER.debug( "Parent project " + origParent.getId() + " loaded from repository" );
-                }
-                catch ( ProjectBuildingException e )
-                {
-                    LOGGER.warn( "Unable to load parent project " + origParent.getId() + " from repository", e );
-                }
-            }
-
-            if ( parentProject == null )
-            {
-                // fallback to original parent, which may contain uninterpolated value (still need a unit test)
-
-                parentProject = origParent;
-
-                LOGGER.debug( "Parent project " + origParent.getId() + " picked from original value" );
-            }
-        }
-        return parentProject;
+        return aProject.getParent();
     }
 
     /**
@@ -762,7 +677,11 @@ public class DefaultSiteTool
                     {
                         try
                         {
-                            moduleProject = mavenProjectBuilder.build( f, localRepository, null );
+                            ProjectBuildingRequest request = new DefaultProjectBuildingRequest();
+                            request.setLocalRepository( localRepository );
+
+                            ProjectBuildingResult result = projectBuilder.build( f, request );
+                            moduleProject = result.getProject();
                         }
                         catch ( ProjectBuildingException e )
                         {
@@ -1090,7 +1009,6 @@ public class DefaultSiteTool
      * @param reactorProjects not null
      * @param localRepository not null
      * @param repositories not null
-     * @param origProps not null
      * @return the decoration model depending the locale and the parent project
      * @throws SiteToolException if any
      */
@@ -1443,38 +1361,5 @@ public class DefaultSiteTool
         {
             return url; // this will then throw somewhere else
         }
-    }
-
-    /**
-     * Check the current Maven version to see if it's Maven 3.0 or newer.
-     */
-    private static boolean isMaven3OrMore()
-    {
-        return new DefaultArtifactVersion( getMavenVersion() ).getMajorVersion() >= 3;
-    }
-
-    private static String getMavenVersion()
-    {
-        // This relies on the fact that MavenProject is the in core classloader
-        // and that the core classloader is for the maven-core artifact
-        // and that should have a pom.properties file
-        // if this ever changes, we will have to revisit this code.
-        final Properties properties = new Properties();
-        final String corePomProperties = "META-INF/maven/org.apache.maven/maven-core/pom.properties";
-        final InputStream in = MavenProject.class.getClassLoader().getResourceAsStream( corePomProperties );
-        try
-        {
-            properties.load( in );
-        }
-        catch ( IOException ioe )
-        {
-            return "";
-        }
-        finally
-        {
-            IOUtil.close( in );
-        }
-
-        return properties.getProperty( "version" ).trim();
     }
 }

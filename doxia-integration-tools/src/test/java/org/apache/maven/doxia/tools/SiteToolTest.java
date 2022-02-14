@@ -40,6 +40,8 @@ import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
 import org.apache.maven.project.MavenProject;
 
+import org.codehaus.plexus.ContainerConfiguration;
+import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -51,6 +53,12 @@ import org.codehaus.plexus.util.WriterFactory;
 public class SiteToolTest
     extends PlexusTestCase
 {
+    @Override
+    protected void customizeContainerConfiguration( @SuppressWarnings( "unused" ) final ContainerConfiguration configuration )
+    {
+        configuration.setClassPathScanning( PlexusConstants.SCANNING_CACHE );
+    }
+
     /**
      * @return the repo.
      *

@@ -71,7 +71,9 @@ under the License.
     <javaVersion>8</javaVersion>
     <doxiaVersion>2.0.0-M1</doxiaVersion>
     <slf4jVersion>1.7.32</slf4jVersion>
-    <mavenVersion>2.2.1</mavenVersion>
+    <mavenVersion>3.2.5</mavenVersion>
+    <aetherVersion>1.0.0.v20140518</aetherVersion>
+    <wagonVersion>2.8</wagonVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
     <project.build.outputTimestamp>2022-02-01T20:16:03Z</project.build.outputTimestamp>
   </properties>
