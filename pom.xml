@@ -170,6 +170,7 @@ under the License.
         <artifactId>plexus-velocity</artifactId>
         <version>1.2</version>
       </dependency>
+      <!-- Don't upgrade, it is broken: https://github.com/codehaus-plexus/plexus-utils/commit/1e18ddcc98f318b36449102f3267fd4631cc668b -->
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-utils</artifactId>
