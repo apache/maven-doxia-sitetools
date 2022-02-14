@@ -24,8 +24,8 @@ import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -235,7 +235,7 @@ public class DefaultSiteRendererTest
         // Render the site from src/test/resources/site to OUTPUT
         // ----------------------------------------------------------------------
         DecorationModel decoration = new DecorationXpp3Reader()
-            .read( new FileReader( getTestFile( "src/test/resources/site/site.xml" ) ) );
+            .read( new FileInputStream( getTestFile( "src/test/resources/site/site.xml" ) ) );
 
         SiteRenderingContext ctxt = getSiteRenderingContext( decoration, "src/test/resources/site", false );
         ctxt.setRootDirectory( getTestFile( "" ) );

@@ -20,7 +20,7 @@ package org.apache.maven.doxia.tools.stubs;
  */
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +58,7 @@ public class SiteToolMavenProjectStub
 
         try
         {
-            model = new MavenXpp3Reader().read( new FileReader( new File( getBasedir(), "pom.xml" ) ) );
+            model = new MavenXpp3Reader().read( new FileInputStream( new File( getBasedir(), "pom.xml" ) ) );
             setModel( model );
         }
         catch ( Exception e )
