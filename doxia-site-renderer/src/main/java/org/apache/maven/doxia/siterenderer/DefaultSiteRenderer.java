@@ -21,6 +21,7 @@ package org.apache.maven.doxia.siterenderer;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -119,6 +120,7 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  * @since 1.0
  */
+@Singleton
 @Named
 public class DefaultSiteRenderer
     implements Renderer

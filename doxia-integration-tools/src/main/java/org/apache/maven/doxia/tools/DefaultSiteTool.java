@@ -21,6 +21,7 @@ package org.apache.maven.doxia.tools;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,6 +85,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
+@Singleton
 @Named
 public class DefaultSiteTool
     implements SiteTool

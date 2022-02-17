@@ -20,6 +20,7 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  */
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:henning@apache.org">Henning P. Schmiedehausen</a>
  */
+@Singleton
 @Named
 public class DefaultDecorationModelInheritanceAssembler
     implements DecorationModelInheritanceAssembler
