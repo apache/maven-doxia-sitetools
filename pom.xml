@@ -73,7 +73,8 @@ under the License.
     <slf4jVersion>1.7.32</slf4jVersion>
     <mavenVersion>4.0.0-alpha-1-SNAPSHOT</mavenVersion>
     <aetherVersion>1.0.0.v20140518</aetherVersion>
-    <wagonVersion>2.8</wagonVersion>
+    <resolverVersion>1.8.0-SNAPSHOT</resolverVersion>
+    <wagonVersion>3.5.2-SNAPSHOT</wagonVersion>
     <junitVersion>5.8.2</junitVersion>
     <sisuVersion>0.3.5</sisuVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
@@ -274,19 +275,6 @@ under the License.
       </plugins>
     </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>org.eclipse.sisu</groupId>
-        <artifactId>sisu-maven-plugin</artifactId>
-        <version>${sisuVersion}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>main-index</goal>
-              <goal>test-index</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
