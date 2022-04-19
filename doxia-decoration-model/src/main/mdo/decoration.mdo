@@ -30,7 +30,7 @@ under the License.
     <p>An XSD is available at:</p>
     <ul>
       <!-- There is no property filtering in Modello, this has to be updated manually. See DOXIASITETOOLS-98. -->
-      <li><a href="http://maven.apache.org/xsd/decoration-1.8.0.xsd">http://maven.apache.org/xsd/decoration-1.8.0.xsd</a></li>
+      <li><a href="http://maven.apache.org/xsd/decoration-1.9.0.xsd">http://maven.apache.org/xsd/decoration-1.9.0.xsd</a></li>
     </ul>
     ]]></description>
 
@@ -177,6 +177,31 @@ under the License.
           <description>Timestamp of the last modification of this decoration model.</description>
           <version>1.0.1+</version>
           <type>long</type>
+        </field>
+        <field>
+          <name>apacheAnalyticsSiteId</name>
+          <description>The id for your Apache Analytics.</description>
+          <version>1.9.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>apacheAnalyticsUrl</name>
+          <description>The url for Apache Analytics.</description>
+          <version>1.9.0+</version>
+          <type>String</type>
+          <defaultValue>analytics.apache.org</defaultValue>
+          <identifier>false</identifier>
+        </field>
+        <field>
+          <name>apacheAnalyticsOptions</name>
+          <description>Extra options for Apache Analytics.</description>
+          <version>1.9.0+</version>
+          <type>Properties</type>
+          <association xml.mapStyle="inline">
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
         </field>
       </fields>
       <codeSegments>
