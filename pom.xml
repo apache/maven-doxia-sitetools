@@ -72,7 +72,7 @@ under the License.
     <doxiaVersion>2.0.0-M2</doxiaVersion>
     <slf4jVersion>1.7.32</slf4jVersion>
     <mavenVersion>3.2.5</mavenVersion>
-    <aetherVersion>1.0.0.v20140518</aetherVersion>
+    <aetherVersion>1.1.0</aetherVersion>
     <wagonVersion>2.8</wagonVersion>
     <junitVersion>5.8.2</junitVersion>
     <sisuVersion>0.3.5</sisuVersion>
