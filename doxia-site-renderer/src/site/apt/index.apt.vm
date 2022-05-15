@@ -34,7 +34,7 @@ Doxia Sitetools - Site Renderer
 
   Documents can be dynamically generated with {{{/doxia/doxia/doxia-sink-api/}Doxia Sink API}}, like Maven reports,
   or simply read from static files written in {{{/doxia/references/index.html}markup supported by Doxia Parsers}},
-  eventually processed by {{{http://velocity.apache.org/engine/1.7/}Velocity}}
+  eventually processed by {{{https://velocity.apache.org/engine/${velocityEngineVersion}/}Velocity}}
   if their file names end in <<<.vm>>>.
 
 [doxia-site-renderer.png]
@@ -76,62 +76,62 @@ Doxia Sitetools - Site Renderer
 
   There are also some tools for general use:
 
-#set( $plexus = "http://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus" )
+#set( $plexus = "https://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus/util" )
 *---------------------------------+------------------------------------------------------+-------------------------------+
 || Variable                       || Type                                                || Description                 ||
 *---------------------------------+------------------------------------------------------+-------------------------------+
-| <<<PathTool>>>                  | {{{$plexus/util/PathTool.html}<<<PathTool>>>}}       |                               |
+| <<<PathTool>>>                  | {{{$plexus/PathTool.html}<<<PathTool>>>}}            |                               |
 *---------------------------------+------------------------------------------------------+-------------------------------+
-| <<<StringUtils>>>               | {{{$plexus/util/StringUtils.html}<<<StringUtils>>>}} |                               |
+| <<<StringUtils>>>               | {{{$plexus/StringUtils.html}<<<StringUtils>>>}}      |                               |
 *---------------------------------+------------------------------------------------------+-------------------------------+
-| <<<plexus>>>                    | {{{http://git.eclipse.org/c/sisu/org.eclipse.sisu.plexus.git/tree/org.eclipse.sisu.plexus/src/org/codehaus/plexus/PlexusContainer.java}<<<PlexusContainer>>>}} |  |
+| <<<plexus>>>                    | {{{https://github.com/eclipse/sisu.plexus/blob/master/org.eclipse.sisu.plexus/src/org/codehaus/plexus/PlexusContainer.java}<<<PlexusContainer>>>}} |  |
 *---------------------------------+------------------------------------------------------+-------------------------------+
 
-  Additionally, there are {{{http://velocity.apache.org/tools/releases/2.0/generic.html} Velocity Generic Tools}} populated
+  Additionally, there are {{{https://velocity.apache.org/tools/${velocityToolsVersion}/tools-summary.html} Velocity Generic Tools}} populated
   with the site locale, the decoration model's date format, and site renderer's resource bundle:
 
-#set( $generic = "http://velocity.apache.org/tools/releases/2.0/javadoc/org/apache/velocity/tools/generic" )
-*------------------+----------------------------------------------------------+-------------------------------+
-|| Variable        || Type                                                    || Description                 ||
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<alternator>>> | {{{$generic/AlternatorTool.html}AlternatorTool}}         | For creating alternators to easily alternate over a set of values.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<class>>>      | {{{$generic/ClassTool.html}ClassTool}}                   | For simplifying reflective lookup of information about classes and their fields, methods and constructors.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<context>>>    | {{{$generic/ContextTool.html}ContextTool}}               | For convenient access to context data and metadata.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<convert>>>    | {{{$generic/ConversionTool.html}ConversionTool}}         | For converting String values to richer object Types.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<date>>>       | {{{$generic/ComparisonDateTool.html}ComparisonDateTool}} | For manipulating, formatting, and comparing dates.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<display>>>    | {{{$generic/DisplayTool.html}DisplayTool}}               | For controlling display of references (e.g., truncating values, "pretty printing" lists, and displaying alternates when a reference is null).
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<esc>>>        | {{{$generic/EscapeTool.html}EscapeTool}}                 | For common escaping needs in Velocity templates (e.g. escaping html, xml, javascript etc.).
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<field>>>      | {{{$generic/FieldTool.html}FieldTool}}                   | For (easy) access to static fields in a class, such as string constants.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<link>>>       | {{{$generic/LinkTool.html}LinkTool}}                     | For creating and manipulating URIs and URLs. The API for this tool is designed to closely resemble that of the VelocityView tool of the same name.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<loop>>>       | {{{$generic/LoopTool.html}LoopTool}}                     | A convenience tool to use with \#foreach loops. It wraps a list with a custom iterator to provide greater control, allowing loops to end early, skip ahead and more.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<math>>>       | {{{$generic/MathTool.html}MathTool}}                     | For performing math functions.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<number>>>     | {{{$generic/NumberTool.html}NumberTool}}                 | For formatting and converting numbers.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<render>>>     | {{{$generic/RenderTool.html}RenderTool}}                 | To evaluate and render arbitrary strings of VTL, including recursive rendering.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<text>>>       | {{{$generic/ResourceTool.html}ResourceTool}}             | For simplified access to resource bundles for internationalization or other dynamic content needs.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<sorter>>>     | {{{$generic/SortTool.html}SortTool}}                     | Used to sort collections (or arrays, iterators, etc) on any arbitary set of properties exposed by the objects contained within the collection.
-*------------------+----------------------------------------------------------+-------------------------------+
-| <<<xml>>>        | {{{$generic/XmlTool.html}XmlTool}}                       | For reading/navigating XML files. This uses dom4j under the covers and provides complete XPath support.
-*------------------+----------------------------------------------------------+-------------------------------+
+#set( $generic = "https://velocity.apache.org/tools/${velocityToolsVersion}/tools-summary.html" )
+*------------------+---------------------------------------------------------------+-------------------------------+
+|| Variable        || Type                                                         || Description                 ||
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<alternator>>> | {{{$generic${esc.hash}deprecated-tools}AlternatorTool}}       | {{{$generic${esc.hash}deprecated-tools}<<Deprecated>>}}: use CSS3 nth-child(even/odd) selectors or ${esc.hash}if($foreach.index % 2). For creating alternators to easily alternate over a set of values.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<class>>>      | {{{$generic${esc.hash}ClassTool}ClassTool}}                   | For simplifying reflective lookup of information about classes and their fields, methods and constructors.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<context>>>    | {{{$generic${esc.hash}ContextTool}ContextTool}}               | For convenient access to context data and metadata.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<convert>>>    | {{{$generic${esc.hash}deprecated-tools}ConversionTool}}       | {{{$generic${esc.hash}deprecated-tools}<<Deprecated>>}}: use NumberTool for numbers formatting/parsing, DateTool for date/time formatting/parsing, or CollectionTool for toStrings(). For converting String values to richer object Types.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<date>>>       | {{{$generic${esc.hash}ComparisonDateTool}ComparisonDateTool}} | For manipulating, formatting, and comparing dates.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<display>>>    | {{{$generic${esc.hash}DisplayTool}DisplayTool}}               | For controlling display of references (e.g., truncating values, "pretty printing" lists, and displaying alternates when a reference is null).
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<esc>>>        | {{{$generic${esc.hash}EscapeTool}EscapeTool}}                 | For common escaping needs in Velocity templates (e.g. escaping html, xml, javascript etc.).
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<field>>>      | {{{$generic${esc.hash}FieldTool}FieldTool}}                   | For (easy) access to static fields in a class, such as string constants.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<link>>>       | {{{$generic${esc.hash}LinkTool}LinkTool}}                     | For creating and manipulating URIs and URLs. The API for this tool is designed to closely resemble that of the VelocityView tool of the same name.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<loop>>>       | {{{$generic${esc.hash}LoopTool}LoopTool}}                     | A convenience tool to use with <<<${esc.hash}foreach>>> loops. It wraps a list with a custom iterator to provide greater control, allowing loops to end early, skip ahead and more.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<math>>>       | {{{$generic${esc.hash}MathTool}MathTool}}                     | For performing math functions.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<number>>>     | {{{$generic${esc.hash}NumberTool}NumberTool}}                 | For formatting and converting numbers.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<render>>>     | {{{$generic${esc.hash}RenderTool}RenderTool}}                 | To evaluate and render arbitrary strings of VTL, including recursive rendering.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<text>>>       | {{{$generic${esc.hash}ResourceTool}ResourceTool}}             | For simplified access to resource bundles for internationalization or other dynamic content needs.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<sorter>>>     | {{{$generic${esc.hash}deprecated-tools}SortTool}}             | {{{$generic${esc.hash}deprecated-tools}<<Deprecated>>}}: use CollectionTool sort methods. Used to sort collections (or arrays, iterators, etc) on any arbitary set of properties exposed by the objects contained within the collection.
+*------------------+---------------------------------------------------------------+-------------------------------+
+| <<<xml>>>        | {{{$generic${esc.hash}XmlTool}XmlTool}}                       | For reading/navigating XML files. This uses dom4j under the covers and provides complete XPath support.
+*------------------+---------------------------------------------------------------+-------------------------------+
 
   If you intend to use custom Velocity tools, add them to the Maven Site Plugin's dependency list and make sure
   that they have a bundled configuration file in <<</META-INF/maven/site-tools.xml>>>.
 
-  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html\#L488}DefaultSiteRenderer.createToolManagedVelocityContext(...)}}>>>
-  source for more details and the {{{http://velocity.apache.org/tools/devel/summary.html}tools usage summary}}.
+  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html${esc.hash}L483}DefaultSiteRenderer.createToolManagedVelocityContext(...)}}>>>
+  source for more details and the {{{https://velocity.apache.org/tools/devel/tools-summary.html}tools usage summary}}.
 
 ** Maven Site Plugin
 
@@ -149,7 +149,7 @@ Doxia Sitetools - Site Renderer
 | <project properties>            | <<<String>>>         | Properties defined in POM are directly available. |
 *---------------------------------+----------------------+-------------------------------+
 
-  See <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/render/AbstractSiteRenderingMojo.html\#createSiteRenderingContext(java.util.Locale)}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
+  See <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/render/AbstractSiteRenderingMojo.html${esc.hash}createSiteRenderingContext(java.util.Locale)}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
   source for more details.
 
 ** Site Template
@@ -175,5 +175,5 @@ Doxia Sitetools - Site Renderer
 | <<<docRenderingContext>>>       | {{{./apidocs/org/apache/maven/doxia/siterenderer/RenderingContext.html}<<<RenderingContext>>>}} | (since 1.8) The document rendering context. |
 *---------------------------------+----------------------+-------------------------------+
 
-  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html\#L616}DefaultSiteRenderer.createSiteTemplateVelocityContext(...)}}>>>
+  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html${esc.hash}L616}DefaultSiteRenderer.createSiteTemplateVelocityContext(...)}}>>>
   source for more details.

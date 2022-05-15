@@ -156,11 +156,6 @@ under the License.
           </exclusion>
         </exclusions>
       </dependency>
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-velocity</artifactId>
-        <version>1.2</version>
-      </dependency>
       <!-- Don't upgrade, it is broken: https://github.com/codehaus-plexus/plexus-utils/commit/1e18ddcc98f318b36449102f3267fd4631cc668b -->
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
@@ -183,11 +178,6 @@ under the License.
         <groupId>javax.inject</groupId>
         <artifactId>javax.inject</artifactId>
         <version>1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.velocity</groupId>
-        <artifactId>velocity</artifactId>
-        <version>1.7</version>
       </dependency>
       <!-- Test -->
       <dependency>

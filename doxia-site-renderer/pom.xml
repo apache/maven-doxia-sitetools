@@ -34,6 +34,10 @@ under the License.
   <name>Doxia Sitetools :: Site Renderer</name>
   <description>The Site Renderer handles the rendering of sites, merging site decoration with document content.</description>
 
+  <properties>
+    <velocityEngineVersion>2.3</velocityEngineVersion>
+    <velocityToolsVersion>3.1</velocityToolsVersion>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -103,6 +107,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-velocity</artifactId>
+      <version>2.0</version>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -118,39 +123,13 @@ under the License.
     <!-- misc -->
     <dependency>
       <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
+      <artifactId>velocity-engine-core</artifactId>
+      <version>${velocityEngineVersion}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity-tools</artifactId>
-      <version>2.0</version>
-      <exclusions>
-        <!-- exclude VelocityView and VelocityStruts specific dependencies -->
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>servlet-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.struts</groupId>
-          <artifactId>struts-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.struts</groupId>
-          <artifactId>struts-taglib</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.struts</groupId>
-          <artifactId>struts-tiles</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>sslext</groupId>
-          <artifactId>sslext</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-validator</groupId>
-          <artifactId>commons-validator</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.apache.velocity.tools</groupId>
+      <artifactId>velocity-tools-generic</artifactId>
+      <version>${velocityToolsVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
