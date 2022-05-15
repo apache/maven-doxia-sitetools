@@ -25,7 +25,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>34</version>
+    <version>36</version>
     <relativePath />
   </parent>
 
@@ -75,7 +75,6 @@ under the License.
     <aetherVersion>1.0.0.v20140518</aetherVersion>
     <wagonVersion>2.8</wagonVersion>
     <junitVersion>5.8.2</junitVersion>
-    <sisuVersion>0.3.5</sisuVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
     <project.build.outputTimestamp>2022-02-17T13:55:40Z</project.build.outputTimestamp>
   </properties>
@@ -140,11 +139,6 @@ under the License.
         <version>2.11.0</version>
       </dependency>
       <!-- Plexus -->
-      <dependency>
-        <groupId>org.eclipse.sisu</groupId>
-        <artifactId>org.eclipse.sisu.plexus</artifactId>
-        <version>${sisuVersion}</version>
-      </dependency>
       <dependency>
         <groupId>com.google.inject</groupId>
         <artifactId>guice</artifactId>
@@ -261,31 +255,12 @@ under the License.
             </excludes>
           </configuration>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.2.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.1.2</version>
-        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.eclipse.sisu</groupId>
         <artifactId>sisu-maven-plugin</artifactId>
-        <version>${sisuVersion}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>main-index</goal>
-              <goal>test-index</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <!--
       <plugin>
