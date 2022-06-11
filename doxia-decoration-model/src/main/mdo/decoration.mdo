@@ -86,24 +86,33 @@ under the License.
         </field>
         <field>
           <name>googleAdSenseClient</name>
-          <description>Your Google AdSense client id.</description>
+          <description>Your Google AdSense client id.&#xA;&#xA;@deprecated This property is deprecated for removal.</description>
           <version>1.3.0+</version>
           <type>String</type>
           <identifier>true</identifier>
+          <annotations>
+            <annotation>@Deprecated</annotation>
+          </annotations>
         </field>
         <field>
           <name>googleAdSenseSlot</name>
-          <description>Your Google AdSense slot id.</description>
+          <description>Your Google AdSense slot id.&#xA;&#xA;@deprecated This property is deprecated for removal.</description>
           <version>1.3.0+</version>
           <type>String</type>
           <identifier>true</identifier>
+          <annotations>
+            <annotation>@Deprecated</annotation>
+          </annotations>
         </field>
         <field>
           <name>googleAnalyticsAccountId</name>
-          <description>The id for your Google Analytics account.</description>
+          <description>The id for your Google Analytics account.&#xA;&#xA;@deprecated This property is deprecated for removal.</description>
           <version>1.1.0+</version>
           <type>String</type>
           <identifier>true</identifier>
+          <annotations>
+            <annotation>@Deprecated</annotation>
+          </annotations>
         </field>
         <field xdoc.separator="blank" java.getter="false">
           <name>publishDate</name>
