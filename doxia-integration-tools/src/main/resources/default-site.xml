@@ -22,6 +22,11 @@ under the License.
   <bannerLeft>
     <name>${project.name}</name>
   </bannerLeft>
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-default-skin</artifactId>
+    <version>1.3</version>
+  </skin>
   <body>
     <links>
       <item name="${project.name}" href="${project.url}"/>

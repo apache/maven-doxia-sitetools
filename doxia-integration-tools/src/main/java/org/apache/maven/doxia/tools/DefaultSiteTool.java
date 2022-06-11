@@ -138,13 +138,7 @@ public class DefaultSiteTool
         Objects.requireNonNull( localRepository, "localRepository cannot be null" );
         Objects.requireNonNull( remoteArtifactRepositories, "remoteArtifactRepositories cannot be null" );
         Objects.requireNonNull( decoration, "decoration cannot be null" );
-
-        Skin skin = decoration.getSkin();
-
-        if ( skin == null )
-        {
-            skin = Skin.getDefaultSkin();
-        }
+        Skin skin = Objects.requireNonNull( decoration.getSkin(), "decoration.skin cannot be null" );
 
         String version = skin.getVersion();
         Artifact artifact;
@@ -180,7 +174,8 @@ public class DefaultSiteTool
                                             List<ArtifactRepository> remoteArtifactRepositories )
         throws SiteToolException
     {
-        return getSkinArtifactFromRepository( localRepository, remoteArtifactRepositories, new DecorationModel() );
+        DecorationModel decorationModel = getDefaultDecorationModel();
+        return getSkinArtifactFromRepository( localRepository, remoteArtifactRepositories, decorationModel );
     }
 
     /**
@@ -424,26 +419,7 @@ public class DefaultSiteTool
         if ( decorationModel == null )
         {
             LOGGER.debug( "Using default site descriptor" );
-
-            String siteDescriptorContent;
-
-            Reader reader = null;
-            try
-            {
-                // Note the default is not a super class - it is used when nothing else is found
-                reader = ReaderFactory.newXmlReader( getClass().getResourceAsStream( "/default-site.xml" ) );
-                siteDescriptorContent = IOUtil.toString( reader );
-            }
-            catch ( IOException e )
-            {
-                throw new SiteToolException( "Error reading default site descriptor", e );
-            }
-            finally
-            {
-                IOUtil.close( reader );
-            }
-
-            decorationModel = readDecorationModel( siteDescriptorContent );
+            decorationModel = getDefaultDecorationModel();
         }
 
         // DecorationModel back to String to interpolate, then go back to DecorationModel
@@ -1043,7 +1019,7 @@ public class DefaultSiteTool
         }
 
         // 2. read DecorationModel from site descriptor File and do early interpolation (${this.*})
-        DecorationModel decoration = null;
+        DecorationModel decorationModel = null;
         Reader siteDescriptorReader = null;
         try
         {
@@ -1059,8 +1035,8 @@ public class DefaultSiteTool
                 // interpolate ${this.*} = early interpolation
                 siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent, true );
 
-                decoration = readDecorationModel( siteDescriptorContent );
-                decoration.setLastModified( siteDescriptor.lastModified() );
+                decorationModel = readDecorationModel( siteDescriptorContent );
+                decorationModel.setLastModified( siteDescriptor.lastModified() );
             }
             else
             {
@@ -1081,7 +1057,7 @@ public class DefaultSiteTool
         MavenProject parentProject = getParentProject( project, reactorProjects, localRepository );
 
         // 4. merge with parent project DecorationModel
-        if ( parentProject != null && ( decoration == null || decoration.isMergeParent() ) )
+        if ( parentProject != null && ( decorationModel == null || decorationModel.isMergeParent() ) )
         {
             depth++;
             LOGGER.debug( "Looking for site descriptor of level " + depth + " parent project: "
@@ -1099,22 +1075,23 @@ public class DefaultSiteTool
                 // has different configuration. But this is a rare case (this only has impact if parent is from reactor)
             }
 
-            DecorationModel parentDecoration =
+            DecorationModel parentDecorationModel =
                 getDecorationModel( depth, parentSiteDirectory, locale, parentProject, reactorProjects, localRepository,
                                     repositories ).getKey();
 
             // MSHARED-116 requires an empty decoration model (instead of a null one)
             // MSHARED-145 requires us to do this only if there is a parent to merge it with
-            if ( decoration == null && parentDecoration != null )
+            if ( decorationModel == null && parentDecorationModel != null )
             {
                 // we have no site descriptor: merge the parent into an empty one
-                decoration = new DecorationModel();
+                LOGGER.debug( "Using default site descriptor" );
+                decorationModel = getDefaultDecorationModel();
             }
 
             String name = project.getName();
-            if ( decoration != null && StringUtils.isNotEmpty( decoration.getName() ) )
+            if ( decorationModel != null && StringUtils.isNotEmpty( decorationModel.getName() ) )
             {
-                name = decoration.getName();
+                name = decorationModel.getName();
             }
 
             // Merge the parent and child DecorationModels
@@ -1126,11 +1103,11 @@ public class DefaultSiteTool
                     + " parent: distributionManagement.site.url child = " + projectDistMgmnt + " and parent = "
                     + parentDistMgmnt );
             }
-            assembler.assembleModelInheritance( name, decoration, parentDecoration, projectDistMgmnt,
+            assembler.assembleModelInheritance( name, decorationModel, parentDecorationModel, projectDistMgmnt,
                                                 parentDistMgmnt == null ? projectDistMgmnt : parentDistMgmnt );
         }
 
-        return new AbstractMap.SimpleEntry<DecorationModel, MavenProject>( decoration, parentProject );
+        return new AbstractMap.SimpleEntry<DecorationModel, MavenProject>( decorationModel, parentProject );
     }
 
     /**
@@ -1153,6 +1130,29 @@ public class DefaultSiteTool
         {
             throw new SiteToolException( "Error reading site descriptor", e );
         }
+    }
+
+    private DecorationModel getDefaultDecorationModel()
+        throws SiteToolException
+    {
+        String siteDescriptorContent;
+
+        Reader reader = null;
+        try
+        {
+            reader = ReaderFactory.newXmlReader( getClass().getResourceAsStream( "/default-site.xml" ) );
+            siteDescriptorContent = IOUtil.toString( reader );
+        }
+        catch ( IOException e )
+        {
+            throw new SiteToolException( "Error reading default site descriptor", e );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+
+        return readDecorationModel( siteDescriptorContent );
     }
 
     private String decorationModelToString( DecorationModel decoration )
