@@ -49,7 +49,6 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.doxia.site.decoration.Banner;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.decoration.Menu;
 import org.apache.maven.doxia.site.decoration.MenuItem;
@@ -442,14 +441,6 @@ public class DefaultSiteTool
         catch ( IOException e )
         {
             throw new SiteToolException( "Error while populating modules menu", e );
-        }
-
-        if ( decorationModel.getBannerLeft() == null )
-        {
-            // extra default to set
-            Banner banner = new Banner();
-            banner.setName( project.getName() );
-            decorationModel.setBannerLeft( banner );
         }
 
         return decorationModel;
