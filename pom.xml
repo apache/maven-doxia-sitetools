@@ -70,7 +70,7 @@ under the License.
   <properties>
     <javaVersion>8</javaVersion>
     <doxiaVersion>2.0.0-M2</doxiaVersion>
-    <slf4jVersion>1.7.32</slf4jVersion>
+    <slf4jVersion>1.7.36</slf4jVersion>
     <mavenVersion>3.2.5</mavenVersion>
     <aetherVersion>1.0.0.v20140518</aetherVersion>
     <wagonVersion>2.8</wagonVersion>
@@ -142,7 +142,7 @@ under the License.
       <dependency>
         <groupId>com.google.inject</groupId>
         <artifactId>guice</artifactId>
-        <version>4.2.2</version>
+        <version>4.2.3</version>
         <classifier>no_aop</classifier>
       </dependency>
       <dependency>
@@ -156,11 +156,10 @@ under the License.
           </exclusion>
         </exclusions>
       </dependency>
-      <!-- Don't upgrade, it is broken: https://github.com/codehaus-plexus/plexus-utils/commit/1e18ddcc98f318b36449102f3267fd4631cc668b -->
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-utils</artifactId>
-        <version>3.3.0</version>
+        <version>3.4.2</version>
       </dependency>
       <!--  SLF4J -->
       <dependency>
