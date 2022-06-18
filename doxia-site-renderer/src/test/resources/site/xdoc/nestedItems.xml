@@ -27,7 +27,7 @@ under the License.
 
     <body>
         <section name="List Section">
-            <h4>Unordered lists</h4>
+            <h3>Unordered lists</h3>
             <p>
                Below is an unordered list, followed by six paragraphs.
             </p>
@@ -92,7 +92,7 @@ under the License.
                Paragraph 6 below list.
             </p>
 
-            <h4>Ordered lists</h4>
+            <h3>Ordered lists</h3>
             <p>
                Below is an ordered list, followed by six paragraphs.
             </p>
@@ -157,7 +157,7 @@ under the License.
                Paragraph 6 below list.
             </p>
 
-            <h4>Definition lists</h4>
+            <h3>Definition lists</h3>
             <p>
                Below is a definition list, followed by six paragraphs.
             </p>

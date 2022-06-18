@@ -25,7 +25,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlDefinitionList;
 import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlListItem;
 import com.gargoylesoftware.htmlunit.html.HtmlOrderedList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -66,8 +66,8 @@ public class FaqVerifier
 
         HtmlSection section = (HtmlSection) elementIterator.next();
 
-        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
-        assertEquals( "Oft Asked Questions", h2.asNormalizedText().trim() );
+        HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
+        assertEquals( "Oft Asked Questions", h1.asNormalizedText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertEquals( a.getAttribute( "name" ), "Oft_Asked_Questions" );
@@ -110,8 +110,8 @@ public class FaqVerifier
 
         section = (HtmlSection) elementIterator.next();
 
-        h2 = (HtmlHeading2) elementIterator.next();
-        assertEquals( "Contributing", h2.asNormalizedText().trim() );
+        h1 = (HtmlHeading1) elementIterator.next();
+        assertEquals( "Contributing", h1.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Contributing", a.getAttribute( "name" ) );
@@ -162,8 +162,8 @@ public class FaqVerifier
 
         section = (HtmlSection) elementIterator.next();
 
-        h2 = (HtmlHeading2) elementIterator.next();
-        assertEquals( "Using Maven", h2.asNormalizedText().trim() );
+        h1 = (HtmlHeading1) elementIterator.next();
+        assertEquals( "Using Maven", h1.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Using_Maven", a.getAttribute( "name" ) );

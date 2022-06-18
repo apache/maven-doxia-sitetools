@@ -24,7 +24,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlScript;
@@ -67,39 +67,39 @@ public class JavascriptVerifier
         // HtmlUnit
         try ( WebClient webClient = new WebClient() ) {
             webClient.getOptions().setCssEnabled( false );
-    
+
             final List<String> collectedAlerts = new ArrayList<String>( 4 );
             webClient.setAlertHandler( new CollectingAlertHandler( collectedAlerts ) );
-    
+
             HtmlPage page = (HtmlPage) webClient.getPage( jsTest.toURI().toURL() );
             assertNotNull( page );
-    
+
             HtmlElement element = page.getHtmlElementById( "contentBox" );
             assertNotNull( element );
             HtmlDivision division = (HtmlDivision) element;
             assertNotNull( division );
-    
+
             Iterator<HtmlElement> elementIterator = division.getHtmlElementDescendants().iterator();
-    
+
             // ----------------------------------------------------------------------
             //
             // ----------------------------------------------------------------------
-    
+
             HtmlSection section = (HtmlSection) elementIterator.next();
             assertNotNull( section );
-    
-            HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
-            assertNotNull( h2 );
-            assertEquals( "Test", h2.asNormalizedText().trim() );
-    
+
+            HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
+            assertNotNull( h1 );
+            assertEquals( "Test", h1.asNormalizedText().trim() );
+
             HtmlAnchor a = (HtmlAnchor) elementIterator.next();
             assertNotNull( a );
             assertEquals( "Test", a.getAttribute( "name" ) );
-    
+
             HtmlParagraph p = (HtmlParagraph) elementIterator.next();
             assertNotNull( p );
             assertEquals( "You should see a JavaScript alert...", p.asNormalizedText().trim() );
-    
+
             HtmlScript script = (HtmlScript) elementIterator.next();
             assertNotNull( script  );
             assertEquals( "text/javascript", script.getAttribute( "type" ) );

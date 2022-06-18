@@ -27,8 +27,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlDefinitionList;
 import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
-import com.gargoylesoftware.htmlunit.html.HtmlHeading4;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading3;
 import com.gargoylesoftware.htmlunit.html.HtmlListItem;
 import com.gargoylesoftware.htmlunit.html.HtmlOrderedList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -68,9 +68,9 @@ public class NestedItemsVerifier
         HtmlSection section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
-        assertNotNull( h2 );
-        assertEquals( "List Section", h2.asNormalizedText().trim() );
+        HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
+        assertNotNull( h1 );
+        assertEquals( "List Section", h1.asNormalizedText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -86,9 +86,9 @@ public class NestedItemsVerifier
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        HtmlHeading4 h4 = (HtmlHeading4) elementIterator.next();
-        assertNotNull( h4 );
-        assertEquals( "Unordered lists", h4.asNormalizedText().trim() );
+        HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
+        assertNotNull( h3 );
+        assertEquals( "Unordered lists", h3.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -176,9 +176,9 @@ public class NestedItemsVerifier
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        h4 = (HtmlHeading4) elementIterator.next();
-        assertNotNull( h4 );
-        assertEquals( "Ordered lists", h4.asNormalizedText().trim() );
+        h3 = (HtmlHeading3) elementIterator.next();
+        assertNotNull( h3 );
+        assertEquals( "Ordered lists", h3.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -262,9 +262,9 @@ public class NestedItemsVerifier
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        h4 = (HtmlHeading4) elementIterator.next();
-        assertNotNull( h4 );
-        assertEquals( "Definition lists", h4.asNormalizedText().trim() );
+        h3 = (HtmlHeading3) elementIterator.next();
+        assertNotNull( h3 );
+        assertEquals( "Definition lists", h3.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );

@@ -24,8 +24,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlBold;
 import com.gargoylesoftware.htmlunit.html.HtmlCode;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
-import com.gargoylesoftware.htmlunit.html.HtmlHeading3;
 import com.gargoylesoftware.htmlunit.html.HtmlItalic;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
@@ -64,9 +64,9 @@ public class AptVerifier
 
         HtmlSection section = (HtmlSection) elementIterator.next();
 
-        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
-        assertNotNull( h2 );
-        assertEquals( "Links", h2.asNormalizedText().trim() );
+        HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
+        assertNotNull( h1 );
+        assertEquals( "Links", h1.asNormalizedText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Links", a.getAttribute( "name" ) );
@@ -109,10 +109,10 @@ public class AptVerifier
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        h2 = (HtmlHeading2) elementIterator.next();
-        assertNotNull( h2 );
+        h1 = (HtmlHeading1) elementIterator.next();
+        assertNotNull( h1 );
         // Note: htmlunit strips the white space, actual result is ok
-        assertEquals( "Section formatting: italic bold mono", h2.asNormalizedText().trim() );
+        assertEquals( "Section formatting: italic bold mono", h1.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Section_formatting:_italic_bold_mono", a.getAttribute( "name" ) );
@@ -132,10 +132,10 @@ public class AptVerifier
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
-        assertNotNull( h3 );
+        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
+        assertNotNull( h2 );
         // Note: htmlunit strips the white space, actual result is ok
-        assertEquals( "SubSection formatting: italic bold mono", h3.asNormalizedText().trim() );
+        assertEquals( "SubSection formatting: italic bold mono", h2.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "SubSection_formatting:_italic_bold_mono", a.getAttribute( "name" ) );
@@ -170,9 +170,9 @@ public class AptVerifier
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        h2 = (HtmlHeading2) elementIterator.next();
-        assertNotNull( h2 );
-        assertEquals( "No Default Anchor in Section Title with Explicit Anchor", h2.asNormalizedText().trim() );
+        h1 = (HtmlHeading1) elementIterator.next();
+        assertNotNull( h1 );
+        assertEquals( "No Default Anchor in Section Title with Explicit Anchor", h1.asNormalizedText().trim() );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "No_Default_Anchor_in_Section_Title_with_Explicit_Anchor", a.getAttribute( "name" ) );
 

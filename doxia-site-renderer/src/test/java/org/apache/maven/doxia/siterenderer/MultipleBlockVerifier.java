@@ -22,7 +22,7 @@ package org.apache.maven.doxia.siterenderer;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlListItem;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
@@ -63,9 +63,9 @@ public class MultipleBlockVerifier
         HtmlSection section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
-        assertNotNull( h2 );
-        assertEquals( "section name", h2.asNormalizedText().trim() );
+        HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
+        assertNotNull( h1 );
+        assertEquals( "section name", h1.asNormalizedText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );

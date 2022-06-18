@@ -50,17 +50,17 @@
 
     <section name="section name with entities: '&amp;' '&Alpha;' '&nbsp;' '&tritPos;'">
 
-      <h4>Entities</h4>
-      <h3>Generic Entities: '&amp;' '&lt;' '&gt;' '&quot;' '&apos;'</h3>
+      <h3>Entities</h3>
+      <h2>Generic Entities: '&amp;' '&lt;' '&gt;' '&quot;' '&apos;'</h2>
       <p>'&amp;' '&lt;' '&gt;' '&quot;' '&apos;'</p>
 
-      <h3>Local Entities: '&Alpha;' '&Beta;' '&Gamma;' '&tritPos;'</h3>
+      <h2>Local Entities: '&Alpha;' '&Beta;' '&Gamma;' '&tritPos;'</h2>
       <p>'&Alpha;' '&Beta;' '&Gamma;' '&tritPos;&#x1d7ed;' '&flo;&#x159;' '&myCustomEntity;'</p>
 
-      <h3>DTD Entities: '&nbsp;' '&iexcl;' '&cent;'</h3>
+      <h2>DTD Entities: '&nbsp;' '&iexcl;' '&cent;'</h2>
       <p>'&nbsp;' '&iexcl;' '&cent;'</p>
 
-      <h4>CDATA</h4>
+      <h3>CDATA</h3>
       <source><![CDATA[<project xmlns:ant="jelly:ant">]]></source>
       <p><![CDATA['&nbsp;' '&iexcl;']]></p>
 

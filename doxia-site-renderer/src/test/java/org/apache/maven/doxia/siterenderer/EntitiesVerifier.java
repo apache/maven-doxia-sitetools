@@ -22,9 +22,9 @@ package org.apache.maven.doxia.siterenderer;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading3;
-import com.gargoylesoftware.htmlunit.html.HtmlHeading4;
 import com.gargoylesoftware.htmlunit.html.HtmlMeta;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
@@ -105,9 +105,9 @@ public class EntitiesVerifier
 
         HtmlSection section = (HtmlSection) elementIterator.next();
 
-        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
-        assertNotNull( h2 );
-        assertEquals( h2.asNormalizedText().trim(), "section name with entities: '&' '\u0391' ' ' '\uD835\uDFED'" );
+        HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
+        assertNotNull( h1 );
+        assertEquals( h1.asNormalizedText().trim(), "section name with entities: '&' '\u0391' ' ' '\uD835\uDFED'" );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -120,9 +120,9 @@ public class EntitiesVerifier
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        HtmlHeading4 h4 = (HtmlHeading4) elementIterator.next();
-        assertNotNull( h4 );
-        assertEquals( "Entities", h4.asNormalizedText().trim() );
+        HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
+        assertNotNull( h3 );
+        assertEquals( "Entities", h3.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -131,9 +131,9 @@ public class EntitiesVerifier
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
-        assertNotNull( h3 );
-        assertEquals( "Generic Entities: '&' '<' '>' '\"' '''", h3.asNormalizedText().trim() );
+        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
+        assertNotNull( h2 );
+        assertEquals( "Generic Entities: '&' '<' '>' '\"' '''", h2.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
 
@@ -144,9 +144,9 @@ public class EntitiesVerifier
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        h3 = (HtmlHeading3) elementIterator.next();
-        assertNotNull( h3 );
-        assertEquals( "Local Entities: '\u0391' '\u0392' '\u0393' '\uD835\uDFED'", h3.asNormalizedText().trim() );
+        h2 = (HtmlHeading2) elementIterator.next();
+        assertNotNull( h2 );
+        assertEquals( "Local Entities: '\u0391' '\u0392' '\u0393' '\uD835\uDFED'", h2.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
 
@@ -157,9 +157,9 @@ public class EntitiesVerifier
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        h3 = (HtmlHeading3) elementIterator.next();
-        assertNotNull( h3 );
-        assertEquals( "DTD Entities: ' ' '\u00A1' '\u00A2'", h3.asNormalizedText().trim() );
+        h2 = (HtmlHeading2) elementIterator.next();
+        assertNotNull( h2 );
+        assertEquals( "DTD Entities: ' ' '\u00A1' '\u00A2'", h2.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
 
@@ -170,9 +170,9 @@ public class EntitiesVerifier
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
-        h4 = (HtmlHeading4) elementIterator.next();
-        assertNotNull( h4 );
-        assertEquals( "CDATA", h4.asNormalizedText().trim() );
+        h3 = (HtmlHeading3) elementIterator.next();
+        assertNotNull( h3 );
+        assertEquals( "CDATA", h3.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
