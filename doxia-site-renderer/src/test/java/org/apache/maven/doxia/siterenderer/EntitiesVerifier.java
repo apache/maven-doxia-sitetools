@@ -107,7 +107,7 @@ public class EntitiesVerifier
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
-        assertEquals( h2.asText().trim(), "section name with entities: '&' '\u0391' ' ' '\uD835\uDFED'" );
+        assertEquals( h2.asNormalizedText().trim(), "section name with entities: '&' '\u0391' ' ' '\uD835\uDFED'" );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -122,7 +122,7 @@ public class EntitiesVerifier
 
         HtmlHeading4 h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
-        assertEquals( "Entities", h4.asText().trim() );
+        assertEquals( "Entities", h4.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -133,46 +133,46 @@ public class EntitiesVerifier
 
         HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
-        assertEquals( "Generic Entities: '&' '<' '>' '\"' '''", h3.asText().trim() );
+        assertEquals( "Generic Entities: '&' '<' '>' '\"' '''", h3.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "'&' '<' '>' '\"' '''", p.asText().trim() );
+        assertEquals( "'&' '<' '>' '\"' '''", p.asNormalizedText().trim() );
 
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
-        assertEquals( "Local Entities: '\u0391' '\u0392' '\u0393' '\uD835\uDFED'", h3.asText().trim() );
+        assertEquals( "Local Entities: '\u0391' '\u0392' '\u0393' '\uD835\uDFED'", h3.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "'\u0391' '\u0392' '\u0393' '\uD835\uDFED\uD835\uDFED' '\u0159\u0159' '\u0159'", p.asText().trim() );
+        assertEquals( "'\u0391' '\u0392' '\u0393' '\uD835\uDFED\uD835\uDFED' '\u0159\u0159' '\u0159'", p.asNormalizedText().trim() );
 
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
-        assertEquals( "DTD Entities: ' ' '\u00A1' '\u00A2'", h3.asText().trim() );
+        assertEquals( "DTD Entities: ' ' '\u00A1' '\u00A2'", h3.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "' ' '\u00A1' '\u00A2'", p.asText().trim() );
+        assertEquals( "' ' '\u00A1' '\u00A2'", p.asNormalizedText().trim() );
 
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
-        assertEquals( "CDATA", h4.asText().trim() );
+        assertEquals( "CDATA", h4.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -183,11 +183,11 @@ public class EntitiesVerifier
 
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
         assertNotNull( pre );
-        assertEquals( "<project xmlns:ant=\"jelly:ant\">", pre.asText().trim() );
+        assertEquals( "<project xmlns:ant=\"jelly:ant\">", pre.asNormalizedText().trim() );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "'&nbsp;' '&iexcl;'", p.asText().trim() );
+        assertEquals( "'&nbsp;' '&iexcl;'", p.asNormalizedText().trim() );
 
         assertFalse( elementIterator.hasNext() );
     }

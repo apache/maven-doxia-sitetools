@@ -67,7 +67,7 @@ public class FaqVerifier
         HtmlSection section = (HtmlSection) elementIterator.next();
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
-        assertEquals( "Oft Asked Questions", h2.asText().trim() );
+        assertEquals( "Oft Asked Questions", h2.asNormalizedText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertEquals( a.getAttribute( "name" ), "Oft_Asked_Questions" );
@@ -78,32 +78,32 @@ public class FaqVerifier
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         element = elementIterator.next();
         assertEquals( "b", element.getTagName() );
-        assertEquals( "Contributing", element.asText().trim() );
+        assertEquals( "Contributing", element.asNormalizedText().trim() );
 
         HtmlOrderedList ol = (HtmlOrderedList) elementIterator.next();
-        assertEquals( "One stupid question & a silly answer?", ol.getFirstElementChild().asText().trim() );
+        assertEquals( "One stupid question & a silly answer?", ol.getFirstElementChild().asNormalizedText().trim() );
 
         HtmlListItem li = (HtmlListItem) elementIterator.next();
-        assertEquals( "One stupid question & a silly answer?", li.getFirstElementChild().asText().trim() );
+        assertEquals( "One stupid question & a silly answer?", li.getFirstElementChild().asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#stupid-question", a.getAttribute( "href" ) );
 
         element = elementIterator.next();
         assertEquals( "b", element.getTagName() );
-        assertEquals( "stupid", element.asText().trim() );
+        assertEquals( "stupid", element.asNormalizedText().trim() );
 
         p = (HtmlParagraph) elementIterator.next();
         element = elementIterator.next();
         assertEquals( "b", element.getTagName() );
-        assertEquals( "Using Maven", element.asText().trim() );
+        assertEquals( "Using Maven", element.asNormalizedText().trim() );
 
         ol = (HtmlOrderedList) elementIterator.next();
-        assertEquals( "How do I disable a report on my site?", ol.getFirstElementChild().asText().trim() );
+        assertEquals( "How do I disable a report on my site?", ol.getFirstElementChild().asNormalizedText().trim() );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "How do I disable a report on my site?", li.getFirstElementChild().asText().trim() );
+        assertEquals( "How do I disable a report on my site?", li.getFirstElementChild().asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#disable-reports", a.getAttribute( "href" ) );
@@ -111,7 +111,7 @@ public class FaqVerifier
         section = (HtmlSection) elementIterator.next();
 
         h2 = (HtmlHeading2) elementIterator.next();
-        assertEquals( "Contributing", h2.asText().trim() );
+        assertEquals( "Contributing", h2.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Contributing", a.getAttribute( "name" ) );
@@ -119,14 +119,14 @@ public class FaqVerifier
         HtmlDefinitionList dl = (HtmlDefinitionList) elementIterator.next();
 
         HtmlDefinitionTerm dt = (HtmlDefinitionTerm) elementIterator.next();
-        assertEquals( "One stupid question & a silly answer?", dt.getFirstChild().asText().trim() );
+        assertEquals( "One stupid question & a silly answer?", dt.getFirstChild().asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "stupid-question", a.getAttribute( "name" ) );
 
         element = elementIterator.next();
         assertEquals( "b", element.getTagName() );
-        assertEquals( "stupid", element.asText().trim() );
+        assertEquals( "stupid", element.asNormalizedText().trim() );
 
         HtmlDefinitionDescription dd = (HtmlDefinitionDescription) elementIterator.next();
 
@@ -134,36 +134,36 @@ public class FaqVerifier
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#Using_Maven", a.getAttribute( "href" ) );
-        assertEquals( "local link", a.asText().trim() );
+        assertEquals( "local link", a.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "./cdc.html", a.getAttribute( "href" ) );
-        assertEquals( "source document", a.asText().trim() );
+        assertEquals( "source document", a.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "http://maven.apache.org/?l=a&m=b", a.getAttribute( "href" ) );
-        assertEquals( "external link", a.asText().trim() );
+        assertEquals( "external link", a.asNormalizedText().trim() );
 
         element = elementIterator.next();
         assertEquals( "i", element.getTagName() );
-        assertEquals( "italic", element.asText().trim() );
+        assertEquals( "italic", element.asNormalizedText().trim() );
 
         element = elementIterator.next();
         assertEquals( "b", element.getTagName() );
-        assertEquals( "non-US-ASCII characters: àéèç", element.asText().trim() );
+        assertEquals( "non-US-ASCII characters: àéèç", element.asNormalizedText().trim() );
 
         p = (HtmlParagraph) elementIterator.next();
         assertEquals( "right", p.getAttribute( "align" ) );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#top", a.getAttribute( "href" ) );
-        assertEquals( "[top]", a.asText().trim() );
+        assertEquals( "[top]", a.asNormalizedText().trim() );
 
 
         section = (HtmlSection) elementIterator.next();
 
         h2 = (HtmlHeading2) elementIterator.next();
-        assertEquals( "Using Maven", h2.asText().trim() );
+        assertEquals( "Using Maven", h2.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Using_Maven", a.getAttribute( "name" ) );
@@ -171,7 +171,7 @@ public class FaqVerifier
         dl = (HtmlDefinitionList) elementIterator.next();
 
         dt = (HtmlDefinitionTerm) elementIterator.next();
-        assertEquals( "How do I disable a report on my site?", dt.getFirstChild().asText().trim() );
+        assertEquals( "How do I disable a report on my site?", dt.getFirstChild().asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "disable-reports", a.getAttribute( "name" ) );
@@ -182,20 +182,20 @@ public class FaqVerifier
 
         element = elementIterator.next();
         assertEquals( "code", element.getTagName() );
-        assertEquals( "<source></source>", element.asText().trim() );
+        assertEquals( "<source></source>", element.asNormalizedText().trim() );
 
         HtmlDivision div = (HtmlDivision) elementIterator.next();
         assertEquals( "source", div.getAttribute( "class" ) );
 
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
-        assertEquals( "<source>1.5</source>", pre.asText().trim() );
+        assertEquals( "<source>1.5</source>", pre.asNormalizedText().trim() );
 
         p = (HtmlParagraph) elementIterator.next();
         assertEquals( "right", p.getAttribute( "align" ) );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#top", a.getAttribute( "href" ) );
-        assertEquals( "[top]", a.asText().trim() );
+        assertEquals( "[top]", a.asNormalizedText().trim() );
 
         assertFalse( elementIterator.hasNext() );
     }

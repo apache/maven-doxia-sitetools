@@ -65,7 +65,7 @@ public class MultipleBlockVerifier
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
-        assertEquals( "section name", h2.asText().trim() );
+        assertEquals( "section name", h2.asNormalizedText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -77,7 +77,7 @@ public class MultipleBlockVerifier
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "text", p.asText().trim() );
+        assertEquals( "text", p.asNormalizedText().trim() );
 
         // ----------------------------------------------------------------------
         // Unordered list
@@ -88,7 +88,7 @@ public class MultipleBlockVerifier
 
         HtmlListItem li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "list1", li.getFirstChild().asText().trim() );
+        assertEquals( "list1", li.getFirstChild().asNormalizedText().trim() );
 
         // ----------------------------------------------------------------------
         // Paragraph
@@ -96,7 +96,7 @@ public class MultipleBlockVerifier
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "text2", p.asText().trim() );
+        assertEquals( "text2", p.asNormalizedText().trim() );
 
         // ----------------------------------------------------------------------
         // Unordered list
@@ -107,7 +107,7 @@ public class MultipleBlockVerifier
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "list1", li.getFirstChild().asText().trim() );
+        assertEquals( "list1", li.getFirstChild().asNormalizedText().trim() );
 
         // ----------------------------------------------------------------------
         // Paragraph
@@ -115,7 +115,7 @@ public class MultipleBlockVerifier
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "text3", p.asText().trim() );
+        assertEquals( "text3", p.asNormalizedText().trim() );
 
         // ----------------------------------------------------------------------
         // Unordered list
@@ -129,7 +129,7 @@ public class MultipleBlockVerifier
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "list1", p.getFirstChild().asText().trim() );
+        assertEquals( "list1", p.getFirstChild().asNormalizedText().trim() );
 
         assertFalse( elementIterator.hasNext() );
     }

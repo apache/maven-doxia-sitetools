@@ -78,7 +78,7 @@ public class AttributesVerifier
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
-        assertEquals( "section", h2.asText().trim() );
+        assertEquals( "section", h2.asNormalizedText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -198,13 +198,13 @@ public class AttributesVerifier
 
         section = (HtmlSection) elementIterator.next();
         h2 = (HtmlHeading2) elementIterator.next();
-        assertEquals( "Section without id", h2.asText().trim() );
+        assertEquals( "Section without id", h2.asNormalizedText().trim() );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Section_without_id", a.getAttribute( "name" ) );
 
         section = (HtmlSection) elementIterator.next();
         HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
-        assertEquals( "Subsection without id", h3.asText().trim() );
+        assertEquals( "Subsection without id", h3.asNormalizedText().trim() );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Subsection_without_id", a.getAttribute( "name" ) );
 
@@ -212,7 +212,7 @@ public class AttributesVerifier
         assertEquals( "section-id", a.getAttribute( "name" ) );
         section = (HtmlSection) elementIterator.next();
         h2 = (HtmlHeading2) elementIterator.next();
-        assertEquals( "Section with id", h2.asText().trim() );
+        assertEquals( "Section with id", h2.asNormalizedText().trim() );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Section_with_id", a.getAttribute( "name" ) );
 
@@ -220,7 +220,7 @@ public class AttributesVerifier
         assertEquals( "subsection-id", a.getAttribute( "name" ) );
         section = (HtmlSection) elementIterator.next();
         h3 = (HtmlHeading3) elementIterator.next();
-        assertEquals( "Subsection with id", h3.asText().trim() );
+        assertEquals( "Subsection with id", h3.asNormalizedText().trim() );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Subsection_with_id", a.getAttribute( "name" ) );
 
@@ -230,7 +230,7 @@ public class AttributesVerifier
         assertEquals( "bar", section.getAttribute( "class" ) );
         assertEquals( "foo", section.getAttribute( "id" ) );
         h2 = (HtmlHeading2) elementIterator.next();
-        assertEquals( "Section name", h2.asText().trim() );
+        assertEquals( "Section name", h2.asNormalizedText().trim() );
         assertEquals( "", h2.getAttribute( "class" ) );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Section_name", a.getAttribute( "name" ) );
@@ -241,7 +241,7 @@ public class AttributesVerifier
         assertEquals( "subbar", section.getAttribute( "class" ) );
         assertEquals( "subfoo", section.getAttribute( "id" ) );
         h3 = (HtmlHeading3) elementIterator.next();
-        assertEquals( "Subsection name", h3.asText().trim() );
+        assertEquals( "Subsection name", h3.asNormalizedText().trim() );
         assertEquals( "", h3.getAttribute( "class" ) );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Subsection_name", a.getAttribute( "name" ) );

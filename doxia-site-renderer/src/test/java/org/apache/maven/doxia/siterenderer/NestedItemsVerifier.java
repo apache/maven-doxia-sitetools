@@ -70,7 +70,7 @@ public class NestedItemsVerifier
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
-        assertEquals( "List Section", h2.asText().trim() );
+        assertEquals( "List Section", h2.asNormalizedText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -88,7 +88,7 @@ public class NestedItemsVerifier
 
         HtmlHeading4 h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
-        assertEquals( "Unordered lists", h4.asText().trim() );
+        assertEquals( "Unordered lists", h4.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -96,14 +96,14 @@ public class NestedItemsVerifier
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Below is an unordered list, followed by six paragraphs.", p.asText().trim() );
+        assertEquals( "Below is an unordered list, followed by six paragraphs.", p.asNormalizedText().trim() );
 
         HtmlUnorderedList ul = (HtmlUnorderedList) elementIterator.next();
         assertNotNull( ul );
 
         HtmlListItem li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 1.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 1.", li.getFirstChild().asNormalizedText().trim() );
 
         ul = (HtmlUnorderedList) elementIterator.next();
         assertNotNull( ul );
@@ -112,62 +112,62 @@ public class NestedItemsVerifier
         assertNotNull( li );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Item 11.", p.getFirstChild().asText().trim() );
+        assertEquals( "Item 11.", p.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Item 12.", p.getFirstChild().asText().trim() );
+        assertEquals( "Item 12.", p.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 13.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 13.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 14.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 14.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 2.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 2.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 3.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 3.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 4.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 4.", li.getFirstChild().asNormalizedText().trim() );
 
         ul = (HtmlUnorderedList) elementIterator.next();
         assertNotNull( ul );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 41.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 41.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 42.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 42.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 43.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 43.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 44.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 44.", li.getFirstChild().asNormalizedText().trim() );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 1 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 1 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 2 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 2 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 3 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 3 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 4 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 4 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 5 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 5 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 6 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 6 below list.", p.asNormalizedText().trim() );
 
         // ----------------------------------------------------------------------
         // Ordered lists
@@ -178,7 +178,7 @@ public class NestedItemsVerifier
 
         h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
-        assertEquals( "Ordered lists", h4.asText().trim() );
+        assertEquals( "Ordered lists", h4.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -186,74 +186,74 @@ public class NestedItemsVerifier
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Below is an ordered list, followed by six paragraphs.", p.asText().trim() );
+        assertEquals( "Below is an ordered list, followed by six paragraphs.", p.asNormalizedText().trim() );
 
         HtmlOrderedList ol = (HtmlOrderedList) elementIterator.next();
         assertNotNull( ol );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 1.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 1.", li.getFirstChild().asNormalizedText().trim() );
 
         ol = (HtmlOrderedList) elementIterator.next();
         assertNotNull( ol );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 11.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 11.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 12.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 12.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 13.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 13.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 14.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 14.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 2.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 2.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 3.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 3.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 4.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 4.", li.getFirstChild().asNormalizedText().trim() );
 
         ol = (HtmlOrderedList) elementIterator.next();
         assertNotNull( ol );
 
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 41.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 41.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 42.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 42.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 43.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 43.", li.getFirstChild().asNormalizedText().trim() );
         li = (HtmlListItem) elementIterator.next();
         assertNotNull( li );
-        assertEquals( "Item 44.", li.getFirstChild().asText().trim() );
+        assertEquals( "Item 44.", li.getFirstChild().asNormalizedText().trim() );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 1 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 1 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 2 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 2 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 3 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 3 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 4 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 4 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 5 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 5 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 6 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 6 below list.", p.asNormalizedText().trim() );
 
         // ----------------------------------------------------------------------
         // Definition lists
@@ -264,7 +264,7 @@ public class NestedItemsVerifier
 
         h4 = (HtmlHeading4) elementIterator.next();
         assertNotNull( h4 );
-        assertEquals( "Definition lists", h4.asText().trim() );
+        assertEquals( "Definition lists", h4.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertNotNull( a );
@@ -272,52 +272,52 @@ public class NestedItemsVerifier
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Below is a definition list, followed by six paragraphs.", p.asText().trim() );
+        assertEquals( "Below is a definition list, followed by six paragraphs.", p.asNormalizedText().trim() );
 
         HtmlDefinitionList dl = (HtmlDefinitionList) elementIterator.next();
         assertNotNull( dl );
 
         HtmlDefinitionTerm dt = (HtmlDefinitionTerm) elementIterator.next();
         assertNotNull( dt );
-        assertEquals( "Term 1.", dt.getFirstChild().asText().trim() );
+        assertEquals( "Term 1.", dt.getFirstChild().asNormalizedText().trim() );
         HtmlDefinitionDescription dd = (HtmlDefinitionDescription) elementIterator.next();
         assertNotNull( dd );
-        assertEquals( "Description 1.", dd.getFirstChild().asText().trim() );
+        assertEquals( "Description 1.", dd.getFirstChild().asNormalizedText().trim() );
 
         dt = (HtmlDefinitionTerm) elementIterator.next();
         assertNotNull( dt );
-        assertEquals( "Term 2.", dt.getFirstChild().asText().trim() );
+        assertEquals( "Term 2.", dt.getFirstChild().asNormalizedText().trim() );
         dd = (HtmlDefinitionDescription) elementIterator.next();
         assertNotNull( dd );
-        assertEquals( "Description 2.", dd.getFirstChild().asText().trim() );
+        assertEquals( "Description 2.", dd.getFirstChild().asNormalizedText().trim() );
 
         dl = (HtmlDefinitionList) elementIterator.next();
         assertNotNull( dl );
         dt = (HtmlDefinitionTerm) elementIterator.next();
         assertNotNull( dt );
-        assertEquals( "Term 21.", dt.getFirstChild().asText().trim() );
+        assertEquals( "Term 21.", dt.getFirstChild().asNormalizedText().trim() );
         dd = (HtmlDefinitionDescription) elementIterator.next();
         assertNotNull( dd );
-        assertEquals( "Description 21.", dd.getFirstChild().asText().trim() );
+        assertEquals( "Description 21.", dd.getFirstChild().asNormalizedText().trim() );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 1 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 1 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 2 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 2 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 3 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 3 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 4 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 4 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 5 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 5 below list.", p.asNormalizedText().trim() );
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
-        assertEquals( "Paragraph 6 below list.", p.asText().trim() );
+        assertEquals( "Paragraph 6 below list.", p.asNormalizedText().trim() );
 
         assertFalse( elementIterator.hasNext() );
     }

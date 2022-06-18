@@ -66,7 +66,7 @@ public class AptVerifier
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
-        assertEquals( "Links", h2.asText().trim() );
+        assertEquals( "Links", h2.asNormalizedText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Links", a.getAttribute( "name" ) );
@@ -112,22 +112,22 @@ public class AptVerifier
         h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
         // Note: htmlunit strips the white space, actual result is ok
-        assertEquals( "Section formatting: italic bold mono", h2.asText().trim() );
+        assertEquals( "Section formatting: italic bold mono", h2.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Section_formatting:_italic_bold_mono", a.getAttribute( "name" ) );
 
         HtmlItalic italic = (HtmlItalic) elementIterator.next();
         assertEquals( "i", italic.getTagName() );
-        assertEquals( "italic", italic.asText().trim() );
+        assertEquals( "italic", italic.asNormalizedText().trim() );
 
         HtmlBold bold = (HtmlBold) elementIterator.next();
         assertEquals( "b", bold.getTagName() );
-        assertEquals( "bold", bold.asText().trim() );
+        assertEquals( "bold", bold.asNormalizedText().trim() );
 
         HtmlCode code = (HtmlCode) elementIterator.next();
         assertEquals( "code", code.getTagName() );
-        assertEquals( "mono", code.asText().trim() );
+        assertEquals( "mono", code.asNormalizedText().trim() );
 
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
@@ -135,44 +135,44 @@ public class AptVerifier
         HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
         // Note: htmlunit strips the white space, actual result is ok
-        assertEquals( "SubSection formatting: italic bold mono", h3.asText().trim() );
+        assertEquals( "SubSection formatting: italic bold mono", h3.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "SubSection_formatting:_italic_bold_mono", a.getAttribute( "name" ) );
 
         italic = (HtmlItalic) elementIterator.next();
         assertEquals( "i", italic.getTagName() );
-        assertEquals( "italic", italic.asText().trim() );
+        assertEquals( "italic", italic.asNormalizedText().trim() );
 
         bold = (HtmlBold) elementIterator.next();
         assertEquals( "b", bold.getTagName() );
-        assertEquals( "bold", bold.asText().trim() );
+        assertEquals( "bold", bold.asNormalizedText().trim() );
 
         code = (HtmlCode) elementIterator.next();
         assertEquals( "code", code.getTagName() );
-        assertEquals( "mono", code.asText().trim() );
+        assertEquals( "mono", code.asNormalizedText().trim() );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
 
         italic = (HtmlItalic) elementIterator.next();
         assertEquals( "i", italic.getTagName() );
-        assertEquals( "italic", italic.asText().trim() );
+        assertEquals( "italic", italic.asNormalizedText().trim() );
 
         bold = (HtmlBold) elementIterator.next();
         assertEquals( "b", bold.getTagName() );
-        assertEquals( "bold", bold.asText().trim() );
+        assertEquals( "bold", bold.asNormalizedText().trim() );
 
         code = (HtmlCode) elementIterator.next();
         assertEquals( "code", code.getTagName() );
-        assertEquals( "mono", code.asText().trim() );
+        assertEquals( "mono", code.asNormalizedText().trim() );
 
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );
 
         h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull( h2 );
-        assertEquals( "No Default Anchor in Section Title with Explicit Anchor", h2.asText().trim() );
+        assertEquals( "No Default Anchor in Section Title with Explicit Anchor", h2.asNormalizedText().trim() );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "No_Default_Anchor_in_Section_Title_with_Explicit_Anchor", a.getAttribute( "name" ) );
 

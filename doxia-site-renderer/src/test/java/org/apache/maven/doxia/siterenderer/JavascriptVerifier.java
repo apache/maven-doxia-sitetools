@@ -90,7 +90,7 @@ public class JavascriptVerifier
     
             HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
             assertNotNull( h2 );
-            assertEquals( "Test", h2.asText().trim() );
+            assertEquals( "Test", h2.asNormalizedText().trim() );
     
             HtmlAnchor a = (HtmlAnchor) elementIterator.next();
             assertNotNull( a );
@@ -98,12 +98,12 @@ public class JavascriptVerifier
     
             HtmlParagraph p = (HtmlParagraph) elementIterator.next();
             assertNotNull( p );
-            assertEquals( "You should see a JavaScript alert...", p.asText().trim() );
+            assertEquals( "You should see a JavaScript alert...", p.asNormalizedText().trim() );
     
             HtmlScript script = (HtmlScript) elementIterator.next();
             assertNotNull( script  );
             assertEquals( "text/javascript", script.getAttribute( "type" ) );
-            assertEquals( "", script.asText().trim() );
+            assertEquals( "", script.asNormalizedText().trim() );
             List<String> expectedAlerts = Collections.singletonList( "Hello!" );
             assertEquals( expectedAlerts, collectedAlerts );
         }
