@@ -111,19 +111,6 @@ public class SiteToolTest
      * @throws Exception
      */
     @Test
-    public void testGetDefaultSkinArtifact()
-        throws Exception
-    {
-        assertNotNull( tool );
-
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );
-        assertNotNull( tool.getDefaultSkinArtifact( getLocalRepo(), project.getRemoteArtifactRepositories() ) );
-    }
-
-    /**
-     * @throws Exception
-     */
-    @Test
     public void testGetSkinArtifactFromRepository()
         throws Exception
     {

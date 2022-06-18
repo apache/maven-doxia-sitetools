@@ -60,19 +60,6 @@ public interface SiteTool
         throws SiteToolException;
 
     /**
-     * Get the default skin artifact for a project from one of the repositories.
-     *
-     * @param localRepository the Maven local repository, not null.
-     * @param remoteArtifactRepositories the Maven remote repositories, not null.
-     * @return the default <code>Skin</code> artifact from a given project and a local repository
-     * @throws SiteToolException if any
-     * @see #getSkinArtifactFromRepository(ArtifactRepository, List, DecorationModel)
-     */
-    Artifact getDefaultSkinArtifact( ArtifactRepository localRepository,
-                                     List<ArtifactRepository> remoteArtifactRepositories )
-        throws SiteToolException;
-
-    /**
      * Get a site descriptor from the project's site directory.
      *
      * @param siteDirectory the site directory, not null

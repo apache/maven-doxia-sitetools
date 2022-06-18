@@ -29,8 +29,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.LineNumberReader;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -142,10 +140,6 @@ public class DefaultSiteRenderer
 
     @Inject
     private PlexusContainer plexus;
-
-    private static final String RESOURCE_DIR = "org/apache/maven/doxia/siterenderer/resources";
-
-    private static final String DEFAULT_TEMPLATE = RESOURCE_DIR + "/default-site.vm";
 
     private static final String SKIN_TEMPLATE_LOCATION = "META-INF/maven/site.vm";
 
@@ -690,14 +684,12 @@ public class DefaultSiteRenderer
             catch ( ParseErrorException pee )
             {
                 throw new RendererException( "Velocity parsing error while reading the site decoration template "
-                    + ( ( skin == null ) ? ( "'" + templateName + "'" ) : ( "from " + skin.getId() + " skin" ) ),
-                                             pee );
+                    + "from " + skin.getId() + " skin", pee );
             }
             catch ( ResourceNotFoundException rnfe )
             {
                 throw new RendererException( "Could not find the site decoration template "
-                    + ( ( skin == null ) ? ( "'" + templateName + "'" ) : ( "from " + skin.getId() + " skin" ) ),
-                                             rnfe );
+                    + "from " + skin.getId() + " skin", rnfe );
             }
 
             try
@@ -754,17 +746,12 @@ public class DefaultSiteRenderer
 
         try
         {
-            if ( zipFile.getEntry( SKIN_TEMPLATE_LOCATION ) != null )
+            if ( zipFile.getEntry( SKIN_TEMPLATE_LOCATION ) == null )
             {
-                context.setTemplateName( SKIN_TEMPLATE_LOCATION );
-                context.setTemplateClassLoader( new URLClassLoader( new URL[]{skin.getFile().toURI().toURL()} ) );
+                throw new RendererException( "Skin does not contain template at " + SKIN_TEMPLATE_LOCATION );
             }
-            else
-            {
-                context.setTemplateName( DEFAULT_TEMPLATE );
-                context.setTemplateClassLoader( getClass().getClassLoader() );
-                context.setUsingDefaultTemplate( true );
-            }
+            context.setTemplateName( SKIN_TEMPLATE_LOCATION );
+            context.setTemplateClassLoader( new URLClassLoader( new URL[]{skin.getFile().toURI().toURL()} ) );
 
             ZipEntry skinDescriptorEntry = zipFile.getEntry( SkinModel.SKIN_DESCRIPTOR_LOCATION );
             if ( skinDescriptorEntry != null )
@@ -858,110 +845,40 @@ public class DefaultSiteRenderer
     public void copyResources( SiteRenderingContext siteRenderingContext, File outputDirectory )
         throws IOException
     {
-        if ( siteRenderingContext.getSkin() != null )
+        ZipFile file = getZipFile( siteRenderingContext.getSkin().getFile() );
+
+        try
         {
-            ZipFile file = getZipFile( siteRenderingContext.getSkin().getFile() );
-
-            try
+            for ( Enumeration<? extends ZipEntry> e = file.entries(); e.hasMoreElements(); )
             {
-                for ( Enumeration<? extends ZipEntry> e = file.entries(); e.hasMoreElements(); )
+                ZipEntry entry = e.nextElement();
+
+                if ( !entry.getName().startsWith( "META-INF/" ) )
                 {
-                    ZipEntry entry = e.nextElement();
-
-                    if ( !entry.getName().startsWith( "META-INF/" ) )
+                    File destFile = new File( outputDirectory, entry.getName() );
+                    if ( !entry.isDirectory() )
                     {
-                        File destFile = new File( outputDirectory, entry.getName() );
-                        if ( !entry.isDirectory() )
-                        {
-                            if ( destFile.exists() )
-                            {
-                                // don't override existing content: avoids extra rewrite with same content or extra site
-                                // resource
-                                continue;
-                            }
-
-                            destFile.getParentFile().mkdirs();
-
-                            copyFileFromZip( file, entry, destFile );
-                        }
-                        else
-                        {
-                            destFile.mkdirs();
-                        }
-                    }
-                }
-            }
-            finally
-            {
-                closeZipFile( file );
-            }
-        }
-
-        if ( siteRenderingContext.isUsingDefaultTemplate() )
-        {
-            InputStream resourceList = getClass().getClassLoader()
-                    .getResourceAsStream( RESOURCE_DIR + "/resources.txt" );
-
-            if ( resourceList != null )
-            {
-                Reader r = null;
-                LineNumberReader reader = null;
-                try
-                {
-                    r = ReaderFactory.newReader( resourceList, ReaderFactory.UTF_8 );
-                    reader = new LineNumberReader( r );
-
-                    String line;
-
-                    while ( ( line = reader.readLine() ) != null )
-                    {
-                        if ( line.startsWith( "#" ) || line.trim().length() == 0 )
-                        {
-                            continue;
-                        }
-
-                        InputStream is = getClass().getClassLoader().getResourceAsStream( RESOURCE_DIR + "/" + line );
-
-                        if ( is == null )
-                        {
-                            throw new IOException( "The resource " + line + " doesn't exist." );
-                        }
-
-                        File outputFile = new File( outputDirectory, line );
-
-                        if ( outputFile.exists() )
+                        if ( destFile.exists() )
                         {
                             // don't override existing content: avoids extra rewrite with same content or extra site
                             // resource
                             continue;
                         }
 
-                        if ( !outputFile.getParentFile().exists() )
-                        {
-                            outputFile.getParentFile().mkdirs();
-                        }
+                        destFile.getParentFile().mkdirs();
 
-                        OutputStream os = null;
-                        try
-                        {
-                            // for the images
-                            os = new FileOutputStream( outputFile );
-                            IOUtil.copy( is, os );
-                        }
-                        finally
-                        {
-                            IOUtil.close( os );
-                        }
-
-                        IOUtil.close( is );
+                        copyFileFromZip( file, entry, destFile );
+                    }
+                    else
+                    {
+                        destFile.mkdirs();
                     }
                 }
-                finally
-                {
-                    IOUtil.close( reader );
-                    IOUtil.close( r );
-                }
             }
+        }
+        finally
+        {
+            closeZipFile( file );
         }
 
         // Copy extra site resources

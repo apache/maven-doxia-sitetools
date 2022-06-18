@@ -62,8 +62,6 @@ public class SiteRenderingContext
 
     private SkinModel skinModel;
 
-    private boolean usingDefaultTemplate;
-
     private File rootDirectory;
 
     private List<File> siteDirectories = new ArrayList<File>();
@@ -283,26 +281,6 @@ public class SiteRenderingContext
     }
 
     /**
-     * <p>Setter for the field <code>usingDefaultTemplate</code>.</p>
-     *
-     * @param usingDefaultTemplate a boolean.
-     */
-    public void setUsingDefaultTemplate( boolean usingDefaultTemplate )
-    {
-        this.usingDefaultTemplate = usingDefaultTemplate;
-    }
-
-    /**
-     * <p>isUsingDefaultTemplate.</p>
-     *
-     * @return a boolean.
-     */
-    public boolean isUsingDefaultTemplate()
-    {
-        return usingDefaultTemplate;
-    }
-
-    /**
      * Add a site directory, expected to have a Doxia Site layout, ie one directory per Doxia parser module containing
      * files with parser extension. Typical values are <code>src/site</code> or <code>target/generated-site</code>.
      *
@@ -407,7 +385,7 @@ public class SiteRenderingContext
 
     /**
      * <p>If you want to specify a specific publish date instead of the current date.</p>
-     * 
+     *
      * @return the publish date, can be {@code null}
      */
     public Date getPublishDate()
@@ -417,7 +395,7 @@ public class SiteRenderingContext
 
     /**
      * <p>Specify a specific publish date instead of the current date.</p>
-     * 
+     *
      * @param publishDate the publish date
      */
     public void setPublishDate( Date publishDate )
@@ -427,7 +405,7 @@ public class SiteRenderingContext
 
     /**
      * Directory where to save content after Velocity processing (<code>*.vm</code>), but before parsing it with Doxia.
-     * 
+     *
      * @return not null if the documents are to be saved
      * @since 1.7
      */
@@ -439,7 +417,7 @@ public class SiteRenderingContext
     /**
      * Where to (eventually) save content after Velocity processing (<code>*.vm</code>), but before parsing it with
      * Doxia?
-     * 
+     *
      * @param processedContentOutput not null if the documents are to be saved
      * @since 1.7
      */

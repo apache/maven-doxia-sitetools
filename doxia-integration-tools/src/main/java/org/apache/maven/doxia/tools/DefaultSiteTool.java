@@ -169,14 +169,6 @@ public class DefaultSiteTool
         return artifact;
     }
 
-    public Artifact getDefaultSkinArtifact( ArtifactRepository localRepository,
-                                            List<ArtifactRepository> remoteArtifactRepositories )
-        throws SiteToolException
-    {
-        DecorationModel decorationModel = getDefaultDecorationModel();
-        return getSkinArtifactFromRepository( localRepository, remoteArtifactRepositories, decorationModel );
-    }
-
     /**
      * This method is not implemented according to the URI specification and has many weird
      * corner cases where it doesn't do the right thing. Please consider using a better
