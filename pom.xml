@@ -71,7 +71,7 @@ under the License.
     <javaVersion>8</javaVersion>
     <doxiaVersion>2.0.0-M2</doxiaVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
-    <mavenVersion>3.2.5</mavenVersion>
+    <mavenVersion>3.3.9</mavenVersion>
     <aetherVersion>1.0.0.v20140518</aetherVersion>
     <wagonVersion>2.8</wagonVersion>
     <junitVersion>5.8.2</junitVersion>
