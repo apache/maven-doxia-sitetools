@@ -1074,9 +1074,9 @@ public class DefaultSiteTool
             // MSHARED-145 requires us to do this only if there is a parent to merge it with
             if ( decorationModel == null && parentDecorationModel != null )
             {
-                // we have no site descriptor: merge the parent into an empty one
-                LOGGER.debug( "Using default site descriptor" );
-                decorationModel = getDefaultDecorationModel();
+                // we have no site descriptor: merge the parent into an empty one because the default one
+                // (default-site.xml) will break menu and breadcrumb composition.
+                decorationModel = new DecorationModel();
             }
 
             String name = project.getName();
