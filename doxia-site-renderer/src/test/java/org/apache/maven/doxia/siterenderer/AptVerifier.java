@@ -22,11 +22,11 @@ package org.apache.maven.doxia.siterenderer;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlBold;
 import com.gargoylesoftware.htmlunit.html.HtmlCode;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
 import com.gargoylesoftware.htmlunit.html.HtmlItalic;
+import com.gargoylesoftware.htmlunit.html.HtmlMain;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlSection;
@@ -53,10 +53,10 @@ public class AptVerifier
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
         assertNotNull( element );
-        HtmlDivision division = (HtmlDivision) element;
-        assertNotNull( division );
+        HtmlMain main = (HtmlMain) element;
+        assertNotNull( main );
 
-        Iterator<HtmlElement> elementIterator = division.getHtmlElementDescendants().iterator();
+        Iterator<HtmlElement> elementIterator = main.getHtmlElementDescendants().iterator();
 
         // ----------------------------------------------------------------------
         //

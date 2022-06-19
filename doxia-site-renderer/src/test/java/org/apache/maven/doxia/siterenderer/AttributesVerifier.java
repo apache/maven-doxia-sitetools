@@ -27,6 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
 import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlItalic;
+import com.gargoylesoftware.htmlunit.html.HtmlMain;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
@@ -65,10 +66,10 @@ public class AttributesVerifier
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
         assertNotNull( element );
-        HtmlDivision division = (HtmlDivision) element;
-        assertNotNull( division );
+        HtmlMain main = (HtmlMain) element;
+        assertNotNull( main );
 
-        Iterator<HtmlElement> elementIterator = division.getHtmlElementDescendants().iterator();
+        Iterator<HtmlElement> elementIterator = main.getHtmlElementDescendants().iterator();
 
         // ----------------------------------------------------------------------
         //

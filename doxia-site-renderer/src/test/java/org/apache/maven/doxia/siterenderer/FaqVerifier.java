@@ -27,6 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlListItem;
+import com.gargoylesoftware.htmlunit.html.HtmlMain;
 import com.gargoylesoftware.htmlunit.html.HtmlOrderedList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
@@ -55,10 +56,10 @@ public class FaqVerifier
 
         HtmlElement element = page.getHtmlElementById( "contentBox" );
         assertNotNull( element );
-        HtmlDivision division = (HtmlDivision) element;
-        assertNotNull( division );
+        HtmlMain main = (HtmlMain) element;
+        assertNotNull( main );
 
-        Iterator<HtmlElement> elementIterator = division.getHtmlElementDescendants().iterator();
+        Iterator<HtmlElement> elementIterator = main.getHtmlElementDescendants().iterator();
 
         // ----------------------------------------------------------------------
         //

@@ -29,12 +29,12 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -102,6 +102,8 @@ public class DefaultSiteRendererTest
 
     private File skinJar = new File( getBasedir(), "target/test-classes/skin.jar" );
 
+    private File minimalSkinJar = new File( getBasedir(), "target/test-classes/minimal-skin.jar" );
+
     /**
      * @throws java.lang.Exception if something goes wrong.
      */
@@ -110,10 +112,6 @@ public class DefaultSiteRendererTest
         throws Exception
     {
         renderer = (Renderer) container.lookup( Renderer.class );
-
-        // copy the default-site.vm and default-site-macros.vm
-        copyVm( "default-site.vm", "\n\n\n\r\n\r\n\r\n" );
-        copyVm( "default-site-macros.vm", "" );
 
         InputStream skinIS = getClass().getResourceAsStream( "velocity-toolmanager.vm" );
         JarOutputStream jarOS = new JarOutputStream( new FileOutputStream( skinJar ) );
@@ -129,26 +127,22 @@ public class DefaultSiteRendererTest
             IOUtil.close( jarOS );
         }
 
-        oldLocale = Locale.getDefault();
-        Locale.setDefault( Locale.ENGLISH );
-    }
-
-    private void copyVm( String filename, String append )
-        throws IOException
-    {
-        InputStream is = getClass().getResourceAsStream( "/org/apache/maven/doxia/siterenderer/resources/" + filename );
-        assertNotNull( is );
-        OutputStream os = new FileOutputStream( new File( getBasedir(), "target/test-classes/" + filename ) );
+        skinIS = new ByteArrayInputStream( "<main id=\"contentBox\">$bodyContent</main>".getBytes( StandardCharsets.UTF_8 ) );
+        jarOS = new JarOutputStream( new FileOutputStream( minimalSkinJar ) );
         try
         {
-            IOUtil.copy( is, os );
-            os.write( append.getBytes( "ISO-8859-1" ) );
+            jarOS.putNextEntry( new ZipEntry( "META-INF/maven/site.vm" ) );
+            IOUtil.copy( skinIS, jarOS );
+            jarOS.closeEntry();
         }
         finally
         {
-            IOUtil.close( is );
-            IOUtil.close( os );
+            IOUtil.close( skinIS );
+            IOUtil.close( jarOS );
         }
+
+        oldLocale = Locale.getDefault();
+        Locale.setDefault( Locale.ENGLISH );
     }
 
     /**
@@ -262,7 +256,6 @@ public class DefaultSiteRendererTest
         // ----------------------------------------------------------------------
         // Verify specific pages
         // ----------------------------------------------------------------------
-        verifyHeadPage();
         verifyCdcPage();
         verifyNestedItemsPage();
         verifyMultipleBlock();
@@ -375,28 +368,23 @@ public class DefaultSiteRendererTest
     }
 
     private SiteRenderingContext getSiteRenderingContext( DecorationModel decoration, String siteDir, boolean validate )
+        throws RendererException, IOException
     {
-        SiteRenderingContext ctxt = new SiteRenderingContext();
-        ctxt.setTemplateName( "default-site.vm" );
-        ctxt.setTemplateClassLoader( getClass().getClassLoader() );
-        ctxt.setUsingDefaultTemplate( true );
-        final Map<String, String> templateProp = new HashMap<String, String>();
-        templateProp.put( "outputEncoding", "UTF-8" );
-        ctxt.setTemplateProperties( templateProp );
-        ctxt.setDecoration( decoration );
-        ctxt.addSiteDirectory( getTestFile( siteDir ) );
-        ctxt.setValidate( validate );
+        File skinFile = minimalSkinJar;
 
-        return ctxt;
-    }
+        final Map<String, String> attributes = new HashMap<String, String>();
+        attributes.put( "outputEncoding", "UTF-8" );
 
-    /**
-     * @throws Exception if something goes wrong.
-     */
-    public void verifyHeadPage()
-        throws Exception
-    {
-        new HeadVerifier().verify( "target/output/head.html" );
+        Artifact skin = new DefaultArtifact( "org.group", "artifact",
+        VersionRange.createFromVersion( "1.1" ), null, "jar", "", null );
+        skin.setFile( skinFile );
+        SiteRenderingContext siteRenderingContext =
+            renderer.createContextForSkin( skin, attributes,decoration, "defaultWindowTitle",
+                                                   Locale.ENGLISH );
+        siteRenderingContext.addSiteDirectory( getTestFile( siteDir ) );
+        siteRenderingContext.setValidate( validate );
+
+        return siteRenderingContext;
     }
 
     /**

@@ -25,7 +25,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading2;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading3;
-import com.gargoylesoftware.htmlunit.html.HtmlMeta;
+import com.gargoylesoftware.htmlunit.html.HtmlMain;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
@@ -36,7 +36,6 @@ import java.util.Iterator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Verify the <code>site/xdoc/entityTest.xml</code>
@@ -53,51 +52,12 @@ public class EntitiesVerifier
         HtmlPage page = htmlPage( file );
         assertNotNull( page );
 
-        HtmlMeta author = (HtmlMeta) page.getElementsByName( "author" ).get( 0 );
-        assertNotNull( author );
-        assertTrue( author.toString().indexOf( "Ligature \u00C6" ) > 0 );
-        assertEquals( "Ligature \u00C6", author.getContentAttribute() );
-
-        author = (HtmlMeta) page.getElementsByName( "author" ).get( 1 );
-        assertNotNull( author );
-        assertTrue( author.toString().indexOf( "Ampersand &amp;" ) > 0 );
-        assertEquals( "Ampersand &", author.getContentAttribute() );
-
-        author = (HtmlMeta) page.getElementsByName( "author" ).get( 2 );
-        assertNotNull( author );
-        assertTrue( author.toString().indexOf( "Less than &lt;" ) > 0 );
-        assertEquals( "Less than <", author.getContentAttribute() );
-
-        author = (HtmlMeta) page.getElementsByName( "author" ).get( 3 );
-        assertNotNull( author );
-        assertTrue( author.toString().indexOf( "Greater than >" ) > 0 );
-        assertEquals( "Greater than >", author.getContentAttribute() );
-
-        author = (HtmlMeta) page.getElementsByName( "author" ).get( 4 );
-        assertNotNull( author );
-        assertEquals( "Apostrophe '", author.getContentAttribute() );
-
-        author = (HtmlMeta) page.getElementsByName( "author" ).get( 5 );
-        assertNotNull( author );
-        assertTrue( author.toString().indexOf( "Quote &quot;" ) > 0 );
-        assertEquals( "Quote \"", author.getContentAttribute() );
-
-        author = (HtmlMeta) page.getElementsByName( "author" ).get( 6 );
-        assertNotNull( author );
-        assertTrue( author.toString().indexOf( "test@email.com" ) > 0 );
-        assertEquals( "test@email.com", author.getContentAttribute() );
-
-        author = (HtmlMeta) page.getElementsByName( "author" ).get( 7 );
-        assertNotNull( author );
-        assertTrue( author.toString().indexOf( "test\u00A9email.com" ) > 0 );
-        assertEquals( "test\u00A9email.com", author.getContentAttribute() );
-
         HtmlElement element = page.getHtmlElementById( "contentBox" );
         assertNotNull( element );
-        HtmlDivision division = (HtmlDivision) element;
-        assertNotNull( division );
+        HtmlMain main = (HtmlMain) element;
+        assertNotNull( main );
 
-        Iterator<HtmlElement> elementIterator = division.getHtmlElementDescendants().iterator();
+        Iterator<HtmlElement> elementIterator = main.getHtmlElementDescendants().iterator();
 
         // ----------------------------------------------------------------------
         //
