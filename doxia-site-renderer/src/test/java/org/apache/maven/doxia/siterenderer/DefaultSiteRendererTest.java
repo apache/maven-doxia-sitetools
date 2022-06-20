@@ -264,7 +264,6 @@ public class DefaultSiteRendererTest
         verifyJavascriptPage();
         verifyFaqPage();
         verifyAttributes();
-        verifyMisc();
         verifyApt();
         verifyExtensionInFilename();
         verifyNewlines();
@@ -479,19 +478,6 @@ public class DefaultSiteRendererTest
     {
         AttributesVerifier verifier = new AttributesVerifier();
         verifier.verify( "target/output/attributes.html" );
-    }
-
-    /**
-     * @throws Exception if something goes wrong.
-     */
-    public void verifyMisc()
-        throws Exception
-    {
-        AbstractVerifier verifier = new MiscVerifier();
-        verifier.verify( "target/output/misc.html" );
-
-        verifier = new CommentsVerifier();
-        verifier.verify( "target/output/misc.html" );
     }
 
     /**
