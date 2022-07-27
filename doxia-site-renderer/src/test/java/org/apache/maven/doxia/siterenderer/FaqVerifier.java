@@ -68,12 +68,9 @@ public class FaqVerifier
         HtmlSection section = (HtmlSection) elementIterator.next();
 
         HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
-        assertEquals( "Oft Asked Questions", h1.asNormalizedText().trim() );
+        assertEquals( "Often Asked Questions", h1.asNormalizedText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertEquals( a.getAttribute( "name" ), "Oft_Asked_Questions" );
-
-        a = (HtmlAnchor) elementIterator.next();
         assertEquals( "top", a.getAttribute( "name" ) );
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
@@ -114,9 +111,6 @@ public class FaqVerifier
         h1 = (HtmlHeading1) elementIterator.next();
         assertEquals( "Contributing", h1.asNormalizedText().trim() );
 
-        a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "Contributing", a.getAttribute( "name" ) );
-
         HtmlDefinitionList dl = (HtmlDefinitionList) elementIterator.next();
 
         HtmlDefinitionTerm dt = (HtmlDefinitionTerm) elementIterator.next();
@@ -134,7 +128,7 @@ public class FaqVerifier
         p = (HtmlParagraph) elementIterator.next();
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#Using_Maven", a.getAttribute( "href" ) );
+        assertEquals( "#using", a.getAttribute( "href" ) );
         assertEquals( "local link", a.asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
@@ -160,14 +154,10 @@ public class FaqVerifier
         assertEquals( "#top", a.getAttribute( "href" ) );
         assertEquals( "[top]", a.asNormalizedText().trim() );
 
-
         section = (HtmlSection) elementIterator.next();
 
         h1 = (HtmlHeading1) elementIterator.next();
         assertEquals( "Using Maven", h1.asNormalizedText().trim() );
-
-        a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "Using_Maven", a.getAttribute( "name" ) );
 
         dl = (HtmlDefinitionList) elementIterator.next();
 

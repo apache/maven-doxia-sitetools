@@ -67,10 +67,6 @@ public class MultipleBlockVerifier
         assertNotNull( h1 );
         assertEquals( "section name", h1.asNormalizedText().trim() );
 
-        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertNotNull( a );
-        assertEquals( "section_name", a.getAttribute( "name" ) );
-
         // ----------------------------------------------------------------------
         // Paragraph
         // ----------------------------------------------------------------------

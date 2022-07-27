@@ -92,10 +92,6 @@ public class JavascriptVerifier
             assertNotNull( h1 );
             assertEquals( "Test", h1.asNormalizedText().trim() );
 
-            HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-            assertNotNull( a );
-            assertEquals( "Test", a.getAttribute( "name" ) );
-
             HtmlParagraph p = (HtmlParagraph) elementIterator.next();
             assertNotNull( p );
             assertEquals( "You should see a JavaScript alert...", p.asNormalizedText().trim() );

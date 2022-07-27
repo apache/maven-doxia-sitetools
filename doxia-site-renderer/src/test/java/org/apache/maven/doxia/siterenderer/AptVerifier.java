@@ -68,14 +68,11 @@ public class AptVerifier
         assertNotNull( h1 );
         assertEquals( "Links", h1.asNormalizedText().trim() );
 
-        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "Links", a.getAttribute( "name" ) );
-
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
 
         // Expected log: [APT Parser] Ambiguous link: 'cdc.html'. If this is a local link, prepend "./"!
-        a = (HtmlAnchor) elementIterator.next();
+        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertEquals( "Anchor", a.getAttribute( "name" ) );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "cdc.html", a.getAttribute( "name" ) );
@@ -114,9 +111,6 @@ public class AptVerifier
         // Note: htmlunit strips the white space, actual result is ok
         assertEquals( "Section formatting: italic bold mono", h1.asNormalizedText().trim() );
 
-        a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "Section_formatting:_italic_bold_mono", a.getAttribute( "name" ) );
-
         HtmlItalic italic = (HtmlItalic) elementIterator.next();
         assertEquals( "i", italic.getTagName() );
         assertEquals( "italic", italic.asNormalizedText().trim() );
@@ -136,9 +130,6 @@ public class AptVerifier
         assertNotNull( h2 );
         // Note: htmlunit strips the white space, actual result is ok
         assertEquals( "SubSection formatting: italic bold mono", h2.asNormalizedText().trim() );
-
-        a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "SubSection_formatting:_italic_bold_mono", a.getAttribute( "name" ) );
 
         italic = (HtmlItalic) elementIterator.next();
         assertEquals( "i", italic.getTagName() );

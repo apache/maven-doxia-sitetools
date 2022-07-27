@@ -72,10 +72,6 @@ public class NestedItemsVerifier
         assertNotNull( h1 );
         assertEquals( "List Section", h1.asNormalizedText().trim() );
 
-        HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertNotNull( a );
-        assertEquals( "List_Section", a.getAttribute( "name" ) );
-
         // ----------------------------------------------------------------------
         // Unordered lists
         // ----------------------------------------------------------------------
@@ -89,10 +85,6 @@ public class NestedItemsVerifier
         HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
         assertEquals( "Unordered lists", h3.asNormalizedText().trim() );
-
-        a = (HtmlAnchor) elementIterator.next();
-        assertNotNull( a );
-        assertEquals( "Unordered_lists", a.getAttribute( "name" ) );
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
@@ -180,10 +172,6 @@ public class NestedItemsVerifier
         assertNotNull( h3 );
         assertEquals( "Ordered lists", h3.asNormalizedText().trim() );
 
-        a = (HtmlAnchor) elementIterator.next();
-        assertNotNull( a );
-        assertEquals( "Ordered_lists", a.getAttribute( "name" ) );
-
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );
         assertEquals( "Below is an ordered list, followed by six paragraphs.", p.asNormalizedText().trim() );
@@ -265,10 +253,6 @@ public class NestedItemsVerifier
         h3 = (HtmlHeading3) elementIterator.next();
         assertNotNull( h3 );
         assertEquals( "Definition lists", h3.asNormalizedText().trim() );
-
-        a = (HtmlAnchor) elementIterator.next();
-        assertNotNull( a );
-        assertEquals( "Definition_lists", a.getAttribute( "name" ) );
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull( p );

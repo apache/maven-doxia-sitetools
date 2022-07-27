@@ -22,16 +22,10 @@ package org.apache.maven.doxia.siterenderer.sink;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import javax.swing.text.html.HTML.Attribute;
 
 import org.apache.maven.doxia.markup.HtmlMarkup;
 import org.apache.maven.doxia.module.xhtml5.Xhtml5Sink;
-import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.siterenderer.DocumentContent;
 import org.apache.maven.doxia.siterenderer.RenderingContext;
 import org.apache.maven.doxia.util.HtmlTools;
@@ -47,7 +41,7 @@ import org.codehaus.plexus.util.StringUtils;
 @SuppressWarnings( "checkstyle:methodname" )
 public class SiteRendererSink
     extends Xhtml5Sink
-    implements Sink, DocumentContent
+    implements DocumentContent
 {
     private String date;
 
@@ -56,16 +50,6 @@ public class SiteRendererSink
     private List<String> authors = new ArrayList<String>();
 
     private final StringWriter headWriter;
-
-    private StringBuilder sectionTitleBuffer;
-
-    private StringBuilder sectionTitleWriteBuffer;
-
-    private boolean sectionHasID;
-
-    private boolean isSectionTitle;
-
-    private Set<String> anchorsInSectionTitle;
 
     private final Writer writer;
 
@@ -203,80 +187,6 @@ public class SiteRendererSink
 
     /** {@inheritDoc} */
     @Override
-    public void anchor( String name, SinkEventAttributes attributes )
-    {
-        super.anchor( name, attributes );
-        if ( isSectionTitle )
-        {
-            if ( anchorsInSectionTitle == null )
-            {
-                anchorsInSectionTitle = new HashSet<String>();
-            }
-            anchorsInSectionTitle.add( name );
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void onSectionTitle( int depth, SinkEventAttributes attributes )
-    {
-        sectionHasID = ( attributes != null && attributes.isDefined ( Attribute.ID.toString() ) );
-        isSectionTitle = true;
-
-        super.onSectionTitle( depth, attributes );
-
-        this.sectionTitleBuffer = new StringBuilder();
-        this.sectionTitleWriteBuffer = new StringBuilder();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void onSectionTitle_( int depth )
-    {
-        String sectionTitle = sectionTitleBuffer.toString();
-        this.sectionTitleBuffer = null;
-        String sectionWriteTitle = sectionTitleWriteBuffer.toString();
-        this.sectionTitleWriteBuffer = null;
-
-        if ( !StringUtils.isEmpty( sectionTitle ) )
-        {
-            if ( sectionHasID )
-            {
-                sectionHasID = false;
-            }
-            else
-            {
-                String id = HtmlTools.encodeId( sectionTitle );
-                if ( ( anchorsInSectionTitle == null ) || ( !anchorsInSectionTitle.contains( id ) ) )
-                {
-                    anchor( id );
-                    anchor_();
-                }
-            }
-        }
-
-        super.write( sectionWriteTitle );
-
-        this.isSectionTitle = false;
-        anchorsInSectionTitle = null;
-        super.onSectionTitle_( depth );
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void text( String text )
-    {
-        if ( sectionTitleBuffer != null )
-        {
-            // this implies we're inside a section title, collect text events for anchor generation
-            sectionTitleBuffer.append( text );
-        }
-
-        super.text( text );
-    }
-
-    /** {@inheritDoc} */
-    @Override
     protected void write( String text )
     {
         String txt = text;
@@ -302,15 +212,7 @@ public class SiteRendererSink
             }
         }
 
-        if ( sectionTitleWriteBuffer != null )
-        {
-            // this implies we're inside a section title, collect text events for anchor generation
-            sectionTitleWriteBuffer.append( txt );
-        }
-        else
-        {
-            super.write( txt );
-        }
+        super.write( txt );
     }
 
     // DocumentContent interface
