@@ -572,7 +572,7 @@ public class DefaultSiteRenderer
             }
             catch ( IOException e )
             {
-                LOGGER.debug( "Failed to load pom.properties, so doxiaVersion is not available"
+                LOGGER.debug( "Failed to load pom.properties, so doxiaSiteRendererVersion is not available"
                         + " in the Velocity context." );
             }
         }
