@@ -74,7 +74,7 @@ under the License.
     <mavenVersion>3.2.5</mavenVersion>
     <aetherVersion>1.0.0.v20140518</aetherVersion>
     <wagonVersion>2.8</wagonVersion>
-    <junitVersion>5.8.2</junitVersion>
+    <junitVersion>5.9.0</junitVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
     <project.build.outputTimestamp>2022-06-20T18:19:40Z</project.build.outputTimestamp>
   </properties>
