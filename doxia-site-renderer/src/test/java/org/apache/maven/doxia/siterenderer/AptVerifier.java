@@ -73,9 +73,9 @@ public class AptVerifier
 
         // Expected log: [APT Parser] Ambiguous link: 'cdc.html'. If this is a local link, prepend "./"!
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "Anchor", a.getAttribute( "name" ) );
+        assertEquals( "Anchor", a.getAttribute( "id" ) );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "cdc.html", a.getAttribute( "name" ) );
+        assertEquals( "cdc.html", a.getAttribute( "id" ) );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#Anchor", a.getAttribute( "href" ) );
@@ -83,7 +83,7 @@ public class AptVerifier
         assertEquals( "#Anchor", a.getAttribute( "href" ) );
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "Anchor_with_space", a.getAttribute( "name" ) );
+        assertEquals( "Anchor_with_space", a.getAttribute( "id" ) );
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#Anchor_with_space", a.getAttribute( "href" ) );
 
@@ -165,7 +165,7 @@ public class AptVerifier
         assertNotNull( h1 );
         assertEquals( "No Default Anchor in Section Title with Explicit Anchor", h1.asNormalizedText().trim() );
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "No_Default_Anchor_in_Section_Title_with_Explicit_Anchor", a.getAttribute( "name" ) );
+        assertEquals( "No_Default_Anchor_in_Section_Title_with_Explicit_Anchor", a.getAttribute( "id" ) );
 
         section = (HtmlSection) elementIterator.next();
         assertNotNull( section );

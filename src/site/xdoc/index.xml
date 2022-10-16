@@ -46,7 +46,7 @@
           <area shape="rect" coords="207,232,324,267" href="doxia-skin-model/index.html"          alt="Doxia Skin Model"/>
           <area shape="rect" coords="288,123,444,159" href="http://codehaus-plexus.github.io/plexus-velocity/"        alt="Plexus Velocity"/>
           <area shape="rect" coords="318,180,414,214" href="http://velocity.apache.org"                               alt="Velocity"/>
-          <area shape="rect" coords="134,301,274,337" href="/doxia/doxia/doxia-modules/doxia-module-xhtml/index.html" alt="Doxia Module XHTML"/>
+          <area shape="rect" coords="134,301,274,337" href="/doxia/doxia/doxia-modules/doxia-module-xhtml5/index.html" alt="Doxia Module XHTML5"/>
           <area shape="rect" coords="114,288,252,353" href="/doxia/doxia/doxia-modules/index.html" alt="Doxia Modules"/>
         </map>
       </p>

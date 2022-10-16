@@ -71,7 +71,7 @@ public class FaqVerifier
         assertEquals( "Often Asked Questions", h1.asNormalizedText().trim() );
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "top", a.getAttribute( "name" ) );
+        assertEquals( "top", a.getAttribute( "id" ) );
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         element = elementIterator.next();
@@ -109,7 +109,10 @@ public class FaqVerifier
         section = (HtmlSection) elementIterator.next();
 
         h1 = (HtmlHeading1) elementIterator.next();
-        assertEquals( "Contributing", h1.asNormalizedText().trim() );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "contributing", a.getAttribute( "id" ) );
+        assertEquals( "Contributing", a.asNormalizedText().trim() );
 
         HtmlDefinitionList dl = (HtmlDefinitionList) elementIterator.next();
 
@@ -117,7 +120,7 @@ public class FaqVerifier
         assertEquals( "One stupid question & a silly answer?", dt.getFirstChild().asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "stupid-question", a.getAttribute( "name" ) );
+        assertEquals( "stupid-question", a.getAttribute( "id" ) );
 
         element = elementIterator.next();
         assertEquals( "b", element.getTagName() );
@@ -148,7 +151,6 @@ public class FaqVerifier
         assertEquals( "non-US-ASCII characters: àéèç", element.asNormalizedText().trim() );
 
         p = (HtmlParagraph) elementIterator.next();
-        assertEquals( "right", p.getAttribute( "align" ) );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#top", a.getAttribute( "href" ) );
@@ -157,7 +159,10 @@ public class FaqVerifier
         section = (HtmlSection) elementIterator.next();
 
         h1 = (HtmlHeading1) elementIterator.next();
-        assertEquals( "Using Maven", h1.asNormalizedText().trim() );
+
+        a = (HtmlAnchor) elementIterator.next();
+        assertEquals( "using", a.getAttribute( "id" ) );
+        assertEquals( "Using Maven", a.asNormalizedText().trim() );
 
         dl = (HtmlDefinitionList) elementIterator.next();
 
@@ -165,7 +170,7 @@ public class FaqVerifier
         assertEquals( "How do I disable a report on my site?", dt.getFirstChild().asNormalizedText().trim() );
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "disable-reports", a.getAttribute( "name" ) );
+        assertEquals( "disable-reports", a.getAttribute( "id" ) );
 
         dd = (HtmlDefinitionDescription) elementIterator.next();
 
@@ -182,7 +187,6 @@ public class FaqVerifier
         assertEquals( "<source>1.5</source>", pre.asNormalizedText().trim() );
 
         p = (HtmlParagraph) elementIterator.next();
-        assertEquals( "right", p.getAttribute( "align" ) );
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals( "#top", a.getAttribute( "href" ) );
