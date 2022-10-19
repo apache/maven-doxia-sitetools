@@ -151,6 +151,8 @@ public class DefaultSiteRenderer
 
     private static final String TOOLS_LOCATION = "META-INF/maven/site-tools.xml";
 
+    private static final String DOXIA_SITE_RENDERER_VERSION = getSiteRendererVersion();
+
     // ----------------------------------------------------------------------
     // Renderer implementation
     // ----------------------------------------------------------------------
@@ -555,26 +557,9 @@ public class DefaultSiteRenderer
 
         context.put( "publishDate", siteRenderingContext.getPublishDate() );
 
-        // doxiaSiteRendererVersion
-        InputStream inputStream = this.getClass().getResourceAsStream( "/META-INF/"
-            + "maven/org.apache.maven.doxia/doxia-site-renderer/pom.properties" );
-        if ( inputStream == null )
+        if ( DOXIA_SITE_RENDERER_VERSION != null )
         {
-            LOGGER.debug( "pom.properties for doxia-site-renderer could not be found." );
-        }
-        else
-        {
-            Properties properties = new Properties();
-            try ( InputStream in = inputStream )
-            {
-                properties.load( in );
-                context.put( "doxiaSiteRendererVersion", properties.getProperty( "version" ) );
-            }
-            catch ( IOException e )
-            {
-                LOGGER.debug( "Failed to load pom.properties, so doxiaSiteRendererVersion is not available"
-                        + " in the Velocity context." );
-            }
+            context.put( "doxiaSiteRendererVersion", DOXIA_SITE_RENDERER_VERSION );
         }
 
         // Add user properties
@@ -1137,5 +1122,30 @@ public class DefaultSiteRenderer
         {
             // ignore
         }
+    }
+
+    private static String getSiteRendererVersion()
+    {
+        InputStream inputStream = DefaultSiteRenderer.class.getResourceAsStream( "/META-INF/"
+            + "maven/org.apache.maven.doxia/doxia-site-renderer/pom.properties" );
+        if ( inputStream == null )
+        {
+            LOGGER.debug( "pom.properties for doxia-site-renderer not found" );
+        }
+        else
+        {
+            Properties properties = new Properties();
+            try ( InputStream in = inputStream )
+            {
+                properties.load( in );
+                return properties.getProperty( "version" );
+            }
+            catch ( IOException e )
+            {
+                LOGGER.debug( "Failed to load pom.properties, so Doxia SiteRenderer version will not be available", e );
+            }
+        }
+
+        return null;
     }
 }
