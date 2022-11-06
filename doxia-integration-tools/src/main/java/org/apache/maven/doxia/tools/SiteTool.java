@@ -39,10 +39,11 @@ import org.apache.maven.reporting.MavenReport;
 public interface SiteTool
 {
     /**
-     * The locale by default for a Maven Site
-     * @see Locale#ENGLISH
+     * The locale by default for a Maven Site.
+     *
+     * @see Locale#ROOT
      */
-    Locale DEFAULT_LOCALE = Locale.ENGLISH;
+    Locale DEFAULT_LOCALE = Locale.ROOT;
 
     /**
      * Get a skin artifact from one of the repositories.
@@ -63,9 +64,12 @@ public interface SiteTool
      * Get a site descriptor from the project's site directory.
      *
      * @param siteDirectory the site directory, not null
-     * @param locale the locale wanted for the site descriptor. If not null, searching for
-     * <code>site_<i>localeLanguage</i>.xml</code>, otherwise searching for <code>site.xml</code>.
-     * @return the site descriptor file
+     * @param locale the locale wanted for the site descriptor, not null. Most specific
+     * to least specific lookup from <code>site_language_country_variant.xml</code>,
+     * <code>site_language_country.xml</code>, <code>site_language.xml}</code>,
+     * to <code>site.xml</code> as last resort for {@link Locale#ROOT}, if provided
+     * locale defines a variant and/or a country and/or a language.
+     * @return the most specific site descriptor file for the given locale
      */ // used by maven-pdf-plugin (should not?)
     File getSiteDescriptor( File siteDirectory, Locale locale );
 
@@ -107,7 +111,8 @@ public interface SiteTool
      * Get a decoration model for a project.
      *
      * @param siteDirectory the site directory, may be null if project from repository
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
+     * @param locale the locale used for the i18n in DecorationModel, not null.
+     * See {@link #getSiteDescriptor(File, Locale)} for details.
      * @param project the Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.
      * @param localRepository the Maven local repository, not null.
@@ -128,7 +133,8 @@ public interface SiteTool
      * 2 separate menus: "Project Information" and "Project Reports".
      *
      * @param decorationModel the Doxia Sitetools DecorationModel, not null.
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
+     * @param locale the locale used for the i18n in DecorationModel, not null.
+     * See {@link #getSiteDescriptor(File, Locale)} for details.
      * @param reportsPerCategory reports per category to put in "Reports" or "Information" menus, not null.
      * @see MavenReport#CATEGORY_PROJECT_INFORMATION
      * @see MavenReport#CATEGORY_PROJECT_REPORTS
@@ -138,11 +144,10 @@ public interface SiteTool
 
     /**
      * Extracts from a comma-separated list the locales that are available in <code>site-tool</code>
-     * resource bundle. Notice that <code>default</code> value will be changed to the default locale of
-     * the JVM.
+     * resource bundle.
      *
      * @param locales A comma separated list of locales
-     * @return a list of <code>Locale</code>, which at least contains the Maven default locale which is english
+     * @return a list of <code>Locale</code>s.
      * @since 1.7, was previously getAvailableLocales(String)
      */
     List<Locale> getSiteLocales( String locales );

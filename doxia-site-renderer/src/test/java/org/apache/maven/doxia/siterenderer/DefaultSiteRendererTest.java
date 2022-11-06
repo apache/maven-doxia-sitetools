@@ -140,9 +140,6 @@ public class DefaultSiteRendererTest
             IOUtil.close( skinIS );
             IOUtil.close( jarOS );
         }
-
-        oldLocale = Locale.getDefault();
-        Locale.setDefault( Locale.ENGLISH );
     }
 
     /**
@@ -153,8 +150,6 @@ public class DefaultSiteRendererTest
         throws Exception
     {
         container.release( renderer );
-
-        Locale.setDefault( oldLocale );
     }
 
     /**
@@ -345,7 +340,7 @@ public class DefaultSiteRendererTest
         skin.setFile( skinFile );
         SiteRenderingContext siteRenderingContext =
             renderer.createContextForSkin( skin, attributes, new DecorationModel(), "defaultWindowTitle",
-                                           Locale.ENGLISH );
+                                           Locale.ROOT );
         RenderingContext context = new RenderingContext( new File( "" ), "document.html", "generator" );
         SiteRendererSink sink = new SiteRendererSink( context );
         renderer.mergeDocumentIntoSite( writer, sink, siteRenderingContext );
@@ -379,7 +374,7 @@ public class DefaultSiteRendererTest
         skin.setFile( skinFile );
         SiteRenderingContext siteRenderingContext =
             renderer.createContextForSkin( skin, attributes,decoration, "defaultWindowTitle",
-                                                   Locale.ENGLISH );
+                                                   Locale.ROOT );
         siteRenderingContext.addSiteDirectory( getTestFile( siteDir ) );
         siteRenderingContext.setValidate( validate );
 

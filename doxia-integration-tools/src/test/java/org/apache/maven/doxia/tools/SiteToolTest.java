@@ -212,13 +212,50 @@ public class SiteToolTest
         assertNotNull( tool );
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), null ).toString(),
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), SiteTool.DEFAULT_LOCALE ).toString(),
             project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
         assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.ENGLISH ).toString(),
             project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
         String siteDir = "src/blabla";
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), siteDir ), null ).toString(),
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), siteDir ), SiteTool.DEFAULT_LOCALE ).toString(),
             project.getBasedir() + File.separator + "src" + File.separator + "blabla" + File.separator + "site.xml" );
+
+        project = new SiteToolMavenProjectStub( "site-tool-locales-test/full" );
+        final Locale BAVARIAN = new Locale( "de", "DE", "BY" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), SiteTool.DEFAULT_LOCALE ).toString(),
+            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), BAVARIAN ).toString(),
+            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site_de_DE_BY.xml" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.GERMANY ).toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.ENGLISH ).toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.GERMAN ).toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
+
+        project = new SiteToolMavenProjectStub( "site-tool-locales-test/language_country" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), SiteTool.DEFAULT_LOCALE ).toString(),
+            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), BAVARIAN ).toString(),
+            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site_de_DE.xml" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.GERMANY ).toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site_de_DE.xml" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.ENGLISH ).toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.GERMAN ).toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
+
+        project = new SiteToolMavenProjectStub( "site-tool-locales-test/language" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), SiteTool.DEFAULT_LOCALE ).toString(),
+            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), BAVARIAN ).toString(),
+            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site_de.xml" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.GERMANY ).toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site_de.xml" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.ENGLISH ).toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
+        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.GERMAN ).toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site_de.xml" );
     }
 
     /**
@@ -239,7 +276,7 @@ public class SiteToolTest
             + "maven-site-1.0-site.xml";
 
         assertEquals( tool.getSiteDescriptorFromRepository( project, getLocalRepo(),
-                                                            project.getRemoteArtifactRepositories(), Locale.ENGLISH )
+                                                            project.getRemoteArtifactRepositories(), SiteTool.DEFAULT_LOCALE )
             .toString(), result );
     }
 
@@ -257,7 +294,7 @@ public class SiteToolTest
 
         // model from current local build
         DecorationModel model =
-            tool.getDecorationModel( new File( project.getBasedir(), "src/site" ), Locale.getDefault(), project,
+            tool.getDecorationModel( new File( project.getBasedir(), "src/site" ), SiteTool.DEFAULT_LOCALE, project,
                                      reactorProjects, getLocalRepo(), project.getRemoteArtifactRepositories() );
         assertNotNull( model );
         assertNotNull( model.getBannerLeft() );
@@ -269,24 +306,20 @@ public class SiteToolTest
         assertEquals( "http://maven.apache.org/images/maven-small.gif", model.getBannerRight().getSrc() );
         assertNull( model.getBannerRight().getHref() );
 
-        // model from repo: https://repo1.maven.org/maven2/org/apache/maven/maven-site/1.0/maven-site-1.0-site.xml
-        // TODO Enable this test as soon as we haven a site.xml with head content as string
-        /*project.setBasedir( null );
+        // model from repo: https://repo1.maven.org/maven2/org/apache/maven/maven/3.8.6/maven-3.8.6-site.xml
+        project.setBasedir( null );
         project.setGroupId( "org.apache.maven" );
-        project.setArtifactId( "maven-site" );
-        project.setVersion( "1.0" );
+        project.setArtifactId( "maven" );
+        project.setVersion( "3.8.6" );
         DecorationModel modelFromRepo =
-            tool.getDecorationModel( null, Locale.getDefault(), project, reactorProjects, getLocalRepo(),
+            tool.getDecorationModel( null, SiteTool.DEFAULT_LOCALE, project, reactorProjects, getLocalRepo(),
                                      project.getRemoteArtifactRepositories() );
         assertNotNull( modelFromRepo );
         assertNotNull( modelFromRepo.getBannerLeft() );
-        assertEquals( "Maven", modelFromRepo.getBannerLeft().getName() );
-        assertEquals( "images/apache-maven-project-2.png", modelFromRepo.getBannerLeft().getSrc() );
-        assertEquals( "http://maven.apache.org/", modelFromRepo.getBannerLeft().getHref() );
-        assertNotNull( modelFromRepo.getBannerRight() );
-        assertNull( modelFromRepo.getBannerRight().getName() );
-        assertEquals( "images/maven-logo-2.gif", modelFromRepo.getBannerRight().getSrc() );
-        assertNull( modelFromRepo.getBannerRight().getHref() );*/
+        assertEquals( "dummy", modelFromRepo.getBannerLeft().getName() );
+        assertEquals( "https://maven.apache.org/images/apache-maven-project.png", modelFromRepo.getBannerLeft().getSrc() );
+        assertEquals( "https://maven.apache.org/", modelFromRepo.getBannerLeft().getHref() );
+        assertNull( modelFromRepo.getBannerRight() );
     }
 
     /**
@@ -303,7 +336,7 @@ public class SiteToolTest
         List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
 
         DecorationModel model =
-            tool.getDecorationModel( new File( project.getBasedir(), siteDirectory ), Locale.getDefault(), project,
+            tool.getDecorationModel( new File( project.getBasedir(), siteDirectory ), SiteTool.DEFAULT_LOCALE, project,
                                      reactorProjects, getLocalRepo(), project.getRemoteArtifactRepositories() );
         assertNotNull( model );
     }
@@ -312,10 +345,10 @@ public class SiteToolTest
     public void testGetAvailableLocales()
                     throws Exception
     {
-        assertEquals( Collections.singletonList( SiteTool.DEFAULT_LOCALE ), tool.getSiteLocales( "en" ) );
+        assertEquals( Collections.singletonList( SiteTool.DEFAULT_LOCALE ), tool.getSiteLocales( "default" ) );
 
         assertEquals( Arrays.asList( SiteTool.DEFAULT_LOCALE, Locale.FRENCH, Locale.ITALIAN ),
-                      tool.getSiteLocales( "en,fr,it" ) );
+                      tool.getSiteLocales( "default,fr,it" ) );
 
         // by default, only DEFAULT_LOCALE
         assertEquals( Collections.singletonList( SiteTool.DEFAULT_LOCALE ), tool.getSiteLocales( "" ) );
@@ -358,16 +391,16 @@ public class SiteToolTest
         assertNotNull( tool );
 
         SiteToolMavenProjectStub parentProject = new SiteToolMavenProjectStub( "interpolation-parent-test" );
-        parentProject.setDistgributionManagementSiteUrl( "dav:https://davs.codehaus.org/site" );
+        parentProject.setDistgributionManagementSiteUrl( "dav+https://davs.codehaus.org/site" );
 
         SiteToolMavenProjectStub childProject = new SiteToolMavenProjectStub( "interpolation-child-test" );
         childProject.setParent( parentProject );
-        childProject.setDistgributionManagementSiteUrl( "dav:https://davs.codehaus.org/site/child" );
+        childProject.setDistgributionManagementSiteUrl( "dav+https://davs.codehaus.org/site/child" );
 
         List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList( parentProject );
 
         DecorationModel model = tool.getDecorationModel( new File( childProject.getBasedir(), "src/site" ),
-                                                         Locale.getDefault(), childProject, reactorProjects,
+                                                         SiteTool.DEFAULT_LOCALE, childProject, reactorProjects,
                                                          getLocalRepo(), childProject.getRemoteArtifactRepositories() );
         assertNotNull( model );
 

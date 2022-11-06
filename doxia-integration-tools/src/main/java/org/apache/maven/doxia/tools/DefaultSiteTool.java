@@ -335,14 +335,34 @@ public class DefaultSiteTool
     public File getSiteDescriptor( File siteDirectory, Locale locale )
     {
         Objects.requireNonNull( siteDirectory, "siteDirectory cannot be null" );
-        final Locale llocale = ( locale == null ) ? new Locale( "" ) : locale;
+        Objects.requireNonNull( locale, "locale cannot be null" );
 
-        File siteDescriptor = new File( siteDirectory, "site_" + llocale.getLanguage() + ".xml" );
+        String variant = locale.getVariant();
+        String country = locale.getCountry();
+        String language = locale.getLanguage();
 
-        if ( !siteDescriptor.isFile() )
+        File siteDescriptor = null;
+
+        if ( !variant.isEmpty() )
+        {
+            siteDescriptor = new File( siteDirectory, "site_" + language + "_" + country + "_" + variant + ".xml" );
+        }
+
+        if ( ( siteDescriptor == null || !siteDescriptor.isFile() ) && !country.isEmpty() )
+        {
+            siteDescriptor = new File( siteDirectory, "site_" + language + "_" + country + ".xml" );
+        }
+
+        if ( ( siteDescriptor == null || !siteDescriptor.isFile() ) && !language.isEmpty() )
+        {
+            siteDescriptor = new File( siteDirectory, "site_" + language + ".xml" );
+        }
+
+        if ( siteDescriptor == null || !siteDescriptor.isFile() )
         {
             siteDescriptor = new File( siteDirectory, "site.xml" );
         }
+
         return siteDescriptor;
     }
 
@@ -352,8 +372,8 @@ public class DefaultSiteTool
      * @param project the Maven project, not null.
      * @param localRepository the Maven local repository, not null.
      * @param repositories the Maven remote repositories, not null.
-     * @param locale the locale wanted for the site descriptor. If not null, searching for
-     * <code>site_<i>localeLanguage</i>.xml</code>, otherwise searching for <code>site.xml</code>.
+     * @param locale the locale wanted for the site descriptor, not null.
+     * See {@link #getSiteDescriptor(File, Locale)} for details.
      * @return the site descriptor into the local repository after download of it from repositories or null if not
      * found in repositories.
      * @throws SiteToolException if any
@@ -365,12 +385,11 @@ public class DefaultSiteTool
         Objects.requireNonNull( project, "project cannot be null" );
         Objects.requireNonNull( localRepository, "localRepository cannot be null" );
         Objects.requireNonNull( repositories, "repositories cannot be null" );
-
-        final Locale llocale = ( locale == null ) ? new Locale( "" ) : locale;
+        Objects.requireNonNull( locale, "locale cannot be null" );
 
         try
         {
-            return resolveSiteDescriptor( project, localRepository, repositories, llocale );
+            return resolveSiteDescriptor( project, localRepository, repositories, locale );
         }
         catch ( ArtifactNotFoundException e )
         {
@@ -393,17 +412,17 @@ public class DefaultSiteTool
                                                List<ArtifactRepository> repositories )
         throws SiteToolException
     {
+        Objects.requireNonNull( locale, "locale cannot be null" );
         Objects.requireNonNull( project, "project cannot be null" );
         Objects.requireNonNull( reactorProjects, "reactorProjects cannot be null" );
         Objects.requireNonNull( localRepository, "localRepository cannot be null" );
         Objects.requireNonNull( repositories, "repositories cannot be null" );
 
-        final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale;
-
-        LOGGER.debug( "Computing decoration model of " + project.getId() + " for locale " + llocale );
+        LOGGER.debug( "Computing decoration model of '" + project.getId() + "' for "
+                + ( locale.equals( SiteTool.DEFAULT_LOCALE ) ? "default locale" : "locale '" + locale + "'" ) );
 
         Map.Entry<DecorationModel, MavenProject> result =
-            getDecorationModel( 0, siteDirectory, llocale, project, reactorProjects, localRepository, repositories );
+            getDecorationModel( 0, siteDirectory, locale, project, reactorProjects, localRepository, repositories );
         DecorationModel decorationModel = result.getKey();
         MavenProject parentProject = result.getValue();
 
@@ -423,12 +442,12 @@ public class DefaultSiteTool
 
         if ( parentProject != null )
         {
-            populateParentMenu( decorationModel, llocale, project, parentProject, true );
+            populateParentMenu( decorationModel, locale, project, parentProject, true );
         }
 
         try
         {
-            populateModulesMenu( decorationModel, llocale, project, reactorProjects, localRepository, true );
+            populateModulesMenu( decorationModel, locale, project, reactorProjects, localRepository, true );
         }
         catch ( IOException e )
         {
@@ -506,7 +525,7 @@ public class DefaultSiteTool
      * if used through <code>&lt;menu ref="parent"/&gt;</code>.
      *
      * @param decorationModel the Doxia Sitetools DecorationModel, not null.
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
+     * @param locale the locale used for the i18n in DecorationModel, not null.
      * @param project a Maven project, not null.
      * @param parentProject a Maven parent project, not null.
      * @param keepInheritedRefs used for inherited references.
@@ -515,6 +534,7 @@ public class DefaultSiteTool
                                     MavenProject parentProject, boolean keepInheritedRefs )
     {
         Objects.requireNonNull( decorationModel, "decorationModel cannot be null" );
+        Objects.requireNonNull( locale, "locale cannot be null" );
         Objects.requireNonNull( project, "project cannot be null" );
         Objects.requireNonNull( parentProject, "parentProject cannot be null" );
 
@@ -529,8 +549,6 @@ public class DefaultSiteTool
         {
             return;
         }
-
-        final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale;
 
         String parentUrl = getDistMgmntSiteUrl( parentProject );
 
@@ -570,7 +588,7 @@ public class DefaultSiteTool
         {
             if ( menu.getName() == null )
             {
-                menu.setName( i18n.getString( "site-tool", llocale, "decorationModel.menu.parentproject" ) );
+                menu.setName( i18n.getString( "site-tool", locale, "decorationModel.menu.parentproject" ) );
             }
 
             MenuItem item = new MenuItem();
@@ -585,7 +603,7 @@ public class DefaultSiteTool
      * if used through <code>&lt;menu ref="modules"/&gt;</code>.
      *
      * @param decorationModel the Doxia Sitetools DecorationModel, not null.
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
+     * @param locale the locale used for the i18n in DecorationModel, not null.
      * @param project a Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.
      * @param localRepository the Maven local repository, not null.
@@ -598,10 +616,11 @@ public class DefaultSiteTool
                                      boolean keepInheritedRefs )
         throws SiteToolException, IOException
     {
+        Objects.requireNonNull( decorationModel, "decorationModel cannot be null" );
+        Objects.requireNonNull( locale, "locale cannot be null" );
         Objects.requireNonNull( project, "project cannot be null" );
         Objects.requireNonNull( reactorProjects, "reactorProjects cannot be null" );
         Objects.requireNonNull( localRepository, "localRepository cannot be null" );
-        Objects.requireNonNull( decorationModel, "decorationModel cannot be null" );
 
         Menu menu = decorationModel.getMenuRef( "modules" );
 
@@ -615,14 +634,12 @@ public class DefaultSiteTool
             return;
         }
 
-        final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale ;
-
         // we require child modules and reactors to process module menu
         if ( project.getModules().size() > 0 )
         {
             if ( menu.getName() == null )
             {
-                menu.setName( i18n.getString( "site-tool", llocale, "decorationModel.menu.projectmodules" ) );
+                menu.setName( i18n.getString( "site-tool", locale, "decorationModel.menu.projectmodules" ) );
             }
 
             for ( String module : (List<String>) project.getModules() )
@@ -699,6 +716,7 @@ public class DefaultSiteTool
                                      Map<String, List<MavenReport>> categories )
     {
         Objects.requireNonNull( decorationModel, "decorationModel cannot be null" );
+        Objects.requireNonNull( locale, "locale cannot be null" );
         Objects.requireNonNull( categories, "categories cannot be null" );
 
         Menu menu = decorationModel.getMenuRef( "reports" );
@@ -708,11 +726,9 @@ public class DefaultSiteTool
             return;
         }
 
-        final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale;
-
         if ( menu.getName() == null )
         {
-            menu.setName( i18n.getString( "site-tool", llocale, "decorationModel.menu.projectdocumentation" ) );
+            menu.setName( i18n.getString( "site-tool", locale, "decorationModel.menu.projectdocumentation" ) );
         }
 
         boolean found = false;
@@ -722,9 +738,9 @@ public class DefaultSiteTool
             if ( !isEmptyList( categoryReports ) )
             {
                 MenuItem item = createCategoryMenu(
-                                                    i18n.getString( "site-tool", llocale,
+                                                    i18n.getString( "site-tool", locale,
                                                                     "decorationModel.menu.projectinformation" ),
-                                                    "/project-info.html", categoryReports, llocale );
+                                                    "/project-info.html", categoryReports, locale );
                 menu.getItems().add( item );
                 found = true;
             }
@@ -733,8 +749,8 @@ public class DefaultSiteTool
             if ( !isEmptyList( categoryReports ) )
             {
                 MenuItem item =
-                    createCategoryMenu( i18n.getString( "site-tool", llocale, "decorationModel.menu.projectreports" ),
-                                        "/project-reports.html", categoryReports, llocale );
+                    createCategoryMenu( i18n.getString( "site-tool", locale, "decorationModel.menu.projectreports" ),
+                                        "/project-reports.html", categoryReports, locale );
                 menu.getItems().add( item );
                 found = true;
             }
@@ -755,6 +771,7 @@ public class DefaultSiteTool
 
         String[] localesArray = StringUtils.split( locales, "," );
         List<Locale> localesList = new ArrayList<Locale>( localesArray.length );
+        List<Locale> availableLocales = Arrays.asList( Locale.getAvailableLocales() );
 
         for ( String localeString : localesArray )
         {
@@ -765,7 +782,7 @@ public class DefaultSiteTool
                 continue;
             }
 
-            if ( !Arrays.asList( Locale.getAvailableLocales() ).contains( locale ) )
+            if ( !availableLocales.contains( locale ) )
             {
                 if ( LOGGER.isWarnEnabled() )
                 {
@@ -777,18 +794,16 @@ public class DefaultSiteTool
                 continue;
             }
 
-            // Default bundles are in English
-            if ( ( !locale.getLanguage().equals( DEFAULT_LOCALE.getLanguage() ) )
-                && ( !i18n.getBundle( "site-tool", locale ).getLocale().getLanguage()
-                    .equals( locale.getLanguage() ) ) )
+            Locale bundleLocale = i18n.getBundle( "site-tool", locale ).getLocale();
+            if ( !( bundleLocale.equals( locale ) || bundleLocale.getLanguage().equals( locale.getLanguage() ) ) )
             {
                 if ( LOGGER.isWarnEnabled() )
                 {
                     LOGGER.warn( "The locale '" + locale + "' (" + locale.getDisplayName( Locale.ENGLISH )
                         + ") is not currently supported by Maven Site - IGNORING."
-                        + "\nContributions are welcome and greatly appreciated!"
-                        + "\nIf you want to contribute a new translation, please visit "
-                        + "http://maven.apache.org/plugins/localization.html for detailed instructions." );
+                        + System.lineSeparator() + "Contributions are welcome and greatly appreciated!"
+                        + System.lineSeparator() + "If you want to contribute a new translation, please visit "
+                        + "https://maven.apache.org/plugins/localization.html for detailed instructions." );
                 }
 
                 continue;
@@ -808,12 +823,14 @@ public class DefaultSiteTool
     /**
      * Converts a locale code like "en", "en_US" or "en_US_win" to a <code>java.util.Locale</code>
      * object.
-     * <p>If localeCode = <code>default</code>, return the current value of the default locale for this instance
+     * <p>If localeCode = <code>system</code>, return the current value of the default locale for this instance
      * of the Java Virtual Machine.</p>
+     * <p>If localeCode = <code>default</code>, return the root locale.</p>
      *
      * @param localeCode the locale code string.
      * @return a java.util.Locale object instanced or null if errors occurred
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Locale.html">java.util.Locale#getDefault()</a>
+     * @see Locale#getDefault()
+     * @see SiteTool#DEFAULT_LOCALE
      */
     private Locale codeToLocale( String localeCode )
     {
@@ -822,9 +839,14 @@ public class DefaultSiteTool
             return null;
         }
 
-        if ( "default".equalsIgnoreCase( localeCode ) )
+        if ( "system".equalsIgnoreCase( localeCode ) )
         {
             return Locale.getDefault();
+        }
+
+        if ( "default".equalsIgnoreCase( localeCode ) )
+        {
+            return SiteTool.DEFAULT_LOCALE;
         }
 
         String language = "";
@@ -895,47 +917,138 @@ public class DefaultSiteTool
                                         List<ArtifactRepository> repositories, Locale locale )
         throws IOException, ArtifactResolutionException, ArtifactNotFoundException
     {
-        File result;
+        String variant = locale.getVariant();
+        String country = locale.getCountry();
+        String language = locale.getLanguage();
 
-        // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
-        Artifact artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(),
-                                                                          project.getArtifactId(),
-                                                                          project.getVersion(), "xml",
-                                                                          "site_" + locale.getLanguage() );
-
+        Artifact artifact = null;
+        File siteDescriptor = null;
         boolean found = false;
-        try
+
+        if ( !variant.isEmpty() )
         {
-            artifactResolver.resolve( artifact, repositories, localRepository );
+            String localeStr = language + "_" + country + "_" + variant;
+            // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
+            artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(),
+                                                                     project.getArtifactId(),
+                                                                     project.getVersion(), "xml",
+                                                                     "site_" + localeStr );
 
-            result = artifact.getFile();
-
-            // we use zero length files to avoid re-resolution (see below)
-            if ( result.length() > 0 )
+            try
             {
-                found = true;
+                artifactResolver.resolve( artifact, repositories, localRepository );
+
+                siteDescriptor = artifact.getFile();
+
+                // we use zero length files to avoid re-resolution (see below)
+                if ( siteDescriptor.length() > 0 )
+                {
+                    found = true;
+                }
+                else
+                {
+                    LOGGER.debug( "No site descriptor found for '" + project.getId() + "' for locale '"
+                        + localeStr + "', trying without variant..." );
+                }
             }
-            else
+            catch ( ArtifactNotFoundException e )
             {
-                LOGGER.debug( "No site descriptor found for " + project.getId() + " for locale "
-                    + locale.getLanguage() + ", trying without locale..." );
+                LOGGER.debug( "Unable to locate site descriptor for locale '" + localeStr + "'", e );
+
+                // we can afford to write an empty descriptor here as we don't expect it to turn up later in the
+                // remote repository, because the parent was already released (and snapshots are updated
+                // automatically if changed)
+                siteDescriptor = new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) );
+                siteDescriptor.getParentFile().mkdirs();
+                siteDescriptor.createNewFile();
             }
         }
-        catch ( ArtifactNotFoundException e )
-        {
-            LOGGER.debug( "Unable to locate site descriptor for locale " + locale.getLanguage(), e );
 
-            // we can afford to write an empty descriptor here as we don't expect it to turn up later in the remote
-            // repository, because the parent was already released (and snapshots are updated automatically if changed)
-            result = new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) );
-            result.getParentFile().mkdirs();
-            result.createNewFile();
+        if ( !found && !country.isEmpty() )
+        {
+            String localeStr = language + "_" + country;
+            // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
+            artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(),
+                                                                     project.getArtifactId(),
+                                                                     project.getVersion(), "xml",
+                                                                     "site_" + localeStr );
+
+            try
+            {
+                artifactResolver.resolve( artifact, repositories, localRepository );
+
+                siteDescriptor = artifact.getFile();
+
+                // we use zero length files to avoid re-resolution (see below)
+                if ( siteDescriptor.length() > 0 )
+                {
+                    found = true;
+                }
+                else
+                {
+                    LOGGER.debug( "No site descriptor found for '" + project.getId() + "' for locale '"
+                        + localeStr + "', trying without country..." );
+                }
+            }
+            catch ( ArtifactNotFoundException e )
+            {
+                LOGGER.debug( "Unable to locate site descriptor for locale '" + localeStr + "'", e );
+
+                // we can afford to write an empty descriptor here as we don't expect it to turn up later in the
+                // remote repository, because the parent was already released (and snapshots are updated
+                // automatically if changed)
+                siteDescriptor = new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) );
+                siteDescriptor.getParentFile().mkdirs();
+                siteDescriptor.createNewFile();
+            }
+        }
+
+
+        if ( !found && !language.isEmpty() )
+        {
+            String localeStr = language;
+            // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
+            artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(),
+                                                                     project.getArtifactId(),
+                                                                     project.getVersion(), "xml",
+                                                                     "site_" + localeStr );
+
+            try
+            {
+                artifactResolver.resolve( artifact, repositories, localRepository );
+
+                siteDescriptor = artifact.getFile();
+
+                // we use zero length files to avoid re-resolution (see below)
+                if ( siteDescriptor.length() > 0 )
+                {
+                    found = true;
+                }
+                else
+                {
+                    LOGGER.debug( "No site descriptor found for '" + project.getId() + "' for locale '"
+                        + localeStr + "', trying default locale..." );
+                }
+            }
+            catch ( ArtifactNotFoundException e )
+            {
+                LOGGER.debug( "Unable to locate site descriptor for locale '" + localeStr + "'", e );
+
+                // we can afford to write an empty descriptor here as we don't expect it to turn up later in the
+                // remote repository, because the parent was already released (and snapshots are updated
+                // automatically if changed)
+                siteDescriptor = new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) );
+                siteDescriptor.getParentFile().mkdirs();
+                siteDescriptor.createNewFile();
+            }
         }
 
         if ( !found )
         {
-            artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(), project.getArtifactId(),
-                                                                     project.getVersion(), "xml", "site" );
+            artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(),
+                                                                     project.getArtifactId(),
+                                                                     project.getVersion(), "xml",
+                                                                     "site" );
             try
             {
                 artifactResolver.resolve( artifact, repositories, localRepository );
@@ -943,24 +1056,24 @@ public class DefaultSiteTool
             catch ( ArtifactNotFoundException e )
             {
                 // see above regarding this zero length file
-                result = new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) );
-                result.getParentFile().mkdirs();
-                result.createNewFile();
+                siteDescriptor = new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) );
+                siteDescriptor.getParentFile().mkdirs();
+                siteDescriptor.createNewFile();
 
                 throw e;
             }
 
-            result = artifact.getFile();
+            siteDescriptor = artifact.getFile();
 
             // we use zero length files to avoid re-resolution (see below)
-            if ( result.length() == 0 )
+            if ( siteDescriptor.length() == 0 )
             {
-                LOGGER.debug( "No site descriptor found for " + project.getId() + " without locale." );
-                result = null;
+                LOGGER.debug( "No site descriptor found for '" + project.getId() + "' with default locale." );
+                siteDescriptor = null;
             }
         }
 
-        return result;
+        return siteDescriptor;
     }
 
     /**
@@ -1028,7 +1141,7 @@ public class DefaultSiteTool
         }
         catch ( IOException e )
         {
-            throw new SiteToolException( "The site descriptor for " + project.getId() + " cannot be read from "
+            throw new SiteToolException( "The site descriptor for '" + project.getId() + "' cannot be read from "
                 + siteDescriptor, e );
         }
         finally
@@ -1326,6 +1439,7 @@ public class DefaultSiteTool
     {
         if ( distMgmnt != null && distMgmnt.getSite() != null && distMgmnt.getSite().getUrl() != null )
         {
+            // TODO This needs to go, it is just logically wrong
             return urlEncode( distMgmnt.getSite().getUrl() );
         }
 

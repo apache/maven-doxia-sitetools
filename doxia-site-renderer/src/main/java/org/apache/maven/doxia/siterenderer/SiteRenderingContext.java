@@ -50,7 +50,7 @@ public class SiteRenderingContext
 
     private Map<String, ?> templateProperties;
 
-    private Locale locale = Locale.getDefault();
+    private Locale locale = Locale.ROOT;
 
     private List<Locale> siteLocales = new ArrayList<Locale>();
 
