@@ -73,6 +73,7 @@ under the License.
     <aetherVersion>1.0.0.v20140518</aetherVersion>
     <wagonVersion>3.5.2</wagonVersion>
     <junitVersion>5.8.2</junitVersion>
+    <l10nPluginVersion>1.0.0</l10nPluginVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
     <project.build.outputTimestamp>2022-06-20T18:19:40Z</project.build.outputTimestamp>
   </properties>
