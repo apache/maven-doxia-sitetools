@@ -32,8 +32,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 
 /**
- * <p>Site Renderer interface: render a collection of documents into a site, ie decored with a site template
- * (eventually packaged as skin).</p>
+ * Site Renderer interface: render a collection of documents into a site, ie decorated with a site template.
  *
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  */
