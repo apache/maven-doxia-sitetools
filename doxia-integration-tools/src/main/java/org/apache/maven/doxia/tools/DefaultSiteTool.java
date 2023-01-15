@@ -57,6 +57,7 @@ import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInherit
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.model.DistributionManagement;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Site;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
@@ -75,6 +76,7 @@ import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -679,11 +681,19 @@ public class DefaultSiteTool
                     }
                 }
 
-                String siteUrl = getDistMgmntSiteUrl( moduleProject );
+                final String pluginId = "org.apache.maven.plugins:maven-site-plugin";
+                String skipFlag = getPluginParameter( moduleProject, pluginId, "skip" );
+                if ( skipFlag == null )
+                {
+                    skipFlag = moduleProject.getProperties().getProperty( "maven.site.skip" );
+                }
+
+                String siteUrl = "true".equalsIgnoreCase( skipFlag ) ? null : getDistMgmntSiteUrl( moduleProject );
                 String itemName =
                     ( moduleProject.getName() == null ) ? moduleProject.getArtifactId() : moduleProject.getName();
+                String defaultSiteUrl = "true".equalsIgnoreCase( skipFlag ) ? null : moduleProject.getArtifactId();
 
-                appendMenuItem( project, menu, itemName, siteUrl, moduleProject.getArtifactId() );
+                appendMenuItem( project, menu, itemName, siteUrl, defaultSiteUrl );
             }
         }
         else if ( decorationModel.getMenuRef( "modules" ).getInherit() == null )
@@ -1350,7 +1360,7 @@ public class DefaultSiteTool
      * @param menu not null
      * @param name not null
      * @param href could be null
-     * @param defaultHref not null
+     * @param defaultHref could be null
      */
     private void appendMenuItem( MavenProject project, Menu menu, String name, String href, String defaultHref )
     {
@@ -1364,19 +1374,22 @@ public class DefaultSiteTool
         MenuItem item = new MenuItem();
         item.setName( name );
 
-        String baseUrl = getDistMgmntSiteUrl( project );
-        if ( baseUrl != null )
+        if ( selectedHref != null )
         {
-            selectedHref = getRelativePath( selectedHref, baseUrl );
-        }
+            String baseUrl = getDistMgmntSiteUrl( project );
+            if ( baseUrl != null )
+            {
+                selectedHref = getRelativePath( selectedHref, baseUrl );
+            }
 
-        if ( selectedHref.endsWith( "/" ) )
-        {
-            item.setHref( selectedHref + "index.html" );
-        }
-        else
-        {
-            item.setHref( selectedHref + "/index.html" );
+            if ( selectedHref.endsWith( "/" ) )
+            {
+                item.setHref( selectedHref + "index.html" );
+            }
+            else
+            {
+                item.setHref( selectedHref + "/index.html" );
+            }
         }
         menu.addItem( item );
     }
@@ -1441,6 +1454,51 @@ public class DefaultSiteTool
         {
             // TODO This needs to go, it is just logically wrong
             return urlEncode( distMgmnt.getSite().getUrl() );
+        }
+
+        return null;
+    }
+
+    /**
+     * @param project the project
+     * @param pluginId The id of the plugin
+     * @return The information about the plugin.
+     */
+    private static Plugin getPlugin( MavenProject project, String pluginId )
+    {
+        if ( ( project.getBuild() == null ) || ( project.getBuild().getPluginsAsMap() == null ) )
+        {
+            return null;
+        }
+
+        Plugin plugin = project.getBuild().getPluginsAsMap().get( pluginId );
+
+        if ( ( plugin == null ) && ( project.getBuild().getPluginManagement() != null )
+            && ( project.getBuild().getPluginManagement().getPluginsAsMap() != null ) )
+        {
+            plugin = project.getBuild().getPluginManagement().getPluginsAsMap().get( pluginId );
+        }
+
+        return plugin;
+    }
+
+    /**
+     * @param project the project
+     * @param pluginId The pluginId
+     * @param param The child which should be checked.
+     * @return The value of the dom tree.
+     */
+    private static String getPluginParameter( MavenProject project, String pluginId, String param )
+    {
+        Plugin plugin = getPlugin( project, pluginId );
+        if ( plugin != null )
+        {
+            Xpp3Dom xpp3Dom = (Xpp3Dom) plugin.getConfiguration();
+            if ( xpp3Dom != null && xpp3Dom.getChild( param ) != null
+                && StringUtils.isNotEmpty( xpp3Dom.getChild( param ).getValue() ) )
+            {
+                return xpp3Dom.getChild( param ).getValue();
+            }
         }
 
         return null;
