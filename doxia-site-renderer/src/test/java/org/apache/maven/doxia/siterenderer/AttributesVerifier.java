@@ -181,12 +181,12 @@ public class AttributesVerifier
         assertEquals( "/index.html", a.getAttribute( "href" ) );
 
         HtmlDivision div = (HtmlDivision) elementIterator.next();
-        assertEquals( "source", div.getAttribute( "class" ) );
+        assertEquals( "verbatim source", div.getAttribute( "class" ) );
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
         assertEquals( "pretty", pre.getAttribute( "class" ) );
 
         div = (HtmlDivision) elementIterator.next();
-        assertEquals( "source", div.getAttribute( "class" ) );
+        assertEquals( "verbatim source", div.getAttribute( "class" ) );
         assertEquals( "", div.getAttribute( "id" ) );
         pre = (HtmlPreformattedText) elementIterator.next();
         assertEquals( "pretty", pre.getAttribute( "id" ) );
