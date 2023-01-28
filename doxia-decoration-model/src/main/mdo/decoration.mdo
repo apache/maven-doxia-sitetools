@@ -741,7 +741,7 @@ under the License.
 
     <class java.clone="deep">
       <name>Skin</name>
-      <description>An skin artifact declaration.</description>
+      <description>A skin artifact declaration.</description>
       <version>1.0.0+</version>
       <fields>
         <field>
