@@ -233,7 +233,7 @@ public class DefaultSiteRenderer
         String moduleRelativePath =
             PathTool.getRelativeFilePath( rootDir.getAbsolutePath(), moduleBasedir.getAbsolutePath() );
 
-        List<String> allFiles = FileUtils.getFileNames( moduleBasedir, "**/*.*", excludes, false );
+        List<String> allFiles = FileUtils.getFileNames( moduleBasedir, "**/*", excludes, false );
 
         for ( String extension : module.getExtensions() )
         {
@@ -954,7 +954,7 @@ public class DefaultSiteRenderer
         {
             DirectoryScanner scanner = new DirectoryScanner();
 
-            String[] includedResources = {"**/**"};
+            String[] includedResources = {"**/*"};
 
             scanner.setIncludes( includedResources );
 
