@@ -70,7 +70,7 @@ public interface Renderer // TODO rename to SiteRenderer
      * @param skin a skin
      * @param attributes attributes to use
      * @param decoration a decoration model
-     * @param defaultWindowTitle default window title
+     * @param defaultTitle default title
      * @param locale locale to use
      * @return a SiteRenderingContext.
      * @throws RendererException if it bombs.
@@ -78,7 +78,7 @@ public interface Renderer // TODO rename to SiteRenderer
      * @since 1.7.3 was previously with skin as File instead of Artifact
      */
     SiteRenderingContext createContextForSkin( Artifact skin, Map<String, ?> attributes, DecorationModel decoration,
-                                               String defaultWindowTitle, Locale locale )
+                                               String defaultTitle, Locale locale )
         throws RendererException, IOException;
 
     /**

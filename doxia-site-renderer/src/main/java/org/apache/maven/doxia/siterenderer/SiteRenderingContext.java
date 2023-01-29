@@ -56,7 +56,7 @@ public class SiteRenderingContext
 
     private DecorationModel decoration;
 
-    private String defaultWindowTitle;
+    private String defaultTitle;
 
     private Artifact skin;
 
@@ -212,23 +212,41 @@ public class SiteRenderingContext
     }
 
     /**
-     * <p>Setter for the field <code>defaultWindowTitle</code>.</p>
-     *
-     * @param defaultWindowTitle a {@link java.lang.String} object.
+     * @deprecated use {@link #setDefaultTitle(String)}
      */
-    public void setDefaultWindowTitle( String defaultWindowTitle )
+    @Deprecated
+    public void setDefaultWindowTitle( String defaultWindowsTitle )
     {
-        this.defaultWindowTitle = defaultWindowTitle;
+        setDefaultTitle( defaultWindowsTitle );
     }
 
     /**
-     * <p>Getter for the field <code>defaultWindowTitle</code>.</p>
+     * <p>Setter for the field <code>defaultTitle</code>.</p>
+     *
+     * @param defaultTitle a {@link java.lang.String} object.
+     */
+    public void setDefaultTitle( String defaultTitle )
+    {
+        this.defaultTitle = defaultTitle;
+    }
+
+    /**
+     * @deprecated use {@link #getDefaultTitle()}
+     */
+    @Deprecated
+    public String getDefaultWindowTitle()
+    {
+        return getDefaultTitle();
+    }
+
+    /**
+     * <p>Getter for the field <code>defaultTitle</code>.</p>
      *
      * @return a {@link java.lang.String} object.
      */
-    public String getDefaultWindowTitle()
+    public String getDefaultTitle()
     {
-        return defaultWindowTitle;
+        return defaultTitle;
     }
 
     /**

@@ -603,13 +603,13 @@ public class DefaultSiteRenderer
         // DOXIASITETOOLS-70: Prepend the project name to the title, if any
         StringBuilder title = new StringBuilder();
         if ( siteRenderingContext.getDecoration() != null
-                && siteRenderingContext.getDecoration().getName() != null )
+                && StringUtils.isNotEmpty( siteRenderingContext.getDecoration().getName() ) )
         {
             title.append( siteRenderingContext.getDecoration().getName() );
         }
-        else if ( siteRenderingContext.getDefaultWindowTitle() != null )
+        else if ( StringUtils.isNotEmpty( siteRenderingContext.getDefaultTitle() ) )
         {
-            title.append( siteRenderingContext.getDefaultWindowTitle() );
+            title.append( siteRenderingContext.getDefaultTitle() );
         }
 
         if ( title.length() > 0 && StringUtils.isNotEmpty( content.getTitle() ) )
@@ -719,25 +719,25 @@ public class DefaultSiteRenderer
     }
 
     private SiteRenderingContext createSiteRenderingContext( Map<String, ?> attributes, DecorationModel decoration,
-                                                             String defaultWindowTitle, Locale locale )
+                                                             String defaultTitle, Locale locale )
     {
         SiteRenderingContext context = new SiteRenderingContext();
 
         context.setTemplateProperties( attributes );
         context.setLocale( locale );
         context.setDecoration( decoration );
-        context.setDefaultWindowTitle( defaultWindowTitle );
+        context.setDefaultTitle( defaultTitle );
 
         return context;
     }
 
     /** {@inheritDoc} */
     public SiteRenderingContext createContextForSkin( Artifact skin, Map<String, ?> attributes,
-                                                      DecorationModel decoration, String defaultWindowTitle,
+                                                      DecorationModel decoration, String defaultTitle,
                                                       Locale locale )
             throws IOException, RendererException
     {
-        SiteRenderingContext context = createSiteRenderingContext( attributes, decoration, defaultWindowTitle, locale );
+        SiteRenderingContext context = createSiteRenderingContext( attributes, decoration, defaultTitle, locale );
 
         context.setSkin( skin );
 

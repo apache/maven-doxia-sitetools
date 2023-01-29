@@ -339,7 +339,7 @@ public class DefaultSiteRendererTest
             VersionRange.createFromVersion( "1.1" ), null, "jar", "", null );
         skin.setFile( skinFile );
         SiteRenderingContext siteRenderingContext =
-            renderer.createContextForSkin( skin, attributes, new DecorationModel(), "defaultWindowTitle",
+            renderer.createContextForSkin( skin, attributes, new DecorationModel(), "defaultitle",
                                            Locale.ROOT );
         RenderingContext context = new RenderingContext( new File( "" ), "document.html", "generator" );
         SiteRendererSink sink = new SiteRendererSink( context );
@@ -373,7 +373,7 @@ public class DefaultSiteRendererTest
         VersionRange.createFromVersion( "1.1" ), null, "jar", "", null );
         skin.setFile( skinFile );
         SiteRenderingContext siteRenderingContext =
-            renderer.createContextForSkin( skin, attributes,decoration, "defaultWindowTitle",
+            renderer.createContextForSkin( skin, attributes,decoration, "defaultTitle",
                                                    Locale.ROOT );
         siteRenderingContext.addSiteDirectory( getTestFile( siteDir ) );
         siteRenderingContext.setValidate( validate );
