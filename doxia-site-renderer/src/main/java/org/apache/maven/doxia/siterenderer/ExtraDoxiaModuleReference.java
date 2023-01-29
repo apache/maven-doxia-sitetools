@@ -26,6 +26,7 @@ import java.io.File;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
+@Deprecated
 class ExtraDoxiaModuleReference
 {
     private final String parserId;

@@ -68,6 +68,7 @@ public class SiteRenderingContext
 
     private Map<String, String> moduleExcludes;
 
+    @Deprecated
     private List<ExtraDoxiaModuleReference> modules = new ArrayList<ExtraDoxiaModuleReference>();
 
     private boolean validate;
@@ -298,6 +299,7 @@ public class SiteRenderingContext
      * @param moduleBasedir The base directory for module's source files.
      * @param moduleParserId module's Doxia parser id.
      */
+    @Deprecated
     public void addModuleDirectory( File moduleBasedir, String moduleParserId )
     {
         this.modules.add( new ExtraDoxiaModuleReference( moduleParserId, moduleBasedir ) );
@@ -318,6 +320,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.List} object.
      */
+    @Deprecated
     public List<ExtraDoxiaModuleReference> getModules()
     {
         return modules;
