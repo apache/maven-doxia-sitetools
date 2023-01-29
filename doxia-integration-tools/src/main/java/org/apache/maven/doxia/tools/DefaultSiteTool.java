@@ -1150,7 +1150,7 @@ public class DefaultSiteTool
         }
 
         // 3. look for parent project
-        MavenProject parentProject = getParentProject( project, reactorProjects, localRepository );
+        MavenProject parentProject = project.getParent();
 
         // 4. merge with parent project DecorationModel
         if ( parentProject != null && ( decorationModel == null || decorationModel.isMergeParent() ) )

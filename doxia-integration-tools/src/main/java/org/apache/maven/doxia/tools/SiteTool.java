@@ -187,8 +187,10 @@ public interface SiteTool
      * @param aProject a Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.
      * @param localRepository the Maven local repository, not null.
+     * @deprecated use {@link MavenProject#getParent()}
      * @return the parent project with interpolated URLs.
      */
+    @Deprecated
     MavenProject getParentProject( MavenProject aProject, List<MavenProject> reactorProjects,
                                    ArtifactRepository localRepository );
 }
