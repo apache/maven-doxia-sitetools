@@ -29,7 +29,7 @@ under the License.
     <p>An XSD is available at:</p>
     <ul>
       <!-- There is no property filtering in Modello, this has to be updated manually. See DOXIASITETOOLS-98. -->
-      <li><a href="https://maven.apache.org/xsd/skin-1.7.0.xsd">https://maven.apache.org/xsd/skin-1.7.0.xsd</a></li>
+      <li><a href="https://maven.apache.org/xsd/skin-2.0.0.xsd">https://maven.apache.org/xsd/skin-2.0.0.xsd</a></li>
     </ul>
     ]]></description>
 
@@ -88,7 +88,7 @@ under the License.
           <name>doxiaSitetools</name>
           <version>1.7.0+</version>
           <type>String</type>
-          <defaultValue>1.7</defaultValue>
+          <defaultValue>2.0.0-M5</defaultValue>
           <description><![CDATA[
             The minimum version of Doxia Sitetools required to use the resulting skin.
             ]]>
