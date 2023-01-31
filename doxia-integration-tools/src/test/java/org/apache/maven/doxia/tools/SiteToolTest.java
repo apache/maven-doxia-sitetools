@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.tools;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.tools;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.tools;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -42,7 +41,6 @@ import org.apache.maven.doxia.site.decoration.Skin;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
 import org.apache.maven.project.MavenProject;
-
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.FileUtils;
@@ -61,10 +59,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-@SuppressWarnings( "javadoc" )
+@SuppressWarnings("javadoc")
 @PlexusTest
-public class SiteToolTest
-{
+public class SiteToolTest {
 
     @Inject
     private PlexusContainer container;
@@ -72,7 +69,8 @@ public class SiteToolTest
     @Inject
     private ArtifactRepositoryFactory artifactRepositoryFactory;
 
-    @Inject @Named( "default" )
+    @Inject
+    @Named("default")
     private ArtifactRepositoryLayout defaultArtifactRepositoryLayout;
 
     @Inject
@@ -83,17 +81,19 @@ public class SiteToolTest
      *
      * @throws Exception
      */
-    protected ArtifactRepository getLocalRepo()
-        throws Exception
-    {
+    protected ArtifactRepository getLocalRepo() throws Exception {
         String updatePolicyFlag = ArtifactRepositoryPolicy.UPDATE_POLICY_ALWAYS;
         String checksumPolicyFlag = ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN;
-        ArtifactRepositoryPolicy snapshotsPolicy = new ArtifactRepositoryPolicy( true, updatePolicyFlag,
-                                                                                 checksumPolicyFlag );
-        ArtifactRepositoryPolicy releasesPolicy = new ArtifactRepositoryPolicy( true, updatePolicyFlag,
-                                                                                checksumPolicyFlag );
-        return artifactRepositoryFactory.createArtifactRepository( "local", getTestFile( "target/local-repo" ).toURI().toURL()
-            .toString(), defaultArtifactRepositoryLayout, snapshotsPolicy, releasesPolicy );
+        ArtifactRepositoryPolicy snapshotsPolicy =
+                new ArtifactRepositoryPolicy(true, updatePolicyFlag, checksumPolicyFlag);
+        ArtifactRepositoryPolicy releasesPolicy =
+                new ArtifactRepositoryPolicy(true, updatePolicyFlag, checksumPolicyFlag);
+        return artifactRepositoryFactory.createArtifactRepository(
+                "local",
+                getTestFile("target/local-repo").toURI().toURL().toString(),
+                defaultArtifactRepositoryLayout,
+                snapshotsPolicy,
+                releasesPolicy);
     }
 
     /**
@@ -101,68 +101,71 @@ public class SiteToolTest
      *
      * @throws Exception
      */
-    protected File getLocalRepoDir()
-        throws Exception
-    {
-        return new File( getLocalRepo().getBasedir() );
+    protected File getLocalRepoDir() throws Exception {
+        return new File(getLocalRepo().getBasedir());
     }
 
     /**
      * @throws Exception
      */
     @Test
-    public void testGetSkinArtifactFromRepository()
-        throws Exception
-    {
-        assertNotNull( tool );
+    public void testGetSkinArtifactFromRepository() throws Exception {
+        assertNotNull(tool);
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
         DecorationModel decorationModel = new DecorationModel();
         Skin skin = new Skin();
-        skin.setGroupId( "org.apache.maven.skins" );
-        skin.setArtifactId( "maven-stylus-skin" );
-        decorationModel.setSkin( skin );
-        assertNotNull( tool.getSkinArtifactFromRepository( getLocalRepo(), project.getRemoteArtifactRepositories(),
-                                                           decorationModel ) );
+        skin.setGroupId("org.apache.maven.skins");
+        skin.setArtifactId("maven-stylus-skin");
+        decorationModel.setSkin(skin);
+        assertNotNull(tool.getSkinArtifactFromRepository(
+                getLocalRepo(), project.getRemoteArtifactRepositories(), decorationModel));
     }
 
-    private void checkGetRelativePathDirectory( SiteTool tool, String relative, String to, String from )
-    {
-        assertEquals( relative, tool.getRelativePath( to, from ) );
-        assertEquals( relative, tool.getRelativePath( to + '/', from ) );
-        assertEquals( relative, tool.getRelativePath( to, from + '/' ) );
-        assertEquals( relative, tool.getRelativePath( to + '/', from + '/' ) );
+    private void checkGetRelativePathDirectory(SiteTool tool, String relative, String to, String from) {
+        assertEquals(relative, tool.getRelativePath(to, from));
+        assertEquals(relative, tool.getRelativePath(to + '/', from));
+        assertEquals(relative, tool.getRelativePath(to, from + '/'));
+        assertEquals(relative, tool.getRelativePath(to + '/', from + '/'));
     }
 
     /**
      * @throws Exception
      */
     @Test
-    @SuppressWarnings( { "deprecation" } )
-    public void testGetRelativePath()
-        throws Exception
-    {
-        assertNotNull( tool );
+    @SuppressWarnings({"deprecation"})
+    public void testGetRelativePath() throws Exception {
+        assertNotNull(tool);
 
-        checkGetRelativePathDirectory( tool, "", "http://maven.apache.org", "http://maven.apache.org" );
+        checkGetRelativePathDirectory(tool, "", "http://maven.apache.org", "http://maven.apache.org");
 
-        checkGetRelativePathDirectory( tool, ".." + File.separator + "..", "http://maven.apache.org",
-                                       "http://maven.apache.org/plugins/maven-site-plugin" );
+        checkGetRelativePathDirectory(
+                tool,
+                ".." + File.separator + "..",
+                "http://maven.apache.org",
+                "http://maven.apache.org/plugins/maven-site-plugin");
 
-        checkGetRelativePathDirectory( tool, "plugins" + File.separator + "maven-site-plugin",
-                                       "http://maven.apache.org/plugins/maven-site-plugin", "http://maven.apache.org"                         );
+        checkGetRelativePathDirectory(
+                tool,
+                "plugins" + File.separator + "maven-site-plugin",
+                "http://maven.apache.org/plugins/maven-site-plugin",
+                "http://maven.apache.org");
 
-        checkGetRelativePathDirectory( tool, "", "dav:https://maven.apache.org", "dav:https://maven.apache.org" );
+        checkGetRelativePathDirectory(tool, "", "dav:https://maven.apache.org", "dav:https://maven.apache.org");
 
-        checkGetRelativePathDirectory( tool, "plugins" + File.separator + "maven-site-plugin",
-                                       "dav:http://maven.apache.org/plugins/maven-site-plugin",
-                                       "dav:http://maven.apache.org" );
+        checkGetRelativePathDirectory(
+                tool,
+                "plugins" + File.separator + "maven-site-plugin",
+                "dav:http://maven.apache.org/plugins/maven-site-plugin",
+                "dav:http://maven.apache.org");
 
-        checkGetRelativePathDirectory( tool, "", "scm:svn:https://maven.apache.org", "scm:svn:https://maven.apache.org" );
+        checkGetRelativePathDirectory(tool, "", "scm:svn:https://maven.apache.org", "scm:svn:https://maven.apache.org");
 
-        checkGetRelativePathDirectory( tool, "plugins" + File.separator + "maven-site-plugin",
-                                       "scm:svn:https://maven.apache.org/plugins/maven-site-plugin",
-                                       "scm:svn:https://maven.apache.org" );
+        checkGetRelativePathDirectory(
+                tool,
+                "plugins" + File.separator + "maven-site-plugin",
+                "scm:svn:https://maven.apache.org/plugins/maven-site-plugin",
+                "scm:svn:https://maven.apache.org");
 
         String to = "http://maven.apache.org/downloads.html";
         String from = "http://maven.apache.org/index.html";
@@ -170,282 +173,347 @@ public class SiteToolTest
         // MSITE-600, MSHARED-203
         to = "file:///tmp/bloop";
         from = "scp://localhost:/tmp/blop";
-        assertEquals( tool.getRelativePath( to, from ), to );
+        assertEquals(tool.getRelativePath(to, from), to);
 
         // note: 'tmp' is the host here which is probably not the intention, but at least the result is correct
         to = "file://tmp/bloop";
         from = "scp://localhost:/tmp/blop";
-        assertEquals( to, tool.getRelativePath( to, from ) );
+        assertEquals(to, tool.getRelativePath(to, from));
 
         // Tests between files as described in MIDEA-102
         to = "C:/dev/voca/gateway/parser/gateway-parser.iml";
         from = "C:/dev/voca/gateway/";
-        assertEquals( "parser" + File.separator + "gateway-parser.iml", tool.getRelativePath( to, from ),
-                      "Child file using Windows drive letter");
+        assertEquals(
+                "parser" + File.separator + "gateway-parser.iml",
+                tool.getRelativePath(to, from),
+                "Child file using Windows drive letter");
         to = "C:/foo/child";
         from = "C:/foo/master";
-        assertEquals( ".." + File.separator + "child", tool.getRelativePath( to, from ),
-                      "Sibling directory using Windows drive letter" );
+        assertEquals(
+                ".." + File.separator + "child",
+                tool.getRelativePath(to, from),
+                "Sibling directory using Windows drive letter");
         to = "/myproject/myproject-module1";
         from = "/myproject/myproject";
-        assertEquals( ".." + File.separator + "myproject-module1", tool.getRelativePath( to, from ),
-                      "Sibling directory with similar name" );
+        assertEquals(
+                ".." + File.separator + "myproject-module1",
+                tool.getRelativePath(to, from),
+                "Sibling directory with similar name");
 
         // Normalized paths as described in MSITE-284
-        assertEquals( ".." + File.separator + "project-module-1" + File.separator + "src" + File.separator + "site",
-                      tool.getRelativePath( "Z:\\dir\\project\\project-module-1\\src\\site",
-                                            "Z:\\dir\\project\\project-module-1\\..\\project-parent" ) );
-        assertEquals( ".." + File.separator + ".." + File.separator + ".." + File.separator + "project-parent",
-                      tool.getRelativePath( "Z:\\dir\\project\\project-module-1\\..\\project-parent",
-                                            "Z:\\dir\\project\\project-module-1\\src\\site" ) );
+        assertEquals(
+                ".." + File.separator + "project-module-1" + File.separator + "src" + File.separator + "site",
+                tool.getRelativePath(
+                        "Z:\\dir\\project\\project-module-1\\src\\site",
+                        "Z:\\dir\\project\\project-module-1\\..\\project-parent"));
+        assertEquals(
+                ".." + File.separator + ".." + File.separator + ".." + File.separator + "project-parent",
+                tool.getRelativePath(
+                        "Z:\\dir\\project\\project-module-1\\..\\project-parent",
+                        "Z:\\dir\\project\\project-module-1\\src\\site"));
 
-        assertEquals( ".." + File.separator + "foo", tool.getRelativePath( "../../foo/foo", "../../foo/bar" ) );
+        assertEquals(".." + File.separator + "foo", tool.getRelativePath("../../foo/foo", "../../foo/bar"));
     }
 
     /**
      * @throws Exception
      */
     @Test
-    public void testGetSiteDescriptorFromBasedir()
-        throws Exception
-    {
-        assertNotNull( tool );
+    public void testGetSiteDescriptorFromBasedir() throws Exception {
+        assertNotNull(tool);
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), SiteTool.DEFAULT_LOCALE ).toString(),
-            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.ENGLISH ).toString(),
-            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), SiteTool.DEFAULT_LOCALE)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.ENGLISH)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         String siteDir = "src/blabla";
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), siteDir ), SiteTool.DEFAULT_LOCALE ).toString(),
-            project.getBasedir() + File.separator + "src" + File.separator + "blabla" + File.separator + "site.xml" );
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), siteDir), SiteTool.DEFAULT_LOCALE)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "blabla" + File.separator
+                        + "site.xml");
 
-        project = new SiteToolMavenProjectStub( "site-tool-locales-test/full" );
-        final Locale BAVARIAN = new Locale( "de", "DE", "BY" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), SiteTool.DEFAULT_LOCALE ).toString(),
-            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), BAVARIAN ).toString(),
-            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site_de_DE_BY.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.GERMANY ).toString(),
-                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.ENGLISH ).toString(),
-                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.GERMAN ).toString(),
-                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
+        project = new SiteToolMavenProjectStub("site-tool-locales-test/full");
+        final Locale BAVARIAN = new Locale("de", "DE", "BY");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), SiteTool.DEFAULT_LOCALE)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), BAVARIAN)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
+                        + "site_de_DE_BY.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.GERMANY)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.ENGLISH)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.GERMAN)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
 
-        project = new SiteToolMavenProjectStub( "site-tool-locales-test/language_country" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), SiteTool.DEFAULT_LOCALE ).toString(),
-            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), BAVARIAN ).toString(),
-            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site_de_DE.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.GERMANY ).toString(),
-                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site_de_DE.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.ENGLISH ).toString(),
-                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.GERMAN ).toString(),
-                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
+        project = new SiteToolMavenProjectStub("site-tool-locales-test/language_country");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), SiteTool.DEFAULT_LOCALE)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), BAVARIAN)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
+                        + "site_de_DE.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.GERMANY)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
+                        + "site_de_DE.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.ENGLISH)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.GERMAN)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
 
-        project = new SiteToolMavenProjectStub( "site-tool-locales-test/language" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), SiteTool.DEFAULT_LOCALE ).toString(),
-            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), BAVARIAN ).toString(),
-            project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site_de.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.GERMANY ).toString(),
-                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site_de.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.ENGLISH ).toString(),
-                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml" );
-        assertEquals( tool.getSiteDescriptor( new File( project.getBasedir(), "src/site" ), Locale.GERMAN ).toString(),
-                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site_de.xml" );
+        project = new SiteToolMavenProjectStub("site-tool-locales-test/language");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), SiteTool.DEFAULT_LOCALE)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), BAVARIAN)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
+                        + "site_de.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.GERMANY)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
+                        + "site_de.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.ENGLISH)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
+        assertEquals(
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.GERMAN)
+                        .toString(),
+                project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
+                        + "site_de.xml");
     }
 
     /**
      * @throws Exception
      */
     @Test
-    public void testGetSiteDescriptorFromRepository()
-        throws Exception
-    {
-        assertNotNull( tool );
+    public void testGetSiteDescriptorFromRepository() throws Exception {
+        assertNotNull(tool);
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );
-        project.setGroupId( "org.apache.maven" );
-        project.setArtifactId( "maven-site" );
-        project.setVersion( "1.0" );
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
+        project.setGroupId("org.apache.maven");
+        project.setArtifactId("maven-site");
+        project.setVersion("1.0");
         String result = getLocalRepoDir() + File.separator + "org" + File.separator + "apache" + File.separator
-            + "maven" + File.separator + "maven-site" + File.separator + "1.0" + File.separator
-            + "maven-site-1.0-site.xml";
+                + "maven" + File.separator + "maven-site" + File.separator + "1.0" + File.separator
+                + "maven-site-1.0-site.xml";
 
-        assertEquals( tool.getSiteDescriptorFromRepository( project, getLocalRepo(),
-                                                            project.getRemoteArtifactRepositories(), SiteTool.DEFAULT_LOCALE )
-            .toString(), result );
+        assertEquals(
+                tool.getSiteDescriptorFromRepository(
+                                project,
+                                getLocalRepo(),
+                                project.getRemoteArtifactRepositories(),
+                                SiteTool.DEFAULT_LOCALE)
+                        .toString(),
+                result);
     }
 
     /**
      * @throws Exception
      */
     @Test
-    public void testGetDecorationModel()
-        throws Exception
-    {
-        assertNotNull( tool );
+    public void testGetDecorationModel() throws Exception {
+        assertNotNull(tool);
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "site-tool-test" );
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
         List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
 
         // model from current local build
-        DecorationModel model =
-            tool.getDecorationModel( new File( project.getBasedir(), "src/site" ), SiteTool.DEFAULT_LOCALE, project,
-                                     reactorProjects, getLocalRepo(), project.getRemoteArtifactRepositories() );
-        assertNotNull( model );
-        assertNotNull( model.getBannerLeft() );
-        assertEquals( "Maven Site", model.getBannerLeft().getName() );
-        assertEquals( "http://maven.apache.org/images/apache-maven-project.png", model.getBannerLeft().getSrc() );
-        assertEquals( "http://maven.apache.org/", model.getBannerLeft().getHref() );
-        assertNotNull( model.getBannerRight() );
-        assertNull( model.getBannerRight().getName() );
-        assertEquals( "http://maven.apache.org/images/maven-small.gif", model.getBannerRight().getSrc() );
-        assertNull( model.getBannerRight().getHref() );
+        DecorationModel model = tool.getDecorationModel(
+                new File(project.getBasedir(), "src/site"),
+                SiteTool.DEFAULT_LOCALE,
+                project,
+                reactorProjects,
+                getLocalRepo(),
+                project.getRemoteArtifactRepositories());
+        assertNotNull(model);
+        assertNotNull(model.getBannerLeft());
+        assertEquals("Maven Site", model.getBannerLeft().getName());
+        assertEquals(
+                "http://maven.apache.org/images/apache-maven-project.png",
+                model.getBannerLeft().getSrc());
+        assertEquals("http://maven.apache.org/", model.getBannerLeft().getHref());
+        assertNotNull(model.getBannerRight());
+        assertNull(model.getBannerRight().getName());
+        assertEquals(
+                "http://maven.apache.org/images/maven-small.gif",
+                model.getBannerRight().getSrc());
+        assertNull(model.getBannerRight().getHref());
 
         // model from repo: https://repo1.maven.org/maven2/org/apache/maven/maven/3.8.6/maven-3.8.6-site.xml
-        project.setBasedir( null );
-        project.setGroupId( "org.apache.maven" );
-        project.setArtifactId( "maven" );
-        project.setVersion( "3.8.6" );
-        DecorationModel modelFromRepo =
-            tool.getDecorationModel( null, SiteTool.DEFAULT_LOCALE, project, reactorProjects, getLocalRepo(),
-                                     project.getRemoteArtifactRepositories() );
-        assertNotNull( modelFromRepo );
-        assertNotNull( modelFromRepo.getBannerLeft() );
-        assertEquals( "dummy", modelFromRepo.getBannerLeft().getName() );
-        assertEquals( "https://maven.apache.org/images/apache-maven-project.png", modelFromRepo.getBannerLeft().getSrc() );
-        assertEquals( "https://maven.apache.org/", modelFromRepo.getBannerLeft().getHref() );
-        assertNull( modelFromRepo.getBannerRight() );
+        project.setBasedir(null);
+        project.setGroupId("org.apache.maven");
+        project.setArtifactId("maven");
+        project.setVersion("3.8.6");
+        DecorationModel modelFromRepo = tool.getDecorationModel(
+                null,
+                SiteTool.DEFAULT_LOCALE,
+                project,
+                reactorProjects,
+                getLocalRepo(),
+                project.getRemoteArtifactRepositories());
+        assertNotNull(modelFromRepo);
+        assertNotNull(modelFromRepo.getBannerLeft());
+        assertEquals("dummy", modelFromRepo.getBannerLeft().getName());
+        assertEquals(
+                "https://maven.apache.org/images/apache-maven-project.png",
+                modelFromRepo.getBannerLeft().getSrc());
+        assertEquals("https://maven.apache.org/", modelFromRepo.getBannerLeft().getHref());
+        assertNull(modelFromRepo.getBannerRight());
     }
 
     /**
      * @throws Exception
      */
     @Test
-    public void testGetDefaultDecorationModel()
-        throws Exception
-    {
-        assertNotNull( tool );
+    public void testGetDefaultDecorationModel() throws Exception {
+        assertNotNull(tool);
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "no-site-test" );
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("no-site-test");
         String siteDirectory = "src/site";
         List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
 
-        DecorationModel model =
-            tool.getDecorationModel( new File( project.getBasedir(), siteDirectory ), SiteTool.DEFAULT_LOCALE, project,
-                                     reactorProjects, getLocalRepo(), project.getRemoteArtifactRepositories() );
-        assertNotNull( model );
+        DecorationModel model = tool.getDecorationModel(
+                new File(project.getBasedir(), siteDirectory),
+                SiteTool.DEFAULT_LOCALE,
+                project,
+                reactorProjects,
+                getLocalRepo(),
+                project.getRemoteArtifactRepositories());
+        assertNotNull(model);
     }
 
     @Test
-    public void testGetAvailableLocales()
-                    throws Exception
-    {
-        assertEquals( Collections.singletonList( SiteTool.DEFAULT_LOCALE ), tool.getSiteLocales( "default" ) );
+    public void testGetAvailableLocales() throws Exception {
+        assertEquals(Collections.singletonList(SiteTool.DEFAULT_LOCALE), tool.getSiteLocales("default"));
 
-        assertEquals( Arrays.asList( SiteTool.DEFAULT_LOCALE, Locale.FRENCH, Locale.ITALIAN ),
-                      tool.getSiteLocales( "default,fr,it" ) );
+        assertEquals(
+                Arrays.asList(SiteTool.DEFAULT_LOCALE, Locale.FRENCH, Locale.ITALIAN),
+                tool.getSiteLocales("default,fr,it"));
 
         // by default, only DEFAULT_LOCALE
-        assertEquals( Collections.singletonList( SiteTool.DEFAULT_LOCALE ), tool.getSiteLocales( "" ) );
+        assertEquals(Collections.singletonList(SiteTool.DEFAULT_LOCALE), tool.getSiteLocales(""));
     }
 
     @Test
-    public void testGetInterpolatedSiteDescriptorContent()
-        throws Exception
-    {
-        assertNotNull( tool );
+    public void testGetInterpolatedSiteDescriptorContent() throws Exception {
+        assertNotNull(tool);
 
-        File pomXmlFile = getTestFile( "src/test/resources/unit/interpolated-site/pom.xml" );
-        assertNotNull( pomXmlFile );
-        assertTrue( pomXmlFile.exists() );
+        File pomXmlFile = getTestFile("src/test/resources/unit/interpolated-site/pom.xml");
+        assertNotNull(pomXmlFile);
+        assertTrue(pomXmlFile.exists());
 
-        File descriptorFile = getTestFile( "src/test/resources/unit/interpolated-site/src/site/site.xml" );
-        assertNotNull( descriptorFile );
-        assertTrue( descriptorFile.exists() );
+        File descriptorFile = getTestFile("src/test/resources/unit/interpolated-site/src/site/site.xml");
+        assertNotNull(descriptorFile);
+        assertTrue(descriptorFile.exists());
 
-        String siteDescriptorContent = FileUtils.fileRead( descriptorFile );
-        assertNotNull( siteDescriptorContent );
-        assertTrue( siteDescriptorContent.contains( "${project.name}" ) );
-        assertFalse( siteDescriptorContent.contains( "Interpolatesite" ) );
+        String siteDescriptorContent = FileUtils.fileRead(descriptorFile);
+        assertNotNull(siteDescriptorContent);
+        assertTrue(siteDescriptorContent.contains("${project.name}"));
+        assertFalse(siteDescriptorContent.contains("Interpolatesite"));
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub( "interpolated-site" );
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("interpolated-site");
 
-        siteDescriptorContent =
-            tool.getInterpolatedSiteDescriptorContent( new HashMap<String, String>(), project,
-                                                           siteDescriptorContent );
-        assertNotNull( siteDescriptorContent );
-        assertFalse( siteDescriptorContent.contains( "${project.name}" ) );
-        assertTrue( siteDescriptorContent.contains( "Interpolatesite" ) );
+        siteDescriptorContent = tool.getInterpolatedSiteDescriptorContent(
+                new HashMap<String, String>(), project, siteDescriptorContent);
+        assertNotNull(siteDescriptorContent);
+        assertFalse(siteDescriptorContent.contains("${project.name}"));
+        assertTrue(siteDescriptorContent.contains("Interpolatesite"));
     }
 
     // MSHARED-217 -> DOXIATOOLS-34 -> DOXIASITETOOLS-118
     @Test
-    public void testDecorationModelInheritanceAndInterpolation()
-        throws Exception
-    {
-        assertNotNull( tool );
+    public void testDecorationModelInheritanceAndInterpolation() throws Exception {
+        assertNotNull(tool);
 
-        SiteToolMavenProjectStub parentProject = new SiteToolMavenProjectStub( "interpolation-parent-test" );
-        parentProject.setDistgributionManagementSiteUrl( "dav+https://davs.codehaus.org/site" );
+        SiteToolMavenProjectStub parentProject = new SiteToolMavenProjectStub("interpolation-parent-test");
+        parentProject.setDistgributionManagementSiteUrl("dav+https://davs.codehaus.org/site");
 
-        SiteToolMavenProjectStub childProject = new SiteToolMavenProjectStub( "interpolation-child-test" );
-        childProject.setParent( parentProject );
-        childProject.setDistgributionManagementSiteUrl( "dav+https://davs.codehaus.org/site/child" );
+        SiteToolMavenProjectStub childProject = new SiteToolMavenProjectStub("interpolation-child-test");
+        childProject.setParent(parentProject);
+        childProject.setDistgributionManagementSiteUrl("dav+https://davs.codehaus.org/site/child");
 
-        List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList( parentProject );
+        List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList(parentProject);
 
-        DecorationModel model = tool.getDecorationModel( new File( childProject.getBasedir(), "src/site" ),
-                                                         SiteTool.DEFAULT_LOCALE, childProject, reactorProjects,
-                                                         getLocalRepo(), childProject.getRemoteArtifactRepositories() );
-        assertNotNull( model );
+        DecorationModel model = tool.getDecorationModel(
+                new File(childProject.getBasedir(), "src/site"),
+                SiteTool.DEFAULT_LOCALE,
+                childProject,
+                reactorProjects,
+                getLocalRepo(),
+                childProject.getRemoteArtifactRepositories());
+        assertNotNull(model);
 
-        writeModel( model, "unit/interpolation-child-test/effective-site.xml" );
+        writeModel(model, "unit/interpolation-child-test/effective-site.xml");
 
-        assertEquals( "MSHARED-217 Child", model.getName() );
+        assertEquals("MSHARED-217 Child", model.getName());
         // late (classical) interpolation
-        assertEquals( "project.artifactId = mshared-217-child", model.getBannerLeft().getName() );
+        assertEquals(
+                "project.artifactId = mshared-217-child", model.getBannerLeft().getName());
         // early interpolation: DOXIASITETOOLS-158
-        assertEquals( "this.artifactId = mshared-217-parent", model.getBannerRight().getName() );
+        assertEquals(
+                "this.artifactId = mshared-217-parent", model.getBannerRight().getName());
         // href rebase
-        assertEquals( "../../index.html", model.getBody().getBreadcrumbs().iterator().next().getHref() );
+        assertEquals(
+                "../../index.html",
+                model.getBody().getBreadcrumbs().iterator().next().getHref());
         Iterator<LinkItem> links = model.getBody().getLinks().iterator();
         // late interpolation of pom content
-        assertEquals( "project.name = MSHARED-217 Child", links.next().getName() );
-        assertEquals( "name = name property", links.next().getName() );
+        assertEquals("project.name = MSHARED-217 Child", links.next().getName());
+        assertEquals("name = name property", links.next().getName());
         // early interpolation: DOXIASITETOOLS-158
-        assertEquals( "this.name = MSHARED-217 Parent", links.next().getName() );
+        assertEquals("this.name = MSHARED-217 Parent", links.next().getName());
 
         // late interpolation of project properties
-        assertEquals( "my_property = from child pom.xml", links.next().getName() );
+        assertEquals("my_property = from child pom.xml", links.next().getName());
         // early interpolation of project properties: DOXIASITETOOLS-158
-        assertEquals( "this.my_property = from parent pom.xml", links.next().getName() );
+        assertEquals("this.my_property = from parent pom.xml", links.next().getName());
 
         // Env Var interpolation
         String envPath = links.next().getName();
-        assertTrue( envPath.startsWith( "env.PATH = " ) );
-        assertFalse( envPath.contains( "${" ) );
-        assertNotSame( "env.PATH = PATH property from pom", envPath );
+        assertTrue(envPath.startsWith("env.PATH = "));
+        assertFalse(envPath.contains("${"));
+        assertNotSame("env.PATH = PATH property from pom", envPath);
 
         // property overrides env
-        assertEquals( "PATH = PATH property from pom", links.next().getName() );
+        assertEquals("PATH = PATH property from pom", links.next().getName());
     }
 
-    private void writeModel( DecorationModel model, String to )
-        throws Exception
-    {
-        Writer writer = WriterFactory.newXmlWriter( getTestFile( "target/test-classes/" + to ) );
-        try
-        {
-            new DecorationXpp3Writer().write( writer, model );
-        }
-        finally
-        {
-            IOUtil.close( writer );
+    private void writeModel(DecorationModel model, String to) throws Exception {
+        Writer writer = WriterFactory.newXmlWriter(getTestFile("target/test-classes/" + to));
+        try {
+            new DecorationXpp3Writer().write(writer, model);
+        } finally {
+            IOUtil.close(writer);
         }
     }
 }

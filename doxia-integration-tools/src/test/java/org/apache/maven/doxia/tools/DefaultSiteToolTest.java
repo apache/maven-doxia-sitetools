@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.tools;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,8 +16,7 @@ package org.apache.maven.doxia.tools;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-
+package org.apache.maven.doxia.tools;
 
 import java.io.File;
 
@@ -32,8 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-public class DefaultSiteToolTest
-{
+public class DefaultSiteToolTest {
 
     private DefaultSiteTool tool = new DefaultSiteTool();
 
@@ -41,68 +37,63 @@ public class DefaultSiteToolTest
      * test getNormalizedPath().
      */
     @Test
-    public void testGetNormalizedPath()
-    {
-        assertNull( DefaultSiteTool.getNormalizedPath( null ) );
-        assertEquals( "", DefaultSiteTool.getNormalizedPath( "" ) );
-        assertEquals( "", DefaultSiteTool.getNormalizedPath( "." ) );
-        assertEquals( "", DefaultSiteTool.getNormalizedPath( "./" ) );
-        assertEquals( "foo", DefaultSiteTool.getNormalizedPath( "foo" ) );
-        assertEquals( "foo/bar", DefaultSiteTool.getNormalizedPath( "foo/bar" ) );
-        assertEquals( "foo/bar", DefaultSiteTool.getNormalizedPath( "foo\\bar" ) );
-        assertEquals( "foo/bar", DefaultSiteTool.getNormalizedPath( "foo/./bar" ) );
-        assertEquals( "foo/bar", DefaultSiteTool.getNormalizedPath( "foo//bar" ) );
-        assertEquals( "", DefaultSiteTool.getNormalizedPath( "foo/../" ) );
-        assertEquals( "", DefaultSiteTool.getNormalizedPath( "foo/.." ) );
-        assertEquals( "bar", DefaultSiteTool.getNormalizedPath( "foo/../bar" ) );
-        assertEquals( "foo", DefaultSiteTool.getNormalizedPath( "./foo" ) );
-        assertEquals( "../foo", DefaultSiteTool.getNormalizedPath( "../foo" ) );
-        assertEquals( "../../foo", DefaultSiteTool.getNormalizedPath( "../../foo" ) );
-        assertEquals( "index.html", DefaultSiteTool.getNormalizedPath( "./foo/../index.html" ) );
+    public void testGetNormalizedPath() {
+        assertNull(DefaultSiteTool.getNormalizedPath(null));
+        assertEquals("", DefaultSiteTool.getNormalizedPath(""));
+        assertEquals("", DefaultSiteTool.getNormalizedPath("."));
+        assertEquals("", DefaultSiteTool.getNormalizedPath("./"));
+        assertEquals("foo", DefaultSiteTool.getNormalizedPath("foo"));
+        assertEquals("foo/bar", DefaultSiteTool.getNormalizedPath("foo/bar"));
+        assertEquals("foo/bar", DefaultSiteTool.getNormalizedPath("foo\\bar"));
+        assertEquals("foo/bar", DefaultSiteTool.getNormalizedPath("foo/./bar"));
+        assertEquals("foo/bar", DefaultSiteTool.getNormalizedPath("foo//bar"));
+        assertEquals("", DefaultSiteTool.getNormalizedPath("foo/../"));
+        assertEquals("", DefaultSiteTool.getNormalizedPath("foo/.."));
+        assertEquals("bar", DefaultSiteTool.getNormalizedPath("foo/../bar"));
+        assertEquals("foo", DefaultSiteTool.getNormalizedPath("./foo"));
+        assertEquals("../foo", DefaultSiteTool.getNormalizedPath("../foo"));
+        assertEquals("../../foo", DefaultSiteTool.getNormalizedPath("../../foo"));
+        assertEquals("index.html", DefaultSiteTool.getNormalizedPath("./foo/../index.html"));
 
         // note: space is preserved and double slash is removed!
-        assertEquals( "file:/Documents and Settings/",
-                DefaultSiteTool.getNormalizedPath( "file://Documents and Settings/" ) );
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testGetRelativePath()
-    {
         assertEquals(
-            ".." + File.separator + "bar.html",
-            tool.getRelativePath("http://example.com/foo/bar.html", "http://example.com/foo/baz.html"));
+                "file:/Documents and Settings/", DefaultSiteTool.getNormalizedPath("file://Documents and Settings/"));
     }
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testGetRelativePath_same()
-    {
-        assertTrue(
-          tool.getRelativePath( "http://example.com/foo/bar.html", "http://example.com/foo/bar.html" ).isEmpty() );
+    public void testGetRelativePath() {
+        assertEquals(
+                ".." + File.separator + "bar.html",
+                tool.getRelativePath("http://example.com/foo/bar.html", "http://example.com/foo/baz.html"));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testGetRelativePath_same() {
+        assertTrue(tool.getRelativePath("http://example.com/foo/bar.html", "http://example.com/foo/bar.html")
+                .isEmpty());
     }
 
     @SuppressWarnings("deprecation")
     @Test
     public void testGetRelativePath_differentSchemes() {
         assertEquals(
-          "scp://example.com/foo/bar.html",
-          tool.getRelativePath( "scp://example.com/foo/bar.html", "http://example.com/foo/bar.html" ) );
-      assertEquals(
-        "file:///tmp/bloop",
-         tool.getRelativePath( "file:///tmp/bloop", "scp://localhost:/tmp/blop" ) );
+                "scp://example.com/foo/bar.html",
+                tool.getRelativePath("scp://example.com/foo/bar.html", "http://example.com/foo/bar.html"));
+        assertEquals("file:///tmp/bloop", tool.getRelativePath("file:///tmp/bloop", "scp://localhost:/tmp/blop"));
     }
 
     @SuppressWarnings("deprecation")
     @Test
     public void testGetRelativePath_differentDomains() {
         assertEquals(
-          "https://example.org/bar.html",
-          tool.getRelativePath( "https://example.org/bar.html", "https://example.com/bar.html" ) );
+                "https://example.org/bar.html",
+                tool.getRelativePath("https://example.org/bar.html", "https://example.com/bar.html"));
         assertEquals(
-          "dav:https://nexus2.mysite.net:123/nexus/content/sites/site/mysite-child/2.0.0/",
-          tool.getRelativePath(
-            "dav:https://nexus2.mysite.net:123/nexus/content/sites/site/mysite-child/2.0.0/",
-            "dav:https://nexus1.mysite.net:123/nexus/content/sites/site/mysite-parent/1.0.0/" ));
+                "dav:https://nexus2.mysite.net:123/nexus/content/sites/site/mysite-child/2.0.0/",
+                tool.getRelativePath(
+                        "dav:https://nexus2.mysite.net:123/nexus/content/sites/site/mysite-child/2.0.0/",
+                        "dav:https://nexus1.mysite.net:123/nexus/content/sites/site/mysite-parent/1.0.0/"));
     }
 }

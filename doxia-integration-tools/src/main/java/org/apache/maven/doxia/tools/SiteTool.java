@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.tools;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.tools;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.tools;
 
 import java.io.File;
 import java.util.List;
@@ -36,8 +35,7 @@ import org.apache.maven.reporting.MavenReport;
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-public interface SiteTool
-{
+public interface SiteTool {
     /**
      * The locale by default for a Maven Site.
      *
@@ -55,10 +53,11 @@ public interface SiteTool
      * local repository
      * @throws SiteToolException if any
      */
-    Artifact getSkinArtifactFromRepository( ArtifactRepository localRepository,
-                                            List<ArtifactRepository> remoteArtifactRepositories,
-                                            DecorationModel decoration )
-        throws SiteToolException;
+    Artifact getSkinArtifactFromRepository(
+            ArtifactRepository localRepository,
+            List<ArtifactRepository> remoteArtifactRepositories,
+            DecorationModel decoration)
+            throws SiteToolException;
 
     /**
      * Get a site descriptor from the project's site directory.
@@ -70,8 +69,9 @@ public interface SiteTool
      * to <code>site.xml</code> as last resort for {@link Locale#ROOT}, if provided
      * locale defines a variant and/or a country and/or a language.
      * @return the most specific site descriptor file for the given locale
-     */ // used by maven-pdf-plugin (should not?)
-    File getSiteDescriptor( File siteDirectory, Locale locale );
+     */
+    // used by maven-pdf-plugin (should not?)
+    File getSiteDescriptor(File siteDirectory, Locale locale);
 
     /**
      * Interpolating several expressions in the site descriptor content. Actually, the expressions can be in
@@ -102,10 +102,10 @@ public interface SiteTool
      * @param siteDescriptorContent the site descriptor file, not null.
      * @return the interpolated site descriptor content.
      * @throws SiteToolException if errors happened during the interpolation.
-     */ // used by maven-pdf-plugin (should not?)
-    String getInterpolatedSiteDescriptorContent( Map<String, String> props, MavenProject aProject,
-                                                 String siteDescriptorContent )
-        throws SiteToolException;
+     */
+    // used by maven-pdf-plugin (should not?)
+    String getInterpolatedSiteDescriptorContent(
+            Map<String, String> props, MavenProject aProject, String siteDescriptorContent) throws SiteToolException;
 
     /**
      * Get a decoration model for a project.
@@ -122,10 +122,14 @@ public interface SiteTool
      * @throws SiteToolException if any
      * @since 1.7, was previously with other parameter types and order
      */
-    DecorationModel getDecorationModel( File siteDirectory, Locale locale, MavenProject project,
-                                        List<MavenProject> reactorProjects, ArtifactRepository localRepository,
-                                        List<ArtifactRepository> repositories )
-        throws SiteToolException;
+    DecorationModel getDecorationModel(
+            File siteDirectory,
+            Locale locale,
+            MavenProject project,
+            List<MavenProject> reactorProjects,
+            ArtifactRepository localRepository,
+            List<ArtifactRepository> repositories)
+            throws SiteToolException;
 
     /**
      * Populate the pre-defined <code>reports</code> menu of the decoration model,
@@ -139,8 +143,8 @@ public interface SiteTool
      * @see MavenReport#CATEGORY_PROJECT_INFORMATION
      * @see MavenReport#CATEGORY_PROJECT_REPORTS
      */
-    void populateReportsMenu( DecorationModel decorationModel, Locale locale,
-                              Map<String, List<MavenReport>> reportsPerCategory );
+    void populateReportsMenu(
+            DecorationModel decorationModel, Locale locale, Map<String, List<MavenReport>> reportsPerCategory);
 
     /**
      * Extracts from a comma-separated list the locales that are available in <code>site-tool</code>
@@ -150,7 +154,7 @@ public interface SiteTool
      * @return a list of <code>Locale</code>s.
      * @since 1.7, was previously getAvailableLocales(String)
      */
-    List<Locale> getSiteLocales( String locales );
+    List<Locale> getSiteLocales(String locales);
 
     /**
      * Calculate the relative path between two URLs or between two files.
@@ -174,7 +178,7 @@ public interface SiteTool
      * @param from the <code>from</code> url of file as string
      * @return a relative path from <code>from</code> to <code>to</code>.
      */
-    String getRelativePath( String to, String from );
+    String getRelativePath(String to, String from);
 
     /**
      * Returns the parent POM with interpolated URLs.
@@ -191,6 +195,6 @@ public interface SiteTool
      * @return the parent project with interpolated URLs.
      */
     @Deprecated
-    MavenProject getParentProject( MavenProject aProject, List<MavenProject> reactorProjects,
-                                   ArtifactRepository localRepository );
+    MavenProject getParentProject(
+            MavenProject aProject, List<MavenProject> reactorProjects, ArtifactRepository localRepository);
 }

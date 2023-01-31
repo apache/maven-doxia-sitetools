@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
@@ -29,8 +28,7 @@ import java.io.Writer;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @see RenderingContext document rendering context
  */
-public interface DocumentRenderer
-{
+public interface DocumentRenderer {
     /**
      * Render a document in a site.
      *
@@ -41,8 +39,8 @@ public interface DocumentRenderer
      * @throws java.io.FileNotFoundException if it bombs.
      * @throws java.io.UnsupportedEncodingException if it bombs.
      */
-    void renderDocument( Writer writer, Renderer siteRenderer, SiteRenderingContext siteRenderingContext )
-        throws RendererException, FileNotFoundException, UnsupportedEncodingException;
+    void renderDocument(Writer writer, Renderer siteRenderer, SiteRenderingContext siteRenderingContext)
+            throws RendererException, FileNotFoundException, UnsupportedEncodingException;
 
     /**
      * The name of the output document.
@@ -64,10 +62,10 @@ public interface DocumentRenderer
      * @return whether to overwrite
      */
     boolean isOverwrite();
-    
+
     /**
      * Whether this document is an external report, independent from the site templating.
-     * 
+     *
      * @return {@code true} if report is external, otherwise {@code false}
      * @since 1.7
      */

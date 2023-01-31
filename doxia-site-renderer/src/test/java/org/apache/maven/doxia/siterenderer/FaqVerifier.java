@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,9 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
+
+import java.util.Iterator;
 
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDefinitionDescription;
@@ -34,8 +35,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
 import com.gargoylesoftware.htmlunit.html.HtmlSection;
 
-import java.util.Iterator;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,20 +43,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  * @author ltheussl
  */
-public class FaqVerifier
-    extends AbstractVerifier
-{
+public class FaqVerifier extends AbstractVerifier {
     /** {@inheritDoc} */
-    public void verify( String file )
-            throws Exception
-    {
-        HtmlPage page = htmlPage( file );
-        assertNotNull( page );
+    public void verify(String file) throws Exception {
+        HtmlPage page = htmlPage(file);
+        assertNotNull(page);
 
-        HtmlElement element = page.getHtmlElementById( "contentBox" );
-        assertNotNull( element );
+        HtmlElement element = page.getHtmlElementById("contentBox");
+        assertNotNull(element);
         HtmlMain main = (HtmlMain) element;
-        assertNotNull( main );
+        assertNotNull(main);
 
         Iterator<HtmlElement> elementIterator = main.getHtmlElementDescendants().iterator();
 
@@ -68,130 +63,141 @@ public class FaqVerifier
         HtmlSection section = (HtmlSection) elementIterator.next();
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "top", a.getAttribute( "id" ) );
+        assertEquals("top", a.getAttribute("id"));
 
         HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
-        assertEquals( "Often Asked Questions", h1.asNormalizedText().trim() );
+        assertEquals("Often Asked Questions", h1.asNormalizedText().trim());
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         element = elementIterator.next();
-        assertEquals( "b", element.getTagName() );
-        assertEquals( "Contributing", element.asNormalizedText().trim() );
+        assertEquals("b", element.getTagName());
+        assertEquals("Contributing", element.asNormalizedText().trim());
 
         HtmlOrderedList ol = (HtmlOrderedList) elementIterator.next();
-        assertEquals( "One stupid question & a silly answer?", ol.getFirstElementChild().asNormalizedText().trim() );
+        assertEquals(
+                "One stupid question & a silly answer?",
+                ol.getFirstElementChild().asNormalizedText().trim());
 
         HtmlListItem li = (HtmlListItem) elementIterator.next();
-        assertEquals( "One stupid question & a silly answer?", li.getFirstElementChild().asNormalizedText().trim() );
+        assertEquals(
+                "One stupid question & a silly answer?",
+                li.getFirstElementChild().asNormalizedText().trim());
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#stupid-question", a.getAttribute( "href" ) );
+        assertEquals("#stupid-question", a.getAttribute("href"));
 
         element = elementIterator.next();
-        assertEquals( "b", element.getTagName() );
-        assertEquals( "stupid", element.asNormalizedText().trim() );
+        assertEquals("b", element.getTagName());
+        assertEquals("stupid", element.asNormalizedText().trim());
 
         p = (HtmlParagraph) elementIterator.next();
         element = elementIterator.next();
-        assertEquals( "b", element.getTagName() );
-        assertEquals( "Using Maven", element.asNormalizedText().trim() );
+        assertEquals("b", element.getTagName());
+        assertEquals("Using Maven", element.asNormalizedText().trim());
 
         ol = (HtmlOrderedList) elementIterator.next();
-        assertEquals( "How do I disable a report on my site?", ol.getFirstElementChild().asNormalizedText().trim() );
+        assertEquals(
+                "How do I disable a report on my site?",
+                ol.getFirstElementChild().asNormalizedText().trim());
 
         li = (HtmlListItem) elementIterator.next();
-        assertNotNull( li );
-        assertEquals( "How do I disable a report on my site?", li.getFirstElementChild().asNormalizedText().trim() );
+        assertNotNull(li);
+        assertEquals(
+                "How do I disable a report on my site?",
+                li.getFirstElementChild().asNormalizedText().trim());
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#disable-reports", a.getAttribute( "href" ) );
+        assertEquals("#disable-reports", a.getAttribute("href"));
 
         section = (HtmlSection) elementIterator.next();
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "contributing", a.getAttribute( "id" ) );
+        assertEquals("contributing", a.getAttribute("id"));
 
         h1 = (HtmlHeading1) elementIterator.next();
-        assertEquals( "Contributing", h1.asNormalizedText().trim() );
+        assertEquals("Contributing", h1.asNormalizedText().trim());
 
         HtmlDefinitionList dl = (HtmlDefinitionList) elementIterator.next();
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "stupid-question", a.getAttribute( "id" ) );
+        assertEquals("stupid-question", a.getAttribute("id"));
 
         HtmlDefinitionTerm dt = (HtmlDefinitionTerm) elementIterator.next();
-        assertEquals( "One stupid question & a silly answer?", dt.asNormalizedText().trim() );
+        assertEquals(
+                "One stupid question & a silly answer?", dt.asNormalizedText().trim());
 
         element = elementIterator.next();
-        assertEquals( "b", element.getTagName() );
-        assertEquals( "stupid", element.asNormalizedText().trim() );
+        assertEquals("b", element.getTagName());
+        assertEquals("stupid", element.asNormalizedText().trim());
 
         HtmlDefinitionDescription dd = (HtmlDefinitionDescription) elementIterator.next();
 
         p = (HtmlParagraph) elementIterator.next();
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#using", a.getAttribute( "href" ) );
-        assertEquals( "local link", a.asNormalizedText().trim() );
+        assertEquals("#using", a.getAttribute("href"));
+        assertEquals("local link", a.asNormalizedText().trim());
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "./cdc.html", a.getAttribute( "href" ) );
-        assertEquals( "source document", a.asNormalizedText().trim() );
+        assertEquals("./cdc.html", a.getAttribute("href"));
+        assertEquals("source document", a.asNormalizedText().trim());
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "http://maven.apache.org/?l=a&m=b", a.getAttribute( "href" ) );
-        assertEquals( "external link", a.asNormalizedText().trim() );
+        assertEquals("http://maven.apache.org/?l=a&m=b", a.getAttribute("href"));
+        assertEquals("external link", a.asNormalizedText().trim());
 
         element = elementIterator.next();
-        assertEquals( "i", element.getTagName() );
-        assertEquals( "italic", element.asNormalizedText().trim() );
+        assertEquals("i", element.getTagName());
+        assertEquals("italic", element.asNormalizedText().trim());
 
         element = elementIterator.next();
-        assertEquals( "b", element.getTagName() );
-        assertEquals( "non-US-ASCII characters: àéèç", element.asNormalizedText().trim() );
+        assertEquals("b", element.getTagName());
+        assertEquals("non-US-ASCII characters: àéèç", element.asNormalizedText().trim());
 
         p = (HtmlParagraph) elementIterator.next();
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#top", a.getAttribute( "href" ) );
-        assertEquals( "[top]", a.asNormalizedText().trim() );
+        assertEquals("#top", a.getAttribute("href"));
+        assertEquals("[top]", a.asNormalizedText().trim());
 
         section = (HtmlSection) elementIterator.next();
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "using", a.getAttribute( "id" ) );
+        assertEquals("using", a.getAttribute("id"));
 
         h1 = (HtmlHeading1) elementIterator.next();
-        assertEquals( "Using Maven", h1.asNormalizedText().trim() );
+        assertEquals("Using Maven", h1.asNormalizedText().trim());
 
         dl = (HtmlDefinitionList) elementIterator.next();
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "disable-reports", a.getAttribute( "id" ) );
+        assertEquals("disable-reports", a.getAttribute("id"));
 
         dt = (HtmlDefinitionTerm) elementIterator.next();
-        assertEquals( "How do I disable a report on my site?", dt.getFirstChild().asNormalizedText().trim() );
+        assertEquals(
+                "How do I disable a report on my site?",
+                dt.getFirstChild().asNormalizedText().trim());
 
         dd = (HtmlDefinitionDescription) elementIterator.next();
 
         p = (HtmlParagraph) elementIterator.next();
 
         element = elementIterator.next();
-        assertEquals( "code", element.getTagName() );
-        assertEquals( "<source></source>", element.asNormalizedText().trim() );
+        assertEquals("code", element.getTagName());
+        assertEquals("<source></source>", element.asNormalizedText().trim());
 
         HtmlDivision div = (HtmlDivision) elementIterator.next();
-        assertEquals( "verbatim source", div.getAttribute( "class" ) );
+        assertEquals("verbatim source", div.getAttribute("class"));
 
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
-        assertEquals( "<source>1.5</source>", pre.asNormalizedText().trim() );
+        assertEquals("<source>1.5</source>", pre.asNormalizedText().trim());
 
         p = (HtmlParagraph) elementIterator.next();
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#top", a.getAttribute( "href" ) );
-        assertEquals( "[top]", a.asNormalizedText().trim() );
+        assertEquals("#top", a.getAttribute("href"));
+        assertEquals("[top]", a.asNormalizedText().trim());
 
-        assertFalse( elementIterator.hasNext() );
+        assertFalse(elementIterator.hasNext());
     }
 }

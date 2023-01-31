@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
 
@@ -27,14 +26,12 @@ import java.io.File;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Deprecated
-class ExtraDoxiaModuleReference
-{
+class ExtraDoxiaModuleReference {
     private final String parserId;
 
     private final File basedir;
 
-    ExtraDoxiaModuleReference( String parserId, File basedir )
-    {
+    ExtraDoxiaModuleReference(String parserId, File basedir) {
         this.parserId = parserId;
         this.basedir = basedir;
     }
@@ -44,8 +41,7 @@ class ExtraDoxiaModuleReference
      *
      * @return Doxia parser id associated to this source module.
      */
-    String getParserId()
-    {
+    String getParserId() {
         return parserId;
     }
 
@@ -54,8 +50,7 @@ class ExtraDoxiaModuleReference
      *
      * @return The base directory for module's source files.
      */
-    File getBasedir()
-    {
+    File getBasedir() {
         return basedir;
     }
 }

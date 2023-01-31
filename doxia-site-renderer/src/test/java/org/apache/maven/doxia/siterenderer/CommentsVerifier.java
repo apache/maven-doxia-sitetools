@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
 
@@ -28,16 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Verifies that there are no DOXIASITETOOLS-146 comments
  */
-public class CommentsVerifier
-    extends AbstractVerifier
-{
+public class CommentsVerifier extends AbstractVerifier {
     /** {@inheritDoc} */
-    public void verify( String file )
-            throws Exception
-    {
-        String content = FileUtils.fileRead( new File( file ), "UTF-8" );
+    public void verify(String file) throws Exception {
+        String content = FileUtils.fileRead(new File(file), "UTF-8");
 
-        assertTrue( content.indexOf( "DOXIASITETOOLS-146" ) < 0,
-                    file + " should not contain 'DOXIASITETOOLS-146' text in comments" );
+        assertTrue(
+                content.indexOf("DOXIASITETOOLS-146") < 0,
+                file + " should not contain 'DOXIASITETOOLS-146' text in comments");
     }
 }

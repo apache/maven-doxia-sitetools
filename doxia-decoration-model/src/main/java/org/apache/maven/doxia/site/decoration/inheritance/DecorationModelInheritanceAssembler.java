@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.site.decoration.inheritance;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.site.decoration.inheritance;
 
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 
@@ -26,8 +25,7 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public interface DecorationModelInheritanceAssembler
-{
+public interface DecorationModelInheritanceAssembler {
     /**
      * Manage inheritance of the decoration model between a parent and child.
      *
@@ -49,8 +47,8 @@ public interface DecorationModelInheritanceAssembler
      *      May be null, in which case relative links inherited from the parent
      *      will not be resolved in the merged child.
      */
-    void assembleModelInheritance( String name, DecorationModel child, DecorationModel parent,
-                                   String childBaseUrl, String parentBaseUrl );
+    void assembleModelInheritance(
+            String name, DecorationModel child, DecorationModel parent, String childBaseUrl, String parentBaseUrl);
 
     /**
      * Resolve relative paths for a DecorationModel given a base URL.
@@ -65,5 +63,5 @@ public interface DecorationModelInheritanceAssembler
      * @param baseUrl the base URL.
      *      May be null in which case the decoration model is unchanged.
      */
-    void resolvePaths( DecorationModel decoration, String baseUrl );
+    void resolvePaths(DecorationModel decoration, String baseUrl);
 }

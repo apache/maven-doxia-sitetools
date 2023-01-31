@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,9 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
+
+import java.util.Iterator;
 
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlBold;
@@ -31,8 +32,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlSection;
 
-import java.util.Iterator;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -41,20 +40,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  * @author ltheussl
  */
-public class AptVerifier
-    extends AbstractVerifier
-{
+public class AptVerifier extends AbstractVerifier {
     /** {@inheritDoc} */
-    public void verify( String file )
-            throws Exception
-    {
-        HtmlPage page = htmlPage( file );
-        assertNotNull( page );
+    public void verify(String file) throws Exception {
+        HtmlPage page = htmlPage(file);
+        assertNotNull(page);
 
-        HtmlElement element = page.getHtmlElementById( "contentBox" );
-        assertNotNull( element );
+        HtmlElement element = page.getHtmlElementById("contentBox");
+        assertNotNull(element);
         HtmlMain main = (HtmlMain) element;
-        assertNotNull( main );
+        assertNotNull(main);
 
         Iterator<HtmlElement> elementIterator = main.getHtmlElementDescendants().iterator();
 
@@ -65,109 +60,113 @@ public class AptVerifier
         HtmlSection section = (HtmlSection) elementIterator.next();
 
         HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
-        assertNotNull( h1 );
-        assertEquals( "Links", h1.asNormalizedText().trim() );
+        assertNotNull(h1);
+        assertEquals("Links", h1.asNormalizedText().trim());
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
-        assertNotNull( p );
+        assertNotNull(p);
 
         // Expected log: [APT Parser] Ambiguous link: 'cdc.html'. If this is a local link, prepend "./"!
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "Anchor", a.getAttribute( "id" ) );
+        assertEquals("Anchor", a.getAttribute("id"));
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "cdc.html", a.getAttribute( "id" ) );
+        assertEquals("cdc.html", a.getAttribute("id"));
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#Anchor", a.getAttribute( "href" ) );
+        assertEquals("#Anchor", a.getAttribute("href"));
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#Anchor", a.getAttribute( "href" ) );
+        assertEquals("#Anchor", a.getAttribute("href"));
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "Anchor_with_space", a.getAttribute( "id" ) );
+        assertEquals("Anchor_with_space", a.getAttribute("id"));
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#Anchor_with_space", a.getAttribute( "href" ) );
+        assertEquals("#Anchor_with_space", a.getAttribute("href"));
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "http://maven.apache.org/", a.getAttribute( "href" ) );
-        assertEquals( "externalLink", a.getAttribute( "class" ) );
+        assertEquals("http://maven.apache.org/", a.getAttribute("href"));
+        assertEquals("externalLink", a.getAttribute("class"));
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "http://maven.apache.org/", a.getAttribute( "href" ) );
-        assertEquals( "externalLink", a.getAttribute( "class" ) );
+        assertEquals("http://maven.apache.org/", a.getAttribute("href"));
+        assertEquals("externalLink", a.getAttribute("class"));
 
         // Expected log: [APT Parser] Ambiguous link: 'cdc.html'. If this is a local link, prepend "./"!
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "./cdc.html", a.getAttribute( "href" ) );
+        assertEquals("./cdc.html", a.getAttribute("href"));
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "#cdc.html", a.getAttribute( "href" ) );
+        assertEquals("#cdc.html", a.getAttribute("href"));
 
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "/index.html", a.getAttribute( "href" ) );
+        assertEquals("/index.html", a.getAttribute("href"));
 
         section = (HtmlSection) elementIterator.next();
-        assertNotNull( section );
+        assertNotNull(section);
 
         h1 = (HtmlHeading1) elementIterator.next();
-        assertNotNull( h1 );
+        assertNotNull(h1);
         // Note: htmlunit strips the white space, actual result is ok
-        assertEquals( "Section formatting: italic bold mono", h1.asNormalizedText().trim() );
+        assertEquals(
+                "Section formatting: italic bold mono", h1.asNormalizedText().trim());
 
         HtmlItalic italic = (HtmlItalic) elementIterator.next();
-        assertEquals( "i", italic.getTagName() );
-        assertEquals( "italic", italic.asNormalizedText().trim() );
+        assertEquals("i", italic.getTagName());
+        assertEquals("italic", italic.asNormalizedText().trim());
 
         HtmlBold bold = (HtmlBold) elementIterator.next();
-        assertEquals( "b", bold.getTagName() );
-        assertEquals( "bold", bold.asNormalizedText().trim() );
+        assertEquals("b", bold.getTagName());
+        assertEquals("bold", bold.asNormalizedText().trim());
 
         HtmlCode code = (HtmlCode) elementIterator.next();
-        assertEquals( "code", code.getTagName() );
-        assertEquals( "mono", code.asNormalizedText().trim() );
+        assertEquals("code", code.getTagName());
+        assertEquals("mono", code.asNormalizedText().trim());
 
         section = (HtmlSection) elementIterator.next();
-        assertNotNull( section );
+        assertNotNull(section);
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
-        assertNotNull( h2 );
+        assertNotNull(h2);
         // Note: htmlunit strips the white space, actual result is ok
-        assertEquals( "SubSection formatting: italic bold mono", h2.asNormalizedText().trim() );
+        assertEquals(
+                "SubSection formatting: italic bold mono", h2.asNormalizedText().trim());
 
         italic = (HtmlItalic) elementIterator.next();
-        assertEquals( "i", italic.getTagName() );
-        assertEquals( "italic", italic.asNormalizedText().trim() );
+        assertEquals("i", italic.getTagName());
+        assertEquals("italic", italic.asNormalizedText().trim());
 
         bold = (HtmlBold) elementIterator.next();
-        assertEquals( "b", bold.getTagName() );
-        assertEquals( "bold", bold.asNormalizedText().trim() );
+        assertEquals("b", bold.getTagName());
+        assertEquals("bold", bold.asNormalizedText().trim());
 
         code = (HtmlCode) elementIterator.next();
-        assertEquals( "code", code.getTagName() );
-        assertEquals( "mono", code.asNormalizedText().trim() );
+        assertEquals("code", code.getTagName());
+        assertEquals("mono", code.asNormalizedText().trim());
 
         p = (HtmlParagraph) elementIterator.next();
-        assertNotNull( p );
+        assertNotNull(p);
 
         italic = (HtmlItalic) elementIterator.next();
-        assertEquals( "i", italic.getTagName() );
-        assertEquals( "italic", italic.asNormalizedText().trim() );
+        assertEquals("i", italic.getTagName());
+        assertEquals("italic", italic.asNormalizedText().trim());
 
         bold = (HtmlBold) elementIterator.next();
-        assertEquals( "b", bold.getTagName() );
-        assertEquals( "bold", bold.asNormalizedText().trim() );
+        assertEquals("b", bold.getTagName());
+        assertEquals("bold", bold.asNormalizedText().trim());
 
         code = (HtmlCode) elementIterator.next();
-        assertEquals( "code", code.getTagName() );
-        assertEquals( "mono", code.asNormalizedText().trim() );
+        assertEquals("code", code.getTagName());
+        assertEquals("mono", code.asNormalizedText().trim());
 
         section = (HtmlSection) elementIterator.next();
-        assertNotNull( section );
+        assertNotNull(section);
 
         h1 = (HtmlHeading1) elementIterator.next();
-        assertNotNull( h1 );
-        assertEquals( "No Default Anchor in Section Title with Explicit Anchor", h1.asNormalizedText().trim() );
+        assertNotNull(h1);
+        assertEquals(
+                "No Default Anchor in Section Title with Explicit Anchor",
+                h1.asNormalizedText().trim());
         a = (HtmlAnchor) elementIterator.next();
-        assertEquals( "No_Default_Anchor_in_Section_Title_with_Explicit_Anchor", a.getAttribute( "id" ) );
+        assertEquals("No_Default_Anchor_in_Section_Title_with_Explicit_Anchor", a.getAttribute("id"));
 
         section = (HtmlSection) elementIterator.next();
-        assertNotNull( section );
+        assertNotNull(section);
     }
 }

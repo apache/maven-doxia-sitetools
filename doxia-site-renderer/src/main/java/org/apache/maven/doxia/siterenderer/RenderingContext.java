@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
 import java.util.HashMap;
@@ -34,7 +33,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @since 1.5 (was since 1.1 in o.a.m.d.sink.render)
  */
 public class RenderingContext // TODO rename to DocumentRenderingContext
-{
+ {
     private final File basedir;
 
     private final String basedirRelativePath;
@@ -66,15 +65,18 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
      * @since 1.8
      */
-    public RenderingContext( File basedir, String document, String generator )
-    {
-        this( basedir, null, document, null, null, false, generator );
+    public RenderingContext(File basedir, String document, String generator) {
+        this(basedir, null, document, null, null, false, generator);
     }
 
-    public RenderingContext( File basedir, String basedirRelativePath, String document, String parserId,
-                             String extension, boolean editable )
-    {
-        this( basedir, basedirRelativePath, document, parserId, extension, editable, null );
+    public RenderingContext(
+            File basedir,
+            String basedirRelativePath,
+            String document,
+            String parserId,
+            String extension,
+            boolean editable) {
+        this(basedir, basedirRelativePath, document, parserId, extension, editable, null);
     }
 
     /**
@@ -93,9 +95,14 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
      * @since 1.8
      */
-    public RenderingContext( File basedir, String basedirRelativePath, String document, String parserId,
-                             String extension, boolean editable, String generator )
-    {
+    public RenderingContext(
+            File basedir,
+            String basedirRelativePath,
+            String document,
+            String parserId,
+            String extension,
+            boolean editable,
+            String generator) {
         this.basedir = basedir;
         this.basedirRelativePath = basedirRelativePath;
         this.inputName = document;
@@ -104,8 +111,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
         this.generator = generator;
         this.attributes = new HashMap<String, String>();
 
-        if ( StringUtils.isNotEmpty( extension ) )
-        {
+        if (StringUtils.isNotEmpty(extension)) {
             // document comes from a Doxia source: see DoxiaDocumentRenderer
             this.editable = editable;
 
@@ -113,22 +119,19 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
             // - index.xml -> index.html
             // - index.xml.vm -> index.html
             // - download.apt.vm --> download.html
-            if ( DefaultSiteRenderer.endsWithIgnoreCase( document, ".vm" ) )
-            {
-                document = document.substring( 0, document.length() - 3 );
+            if (DefaultSiteRenderer.endsWithIgnoreCase(document, ".vm")) {
+                document = document.substring(0, document.length() - 3);
             }
-            String fileNameWithoutExt = document.substring( 0, document.length() - extension.length() - 1 );
+            String fileNameWithoutExt = document.substring(0, document.length() - extension.length() - 1);
             this.outputName = fileNameWithoutExt + ".html";
-        }
-        else
-        {
+        } else {
             // document does not come from a Doxia source but direct Sink API
             this.editable = false;
             // make sure output name ends in .html
-            this.outputName = document.substring( 0, document.lastIndexOf( '.' ) ).replace( '\\', '/' ) + ".html";
+            this.outputName = document.substring(0, document.lastIndexOf('.')).replace('\\', '/') + ".html";
         }
 
-        this.relativePath = PathTool.getRelativePath( basedir.getPath(), new File( basedir, inputName ).getPath() );
+        this.relativePath = PathTool.getRelativePath(basedir.getPath(), new File(basedir, inputName).getPath());
     }
 
     /**
@@ -136,8 +139,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      *
      * @return a {@link java.io.File} object.
      */
-    public File getBasedir()
-    {
+    public File getBasedir() {
         return basedir;
     }
 
@@ -146,8 +148,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      *
      * @return a {@link java.lang.String} object.
      */
-    public String getInputName()
-    {
+    public String getInputName() {
         return inputName;
     }
 
@@ -157,8 +158,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @return html output name
      * @see PathTool#getRelativePath(String)
      */
-    public String getOutputName()
-    {
+    public String getOutputName() {
         return outputName;
     }
 
@@ -167,8 +167,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      *
      * @return parser id, or <code>null</code> if not froma DOxia source.
      */
-    public String getParserId()
-    {
+    public String getParserId() {
         return parserId;
     }
 
@@ -177,8 +176,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      *
      * @return the relative path to site root
      */
-    public String getRelativePath()
-    {
+    public String getRelativePath() {
         return relativePath;
     }
 
@@ -188,9 +186,8 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @param key a {@link java.lang.String} object.
      * @param value a {@link java.lang.String} object.
      */
-    public void setAttribute( String key, String value )
-    {
-        attributes.put( key, value );
+    public void setAttribute(String key, String value) {
+        attributes.put(key, value);
     }
 
     /**
@@ -199,9 +196,8 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @param key a {@link java.lang.String} object.
      * @return a {@link java.lang.String} object.
      */
-    public String getAttribute( String key )
-    {
-        return attributes.get( key );
+    public String getAttribute(String key) {
+        return attributes.get(key);
     }
 
     /**
@@ -209,8 +205,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      *
      * @return the source document filename extension when a Doxia source, or <code>null</code> if not a Doxia source
      */
-    public String getExtension()
-    {
+    public String getExtension() {
         return extension;
     }
 
@@ -220,8 +215,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @return <code>true</code> if comes from an editable Doxia source (not generated one).
      * @since 1.8
      */
-    public boolean isEditable()
-    {
+    public boolean isEditable() {
         return editable;
     }
 
@@ -231,9 +225,8 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @return <code>true</code> if comes from a Doxia source.
      * @since 1.8
      */
-    public boolean isDoxiaSource()
-    {
-        return StringUtils.isNotEmpty( extension );
+    public boolean isDoxiaSource() {
+        return StringUtils.isNotEmpty(extension);
     }
 
     /**
@@ -242,8 +235,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @return <code>null</code> if no known generator
      * @since 1.8
      */
-    public String getGenerator()
-    {
+    public String getGenerator() {
         return generator;
     }
 
@@ -253,8 +245,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @return the relative path of basedir when a Doxia source, or <code>null</code> if not a Doxia source
      * @since 1.8
      */
-    public String getBasedirRelativePath()
-    {
+    public String getBasedirRelativePath() {
         return basedirRelativePath;
     }
 
@@ -264,9 +255,8 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @return the relative path to Doxia source from build root, or <code>null</code> if not a Doxia source
      * @since 1.8
      */
-    public String getDoxiaSourcePath()
-    {
-        return isDoxiaSource() ? ( basedirRelativePath + '/' + inputName ) : null;
+    public String getDoxiaSourcePath() {
+        return isDoxiaSource() ? (basedirRelativePath + '/' + inputName) : null;
     }
 
     /**
@@ -276,8 +266,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @return the resulting url
      * @since 1.8
      */
-    public String getDoxiaSourcePath( String base )
-    {
-        return PathTool.calculateLink( getDoxiaSourcePath(), base );
+    public String getDoxiaSourcePath(String base) {
+        return PathTool.calculateLink(getDoxiaSourcePath(), base);
     }
 }

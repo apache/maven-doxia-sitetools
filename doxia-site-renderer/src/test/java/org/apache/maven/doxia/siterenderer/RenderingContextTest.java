@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
 
@@ -32,8 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 20 oct. 07
  */
 @PlexusTest
-public class RenderingContextTest
-{
+public class RenderingContextTest {
 
     /**
      * Test getRelativePath() with various file names.
@@ -41,40 +39,37 @@ public class RenderingContextTest
      * @throws java.lang.Exception if any.
      */
     @Test
-    public void testFileNameWithDot()
-        throws Exception
-    {
-        File baseDir = new File( getBasedir() + File.separatorChar + "test" + File.separatorChar + "resources" );
+    public void testFileNameWithDot() throws Exception {
+        File baseDir = new File(getBasedir() + File.separatorChar + "test" + File.separatorChar + "resources");
         String docName = "file.with.dot.in.name.xml";
 
-        RenderingContext renderingContext = new RenderingContext( baseDir, "test", docName, "", "xml", false );
-        assertEquals( "file.with.dot.in.name.html", renderingContext.getOutputName() );
-        assertEquals( ".", renderingContext.getRelativePath() );
+        RenderingContext renderingContext = new RenderingContext(baseDir, "test", docName, "", "xml", false);
+        assertEquals("file.with.dot.in.name.html", renderingContext.getOutputName());
+        assertEquals(".", renderingContext.getRelativePath());
 
-        renderingContext = new RenderingContext( baseDir, docName, "generator" ); // not Doxia source
-        assertEquals( "file.with.dot.in.name.html", renderingContext.getOutputName() );
-        assertEquals( ".", renderingContext.getRelativePath() );
+        renderingContext = new RenderingContext(baseDir, docName, "generator"); // not Doxia source
+        assertEquals("file.with.dot.in.name.html", renderingContext.getOutputName());
+        assertEquals(".", renderingContext.getRelativePath());
 
         docName = "index.xml.vm";
 
-        renderingContext = new RenderingContext( baseDir, "test", docName, "", "xml", false );
-        assertEquals( "index.html", renderingContext.getOutputName() );
-        assertEquals( ".", renderingContext.getRelativePath() );
+        renderingContext = new RenderingContext(baseDir, "test", docName, "", "xml", false);
+        assertEquals("index.html", renderingContext.getOutputName());
+        assertEquals(".", renderingContext.getRelativePath());
 
         docName = "download.apt.vm";
 
-        renderingContext = new RenderingContext( baseDir, "test", docName, "", "apt", false );
-        assertEquals( "download.html", renderingContext.getOutputName() );
-        assertEquals( ".", renderingContext.getRelativePath() );
+        renderingContext = new RenderingContext(baseDir, "test", docName, "", "apt", false);
+        assertEquals("download.html", renderingContext.getOutputName());
+        assertEquals(".", renderingContext.getRelativePath());
 
         docName = "path/file.apt";
-        renderingContext = new RenderingContext( baseDir, "test", docName, "", "apt", false );
-        assertEquals( "path/file.html", renderingContext.getOutputName() );
-        assertEquals( "..", renderingContext.getRelativePath() );
+        renderingContext = new RenderingContext(baseDir, "test", docName, "", "apt", false);
+        assertEquals("path/file.html", renderingContext.getOutputName());
+        assertEquals("..", renderingContext.getRelativePath());
 
-        renderingContext = new RenderingContext( baseDir, docName, "generator" );
-        assertEquals( "path/file.html", renderingContext.getOutputName() );
-        assertEquals( "..", renderingContext.getRelativePath() );
+        renderingContext = new RenderingContext(baseDir, docName, "generator");
+        assertEquals("path/file.html", renderingContext.getOutputName());
+        assertEquals("..", renderingContext.getRelativePath());
     }
-
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,8 +16,10 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import java.util.Iterator;
+
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
@@ -31,8 +31,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
 import com.gargoylesoftware.htmlunit.html.HtmlSection;
 
-import java.util.Iterator;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,20 +40,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  * @author ltheussl
  */
-public class EntitiesVerifier
-    extends AbstractVerifier
-{
+public class EntitiesVerifier extends AbstractVerifier {
     /** {@inheritDoc} */
-    public void verify( String file )
-            throws Exception
-    {
-        HtmlPage page = htmlPage( file );
-        assertNotNull( page );
+    public void verify(String file) throws Exception {
+        HtmlPage page = htmlPage(file);
+        assertNotNull(page);
 
-        HtmlElement element = page.getHtmlElementById( "contentBox" );
-        assertNotNull( element );
+        HtmlElement element = page.getHtmlElementById("contentBox");
+        assertNotNull(element);
         HtmlMain main = (HtmlMain) element;
-        assertNotNull( main );
+        assertNotNull(main);
 
         Iterator<HtmlElement> elementIterator = main.getHtmlElementDescendants().iterator();
 
@@ -66,70 +60,76 @@ public class EntitiesVerifier
         HtmlSection section = (HtmlSection) elementIterator.next();
 
         HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
-        assertNotNull( h1 );
-        assertEquals( h1.asNormalizedText().trim(), "section name with entities: '&' '\u0391' ' ' '\uD835\uDFED'" );
+        assertNotNull(h1);
+        assertEquals(h1.asNormalizedText().trim(), "section name with entities: '&' '\u0391' ' ' '\uD835\uDFED'");
 
         section = (HtmlSection) elementIterator.next();
-        assertNotNull( section );
+        assertNotNull(section);
 
         section = (HtmlSection) elementIterator.next();
-        assertNotNull( section );
+        assertNotNull(section);
 
         HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
-        assertNotNull( h3 );
-        assertEquals( "Entities", h3.asNormalizedText().trim() );
+        assertNotNull(h3);
+        assertEquals("Entities", h3.asNormalizedText().trim());
 
         section = (HtmlSection) elementIterator.next();
-        assertNotNull( section );
+        assertNotNull(section);
 
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
-        assertNotNull( h2 );
-        assertEquals( "Generic Entities: '&' '<' '>' '\"' '''", h2.asNormalizedText().trim() );
+        assertNotNull(h2);
+        assertEquals(
+                "Generic Entities: '&' '<' '>' '\"' '''", h2.asNormalizedText().trim());
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
-        assertNotNull( p );
-        assertEquals( "'&' '<' '>' '\"' '''", p.asNormalizedText().trim() );
+        assertNotNull(p);
+        assertEquals("'&' '<' '>' '\"' '''", p.asNormalizedText().trim());
 
         section = (HtmlSection) elementIterator.next();
-        assertNotNull( section );
+        assertNotNull(section);
 
         h2 = (HtmlHeading2) elementIterator.next();
-        assertNotNull( h2 );
-        assertEquals( "Local Entities: '\u0391' '\u0392' '\u0393' '\uD835\uDFED'", h2.asNormalizedText().trim() );
+        assertNotNull(h2);
+        assertEquals(
+                "Local Entities: '\u0391' '\u0392' '\u0393' '\uD835\uDFED'",
+                h2.asNormalizedText().trim());
 
         p = (HtmlParagraph) elementIterator.next();
-        assertNotNull( p );
-        assertEquals( "'\u0391' '\u0392' '\u0393' '\uD835\uDFED\uD835\uDFED' '\u0159\u0159' '\u0159'", p.asNormalizedText().trim() );
+        assertNotNull(p);
+        assertEquals(
+                "'\u0391' '\u0392' '\u0393' '\uD835\uDFED\uD835\uDFED' '\u0159\u0159' '\u0159'",
+                p.asNormalizedText().trim());
 
         section = (HtmlSection) elementIterator.next();
-        assertNotNull( section );
+        assertNotNull(section);
 
         h2 = (HtmlHeading2) elementIterator.next();
-        assertNotNull( h2 );
-        assertEquals( "DTD Entities: ' ' '\u00A1' '\u00A2'", h2.asNormalizedText().trim() );
+        assertNotNull(h2);
+        assertEquals(
+                "DTD Entities: ' ' '\u00A1' '\u00A2'", h2.asNormalizedText().trim());
 
         p = (HtmlParagraph) elementIterator.next();
-        assertNotNull( p );
-        assertEquals( "' ' '\u00A1' '\u00A2'", p.asNormalizedText().trim() );
+        assertNotNull(p);
+        assertEquals("' ' '\u00A1' '\u00A2'", p.asNormalizedText().trim());
 
         section = (HtmlSection) elementIterator.next();
-        assertNotNull( section );
+        assertNotNull(section);
 
         h3 = (HtmlHeading3) elementIterator.next();
-        assertNotNull( h3 );
-        assertEquals( "CDATA", h3.asNormalizedText().trim() );
+        assertNotNull(h3);
+        assertEquals("CDATA", h3.asNormalizedText().trim());
 
         HtmlDivision div = (HtmlDivision) elementIterator.next();
-        assertNotNull( div );
+        assertNotNull(div);
 
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
-        assertNotNull( pre );
-        assertEquals( "<project xmlns:ant=\"jelly:ant\">", pre.asNormalizedText().trim() );
+        assertNotNull(pre);
+        assertEquals("<project xmlns:ant=\"jelly:ant\">", pre.asNormalizedText().trim());
 
         p = (HtmlParagraph) elementIterator.next();
-        assertNotNull( p );
-        assertEquals( "'&nbsp;' '&iexcl;'", p.asNormalizedText().trim() );
+        assertNotNull(p);
+        assertEquals("'&nbsp;' '&iexcl;'", p.asNormalizedText().trim());
 
-        assertFalse( elementIterator.hasNext() );
+        assertFalse(elementIterator.hasNext());
     }
 }

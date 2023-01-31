@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,7 +36,7 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  */
 public interface Renderer // TODO rename to SiteRenderer
-{
+ {
     /**
      * Render a collection of documents into a site.
      *
@@ -47,9 +46,8 @@ public interface Renderer // TODO rename to SiteRenderer
      * @throws RendererException if it bombs.
      * @throws IOException if it bombs.
      */
-    void render( Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext,
-                 File outputDirectory )
-        throws RendererException, IOException;
+    void render(Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext, File outputDirectory)
+            throws RendererException, IOException;
 
     /**
      * Generate a document output integrated in a site from a document content,
@@ -61,8 +59,8 @@ public interface Renderer // TODO rename to SiteRenderer
      * @throws RendererException if it bombs.
      * @since 1.8
      */
-    void mergeDocumentIntoSite( Writer writer, DocumentContent content, SiteRenderingContext siteRenderingContext )
-        throws RendererException;
+    void mergeDocumentIntoSite(Writer writer, DocumentContent content, SiteRenderingContext siteRenderingContext)
+            throws RendererException;
 
     /**
      * Create a Site Rendering Context for a site using a skin.
@@ -77,9 +75,9 @@ public interface Renderer // TODO rename to SiteRenderer
      * @throws java.io.IOException if it bombs.
      * @since 1.7.3 was previously with skin as File instead of Artifact
      */
-    SiteRenderingContext createContextForSkin( Artifact skin, Map<String, ?> attributes, DecorationModel decoration,
-                                               String defaultTitle, Locale locale )
-        throws RendererException, IOException;
+    SiteRenderingContext createContextForSkin(
+            Artifact skin, Map<String, ?> attributes, DecorationModel decoration, String defaultTitle, Locale locale)
+            throws RendererException, IOException;
 
     /**
      * Copy resource files from skin, template, and site resources.
@@ -89,8 +87,7 @@ public interface Renderer // TODO rename to SiteRenderer
      * @throws IOException if it bombs.
      * @since 1.7
      */
-    void copyResources( SiteRenderingContext siteRenderingContext, File outputDirectory )
-        throws IOException;
+    void copyResources(SiteRenderingContext siteRenderingContext, File outputDirectory) throws IOException;
 
     /**
      * Locate Doxia document source files in the site source context.
@@ -102,8 +99,8 @@ public interface Renderer // TODO rename to SiteRenderer
      * @throws RendererException if it bombs.
      * @since 1.8
      */
-    Map<String, DocumentRenderer> locateDocumentFiles( SiteRenderingContext siteRenderingContext, boolean editable )
-        throws IOException, RendererException;
+    Map<String, DocumentRenderer> locateDocumentFiles(SiteRenderingContext siteRenderingContext, boolean editable)
+            throws IOException, RendererException;
 
     /**
      * Render a document written in a Doxia markup language. This method is an internal method, used by
@@ -116,6 +113,6 @@ public interface Renderer // TODO rename to SiteRenderer
      * @throws FileNotFoundException if it bombs.
      * @throws UnsupportedEncodingException if it bombs.
      */
-    void renderDocument( Writer writer, RenderingContext docRenderingContext, SiteRenderingContext siteContext )
-        throws RendererException, FileNotFoundException, UnsupportedEncodingException;
+    void renderDocument(Writer writer, RenderingContext docRenderingContext, SiteRenderingContext siteContext)
+            throws RendererException, FileNotFoundException, UnsupportedEncodingException;
 }

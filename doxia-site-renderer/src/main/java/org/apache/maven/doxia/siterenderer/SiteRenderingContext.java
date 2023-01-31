@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,8 +37,7 @@ import org.codehaus.plexus.util.WriterFactory;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class SiteRenderingContext
-{
+public class SiteRenderingContext {
     private String inputEncoding = ReaderFactory.FILE_ENCODING;
 
     private String outputEncoding = WriterFactory.UTF_8;
@@ -84,8 +82,7 @@ public class SiteRenderingContext
      * @return true if validation is switched on.
      * @since 1.1.3
      */
-    public boolean isValidate()
-    {
+    public boolean isValidate() {
         return validate;
     }
 
@@ -95,8 +92,7 @@ public class SiteRenderingContext
      * @param validate true to switch on validation.
      * @since 1.1.3
      */
-    public void setValidate( boolean validate )
-    {
+    public void setValidate(boolean validate) {
         this.validate = validate;
     }
 
@@ -105,8 +101,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.lang.String} object.
      */
-    public String getTemplateName()
-    {
+    public String getTemplateName() {
         return templateName;
     }
 
@@ -115,8 +110,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.lang.ClassLoader} object.
      */
-    public ClassLoader getTemplateClassLoader()
-    {
+    public ClassLoader getTemplateClassLoader() {
         return templateClassLoader;
     }
 
@@ -125,8 +119,7 @@ public class SiteRenderingContext
      *
      * @param templateClassLoader a {@link java.lang.ClassLoader} object.
      */
-    public void setTemplateClassLoader( ClassLoader templateClassLoader )
-    {
+    public void setTemplateClassLoader(ClassLoader templateClassLoader) {
         this.templateClassLoader = templateClassLoader;
     }
 
@@ -135,8 +128,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.Map} object.
      */
-    public Map<String, ?> getTemplateProperties()
-    {
+    public Map<String, ?> getTemplateProperties() {
         return templateProperties;
     }
 
@@ -145,9 +137,8 @@ public class SiteRenderingContext
      *
      * @param templateProperties a {@link java.util.Map} object.
      */
-    public void setTemplateProperties( Map<String, ?> templateProperties )
-    {
-        this.templateProperties = Collections.unmodifiableMap( templateProperties );
+    public void setTemplateProperties(Map<String, ?> templateProperties) {
+        this.templateProperties = Collections.unmodifiableMap(templateProperties);
     }
 
     /**
@@ -155,8 +146,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.Locale} object.
      */
-    public Locale getLocale()
-    {
+    public Locale getLocale() {
         return locale;
     }
 
@@ -165,30 +155,27 @@ public class SiteRenderingContext
      *
      * @param locale a {@link java.util.Locale} object.
      */
-    public void setLocale( Locale locale )
-    {
+    public void setLocale(Locale locale) {
         this.locale = locale;
     }
 
-   /**
+    /**
      * <p>Getter for the field <code>siteLocales</code> -
      * a list of locales available for this site context.</p>
      *
      * @return a {@link java.util.List} object with {@link java.util.Locale} objects.
      */
-    public List<Locale> getSiteLocales()
-    {
+    public List<Locale> getSiteLocales() {
         return siteLocales;
     }
 
-   /**
-    * <p>Adds passed locales to the list of site locales.</p>
-    *
-    * @param locales List of {@link java.util.Locale} objects to add to the site locales list.
-    */
-    public void addSiteLocales( List<Locale> locales )
-    {
-        siteLocales.addAll( locales );
+    /**
+     * <p>Adds passed locales to the list of site locales.</p>
+     *
+     * @param locales List of {@link java.util.Locale} objects to add to the site locales list.
+     */
+    public void addSiteLocales(List<Locale> locales) {
+        siteLocales.addAll(locales);
     }
 
     /**
@@ -196,8 +183,7 @@ public class SiteRenderingContext
      *
      * @return a {@link org.apache.maven.doxia.site.decoration.DecorationModel} object.
      */
-    public DecorationModel getDecoration()
-    {
+    public DecorationModel getDecoration() {
         return decoration;
     }
 
@@ -206,8 +192,7 @@ public class SiteRenderingContext
      *
      * @param decoration a {@link org.apache.maven.doxia.site.decoration.DecorationModel} object.
      */
-    public void setDecoration( DecorationModel decoration )
-    {
+    public void setDecoration(DecorationModel decoration) {
         this.decoration = decoration;
     }
 
@@ -215,9 +200,8 @@ public class SiteRenderingContext
      * @deprecated use {@link #setDefaultTitle(String)}
      */
     @Deprecated
-    public void setDefaultWindowTitle( String defaultWindowsTitle )
-    {
-        setDefaultTitle( defaultWindowsTitle );
+    public void setDefaultWindowTitle(String defaultWindowsTitle) {
+        setDefaultTitle(defaultWindowsTitle);
     }
 
     /**
@@ -225,8 +209,7 @@ public class SiteRenderingContext
      *
      * @param defaultTitle a {@link java.lang.String} object.
      */
-    public void setDefaultTitle( String defaultTitle )
-    {
+    public void setDefaultTitle(String defaultTitle) {
         this.defaultTitle = defaultTitle;
     }
 
@@ -234,8 +217,7 @@ public class SiteRenderingContext
      * @deprecated use {@link #getDefaultTitle()}
      */
     @Deprecated
-    public String getDefaultWindowTitle()
-    {
+    public String getDefaultWindowTitle() {
         return getDefaultTitle();
     }
 
@@ -244,8 +226,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.lang.String} object.
      */
-    public String getDefaultTitle()
-    {
+    public String getDefaultTitle() {
         return defaultTitle;
     }
 
@@ -254,8 +235,7 @@ public class SiteRenderingContext
      *
      * @return a {@link Artifact} object.
      */
-    public Artifact getSkin()
-    {
+    public Artifact getSkin() {
         return skin;
     }
 
@@ -264,8 +244,7 @@ public class SiteRenderingContext
      *
      * @param skin an {@link Artifact} object.
      */
-    public void setSkin( Artifact skin )
-    {
+    public void setSkin(Artifact skin) {
         this.skin = skin;
     }
 
@@ -274,8 +253,7 @@ public class SiteRenderingContext
      *
      * @return a {@link SkinModel} object.
      */
-    public SkinModel getSkinModel()
-    {
+    public SkinModel getSkinModel() {
         return skinModel;
     }
 
@@ -284,8 +262,7 @@ public class SiteRenderingContext
      *
      * @param skinModel a {@link SkinModel} object.
      */
-    public void setSkinModel( SkinModel skinModel )
-    {
+    public void setSkinModel(SkinModel skinModel) {
         this.skinModel = skinModel;
     }
 
@@ -294,8 +271,7 @@ public class SiteRenderingContext
      *
      * @param templateName a {@link java.lang.String} object.
      */
-    public void setTemplateName( String templateName )
-    {
+    public void setTemplateName(String templateName) {
         this.templateName = templateName;
     }
 
@@ -305,9 +281,8 @@ public class SiteRenderingContext
      *
      * @param siteDirectory a {@link java.io.File} object.
      */
-    public void addSiteDirectory( File siteDirectory )
-    {
-        this.siteDirectories.add( siteDirectory );
+    public void addSiteDirectory(File siteDirectory) {
+        this.siteDirectories.add(siteDirectory);
     }
 
     /**
@@ -318,9 +293,8 @@ public class SiteRenderingContext
      * @param moduleParserId module's Doxia parser id.
      */
     @Deprecated
-    public void addModuleDirectory( File moduleBasedir, String moduleParserId )
-    {
-        this.modules.add( new ExtraDoxiaModuleReference( moduleParserId, moduleBasedir ) );
+    public void addModuleDirectory(File moduleBasedir, String moduleParserId) {
+        this.modules.add(new ExtraDoxiaModuleReference(moduleParserId, moduleBasedir));
     }
 
     /**
@@ -328,8 +302,7 @@ public class SiteRenderingContext
      *
      * @return List of site directories files.
      */
-    public List<File> getSiteDirectories()
-    {
+    public List<File> getSiteDirectories() {
         return siteDirectories;
     }
 
@@ -339,8 +312,7 @@ public class SiteRenderingContext
      * @return a {@link java.util.List} object.
      */
     @Deprecated
-    public List<ExtraDoxiaModuleReference> getModules()
-    {
+    public List<ExtraDoxiaModuleReference> getModules() {
         return modules;
     }
 
@@ -349,8 +321,7 @@ public class SiteRenderingContext
      *
      * @return a map defining exclude patterns (comma separated) by parser id.
      */
-    public Map<String, String> getModuleExcludes()
-    {
+    public Map<String, String> getModuleExcludes() {
         return moduleExcludes;
     }
 
@@ -359,8 +330,7 @@ public class SiteRenderingContext
      *
      * @param moduleExcludes a {@link java.util.Map} object.
      */
-    public void setModuleExcludes( Map<String, String> moduleExcludes )
-    {
+    public void setModuleExcludes(Map<String, String> moduleExcludes) {
         this.moduleExcludes = moduleExcludes;
     }
 
@@ -369,8 +339,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.lang.String} object.
      */
-    public String getInputEncoding()
-    {
+    public String getInputEncoding() {
         return inputEncoding;
     }
 
@@ -379,8 +348,7 @@ public class SiteRenderingContext
      *
      * @param inputEncoding a {@link java.lang.String} object.
      */
-    public void setInputEncoding( String inputEncoding )
-    {
+    public void setInputEncoding(String inputEncoding) {
         this.inputEncoding = inputEncoding;
     }
 
@@ -389,8 +357,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.lang.String} object.
      */
-    public String getOutputEncoding()
-    {
+    public String getOutputEncoding() {
         return outputEncoding;
     }
 
@@ -399,8 +366,7 @@ public class SiteRenderingContext
      *
      * @param outputEncoding a {@link java.lang.String} object.
      */
-    public void setOutputEncoding( String outputEncoding )
-    {
+    public void setOutputEncoding(String outputEncoding) {
         this.outputEncoding = outputEncoding;
     }
 
@@ -409,8 +375,7 @@ public class SiteRenderingContext
      *
      * @return the publish date, can be {@code null}
      */
-    public Date getPublishDate()
-    {
+    public Date getPublishDate() {
         return publishDate;
     }
 
@@ -419,8 +384,7 @@ public class SiteRenderingContext
      *
      * @param publishDate the publish date
      */
-    public void setPublishDate( Date publishDate )
-    {
+    public void setPublishDate(Date publishDate) {
         this.publishDate = publishDate;
     }
 
@@ -430,8 +394,7 @@ public class SiteRenderingContext
      * @return not null if the documents are to be saved
      * @since 1.7
      */
-    public File getProcessedContentOutput()
-    {
+    public File getProcessedContentOutput() {
         return processedContentOutput;
     }
 
@@ -442,8 +405,7 @@ public class SiteRenderingContext
      * @param processedContentOutput not null if the documents are to be saved
      * @since 1.7
      */
-    public void setProcessedContentOutput( File processedContentOutput )
-    {
+    public void setProcessedContentOutput(File processedContentOutput) {
         this.processedContentOutput = processedContentOutput;
     }
 
@@ -454,8 +416,7 @@ public class SiteRenderingContext
      * @return the root directory
      * @since 1.8
      */
-    public File getRootDirectory()
-    {
+    public File getRootDirectory() {
         return rootDirectory;
     }
 
@@ -465,8 +426,7 @@ public class SiteRenderingContext
      * @param rootDirectory the root directory
      * @since 1.8
      */
-    public void setRootDirectory( File rootDirectory )
-    {
+    public void setRootDirectory(File rootDirectory) {
         this.rootDirectory = rootDirectory;
     }
 }

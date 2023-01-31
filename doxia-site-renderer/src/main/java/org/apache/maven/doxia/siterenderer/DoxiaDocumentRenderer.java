@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
@@ -30,9 +29,7 @@ import java.io.Writer;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class DoxiaDocumentRenderer
-    implements DocumentRenderer
-{
+public class DoxiaDocumentRenderer implements DocumentRenderer {
     private RenderingContext renderingContext;
 
     /**
@@ -40,39 +37,32 @@ public class DoxiaDocumentRenderer
      *
      * @param renderingContext the document's RenderingContext to use.
      */
-    public DoxiaDocumentRenderer( RenderingContext renderingContext )
-    {
+    public DoxiaDocumentRenderer(RenderingContext renderingContext) {
         this.renderingContext = renderingContext;
     }
 
     /** {@inheritDoc} */
-    public void renderDocument( Writer writer, Renderer siteRenderer, SiteRenderingContext siteRenderingContext )
-        throws RendererException, FileNotFoundException, UnsupportedEncodingException
-    {
-        siteRenderer.renderDocument( writer, renderingContext, siteRenderingContext );
+    public void renderDocument(Writer writer, Renderer siteRenderer, SiteRenderingContext siteRenderingContext)
+            throws RendererException, FileNotFoundException, UnsupportedEncodingException {
+        siteRenderer.renderDocument(writer, renderingContext, siteRenderingContext);
     }
 
     /** {@inheritDoc} */
-    public String getOutputName()
-    {
+    public String getOutputName() {
         return renderingContext.getOutputName();
     }
 
     /** {@inheritDoc} */
-    public RenderingContext getRenderingContext()
-    {
+    public RenderingContext getRenderingContext() {
         return renderingContext;
     }
 
     /** {@inheritDoc} */
-    public boolean isOverwrite()
-    {
+    public boolean isOverwrite() {
         return false;
     }
 
-    public boolean isExternalReport()
-    {
+    public boolean isExternalReport() {
         return false;
     }
-
 }

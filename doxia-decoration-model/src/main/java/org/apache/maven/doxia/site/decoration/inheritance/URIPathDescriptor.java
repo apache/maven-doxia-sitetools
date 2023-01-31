@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.site.decoration.inheritance;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.site.decoration.inheritance;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.site.decoration.inheritance;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,8 +30,7 @@ import org.codehaus.plexus.util.PathTool;
  *
  * @since 1.2
  */
-public class URIPathDescriptor
-{
+public class URIPathDescriptor {
     private final URI baseURI;
     private final URI link;
 
@@ -60,17 +58,15 @@ public class URIPathDescriptor
      * @throws IllegalArgumentException if either argument is not parsable as a URI,
      *      or if baseURI is not absolute.
      */
-    public URIPathDescriptor( final String baseURI, final String link )
-    {
-        final String llink = sanitizeLink( link );
-        final String bbase = sanitizeBase( baseURI );
+    public URIPathDescriptor(final String baseURI, final String link) {
+        final String llink = sanitizeLink(link);
+        final String bbase = sanitizeBase(baseURI);
 
-        this.baseURI = URI.create( bbase ).normalize();
-        this.link = URI.create( llink ).normalize();
+        this.baseURI = URI.create(bbase).normalize();
+        this.link = URI.create(llink).normalize();
 
-        if ( !this.baseURI.isAbsolute() )
-        {
-            throw new IllegalArgumentException( "Base URI is not absolute: " + baseURI );
+        if (!this.baseURI.isAbsolute()) {
+            throw new IllegalArgumentException("Base URI is not absolute: " + baseURI);
         }
     }
 
@@ -80,8 +76,7 @@ public class URIPathDescriptor
      *
      * @return the normalized base URI.
      */
-    public URI getBaseURI()
-    {
+    public URI getBaseURI() {
         return baseURI;
     }
 
@@ -91,8 +86,7 @@ public class URIPathDescriptor
      *
      * @return the normalized link URI.
      */
-    public URI getLink()
-    {
+    public URI getLink() {
         return link;
     }
 
@@ -103,9 +97,8 @@ public class URIPathDescriptor
      * @return the resolved link. This is equivalent to calling
      *      {@link #getBaseURI()}.{@link URI#resolve(java.net.URI) resolve}( {@link #getLink()} ).
      */
-    public URI resolveLink()
-    {
-        return baseURI.resolve( link );
+    public URI resolveLink() {
+        return baseURI.resolve(link);
     }
 
     /**
@@ -116,30 +109,26 @@ public class URIPathDescriptor
      *
      * @return the link as a relative URI.
      */
-    public URI relativizeLink()
-    {
-        return relativizeLink( baseURI.toString(), link );
+    public URI relativizeLink() {
+        return relativizeLink(baseURI.toString(), link);
     }
 
     // NOTE: URI.relativize does not work as expected, see
     // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6226081
-    private static URI relativizeLink( final String base, final URI link )
-    {
-        if ( !link.isAbsolute() )
-        {
+    private static URI relativizeLink(final String base, final URI link) {
+        if (!link.isAbsolute()) {
             return link;
         }
 
-        final URI newBaseURI = URI.create( base );
+        final URI newBaseURI = URI.create(base);
 
-        if ( !sameSite( link, newBaseURI ) )
-        {
+        if (!sameSite(link, newBaseURI)) {
             return link;
         }
 
-        final String relativePath = PathTool.getRelativeWebPath( newBaseURI.toString(), link.toString() );
+        final String relativePath = PathTool.getRelativeWebPath(newBaseURI.toString(), link.toString());
 
-        return URI.create( correctRelativePath( relativePath ) );
+        return URI.create(correctRelativePath(relativePath));
     }
 
     /**
@@ -156,47 +145,36 @@ public class URIPathDescriptor
      * @return a new relative link or the original link {@link #resolveLink() resolved},
      *      i.e. as an absolute link, if the link cannot be re-based.
      */
-    public URI rebaseLink( final String newBase )
-    {
-        if ( link.isAbsolute() )
-        {
+    public URI rebaseLink(final String newBase) {
+        if (link.isAbsolute()) {
             return link;
         }
 
-        if ( newBase == null )
-        {
+        if (newBase == null) {
             return resolveLink();
         }
 
         final URI newBaseURI;
 
-        try
-        {
-            newBaseURI = new URI( newBase );
-        }
-        catch ( URISyntaxException ex )
-        {
+        try {
+            newBaseURI = new URI(newBase);
+        } catch (URISyntaxException ex) {
             return resolveLink();
         }
 
-        if ( !sameSite( newBaseURI ) )
-        {
+        if (!sameSite(newBaseURI)) {
             return resolveLink();
         }
 
-        final String relativeBasePath = PathTool.getRelativeWebPath( newBaseURI.getPath(), baseURI.getPath() );
+        final String relativeBasePath = PathTool.getRelativeWebPath(newBaseURI.getPath(), baseURI.getPath());
 
-        return URI.create( correctRelativePath( relativeBasePath ) ).resolve( link );
+        return URI.create(correctRelativePath(relativeBasePath)).resolve(link);
     }
 
-    private static String correctRelativePath( final String relativePath )
-    {
-        if ( "".equals( relativePath ) || "/".equals( relativePath ) )
-        {
+    private static String correctRelativePath(final String relativePath) {
+        if ("".equals(relativePath) || "/".equals(relativePath)) {
             return "./";
-        }
-        else
-        {
+        } else {
             return relativePath;
         }
     }
@@ -210,21 +188,19 @@ public class URIPathDescriptor
      * @return true if {@link #getBaseURI()} shares the same scheme, host and port with the given URI
      *      where null values are allowed.
      */
-    public boolean sameSite( final URI uri )
-    {
-        return ( uri != null ) && sameSite( this.baseURI, uri );
+    public boolean sameSite(final URI uri) {
+        return (uri != null) && sameSite(this.baseURI, uri);
     }
 
-    private static boolean sameSite( final URI baseURI, final URI newBaseURI )
-    {
+    private static boolean sameSite(final URI baseURI, final URI newBaseURI) {
         final boolean sameScheme =
-            ( newBaseURI.getScheme() == null ? false : baseURI.getScheme().equalsIgnoreCase( newBaseURI.getScheme() ) );
-        final boolean sameHost =
-            ( baseURI.getHost() == null ? newBaseURI.getHost() == null
-                            : baseURI.getHost().equalsIgnoreCase( newBaseURI.getHost() ) );
-        final boolean samePort = ( baseURI.getPort() == newBaseURI.getPort() );
+                (newBaseURI.getScheme() == null ? false : baseURI.getScheme().equalsIgnoreCase(newBaseURI.getScheme()));
+        final boolean sameHost = (baseURI.getHost() == null
+                ? newBaseURI.getHost() == null
+                : baseURI.getHost().equalsIgnoreCase(newBaseURI.getHost()));
+        final boolean samePort = (baseURI.getPort() == newBaseURI.getPort());
 
-        return ( sameScheme && samePort && sameHost );
+        return (sameScheme && samePort && sameHost);
     }
 
     /**
@@ -234,30 +210,25 @@ public class URIPathDescriptor
      * @return this URIPathDescriptor as a String.
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return resolveLink().toString();
     }
 
-    private static String sanitizeBase( final String base )
-    {
-        String sane = base.replace( '\\', '/' );
+    private static String sanitizeBase(final String base) {
+        String sane = base.replace('\\', '/');
 
-        if ( !sane.endsWith( "/" ) )
-        {
+        if (!sane.endsWith("/")) {
             sane += "/";
         }
 
         return sane;
     }
 
-    private static String sanitizeLink( final String link )
-    {
-        String sane = link.replace( '\\', '/' );
+    private static String sanitizeLink(final String link) {
+        String sane = link.replace('\\', '/');
 
-        if ( sane.startsWith( "/" ) )
-        {
-            sane = sane.substring( 1 );
+        if (sane.startsWith("/")) {
+            sane = sane.substring(1);
         }
 
         return sane;

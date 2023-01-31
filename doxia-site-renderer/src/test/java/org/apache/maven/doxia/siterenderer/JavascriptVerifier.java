@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,10 +16,16 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlMain;
@@ -30,26 +34,17 @@ import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
 import com.gargoylesoftware.htmlunit.html.HtmlScript;
 import com.gargoylesoftware.htmlunit.html.HtmlSection;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 /**
  * Verify javascript code.
  *
  * @author ltheussl
  */
-public class JavascriptVerifier
-    extends AbstractVerifier
-{
+public class JavascriptVerifier extends AbstractVerifier {
     /**
      * Verifies a HtmlPage.
      *
@@ -57,51 +52,51 @@ public class JavascriptVerifier
      *
      * @throws Exception if something goes wrong.
      */
-    public void verify( String file )
-            throws Exception
-    {
-        File jsTest = getTestFile( "target/output/javascript.html" );
-        assertNotNull( jsTest );
-        assertTrue( jsTest.exists() );
+    public void verify(String file) throws Exception {
+        File jsTest = getTestFile("target/output/javascript.html");
+        assertNotNull(jsTest);
+        assertTrue(jsTest.exists());
 
         // HtmlUnit
-        try ( WebClient webClient = new WebClient() ) {
-            webClient.getOptions().setCssEnabled( false );
+        try (WebClient webClient = new WebClient()) {
+            webClient.getOptions().setCssEnabled(false);
 
-            final List<String> collectedAlerts = new ArrayList<String>( 4 );
-            webClient.setAlertHandler( new CollectingAlertHandler( collectedAlerts ) );
+            final List<String> collectedAlerts = new ArrayList<String>(4);
+            webClient.setAlertHandler(new CollectingAlertHandler(collectedAlerts));
 
-            HtmlPage page = (HtmlPage) webClient.getPage( jsTest.toURI().toURL() );
-            assertNotNull( page );
+            HtmlPage page = (HtmlPage) webClient.getPage(jsTest.toURI().toURL());
+            assertNotNull(page);
 
-            HtmlElement element = page.getHtmlElementById( "contentBox" );
-            assertNotNull( element );
+            HtmlElement element = page.getHtmlElementById("contentBox");
+            assertNotNull(element);
             HtmlMain main = (HtmlMain) element;
-            assertNotNull( main );
+            assertNotNull(main);
 
-            Iterator<HtmlElement> elementIterator = main.getHtmlElementDescendants().iterator();
+            Iterator<HtmlElement> elementIterator =
+                    main.getHtmlElementDescendants().iterator();
 
             // ----------------------------------------------------------------------
             //
             // ----------------------------------------------------------------------
 
             HtmlSection section = (HtmlSection) elementIterator.next();
-            assertNotNull( section );
+            assertNotNull(section);
 
             HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
-            assertNotNull( h1 );
-            assertEquals( "Test", h1.asNormalizedText().trim() );
+            assertNotNull(h1);
+            assertEquals("Test", h1.asNormalizedText().trim());
 
             HtmlParagraph p = (HtmlParagraph) elementIterator.next();
-            assertNotNull( p );
-            assertEquals( "You should see a JavaScript alert...", p.asNormalizedText().trim() );
+            assertNotNull(p);
+            assertEquals(
+                    "You should see a JavaScript alert...", p.asNormalizedText().trim());
 
             HtmlScript script = (HtmlScript) elementIterator.next();
-            assertNotNull( script  );
-            assertEquals( "text/javascript", script.getAttribute( "type" ) );
-            assertEquals( "", script.asNormalizedText().trim() );
-            List<String> expectedAlerts = Collections.singletonList( "Hello!" );
-            assertEquals( expectedAlerts, collectedAlerts );
+            assertNotNull(script);
+            assertEquals("text/javascript", script.getAttribute("type"));
+            assertEquals("", script.asNormalizedText().trim());
+            List<String> expectedAlerts = Collections.singletonList("Hello!");
+            assertEquals(expectedAlerts, collectedAlerts);
         }
     }
 }
