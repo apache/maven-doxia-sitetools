@@ -394,6 +394,19 @@ under the License.
           <identifier>true</identifier>
           <defaultValue>yyyy-MM-dd</defaultValue>
         </field>
+        <field xml.attribute="true">
+          <name>timezone</name>
+          <description>
+            <![CDATA[
+              The timezone to use. Use <code>system</code> for the default locale for this instance
+              of the Java Virtual Machine. Refer to <code>java.util.TimeZone</code> for details.
+            ]]>
+          </description>
+          <version>2.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>Etc/UTC</defaultValue>
+        </field>
       </fields>
     </class>
 

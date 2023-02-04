@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TimeZone;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -434,6 +435,10 @@ public class DefaultSiteRenderer implements Renderer {
         Locale locale = siteRenderingContext.getLocale();
         String dateFormat =
                 siteRenderingContext.getDecoration().getPublishDate().getFormat();
+        String timeZoneId =
+                siteRenderingContext.getDecoration().getPublishDate().getTimezone();
+        TimeZone timeZone =
+                "system".equalsIgnoreCase(timeZoneId) ? TimeZone.getDefault() : TimeZone.getTimeZone(timeZoneId);
 
         EasyFactoryConfiguration config = new EasyFactoryConfiguration(false);
         config.property("safeMode", Boolean.FALSE);
@@ -448,6 +453,7 @@ public class DefaultSiteRenderer implements Renderer {
                 .tool(ClassTool.class)
                 .tool(ComparisonDateTool.class)
                 .property("format", dateFormat)
+                .property("timezone", timeZone)
                 .tool(ConversionTool.class)
                 .property("dateFormat", dateFormat)
                 .tool(DisplayTool.class)
