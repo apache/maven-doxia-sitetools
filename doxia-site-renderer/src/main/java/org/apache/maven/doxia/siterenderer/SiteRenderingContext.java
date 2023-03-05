@@ -66,9 +66,6 @@ public class SiteRenderingContext {
 
     private Map<String, String> moduleExcludes;
 
-    @Deprecated
-    private List<ExtraDoxiaModuleReference> modules = new ArrayList<ExtraDoxiaModuleReference>();
-
     private boolean validate;
 
     private Date publishDate;
@@ -286,34 +283,12 @@ public class SiteRenderingContext {
     }
 
     /**
-     * Add a extra-module source directory: used for Maven 1.x <code>${basedir}/xdocs</code> layout, which contains
-     * <code>xdoc</code> and <code>fml</code>.
-     *
-     * @param moduleBasedir The base directory for module's source files.
-     * @param moduleParserId module's Doxia parser id.
-     */
-    @Deprecated
-    public void addModuleDirectory(File moduleBasedir, String moduleParserId) {
-        this.modules.add(new ExtraDoxiaModuleReference(moduleParserId, moduleBasedir));
-    }
-
-    /**
      * <p>Getter for the field <code>siteDirectories</code>.</p>
      *
      * @return List of site directories files.
      */
     public List<File> getSiteDirectories() {
         return siteDirectories;
-    }
-
-    /**
-     * <p>Getter for the field <code>modules</code>.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    @Deprecated
-    public List<ExtraDoxiaModuleReference> getModules() {
-        return modules;
     }
 
     /**

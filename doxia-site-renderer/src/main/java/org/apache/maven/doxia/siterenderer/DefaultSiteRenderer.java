@@ -65,7 +65,6 @@ import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.parser.module.ParserModule;
 import org.apache.maven.doxia.parser.module.ParserModuleManager;
-import org.apache.maven.doxia.parser.module.ParserModuleNotFoundException;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.site.skin.SkinModel;
 import org.apache.maven.doxia.site.skin.io.xpp3.SkinXpp3Reader;
@@ -177,24 +176,6 @@ public class DefaultSiteRenderer implements Renderer {
             }
         }
 
-        // look in specific modules directories (used for old Maven 1.x site layout: xdoc and fml docs in /xdocs)
-        for (ExtraDoxiaModuleReference module : siteRenderingContext.getModules()) {
-            try {
-                ParserModule parserModule = parserModuleManager.getParserModule(module.getParserId());
-
-                String excludes = (moduleExcludes == null) ? null : moduleExcludes.get(module.getParserId());
-
-                addModuleFiles(
-                        siteRenderingContext.getRootDirectory(),
-                        module.getBasedir(),
-                        parserModule,
-                        excludes,
-                        files,
-                        editable);
-            } catch (ParserModuleNotFoundException e) {
-                throw new RendererException("Unable to find module", e);
-            }
-        }
         return files;
     }
 
