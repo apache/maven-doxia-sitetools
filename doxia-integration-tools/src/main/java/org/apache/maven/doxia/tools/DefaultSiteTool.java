@@ -444,16 +444,6 @@ public class DefaultSiteTool implements SiteTool {
         }
     }
 
-    /** {@inheritDoc} */
-    public MavenProject getParentProject(
-            MavenProject aProject, List<MavenProject> reactorProjects, ArtifactRepository localRepository) {
-        Objects.requireNonNull(aProject, "aProject cannot be null");
-        Objects.requireNonNull(reactorProjects, "reactorProjects cannot be null");
-        Objects.requireNonNull(localRepository, "localRepository cannot be null");
-
-        return aProject.getParent();
-    }
-
     /**
      * Populate the pre-defined <code>parent</code> menu of the decoration model,
      * if used through <code>&lt;menu ref="parent"/&gt;</code>.

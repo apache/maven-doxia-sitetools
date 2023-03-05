@@ -179,22 +179,4 @@ public interface SiteTool {
      * @return a relative path from <code>from</code> to <code>to</code>.
      */
     String getRelativePath(String to, String from);
-
-    /**
-     * Returns the parent POM with interpolated URLs.
-     * If called from Maven 3, just returns <code>project.getParent()</code>, which is already
-     * interpolated. But when called from Maven 2, attempts to source this value from the
-     * <code>reactorProjects</code> parameters if available (reactor env model attributes
-     * are interpolated), or if the reactor is unavailable (-N) resorts to the
-     * <code>project.getParent().getUrl()</code> value which will NOT have been interpolated.
-     *
-     * @param aProject a Maven project, not null.
-     * @param reactorProjects the Maven reactor projects, not null.
-     * @param localRepository the Maven local repository, not null.
-     * @deprecated use {@link MavenProject#getParent()}
-     * @return the parent project with interpolated URLs.
-     */
-    @Deprecated
-    MavenProject getParentProject(
-            MavenProject aProject, List<MavenProject> reactorProjects, ArtifactRepository localRepository);
 }
