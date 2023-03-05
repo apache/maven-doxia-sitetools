@@ -194,28 +194,12 @@ public class SiteRenderingContext {
     }
 
     /**
-     * @deprecated use {@link #setDefaultTitle(String)}
-     */
-    @Deprecated
-    public void setDefaultWindowTitle(String defaultWindowsTitle) {
-        setDefaultTitle(defaultWindowsTitle);
-    }
-
-    /**
      * <p>Setter for the field <code>defaultTitle</code>.</p>
      *
      * @param defaultTitle a {@link java.lang.String} object.
      */
     public void setDefaultTitle(String defaultTitle) {
         this.defaultTitle = defaultTitle;
-    }
-
-    /**
-     * @deprecated use {@link #getDefaultTitle()}
-     */
-    @Deprecated
-    public String getDefaultWindowTitle() {
-        return getDefaultTitle();
     }
 
     /**
