@@ -40,12 +40,11 @@ import java.util.Objects;
 import java.util.StringTokenizer;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
@@ -57,13 +56,8 @@ import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.model.Site;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
@@ -77,6 +71,13 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.transfer.ArtifactNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,16 +96,16 @@ public class DefaultSiteTool implements SiteTool {
     // ----------------------------------------------------------------------
 
     /**
-     * The component that is used to resolve additional artifacts required.
+     * The component that is used to resolve additional required artifacts.
      */
     @Inject
-    private ArtifactResolver artifactResolver;
+    protected RepositorySystem repositorySystem;
 
     /**
-     * The component used for creating artifact instances.
+     * The component used for getting artifact handlers.
      */
     @Inject
-    private ArtifactFactory artifactFactory;
+    private ArtifactHandlerManager artifactHandlerManager;
 
     /**
      * Internationalization.
@@ -128,36 +129,43 @@ public class DefaultSiteTool implements SiteTool {
     // Public methods
     // ----------------------------------------------------------------------
 
+    /** {@inheritDoc} */
     public Artifact getSkinArtifactFromRepository(
-            ArtifactRepository localRepository,
-            List<ArtifactRepository> remoteArtifactRepositories,
-            DecorationModel decoration)
+            RepositorySystemSession repoSession, List<RemoteRepository> remoteProjectRepositories, Skin skin)
             throws SiteToolException {
-        Objects.requireNonNull(localRepository, "localRepository cannot be null");
-        Objects.requireNonNull(remoteArtifactRepositories, "remoteArtifactRepositories cannot be null");
-        Objects.requireNonNull(decoration, "decoration cannot be null");
-        Skin skin = Objects.requireNonNull(decoration.getSkin(), "decoration.skin cannot be null");
+        Objects.requireNonNull(repoSession, "repoSession cannot be null");
+        Objects.requireNonNull(remoteProjectRepositories, "remoteProjectRepositories cannot be null");
+        Objects.requireNonNull(skin, "skin cannot be null");
 
         String version = skin.getVersion();
-        Artifact artifact;
         try {
             if (version == null) {
                 version = Artifact.RELEASE_VERSION;
             }
             VersionRange versionSpec = VersionRange.createFromVersionSpec(version);
-            artifact = artifactFactory.createDependencyArtifact(
-                    skin.getGroupId(), skin.getArtifactId(), versionSpec, "jar", null, null);
+            String type = "jar";
+            Artifact artifact = new DefaultArtifact(
+                    skin.getGroupId(),
+                    skin.getArtifactId(),
+                    versionSpec,
+                    Artifact.SCOPE_RUNTIME,
+                    type,
+                    null,
+                    artifactHandlerManager.getArtifactHandler(type));
+            ArtifactRequest request =
+                    new ArtifactRequest(RepositoryUtils.toArtifact(artifact), remoteProjectRepositories, "remote-skin");
+            ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
 
-            artifactResolver.resolve(artifact, remoteArtifactRepositories, localRepository);
+            return RepositoryUtils.toArtifact(result.getArtifact());
         } catch (InvalidVersionSpecificationException e) {
             throw new SiteToolException("The skin version '" + version + "' is not valid", e);
         } catch (ArtifactResolutionException e) {
-            throw new SiteToolException("Unable to find skin", e);
-        } catch (ArtifactNotFoundException e) {
-            throw new SiteToolException("The skin does not exist", e);
-        }
+            if (e.getCause() instanceof ArtifactNotFoundException) {
+                throw new SiteToolException("The skin does not exist", e.getCause());
+            }
 
-        return artifact;
+            throw new SiteToolException("Unable to find skin", e);
+        }
     }
 
     /**
@@ -325,8 +333,8 @@ public class DefaultSiteTool implements SiteTool {
      * Get a site descriptor from one of the repositories.
      *
      * @param project the Maven project, not null.
-     * @param localRepository the Maven local repository, not null.
-     * @param repositories the Maven remote repositories, not null.
+     * @param repoSession the repository system session, not null.
+     * @param remoteProjectRepositories the Maven remote project repositories, not null.
      * @param locale the locale wanted for the site descriptor, not null.
      * See {@link #getSiteDescriptor(File, Locale)} for details.
      * @return the site descriptor into the local repository after download of it from repositories or null if not
@@ -335,17 +343,17 @@ public class DefaultSiteTool implements SiteTool {
      */
     File getSiteDescriptorFromRepository(
             MavenProject project,
-            ArtifactRepository localRepository,
-            List<ArtifactRepository> repositories,
+            RepositorySystemSession repoSession,
+            List<RemoteRepository> remoteProjectRepositories,
             Locale locale)
             throws SiteToolException {
         Objects.requireNonNull(project, "project cannot be null");
-        Objects.requireNonNull(localRepository, "localRepository cannot be null");
-        Objects.requireNonNull(repositories, "repositories cannot be null");
+        Objects.requireNonNull(repoSession, "repoSession cannot be null");
+        Objects.requireNonNull(remoteProjectRepositories, "remoteProjectRepositories cannot be null");
         Objects.requireNonNull(locale, "locale cannot be null");
 
         try {
-            return resolveSiteDescriptor(project, localRepository, repositories, locale);
+            return resolveSiteDescriptor(project, repoSession, remoteProjectRepositories, locale);
         } catch (ArtifactNotFoundException e) {
             LOGGER.debug("Unable to locate site descriptor", e);
             return null;
@@ -362,20 +370,20 @@ public class DefaultSiteTool implements SiteTool {
             Locale locale,
             MavenProject project,
             List<MavenProject> reactorProjects,
-            ArtifactRepository localRepository,
-            List<ArtifactRepository> repositories)
+            RepositorySystemSession repoSession,
+            List<RemoteRepository> remoteProjectRepositories)
             throws SiteToolException {
         Objects.requireNonNull(locale, "locale cannot be null");
         Objects.requireNonNull(project, "project cannot be null");
         Objects.requireNonNull(reactorProjects, "reactorProjects cannot be null");
-        Objects.requireNonNull(localRepository, "localRepository cannot be null");
-        Objects.requireNonNull(repositories, "repositories cannot be null");
+        Objects.requireNonNull(repoSession, "repoSession cannot be null");
+        Objects.requireNonNull(remoteProjectRepositories, "remoteProjectRepositories cannot be null");
 
         LOGGER.debug("Computing decoration model of '" + project.getId() + "' for "
                 + (locale.equals(SiteTool.DEFAULT_LOCALE) ? "default locale" : "locale '" + locale + "'"));
 
         Map.Entry<DecorationModel, MavenProject> result =
-                getDecorationModel(0, siteDirectory, locale, project, reactorProjects, localRepository, repositories);
+                getDecorationModel(0, siteDirectory, locale, project, repoSession, remoteProjectRepositories);
         DecorationModel decorationModel = result.getKey();
         MavenProject parentProject = result.getValue();
 
@@ -763,8 +771,30 @@ public class DefaultSiteTool implements SiteTool {
 
     /**
      * @param project not null
-     * @param localRepository not null
-     * @param repositories not null
+     * @param localeStr not null
+     * @param remoteProjectRepositories not null
+     * @return the site descriptor artifact request
+     */
+    private ArtifactRequest createSiteDescriptorArtifactRequest(
+            MavenProject project, String localeStr, List<RemoteRepository> remoteProjectRepositories) {
+        String type = "xml";
+        ArtifactHandler artifactHandler = artifactHandlerManager.getArtifactHandler(type);
+        Artifact artifact = new DefaultArtifact(
+                project.getGroupId(),
+                project.getArtifactId(),
+                project.getVersion(),
+                Artifact.SCOPE_RUNTIME,
+                type,
+                "site" + (localeStr.isEmpty() ? "" : "_" + localeStr),
+                artifactHandler);
+        return new ArtifactRequest(
+                RepositoryUtils.toArtifact(artifact), remoteProjectRepositories, "remote-site-descriptor");
+    }
+
+    /**
+     * @param project not null
+     * @param repoSession the repository system session not null
+     * @param remoteProjectRepositories not null
      * @param locale not null
      * @return the resolved site descriptor
      * @throws IOException if any
@@ -773,128 +803,93 @@ public class DefaultSiteTool implements SiteTool {
      */
     private File resolveSiteDescriptor(
             MavenProject project,
-            ArtifactRepository localRepository,
-            List<ArtifactRepository> repositories,
+            RepositorySystemSession repoSession,
+            List<RemoteRepository> remoteProjectRepositories,
             Locale locale)
             throws IOException, ArtifactResolutionException, ArtifactNotFoundException {
         String variant = locale.getVariant();
         String country = locale.getCountry();
         String language = locale.getLanguage();
 
-        Artifact artifact = null;
+        String localeStr = null;
         File siteDescriptor = null;
         boolean found = false;
 
         if (!variant.isEmpty()) {
-            String localeStr = language + "_" + country + "_" + variant;
-            // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
-            artifact = artifactFactory.createArtifactWithClassifier(
-                    project.getGroupId(), project.getArtifactId(), project.getVersion(), "xml", "site_" + localeStr);
+            localeStr = language + "_" + country + "_" + variant;
+            ArtifactRequest request =
+                    createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
 
             try {
-                artifactResolver.resolve(artifact, repositories, localRepository);
+                ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
 
-                siteDescriptor = artifact.getFile();
-
-                // we use zero length files to avoid re-resolution (see below)
-                if (siteDescriptor.length() > 0) {
-                    found = true;
-                } else {
+                siteDescriptor = result.getArtifact().getFile();
+                found = true;
+            } catch (ArtifactResolutionException e) {
+                if (e.getCause() instanceof ArtifactNotFoundException) {
                     LOGGER.debug("No site descriptor found for '" + project.getId() + "' for locale '" + localeStr
                             + "', trying without variant...");
+                } else {
+                    throw e;
                 }
-            } catch (ArtifactNotFoundException e) {
-                LOGGER.debug("Unable to locate site descriptor for locale '" + localeStr + "'", e);
-
-                // we can afford to write an empty descriptor here as we don't expect it to turn up later in the
-                // remote repository, because the parent was already released (and snapshots are updated
-                // automatically if changed)
-                siteDescriptor = new File(localRepository.getBasedir(), localRepository.pathOf(artifact));
-                siteDescriptor.getParentFile().mkdirs();
-                siteDescriptor.createNewFile();
             }
         }
 
         if (!found && !country.isEmpty()) {
-            String localeStr = language + "_" + country;
-            // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
-            artifact = artifactFactory.createArtifactWithClassifier(
-                    project.getGroupId(), project.getArtifactId(), project.getVersion(), "xml", "site_" + localeStr);
+            localeStr = language + "_" + country;
+            ArtifactRequest request =
+                    createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
 
             try {
-                artifactResolver.resolve(artifact, repositories, localRepository);
+                ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
 
-                siteDescriptor = artifact.getFile();
-
-                // we use zero length files to avoid re-resolution (see below)
-                if (siteDescriptor.length() > 0) {
-                    found = true;
-                } else {
+                siteDescriptor = result.getArtifact().getFile();
+                found = true;
+            } catch (ArtifactResolutionException e) {
+                if (e.getCause() instanceof ArtifactNotFoundException) {
                     LOGGER.debug("No site descriptor found for '" + project.getId() + "' for locale '" + localeStr
                             + "', trying without country...");
+                } else {
+                    throw e;
                 }
-            } catch (ArtifactNotFoundException e) {
-                LOGGER.debug("Unable to locate site descriptor for locale '" + localeStr + "'", e);
-
-                // we can afford to write an empty descriptor here as we don't expect it to turn up later in the
-                // remote repository, because the parent was already released (and snapshots are updated
-                // automatically if changed)
-                siteDescriptor = new File(localRepository.getBasedir(), localRepository.pathOf(artifact));
-                siteDescriptor.getParentFile().mkdirs();
-                siteDescriptor.createNewFile();
             }
         }
 
         if (!found && !language.isEmpty()) {
-            String localeStr = language;
-            // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
-            artifact = artifactFactory.createArtifactWithClassifier(
-                    project.getGroupId(), project.getArtifactId(), project.getVersion(), "xml", "site_" + localeStr);
+            localeStr = language;
+            ArtifactRequest request =
+                    createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
 
             try {
-                artifactResolver.resolve(artifact, repositories, localRepository);
+                ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
 
-                siteDescriptor = artifact.getFile();
-
-                // we use zero length files to avoid re-resolution (see below)
-                if (siteDescriptor.length() > 0) {
-                    found = true;
-                } else {
+                siteDescriptor = result.getArtifact().getFile();
+                found = true;
+            } catch (ArtifactResolutionException e) {
+                if (e.getCause() instanceof ArtifactNotFoundException) {
                     LOGGER.debug("No site descriptor found for '" + project.getId() + "' for locale '" + localeStr
-                            + "', trying default locale...");
+                            + "', trying without language (default locale)...");
+                } else {
+                    throw e;
                 }
-            } catch (ArtifactNotFoundException e) {
-                LOGGER.debug("Unable to locate site descriptor for locale '" + localeStr + "'", e);
-
-                // we can afford to write an empty descriptor here as we don't expect it to turn up later in the
-                // remote repository, because the parent was already released (and snapshots are updated
-                // automatically if changed)
-                siteDescriptor = new File(localRepository.getBasedir(), localRepository.pathOf(artifact));
-                siteDescriptor.getParentFile().mkdirs();
-                siteDescriptor.createNewFile();
             }
         }
 
         if (!found) {
-            artifact = artifactFactory.createArtifactWithClassifier(
-                    project.getGroupId(), project.getArtifactId(), project.getVersion(), "xml", "site");
+            localeStr = "";
+            ArtifactRequest request =
+                    createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
             try {
-                artifactResolver.resolve(artifact, repositories, localRepository);
-            } catch (ArtifactNotFoundException e) {
-                // see above regarding this zero length file
-                siteDescriptor = new File(localRepository.getBasedir(), localRepository.pathOf(artifact));
-                siteDescriptor.getParentFile().mkdirs();
-                siteDescriptor.createNewFile();
+                ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
+
+                siteDescriptor = result.getArtifact().getFile();
+            } catch (ArtifactResolutionException e) {
+                if (e.getCause() instanceof ArtifactNotFoundException) {
+                    LOGGER.debug("No site descriptor found for '" + project.getId() + "' with default locale.");
+                    throw (ArtifactNotFoundException) e.getCause();
+                }
 
                 throw e;
-            }
-
-            siteDescriptor = artifact.getFile();
-
-            // we use zero length files to avoid re-resolution (see below)
-            if (siteDescriptor.length() == 0) {
-                LOGGER.debug("No site descriptor found for '" + project.getId() + "' with default locale.");
-                siteDescriptor = null;
             }
         }
 
@@ -906,9 +901,8 @@ public class DefaultSiteTool implements SiteTool {
      * @param siteDirectory, can be null if project.basedir is null, ie POM from repository
      * @param locale not null
      * @param project not null
-     * @param reactorProjects not null
-     * @param localRepository not null
-     * @param repositories not null
+     * @param repoSession not null
+     * @param remoteProjectRepositories not null
      * @return the decoration model depending the locale and the parent project
      * @throws SiteToolException if any
      */
@@ -917,16 +911,16 @@ public class DefaultSiteTool implements SiteTool {
             File siteDirectory,
             Locale locale,
             MavenProject project,
-            List<MavenProject> reactorProjects,
-            ArtifactRepository localRepository,
-            List<ArtifactRepository> repositories)
+            RepositorySystemSession repoSession,
+            List<RemoteRepository> remoteProjectRepositories)
             throws SiteToolException {
         // 1. get site descriptor File
         File siteDescriptor;
         if (project.getBasedir() == null) {
             // POM is in the repository: look into the repository for site descriptor
             try {
-                siteDescriptor = getSiteDescriptorFromRepository(project, localRepository, repositories, locale);
+                siteDescriptor =
+                        getSiteDescriptorFromRepository(project, repoSession, remoteProjectRepositories, locale);
             } catch (SiteToolException e) {
                 throw new SiteToolException("The site descriptor cannot be resolved from the repository", e);
             }
@@ -983,13 +977,7 @@ public class DefaultSiteTool implements SiteTool {
             }
 
             DecorationModel parentDecorationModel = getDecorationModel(
-                            depth,
-                            parentSiteDirectory,
-                            locale,
-                            parentProject,
-                            reactorProjects,
-                            localRepository,
-                            repositories)
+                            depth, parentSiteDirectory, locale, parentProject, repoSession, remoteProjectRepositories)
                     .getKey();
 
             // MSHARED-116 requires an empty decoration model (instead of a null one)

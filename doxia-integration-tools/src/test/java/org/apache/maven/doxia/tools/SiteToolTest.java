@@ -41,11 +41,16 @@ import org.apache.maven.doxia.site.decoration.Skin;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
 import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
+import org.eclipse.aether.repository.LocalRepository;
 import org.junit.jupiter.api.Test;
 
 import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
@@ -105,6 +110,13 @@ public class SiteToolTest {
         return new File(getLocalRepo().getBasedir());
     }
 
+    protected RepositorySystemSession newRepoSession() throws Exception {
+        DefaultRepositorySystemSession repoSession = MavenRepositorySystemUtils.newSession();
+        repoSession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repoSession, new LocalRepository(getLocalRepoDir())));
+        return repoSession;
+    }
+
     /**
      * @throws Exception
      */
@@ -113,13 +125,11 @@ public class SiteToolTest {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
-        DecorationModel decorationModel = new DecorationModel();
         Skin skin = new Skin();
         skin.setGroupId("org.apache.maven.skins");
         skin.setArtifactId("maven-stylus-skin");
-        decorationModel.setSkin(skin);
-        assertNotNull(tool.getSkinArtifactFromRepository(
-                getLocalRepo(), project.getRemoteArtifactRepositories(), decorationModel));
+        assertNotNull(
+                tool.getSkinArtifactFromRepository(newRepoSession(), project.getRemoteProjectRepositories(), skin));
     }
 
     private void checkGetRelativePathDirectory(SiteTool tool, String relative, String to, String from) {
@@ -330,8 +340,8 @@ public class SiteToolTest {
         assertEquals(
                 tool.getSiteDescriptorFromRepository(
                                 project,
-                                getLocalRepo(),
-                                project.getRemoteArtifactRepositories(),
+                                newRepoSession(),
+                                project.getRemoteProjectRepositories(),
                                 SiteTool.DEFAULT_LOCALE)
                         .toString(),
                 result);
@@ -353,8 +363,8 @@ public class SiteToolTest {
                 SiteTool.DEFAULT_LOCALE,
                 project,
                 reactorProjects,
-                getLocalRepo(),
-                project.getRemoteArtifactRepositories());
+                newRepoSession(),
+                project.getRemoteProjectRepositories());
         assertNotNull(model);
         assertNotNull(model.getBannerLeft());
         assertEquals("Maven Site", model.getBannerLeft().getName());
@@ -379,8 +389,8 @@ public class SiteToolTest {
                 SiteTool.DEFAULT_LOCALE,
                 project,
                 reactorProjects,
-                getLocalRepo(),
-                project.getRemoteArtifactRepositories());
+                newRepoSession(),
+                project.getRemoteProjectRepositories());
         assertNotNull(modelFromRepo);
         assertNotNull(modelFromRepo.getBannerLeft());
         assertEquals("dummy", modelFromRepo.getBannerLeft().getName());
@@ -407,8 +417,8 @@ public class SiteToolTest {
                 SiteTool.DEFAULT_LOCALE,
                 project,
                 reactorProjects,
-                getLocalRepo(),
-                project.getRemoteArtifactRepositories());
+                newRepoSession(),
+                project.getRemoteProjectRepositories());
         assertNotNull(model);
     }
 
@@ -469,8 +479,8 @@ public class SiteToolTest {
                 SiteTool.DEFAULT_LOCALE,
                 childProject,
                 reactorProjects,
-                getLocalRepo(),
-                childProject.getRemoteArtifactRepositories());
+                newRepoSession(),
+                childProject.getRemoteProjectRepositories());
         assertNotNull(model);
 
         writeModel(model, "unit/interpolation-child-test/effective-site.xml");

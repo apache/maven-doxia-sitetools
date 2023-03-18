@@ -24,10 +24,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.decoration.Skin;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.RemoteRepository;
 
 /**
  * Tool to play with <a href="http://maven.apache.org/doxia/">Doxia</a> objects
@@ -46,17 +48,14 @@ public interface SiteTool {
     /**
      * Get a skin artifact from one of the repositories.
      *
-     * @param localRepository the Maven local repository, not null.
-     * @param remoteArtifactRepositories the Maven remote repositories, not null.
-     * @param decoration the Doxia site descriptor model, not null.
-     * @return the <code>Skin</code> artifact defined in a <code>DecorationModel</code> from a given project and a
-     * local repository
+     * @param repoSession the repository system session, not null.
+     * @param remoteProjectRepositories the Maven remote project repositories, not null.
+     * @param skin the Skin model, not null.
+     * @return the <code>Skin</code> artifact defined in a <code>DecorationModel</code> from a given project
      * @throws SiteToolException if any
      */
     Artifact getSkinArtifactFromRepository(
-            ArtifactRepository localRepository,
-            List<ArtifactRepository> remoteArtifactRepositories,
-            DecorationModel decoration)
+            RepositorySystemSession repoSession, List<RemoteRepository> remoteProjectRepositories, Skin skin)
             throws SiteToolException;
 
     /**
@@ -115,8 +114,8 @@ public interface SiteTool {
      * See {@link #getSiteDescriptor(File, Locale)} for details.
      * @param project the Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.
-     * @param localRepository the Maven local repository, not null.
-     * @param repositories the Maven remote repositories, not null.
+     * @param repoSession the repository system session, not null.
+     * @param remoteProjectRepositories the Maven remote project repositories, not null.
      * @return the <code>DecorationModel</code> object corresponding to the <code>site.xml</code> file with some
      * interpolations.
      * @throws SiteToolException if any
@@ -127,8 +126,8 @@ public interface SiteTool {
             Locale locale,
             MavenProject project,
             List<MavenProject> reactorProjects,
-            ArtifactRepository localRepository,
-            List<ArtifactRepository> repositories)
+            RepositorySystemSession repoSession,
+            List<RemoteRepository> remoteProjectRepositories)
             throws SiteToolException;
 
     /**

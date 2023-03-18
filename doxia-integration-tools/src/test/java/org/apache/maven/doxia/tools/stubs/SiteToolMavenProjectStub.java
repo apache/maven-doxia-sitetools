@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
@@ -33,6 +34,7 @@ import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Site;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.eclipse.aether.repository.RemoteRepository;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -109,6 +111,11 @@ public class SiteToolMavenProjectStub extends MavenProjectStub {
                 "central", "https://repo1.maven.org/maven2", new DefaultRepositoryLayout());
 
         return Collections.singletonList(repository);
+    }
+
+    /** {@inheritDoc} */
+    public List<RemoteRepository> getRemoteProjectRepositories() {
+        return RepositoryUtils.toRepos(getRemoteArtifactRepositories());
     }
 
     /** {@inheritDoc} */
