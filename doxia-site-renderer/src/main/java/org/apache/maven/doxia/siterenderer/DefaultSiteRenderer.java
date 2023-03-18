@@ -145,7 +145,7 @@ public class DefaultSiteRenderer implements Renderer {
     private static final String DOXIA_SITE_RENDERER_VERSION = getSiteRendererVersion();
 
     // ----------------------------------------------------------------------
-    // Renderer implementation
+    // SiteRenderer implementation
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
@@ -232,9 +232,9 @@ public class DefaultSiteRenderer implements Renderer {
                 key = StringUtils.replace(key, "\\", "/");
 
                 if (files.containsKey(key)) {
-                    DocumentRenderer renderer = files.get(key);
+                    DocumentRenderer docRenderer = files.get(key);
 
-                    RenderingContext originalContext = renderer.getRenderingContext();
+                    RenderingContext originalContext = docRenderer.getRenderingContext();
 
                     File originalDoc = new File(originalContext.getBasedir(), originalContext.getInputName());
 

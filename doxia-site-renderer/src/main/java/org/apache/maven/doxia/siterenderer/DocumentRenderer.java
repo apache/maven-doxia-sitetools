@@ -39,7 +39,7 @@ public interface DocumentRenderer {
      * @throws java.io.FileNotFoundException if it bombs.
      * @throws java.io.UnsupportedEncodingException if it bombs.
      */
-    void renderDocument(Writer writer, Renderer siteRenderer, SiteRenderingContext siteRenderingContext)
+    void renderDocument(Writer writer, SiteRenderer siteRenderer, SiteRenderingContext siteRenderingContext)
             throws RendererException, FileNotFoundException, UnsupportedEncodingException;
 
     /**

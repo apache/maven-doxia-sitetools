@@ -85,14 +85,9 @@ public class DefaultSiteRendererTest {
     private static final String OUTPUT = "target/output";
 
     /**
-     * The renderer used to produce output.
+     * The site renderer used to produce output.
      */
-    private Renderer renderer;
-
-    /**
-     * The locale before executing tests.
-     */
-    private Locale oldLocale;
+    private SiteRenderer siteRenderer;
 
     @Inject
     private PlexusContainer container;
@@ -106,7 +101,7 @@ public class DefaultSiteRendererTest {
      */
     @BeforeEach
     protected void setUp() throws Exception {
-        renderer = (Renderer) container.lookup(Renderer.class);
+        siteRenderer = (SiteRenderer) container.lookup(SiteRenderer.class);
 
         InputStream skinIS = getClass().getResourceAsStream("velocity-toolmanager.vm");
         JarOutputStream jarOS = new JarOutputStream(new FileOutputStream(skinJar));
@@ -137,7 +132,7 @@ public class DefaultSiteRendererTest {
      */
     @AfterEach
     protected void tearDown() throws Exception {
-        container.release(renderer);
+        container.release(siteRenderer);
     }
 
     /**
@@ -154,13 +149,13 @@ public class DefaultSiteRendererTest {
         Mockito.doThrow(new ParseException(exceptionMessage))
                 .when(doxiaSpy)
                 .parse(Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any(), Mockito.anyString());
-        Renderer renderer = container.lookup(Renderer.class);
-        ReflectionUtils.setVariableValueInObject(renderer, "doxia", doxiaSpy);
+        SiteRenderer siteRenderer = container.lookup(SiteRenderer.class);
+        ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
 
         RenderingContext renderingContext = new RenderingContext(testBasedir, "", testDocumentName, "xdoc", "", false);
 
         try {
-            renderer.renderDocument(null, renderingContext, new SiteRenderingContext());
+            siteRenderer.renderDocument(null, renderingContext, new SiteRenderingContext());
             fail("should fail with exception");
         } catch (RendererException e) {
             assertEquals(
@@ -184,13 +179,13 @@ public class DefaultSiteRendererTest {
         Mockito.doThrow(new ParseException(exceptionMessage, 42, 36))
                 .when(doxiaSpy)
                 .parse(Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any(), Mockito.anyString());
-        Renderer renderer = container.lookup(Renderer.class);
-        ReflectionUtils.setVariableValueInObject(renderer, "doxia", doxiaSpy);
+        SiteRenderer siteRenderer = container.lookup(SiteRenderer.class);
+        ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
 
         RenderingContext renderingContext = new RenderingContext(testBasedir, "", testDocumentName, "xdoc", "", false);
 
         try {
-            renderer.renderDocument(null, renderingContext, new SiteRenderingContext());
+            siteRenderer.renderDocument(null, renderingContext, new SiteRenderingContext());
             fail("should fail with exception");
         } catch (RendererException e) {
             assertEquals(
@@ -217,11 +212,11 @@ public class DefaultSiteRendererTest {
 
         SiteRenderingContext ctxt = getSiteRenderingContext(decoration, "src/test/resources/site", false);
         ctxt.setRootDirectory(getTestFile(""));
-        renderer.render(renderer.locateDocumentFiles(ctxt, true).values(), ctxt, getTestFile(OUTPUT));
+        siteRenderer.render(siteRenderer.locateDocumentFiles(ctxt, true).values(), ctxt, getTestFile(OUTPUT));
 
         ctxt = getSiteRenderingContext(decoration, "src/test/resources/site-validate", true);
         ctxt.setRootDirectory(getTestFile(""));
-        renderer.render(renderer.locateDocumentFiles(ctxt, true).values(), ctxt, getTestFile(OUTPUT));
+        siteRenderer.render(siteRenderer.locateDocumentFiles(ctxt, true).values(), ctxt, getTestFile(OUTPUT));
 
         // ----------------------------------------------------------------------
         // Verify specific pages
@@ -254,9 +249,9 @@ public class DefaultSiteRendererTest {
 
         SiteRenderingContext context = new SiteRenderingContext();
 
-        renderer.render(Collections.singletonList(docRenderer), context, new File("target/output"));
+        siteRenderer.render(Collections.singletonList(docRenderer), context, new File("target/output"));
 
-        verify(docRenderer).renderDocument(isNull(Writer.class), eq(renderer), eq(context));
+        verify(docRenderer).renderDocument(isNull(Writer.class), eq(siteRenderer), eq(context));
     }
 
     @Test
@@ -279,7 +274,7 @@ public class DefaultSiteRendererTest {
         siteRenderingContext.setTemplateName("org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm");
         RenderingContext context = new RenderingContext(new File(""), "document.html", "generator");
         SiteRendererSink sink = new SiteRendererSink(context);
-        renderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
+        siteRenderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
 
         String renderResult = writer.toString();
         String expectedResult = IOUtils.toString(
@@ -306,10 +301,10 @@ public class DefaultSiteRendererTest {
                 "org.group", "artifact", VersionRange.createFromVersion("1.1"), null, "jar", "", null);
         skin.setFile(skinFile);
         SiteRenderingContext siteRenderingContext =
-                renderer.createContextForSkin(skin, attributes, new DecorationModel(), "defaultitle", Locale.ROOT);
+                siteRenderer.createContextForSkin(skin, attributes, new DecorationModel(), "defaultitle", Locale.ROOT);
         RenderingContext context = new RenderingContext(new File(""), "document.html", "generator");
         SiteRendererSink sink = new SiteRendererSink(context);
-        renderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
+        siteRenderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
         String renderResult = writer.toString();
         String expectedResult = StringUtils.unifyLineSeparators(IOUtils.toString(
                 getClass().getResourceAsStream("velocity-toolmanager.expected.txt"), StandardCharsets.UTF_8));
@@ -318,7 +313,7 @@ public class DefaultSiteRendererTest {
 
     @Test
     public void testMatchVersion() throws Exception {
-        DefaultSiteRenderer r = (DefaultSiteRenderer) renderer;
+        DefaultSiteRenderer r = (DefaultSiteRenderer) siteRenderer;
         assertTrue(r.matchVersion("1.7", "1.7"));
         assertFalse(r.matchVersion("1.7", "1.8"));
     }
@@ -334,7 +329,7 @@ public class DefaultSiteRendererTest {
                 "org.group", "artifact", VersionRange.createFromVersion("1.1"), null, "jar", "", null);
         skin.setFile(skinFile);
         SiteRenderingContext siteRenderingContext =
-                renderer.createContextForSkin(skin, attributes, decoration, "defaultTitle", Locale.ROOT);
+                siteRenderer.createContextForSkin(skin, attributes, decoration, "defaultTitle", Locale.ROOT);
         siteRenderingContext.addSiteDirectory(getTestFile(siteDir));
         siteRenderingContext.setValidate(validate);
 
