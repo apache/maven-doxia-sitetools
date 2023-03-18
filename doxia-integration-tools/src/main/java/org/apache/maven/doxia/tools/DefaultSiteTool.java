@@ -397,7 +397,7 @@ public class DefaultSiteTool implements SiteTool {
         }
 
         try {
-            populateModulesMenu(decorationModel, locale, project, reactorProjects, localRepository, true);
+            populateModulesMenu(decorationModel, locale, project, reactorProjects, true);
         } catch (IOException e) {
             throw new SiteToolException("Error while populating modules menu", e);
         }
@@ -520,7 +520,6 @@ public class DefaultSiteTool implements SiteTool {
      * @param locale the locale used for the i18n in DecorationModel, not null.
      * @param project a Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.
-     * @param localRepository the Maven local repository, not null.
      * @param keepInheritedRefs used for inherited references.
      * @throws SiteToolException if any
      * @throws IOException
@@ -530,14 +529,12 @@ public class DefaultSiteTool implements SiteTool {
             Locale locale,
             MavenProject project,
             List<MavenProject> reactorProjects,
-            ArtifactRepository localRepository,
             boolean keepInheritedRefs)
             throws SiteToolException, IOException {
         Objects.requireNonNull(decorationModel, "decorationModel cannot be null");
         Objects.requireNonNull(locale, "locale cannot be null");
         Objects.requireNonNull(project, "project cannot be null");
         Objects.requireNonNull(reactorProjects, "reactorProjects cannot be null");
-        Objects.requireNonNull(localRepository, "localRepository cannot be null");
 
         Menu menu = decorationModel.getMenuRef("modules");
 
@@ -550,37 +547,17 @@ public class DefaultSiteTool implements SiteTool {
         }
 
         // we require child modules and reactors to process module menu
-        if (project.getModules().size() > 0) {
+        if (!project.getModules().isEmpty()) {
             if (menu.getName() == null) {
                 menu.setName(i18n.getString("site-tool", locale, "decorationModel.menu.projectmodules"));
             }
 
-            for (String module : (List<String>) project.getModules()) {
+            for (String module : project.getModules()) {
                 MavenProject moduleProject = getModuleFromReactor(project, reactorProjects, module);
 
                 if (moduleProject == null) {
-                    LOGGER.warn("Module " + module + " not found in reactor: loading locally");
-
-                    File f = new File(project.getBasedir(), module + "/pom.xml");
-                    if (f.exists()) {
-                        try {
-                            ProjectBuildingRequest request = new DefaultProjectBuildingRequest();
-                            request.setLocalRepository(localRepository);
-
-                            ProjectBuildingResult result = projectBuilder.build(f, request);
-                            moduleProject = result.getProject();
-                        } catch (ProjectBuildingException e) {
-                            throw new SiteToolException("Unable to read local module POM", e);
-                        }
-                    } else {
-                        LOGGER.warn("No filesystem module POM available");
-
-                        moduleProject = new MavenProject();
-                        moduleProject.setName(module);
-                        moduleProject.setDistributionManagement(new DistributionManagement());
-                        moduleProject.getDistributionManagement().setSite(new Site());
-                        moduleProject.getDistributionManagement().getSite().setUrl(module);
-                    }
+                    LOGGER.debug("Module " + module + " not found in reactor");
+                    continue;
                 }
 
                 final String pluginId = "org.apache.maven.plugins:maven-site-plugin";
@@ -602,8 +579,8 @@ public class DefaultSiteTool implements SiteTool {
         }
     }
 
-    private static MavenProject getModuleFromReactor(
-            MavenProject project, List<MavenProject> reactorProjects, String module) throws IOException {
+    private MavenProject getModuleFromReactor(MavenProject project, List<MavenProject> reactorProjects, String module)
+            throws IOException {
         File moduleBasedir = new File(project.getBasedir(), module).getCanonicalFile();
 
         for (MavenProject reactorProject : reactorProjects) {
