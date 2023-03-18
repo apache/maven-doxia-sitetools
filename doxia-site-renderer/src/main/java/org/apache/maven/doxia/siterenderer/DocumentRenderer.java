@@ -26,7 +26,7 @@ import java.io.Writer;
  * Renders a page in a site, whatever the source is: a Doxia source file, a report or anything else.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @see RenderingContext document rendering context
+ * @see DocumentRenderingContext document rendering context
  */
 public interface DocumentRenderer {
     /**
@@ -50,11 +50,11 @@ public interface DocumentRenderer {
     String getOutputName();
 
     /**
-     * Return the RenderingContext of the document.
+     * Return the rendering context of the document.
      *
-     * @return RenderingContext.
+     * @return DocumentRenderingContext.
      */
-    RenderingContext getRenderingContext();
+    DocumentRenderingContext getRenderingContext();
 
     /**
      * Whether to always overwrite the document, or only do so when it is changed.

@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.maven.doxia.markup.HtmlMarkup;
 import org.apache.maven.doxia.module.xhtml5.Xhtml5Sink;
 import org.apache.maven.doxia.siterenderer.DocumentContent;
-import org.apache.maven.doxia.siterenderer.RenderingContext;
+import org.apache.maven.doxia.siterenderer.DocumentRenderingContext;
 import org.apache.maven.doxia.util.HtmlTools;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -49,29 +49,29 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
 
     private final Writer writer;
 
-    private RenderingContext renderingContext;
+    private DocumentRenderingContext docRenderingContext;
 
     /**
      * Construct a new SiteRendererSink for a document.
      *
-     * @param renderingContext the document's RenderingContext.
+     * @param docRenderingContext the document's rendering context.
      */
-    public SiteRendererSink(RenderingContext renderingContext) {
-        this(new StringWriter(), renderingContext);
+    public SiteRendererSink(DocumentRenderingContext docRenderingContext) {
+        this(new StringWriter(), docRenderingContext);
     }
 
     /**
      * Construct a new SiteRendererSink for a document.
      *
      * @param writer the writer for the sink.
-     * @param renderingContext the document's RenderingContext.
+     * @param docRenderingContext the document's rendering context.
      */
-    private SiteRendererSink(StringWriter writer, RenderingContext renderingContext) {
+    private SiteRendererSink(StringWriter writer, DocumentRenderingContext docRenderingContext) {
         super(writer);
 
         this.writer = writer;
         this.headWriter = new StringWriter();
-        this.renderingContext = renderingContext;
+        this.docRenderingContext = docRenderingContext;
 
         /* the template is expected to have used the main tag, which can be used only once */
         super.contentStack.push(HtmlMarkup.MAIN);
@@ -177,8 +177,8 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
             return;
         }
 
-        if (renderingContext != null) {
-            String relativePathToBasedir = renderingContext.getRelativePath();
+        if (docRenderingContext != null) {
+            String relativePathToBasedir = docRenderingContext.getRelativePath();
 
             if (relativePathToBasedir == null) {
                 txt = StringUtils.replace(txt, "$relativePath", ".");
@@ -222,7 +222,7 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
     }
 
     /** {@inheritDoc} */
-    public RenderingContext getRenderingContext() {
-        return renderingContext;
+    public DocumentRenderingContext getRenderingContext() {
+        return docRenderingContext;
     }
 }

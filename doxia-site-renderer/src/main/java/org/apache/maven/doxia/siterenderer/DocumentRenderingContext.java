@@ -32,8 +32,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @since 1.5 (was since 1.1 in o.a.m.d.sink.render)
  */
-public class RenderingContext // TODO rename to DocumentRenderingContext
- {
+public class DocumentRenderingContext {
     private final File basedir;
 
     private final String basedirRelativePath;
@@ -56,7 +55,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
 
     /**
      * <p>
-     * Constructor for RenderingContext when document is not rendered from a Doxia markup source.
+     * Constructor for rendering context when document is not rendered from a Doxia markup source.
      * </p>
      *
      * @param basedir the pseudo-source base directory.
@@ -65,11 +64,11 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
      * @since 1.8
      */
-    public RenderingContext(File basedir, String document, String generator) {
+    public DocumentRenderingContext(File basedir, String document, String generator) {
         this(basedir, null, document, null, null, false, generator);
     }
 
-    public RenderingContext(
+    public DocumentRenderingContext(
             File basedir,
             String basedirRelativePath,
             String document,
@@ -81,7 +80,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
 
     /**
      * <p>
-     * Constructor for document RenderingContext.
+     * Constructor for document rendering context.
      * </p>
      *
      * @param basedir the source base directory (not null, pseudo value when not a Doxia source).
@@ -95,7 +94,7 @@ public class RenderingContext // TODO rename to DocumentRenderingContext
      * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
      * @since 1.8
      */
-    public RenderingContext(
+    public DocumentRenderingContext(
             File basedir,
             String basedirRelativePath,
             String document,

@@ -112,6 +112,6 @@ public interface SiteRenderer {
      * @throws FileNotFoundException if it bombs.
      * @throws UnsupportedEncodingException if it bombs.
      */
-    void renderDocument(Writer writer, RenderingContext docRenderingContext, SiteRenderingContext siteContext)
+    void renderDocument(Writer writer, DocumentRenderingContext docRenderingContext, SiteRenderingContext siteContext)
             throws RendererException, FileNotFoundException, UnsupportedEncodingException;
 }

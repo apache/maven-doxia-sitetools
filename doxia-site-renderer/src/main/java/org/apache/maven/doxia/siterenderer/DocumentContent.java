@@ -60,5 +60,5 @@ public interface DocumentContent {
      * Get the document rendering context.
      * @return the document rendering context
      */
-    RenderingContext getRenderingContext();
+    DocumentRenderingContext getRenderingContext();
 }

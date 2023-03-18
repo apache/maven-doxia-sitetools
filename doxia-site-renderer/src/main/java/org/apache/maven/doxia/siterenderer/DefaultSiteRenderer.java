@@ -220,23 +220,24 @@ public class DefaultSiteRenderer implements Renderer {
             docs.addAll(velocityFiles);
 
             for (String doc : docs) {
-                RenderingContext context = new RenderingContext(
+                DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
                         moduleBasedir, moduleRelativePath, doc, module.getParserId(), extension, editable);
 
                 // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
                 if (endsWithIgnoreCase(doc, ".vm")) {
-                    context.setAttribute("velocity", "true");
+                    docRenderingContext.setAttribute("velocity", "true");
                 }
 
-                String key = context.getOutputName();
+                String key = docRenderingContext.getOutputName();
                 key = StringUtils.replace(key, "\\", "/");
 
                 if (files.containsKey(key)) {
                     DocumentRenderer docRenderer = files.get(key);
 
-                    RenderingContext originalContext = docRenderer.getRenderingContext();
+                    DocumentRenderingContext originalDocRenderingContext = docRenderer.getRenderingContext();
 
-                    File originalDoc = new File(originalContext.getBasedir(), originalContext.getInputName());
+                    File originalDoc = new File(
+                            originalDocRenderingContext.getBasedir(), originalDocRenderingContext.getInputName());
 
                     throw new RendererException("File '" + module.getSourceDirectory() + File.separator + doc
                             + "' clashes with existing '" + originalDoc + "'.");
@@ -246,9 +247,11 @@ public class DefaultSiteRenderer implements Renderer {
                 // -----------------------------------------------------------------------
                 for (Map.Entry<String, DocumentRenderer> entry : files.entrySet()) {
                     if (entry.getKey().equalsIgnoreCase(key)) {
-                        RenderingContext originalContext = entry.getValue().getRenderingContext();
+                        DocumentRenderingContext originalDocRenderingContext =
+                                entry.getValue().getRenderingContext();
 
-                        File originalDoc = new File(originalContext.getBasedir(), originalContext.getInputName());
+                        File originalDoc = new File(
+                                originalDocRenderingContext.getBasedir(), originalDocRenderingContext.getInputName());
 
                         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                             throw new RendererException("File '" + module.getSourceDirectory() + File.separator + doc
@@ -262,7 +265,7 @@ public class DefaultSiteRenderer implements Renderer {
                     }
                 }
 
-                files.put(key, new DoxiaDocumentRenderer(context));
+                files.put(key, new DoxiaDocumentRenderer(docRenderingContext));
             }
         }
     }
@@ -272,11 +275,11 @@ public class DefaultSiteRenderer implements Renderer {
             Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext, File outputDirectory)
             throws RendererException, IOException {
         for (DocumentRenderer docRenderer : documents) {
-            RenderingContext renderingContext = docRenderer.getRenderingContext();
+            DocumentRenderingContext docRenderingContext = docRenderer.getRenderingContext();
 
             File outputFile = new File(outputDirectory, docRenderer.getOutputName());
 
-            File inputFile = new File(renderingContext.getBasedir(), renderingContext.getInputName());
+            File inputFile = new File(docRenderingContext.getBasedir(), docRenderingContext.getInputName());
 
             boolean modified = !outputFile.exists()
                     || (inputFile.lastModified() > outputFile.lastModified())
@@ -309,7 +312,8 @@ public class DefaultSiteRenderer implements Renderer {
     }
 
     /** {@inheritDoc} */
-    public void renderDocument(Writer writer, RenderingContext docRenderingContext, SiteRenderingContext siteContext)
+    public void renderDocument(
+            Writer writer, DocumentRenderingContext docRenderingContext, SiteRenderingContext siteContext)
             throws RendererException, FileNotFoundException, UnsupportedEncodingException {
         SiteRendererSink sink = new SiteRendererSink(docRenderingContext);
 
@@ -389,7 +393,7 @@ public class DefaultSiteRenderer implements Renderer {
     }
 
     private void saveVelocityProcessedContent(
-            RenderingContext docRenderingContext, SiteRenderingContext siteContext, String doxiaContent)
+            DocumentRenderingContext docRenderingContext, SiteRenderingContext siteContext, String doxiaContent)
             throws IOException {
         if (!siteContext.getProcessedContentOutput().exists()) {
             siteContext.getProcessedContentOutput().mkdirs();
@@ -462,23 +466,23 @@ public class DefaultSiteRenderer implements Renderer {
     /**
      * Create a Velocity Context for a Doxia document, containing every information about rendered document.
      *
-     * @param renderingContext the document's RenderingContext
+     * @param docRenderingContext the document's rendering context
      * @param siteRenderingContext the site rendering context
      * @return a Velocity tools managed context
      */
     protected Context createDocumentVelocityContext(
-            RenderingContext renderingContext, SiteRenderingContext siteRenderingContext) {
+            DocumentRenderingContext docRenderingContext, SiteRenderingContext siteRenderingContext) {
         Context context = createToolManagedVelocityContext(siteRenderingContext);
         // ----------------------------------------------------------------------
         // Data objects
         // ----------------------------------------------------------------------
 
-        context.put("relativePath", renderingContext.getRelativePath());
+        context.put("relativePath", docRenderingContext.getRelativePath());
 
-        String currentFileName = renderingContext.getOutputName().replace('\\', '/');
+        String currentFileName = docRenderingContext.getOutputName().replace('\\', '/');
         context.put("currentFileName", currentFileName);
 
-        context.put("alignedFileName", PathTool.calculateLink(currentFileName, renderingContext.getRelativePath()));
+        context.put("alignedFileName", PathTool.calculateLink(currentFileName, docRenderingContext.getRelativePath()));
 
         context.put("decoration", siteRenderingContext.getDecoration());
 

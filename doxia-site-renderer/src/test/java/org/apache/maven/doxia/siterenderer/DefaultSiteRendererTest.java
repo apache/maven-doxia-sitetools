@@ -152,10 +152,11 @@ public class DefaultSiteRendererTest {
         SiteRenderer siteRenderer = container.lookup(SiteRenderer.class);
         ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
 
-        RenderingContext renderingContext = new RenderingContext(testBasedir, "", testDocumentName, "xdoc", "", false);
+        DocumentRenderingContext docRenderingContext =
+                new DocumentRenderingContext(testBasedir, "", testDocumentName, "xdoc", "", false);
 
         try {
-            siteRenderer.renderDocument(null, renderingContext, new SiteRenderingContext());
+            siteRenderer.renderDocument(null, docRenderingContext, new SiteRenderingContext());
             fail("should fail with exception");
         } catch (RendererException e) {
             assertEquals(
@@ -182,10 +183,11 @@ public class DefaultSiteRendererTest {
         SiteRenderer siteRenderer = container.lookup(SiteRenderer.class);
         ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
 
-        RenderingContext renderingContext = new RenderingContext(testBasedir, "", testDocumentName, "xdoc", "", false);
+        DocumentRenderingContext docRenderingContext =
+                new DocumentRenderingContext(testBasedir, "", testDocumentName, "xdoc", "", false);
 
         try {
-            siteRenderer.renderDocument(null, renderingContext, new SiteRenderingContext());
+            siteRenderer.renderDocument(null, docRenderingContext, new SiteRenderingContext());
             fail("should fail with exception");
         } catch (RendererException e) {
             assertEquals(
@@ -245,7 +247,7 @@ public class DefaultSiteRendererTest {
         when(docRenderer.isExternalReport()).thenReturn(true);
         when(docRenderer.getOutputName()).thenReturn("external/index");
         when(docRenderer.getRenderingContext())
-                .thenReturn(new RenderingContext(new File(""), "index.html", "generator:external"));
+                .thenReturn(new DocumentRenderingContext(new File(""), "index.html", "generator:external"));
 
         SiteRenderingContext context = new SiteRenderingContext();
 
@@ -272,8 +274,9 @@ public class DefaultSiteRendererTest {
         siteRenderingContext.setTemplateProperties(attributes);
 
         siteRenderingContext.setTemplateName("org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm");
-        RenderingContext context = new RenderingContext(new File(""), "document.html", "generator");
-        SiteRendererSink sink = new SiteRendererSink(context);
+        DocumentRenderingContext docRenderingContext =
+                new DocumentRenderingContext(new File(""), "document.html", "generator");
+        SiteRendererSink sink = new SiteRendererSink(docRenderingContext);
         siteRenderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
 
         String renderResult = writer.toString();
@@ -302,7 +305,7 @@ public class DefaultSiteRendererTest {
         skin.setFile(skinFile);
         SiteRenderingContext siteRenderingContext =
                 siteRenderer.createContextForSkin(skin, attributes, new DecorationModel(), "defaultitle", Locale.ROOT);
-        RenderingContext context = new RenderingContext(new File(""), "document.html", "generator");
+        DocumentRenderingContext context = new DocumentRenderingContext(new File(""), "document.html", "generator");
         SiteRendererSink sink = new SiteRendererSink(context);
         siteRenderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
         String renderResult = writer.toString();
