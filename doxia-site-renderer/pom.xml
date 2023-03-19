@@ -175,6 +175,7 @@ under the License.
     <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
+      <!-- Do not upgrade! Tests fail and require analysis. -->
       <version>2.67.0</version>
       <scope>test</scope>
     </dependency>
