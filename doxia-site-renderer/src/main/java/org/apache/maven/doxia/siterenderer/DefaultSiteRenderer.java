@@ -485,9 +485,7 @@ public class DefaultSiteRenderer implements Renderer {
         context.put("locale", siteRenderingContext.getLocale());
         context.put("supportedLocales", Collections.unmodifiableList(siteRenderingContext.getSiteLocales()));
 
-        if (siteRenderingContext.getPublishDate() != null) {
-            context.put("publishDate", siteRenderingContext.getPublishDate());
-        }
+        context.put("publishDate", siteRenderingContext.getPublishDate());
 
         if (DOXIA_SITE_RENDERER_VERSION != null) {
             context.put("doxiaSiteRendererVersion", DOXIA_SITE_RENDERER_VERSION);
