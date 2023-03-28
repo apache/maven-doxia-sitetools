@@ -24,8 +24,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.Skin;
+import org.apache.maven.doxia.site.SiteModel;
+import org.apache.maven.doxia.site.Skin;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.eclipse.aether.RepositorySystemSession;
@@ -33,7 +33,7 @@ import org.eclipse.aether.repository.RemoteRepository;
 
 /**
  * Tool to play with <a href="http://maven.apache.org/doxia/">Doxia</a> objects
- * like <code>DecorationModel</code>.
+ * like <code>SiteModel</code>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
@@ -51,7 +51,7 @@ public interface SiteTool {
      * @param repoSession the repository system session, not null.
      * @param remoteProjectRepositories the Maven remote project repositories, not null.
      * @param skin the Skin model, not null.
-     * @return the <code>Skin</code> artifact defined in a <code>DecorationModel</code> from a given project
+     * @return the <code>Skin</code> artifact defined in a <code>SiteModel</code> from a given project
      * @throws SiteToolException if any
      */
     Artifact getSkinArtifactFromRepository(
@@ -107,21 +107,21 @@ public interface SiteTool {
             Map<String, String> props, MavenProject aProject, String siteDescriptorContent) throws SiteToolException;
 
     /**
-     * Get a decoration model for a project.
+     * Get a site model for a project.
      *
      * @param siteDirectory the site directory, may be null if project from repository
-     * @param locale the locale used for the i18n in DecorationModel, not null.
+     * @param locale the locale used for the i18n in SiteModel, not null.
      * See {@link #getSiteDescriptor(File, Locale)} for details.
      * @param project the Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.
      * @param repoSession the repository system session, not null.
      * @param remoteProjectRepositories the Maven remote project repositories, not null.
-     * @return the <code>DecorationModel</code> object corresponding to the <code>site.xml</code> file with some
+     * @return the <code>SiteModel</code> object corresponding to the <code>site.xml</code> file with some
      * interpolations.
      * @throws SiteToolException if any
      * @since 1.7, was previously with other parameter types and order
      */
-    DecorationModel getDecorationModel(
+    SiteModel getSiteModel(
             File siteDirectory,
             Locale locale,
             MavenProject project,
@@ -131,19 +131,18 @@ public interface SiteTool {
             throws SiteToolException;
 
     /**
-     * Populate the pre-defined <code>reports</code> menu of the decoration model,
+     * Populate the pre-defined <code>reports</code> menu of the site model,
      * if used through <code>&lt;menu ref="reports"/&gt;</code>. Notice this menu reference is translated into
      * 2 separate menus: "Project Information" and "Project Reports".
      *
-     * @param decorationModel the Doxia Sitetools DecorationModel, not null.
-     * @param locale the locale used for the i18n in DecorationModel, not null.
+     * @param siteModel the Doxia Sitetools SiteModel, not null.
+     * @param locale the locale used for the i18n in SiteModel, not null.
      * See {@link #getSiteDescriptor(File, Locale)} for details.
      * @param reportsPerCategory reports per category to put in "Reports" or "Information" menus, not null.
      * @see MavenReport#CATEGORY_PROJECT_INFORMATION
      * @see MavenReport#CATEGORY_PROJECT_REPORTS
      */
-    void populateReportsMenu(
-            DecorationModel decorationModel, Locale locale, Map<String, List<MavenReport>> reportsPerCategory);
+    void populateReportsMenu(SiteModel siteModel, Locale locale, Map<String, List<MavenReport>> reportsPerCategory);
 
     /**
      * Extracts from a comma-separated list the locales that are available in <code>site-tool</code>

@@ -31,8 +31,9 @@ We have the following keys in the context:
   27. relativePath
   28. render
   29. shortTitle
-  30. sorter
-  31. supportedLocales
-  32. text
-  33. title
-  34. xml
+  30. site
+  31. sorter
+  32. supportedLocales
+  33. text
+  34. title
+  35. xml

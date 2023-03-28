@@ -95,7 +95,7 @@
     <!-- doxia-sitetools -->
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-decoration-model</artifactId>
+      <artifactId>doxia-site-model</artifactId>
     </dependency>
 
     <!-- Plexus -->

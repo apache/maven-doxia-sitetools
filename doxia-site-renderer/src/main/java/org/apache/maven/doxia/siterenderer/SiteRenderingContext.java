@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.skin.SkinModel;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
@@ -52,7 +52,7 @@ public class SiteRenderingContext {
 
     private List<Locale> siteLocales = new ArrayList<Locale>();
 
-    private DecorationModel decoration;
+    private SiteModel siteModel;
 
     private String defaultTitle;
 
@@ -176,21 +176,21 @@ public class SiteRenderingContext {
     }
 
     /**
-     * <p>Getter for the field <code>decoration</code>.</p>
+     * <p>Getter for the field <code>siteModel</code>.</p>
      *
-     * @return a {@link org.apache.maven.doxia.site.decoration.DecorationModel} object.
+     * @return a {@link org.apache.maven.doxia.site.SiteModel} object.
      */
-    public DecorationModel getDecoration() {
-        return decoration;
+    public SiteModel getSiteModel() {
+        return siteModel;
     }
 
     /**
-     * <p>Setter for the field <code>decoration</code>.</p>
+     * <p>Setter for the field <code>siteModel</code>.</p>
      *
-     * @param decoration a {@link org.apache.maven.doxia.site.decoration.DecorationModel} object.
+     * @param siteModel a {@link org.apache.maven.doxia.site.SiteModel} object.
      */
-    public void setDecoration(DecorationModel decoration) {
-        this.decoration = decoration;
+    public void setSiteModel(SiteModel siteModel) {
+        this.siteModel = siteModel;
     }
 
     /**

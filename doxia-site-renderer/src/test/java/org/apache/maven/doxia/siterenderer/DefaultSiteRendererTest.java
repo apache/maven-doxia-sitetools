@@ -45,8 +45,8 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
+import org.apache.maven.doxia.site.SiteModel;
+import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.xsd.AbstractXmlValidator;
 import org.codehaus.plexus.PlexusContainer;
@@ -209,14 +209,14 @@ public class DefaultSiteRendererTest {
         // ----------------------------------------------------------------------
         // Render the site from src/test/resources/site to OUTPUT
         // ----------------------------------------------------------------------
-        DecorationModel decoration =
-                new DecorationXpp3Reader().read(new FileInputStream(getTestFile("src/test/resources/site/site.xml")));
+        SiteModel siteModel =
+                new SiteXpp3Reader().read(new FileInputStream(getTestFile("src/test/resources/site/site.xml")));
 
-        SiteRenderingContext ctxt = getSiteRenderingContext(decoration, "src/test/resources/site", false);
+        SiteRenderingContext ctxt = getSiteRenderingContext(siteModel, "src/test/resources/site", false);
         ctxt.setRootDirectory(getTestFile(""));
         siteRenderer.render(siteRenderer.locateDocumentFiles(ctxt, true).values(), ctxt, getTestFile(OUTPUT));
 
-        ctxt = getSiteRenderingContext(decoration, "src/test/resources/site-validate", true);
+        ctxt = getSiteRenderingContext(siteModel, "src/test/resources/site-validate", true);
         ctxt.setRootDirectory(getTestFile(""));
         siteRenderer.render(siteRenderer.locateDocumentFiles(ctxt, true).values(), ctxt, getTestFile(OUTPUT));
 
@@ -261,7 +261,7 @@ public class DefaultSiteRendererTest {
         StringWriter writer = new StringWriter();
 
         SiteRenderingContext siteRenderingContext = new SiteRenderingContext();
-        siteRenderingContext.setDecoration(new DecorationModel());
+        siteRenderingContext.setSiteModel(new SiteModel());
 
         Map<String, Object> attributes = new HashMap<String, Object>();
 
@@ -304,7 +304,7 @@ public class DefaultSiteRendererTest {
                 "org.group", "artifact", VersionRange.createFromVersion("1.1"), null, "jar", "", null);
         skin.setFile(skinFile);
         SiteRenderingContext siteRenderingContext =
-                siteRenderer.createContextForSkin(skin, attributes, new DecorationModel(), "defaultitle", Locale.ROOT);
+                siteRenderer.createContextForSkin(skin, attributes, new SiteModel(), "defaultitle", Locale.ROOT);
         DocumentRenderingContext context = new DocumentRenderingContext(new File(""), "document.html", "generator");
         SiteRendererSink sink = new SiteRendererSink(context);
         siteRenderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
@@ -321,7 +321,7 @@ public class DefaultSiteRendererTest {
         assertFalse(r.matchVersion("1.7", "1.8"));
     }
 
-    private SiteRenderingContext getSiteRenderingContext(DecorationModel decoration, String siteDir, boolean validate)
+    private SiteRenderingContext getSiteRenderingContext(SiteModel siteModel, String siteDir, boolean validate)
             throws RendererException, IOException {
         File skinFile = minimalSkinJar;
 
@@ -332,7 +332,7 @@ public class DefaultSiteRendererTest {
                 "org.group", "artifact", VersionRange.createFromVersion("1.1"), null, "jar", "", null);
         skin.setFile(skinFile);
         SiteRenderingContext siteRenderingContext =
-                siteRenderer.createContextForSkin(skin, attributes, decoration, "defaultTitle", Locale.ROOT);
+                siteRenderer.createContextForSkin(skin, attributes, siteModel, "defaultTitle", Locale.ROOT);
         siteRenderingContext.addSiteDirectory(getTestFile(siteDir));
         siteRenderingContext.setValidate(validate);
 

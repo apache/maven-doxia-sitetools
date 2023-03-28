@@ -40,9 +40,9 @@ Maven Doxia Integration Tools
 
   Instructions on how to use the integration of Doxia in Maven can be found {{{./usage.html}here}}.
 
-* <<<site.xml>>> Decoration Model Interpolation
+* <<<site.xml>>> Model Interpolation
 
-  Interpolation of {{{../doxia-decoration-model/decoration.html}<<<site.xml>>> decoration model}} injects
+  Interpolation of {{{../doxia-site-model/site.html}<<<site.xml>>> model}} injects
   Maven project's information, replacing <<<$\{...\}>>> with calculated values
   like it happens in {{{/ref/current/maven-model-builder/#Model_Interpolation}Maven model interpolation}}.
 

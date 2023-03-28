@@ -47,13 +47,13 @@ import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.Menu;
-import org.apache.maven.doxia.site.decoration.MenuItem;
-import org.apache.maven.doxia.site.decoration.Skin;
-import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
-import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
-import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
+import org.apache.maven.doxia.site.Menu;
+import org.apache.maven.doxia.site.MenuItem;
+import org.apache.maven.doxia.site.SiteModel;
+import org.apache.maven.doxia.site.Skin;
+import org.apache.maven.doxia.site.inheritance.SiteModelInheritanceAssembler;
+import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
+import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
@@ -118,7 +118,7 @@ public class DefaultSiteTool implements SiteTool {
      * The component for assembling inheritance.
      */
     @Inject
-    protected DecorationModelInheritanceAssembler assembler;
+    protected SiteModelInheritanceAssembler assembler;
 
     /**
      * Project builder.
@@ -366,7 +366,7 @@ public class DefaultSiteTool implements SiteTool {
     }
 
     /** {@inheritDoc} */
-    public DecorationModel getDecorationModel(
+    public SiteModel getSiteModel(
             File siteDirectory,
             Locale locale,
             MavenProject project,
@@ -380,38 +380,38 @@ public class DefaultSiteTool implements SiteTool {
         Objects.requireNonNull(repoSession, "repoSession cannot be null");
         Objects.requireNonNull(remoteProjectRepositories, "remoteProjectRepositories cannot be null");
 
-        LOGGER.debug("Computing decoration model of '" + project.getId() + "' for "
+        LOGGER.debug("Computing site model of '" + project.getId() + "' for "
                 + (locale.equals(SiteTool.DEFAULT_LOCALE) ? "default locale" : "locale '" + locale + "'"));
 
-        Map.Entry<DecorationModel, MavenProject> result =
-                getDecorationModel(0, siteDirectory, locale, project, repoSession, remoteProjectRepositories);
-        DecorationModel decorationModel = result.getKey();
+        Map.Entry<SiteModel, MavenProject> result =
+                getSiteModel(0, siteDirectory, locale, project, repoSession, remoteProjectRepositories);
+        SiteModel siteModel = result.getKey();
         MavenProject parentProject = result.getValue();
 
-        if (decorationModel == null) {
+        if (siteModel == null) {
             LOGGER.debug("Using default site descriptor");
-            decorationModel = getDefaultDecorationModel();
+            siteModel = getDefaultSiteModel();
         }
 
-        // DecorationModel back to String to interpolate, then go back to DecorationModel
-        String siteDescriptorContent = decorationModelToString(decorationModel);
+        // SiteModel back to String to interpolate, then go back to SiteModel
+        String siteDescriptorContent = siteModelToString(siteModel);
 
         // "classical" late interpolation, after full inheritance
         siteDescriptorContent = getInterpolatedSiteDescriptorContent(project, siteDescriptorContent, false);
 
-        decorationModel = readDecorationModel(siteDescriptorContent);
+        siteModel = readSiteModel(siteDescriptorContent);
 
         if (parentProject != null) {
-            populateParentMenu(decorationModel, locale, project, parentProject, true);
+            populateParentMenu(siteModel, locale, project, parentProject, true);
         }
 
         try {
-            populateModulesMenu(decorationModel, locale, project, reactorProjects, true);
+            populateModulesMenu(siteModel, locale, project, reactorProjects, true);
         } catch (IOException e) {
             throw new SiteToolException("Error while populating modules menu", e);
         }
 
-        return decorationModel;
+        return siteModel;
     }
 
     /** {@inheritDoc} */
@@ -469,27 +469,27 @@ public class DefaultSiteTool implements SiteTool {
     }
 
     /**
-     * Populate the pre-defined <code>parent</code> menu of the decoration model,
+     * Populate the pre-defined <code>parent</code> menu of the site model,
      * if used through <code>&lt;menu ref="parent"/&gt;</code>.
      *
-     * @param decorationModel the Doxia Sitetools DecorationModel, not null.
-     * @param locale the locale used for the i18n in DecorationModel, not null.
+     * @param siteModel the Doxia Sitetools SiteModel, not null.
+     * @param locale the locale used for the i18n in SiteModel, not null.
      * @param project a Maven project, not null.
      * @param parentProject a Maven parent project, not null.
      * @param keepInheritedRefs used for inherited references.
      */
     private void populateParentMenu(
-            DecorationModel decorationModel,
+            SiteModel siteModel,
             Locale locale,
             MavenProject project,
             MavenProject parentProject,
             boolean keepInheritedRefs) {
-        Objects.requireNonNull(decorationModel, "decorationModel cannot be null");
+        Objects.requireNonNull(siteModel, "siteModel cannot be null");
         Objects.requireNonNull(locale, "locale cannot be null");
         Objects.requireNonNull(project, "project cannot be null");
         Objects.requireNonNull(parentProject, "parentProject cannot be null");
 
-        Menu menu = decorationModel.getMenuRef("parent");
+        Menu menu = siteModel.getMenuRef("parent");
 
         if (menu == null) {
             return;
@@ -526,7 +526,7 @@ public class DefaultSiteTool implements SiteTool {
             LOGGER.warn("Unable to find a URL to the parent project. The parent menu will NOT be added.");
         } else {
             if (menu.getName() == null) {
-                menu.setName(i18n.getString("site-tool", locale, "decorationModel.menu.parentproject"));
+                menu.setName(i18n.getString("site-tool", locale, "siteModel.menu.parentproject"));
             }
 
             MenuItem item = new MenuItem();
@@ -537,11 +537,11 @@ public class DefaultSiteTool implements SiteTool {
     }
 
     /**
-     * Populate the pre-defined <code>modules</code> menu of the decoration model,
+     * Populate the pre-defined <code>modules</code> menu of the model,
      * if used through <code>&lt;menu ref="modules"/&gt;</code>.
      *
-     * @param decorationModel the Doxia Sitetools DecorationModel, not null.
-     * @param locale the locale used for the i18n in DecorationModel, not null.
+     * @param siteModel the Doxia Sitetools SiteModel, not null.
+     * @param locale the locale used for the i18n in SiteModel, not null.
      * @param project a Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.
      * @param keepInheritedRefs used for inherited references.
@@ -549,18 +549,18 @@ public class DefaultSiteTool implements SiteTool {
      * @throws IOException
      */
     private void populateModulesMenu(
-            DecorationModel decorationModel,
+            SiteModel siteModel,
             Locale locale,
             MavenProject project,
             List<MavenProject> reactorProjects,
             boolean keepInheritedRefs)
             throws SiteToolException, IOException {
-        Objects.requireNonNull(decorationModel, "decorationModel cannot be null");
+        Objects.requireNonNull(siteModel, "siteModel cannot be null");
         Objects.requireNonNull(locale, "locale cannot be null");
         Objects.requireNonNull(project, "project cannot be null");
         Objects.requireNonNull(reactorProjects, "reactorProjects cannot be null");
 
-        Menu menu = decorationModel.getMenuRef("modules");
+        Menu menu = siteModel.getMenuRef("modules");
 
         if (menu == null) {
             return;
@@ -573,7 +573,7 @@ public class DefaultSiteTool implements SiteTool {
         // we require child modules and reactors to process module menu
         if (!project.getModules().isEmpty()) {
             if (menu.getName() == null) {
-                menu.setName(i18n.getString("site-tool", locale, "decorationModel.menu.projectmodules"));
+                menu.setName(i18n.getString("site-tool", locale, "siteModel.menu.projectmodules"));
             }
 
             for (String module : project.getModules()) {
@@ -597,9 +597,9 @@ public class DefaultSiteTool implements SiteTool {
 
                 appendMenuItem(project, menu, itemName, siteUrl, defaultSiteUrl);
             }
-        } else if (decorationModel.getMenuRef("modules").getInherit() == null) {
+        } else if (siteModel.getMenuRef("modules").getInherit() == null) {
             // only remove if project has no modules AND menu is not inherited, see MSHARED-174
-            decorationModel.removeMenuRef("modules");
+            siteModel.removeMenuRef("modules");
         }
     }
 
@@ -618,20 +618,19 @@ public class DefaultSiteTool implements SiteTool {
     }
 
     /** {@inheritDoc} */
-    public void populateReportsMenu(
-            DecorationModel decorationModel, Locale locale, Map<String, List<MavenReport>> categories) {
-        Objects.requireNonNull(decorationModel, "decorationModel cannot be null");
+    public void populateReportsMenu(SiteModel siteModel, Locale locale, Map<String, List<MavenReport>> categories) {
+        Objects.requireNonNull(siteModel, "siteModel cannot be null");
         Objects.requireNonNull(locale, "locale cannot be null");
         Objects.requireNonNull(categories, "categories cannot be null");
 
-        Menu menu = decorationModel.getMenuRef("reports");
+        Menu menu = siteModel.getMenuRef("reports");
 
         if (menu == null) {
             return;
         }
 
         if (menu.getName() == null) {
-            menu.setName(i18n.getString("site-tool", locale, "decorationModel.menu.projectdocumentation"));
+            menu.setName(i18n.getString("site-tool", locale, "siteModel.menu.projectdocumentation"));
         }
 
         boolean found = false;
@@ -639,7 +638,7 @@ public class DefaultSiteTool implements SiteTool {
             List<MavenReport> categoryReports = categories.get(MavenReport.CATEGORY_PROJECT_INFORMATION);
             if (!isEmptyList(categoryReports)) {
                 MenuItem item = createCategoryMenu(
-                        i18n.getString("site-tool", locale, "decorationModel.menu.projectinformation"),
+                        i18n.getString("site-tool", locale, "siteModel.menu.projectinformation"),
                         "/project-info.html",
                         categoryReports,
                         locale);
@@ -650,7 +649,7 @@ public class DefaultSiteTool implements SiteTool {
             categoryReports = categories.get(MavenReport.CATEGORY_PROJECT_REPORTS);
             if (!isEmptyList(categoryReports)) {
                 MenuItem item = createCategoryMenu(
-                        i18n.getString("site-tool", locale, "decorationModel.menu.projectreports"),
+                        i18n.getString("site-tool", locale, "siteModel.menu.projectreports"),
                         "/project-reports.html",
                         categoryReports,
                         locale);
@@ -659,7 +658,7 @@ public class DefaultSiteTool implements SiteTool {
             }
         }
         if (!found) {
-            decorationModel.removeMenuRef("reports");
+            siteModel.removeMenuRef("reports");
         }
     }
 
@@ -919,10 +918,10 @@ public class DefaultSiteTool implements SiteTool {
      * @param project not null
      * @param repoSession not null
      * @param remoteProjectRepositories not null
-     * @return the decoration model depending the locale and the parent project
+     * @return the site model depending the locale and the parent project
      * @throws SiteToolException if any
      */
-    private Map.Entry<DecorationModel, MavenProject> getDecorationModel(
+    private Map.Entry<SiteModel, MavenProject> getSiteModel(
             int depth,
             File siteDirectory,
             Locale locale,
@@ -945,8 +944,8 @@ public class DefaultSiteTool implements SiteTool {
             siteDescriptor = getSiteDescriptor(siteDirectory, locale);
         }
 
-        // 2. read DecorationModel from site descriptor File and do early interpolation (${this.*})
-        DecorationModel decorationModel = null;
+        // 2. read SiteModel from site descriptor File and do early interpolation (${this.*})
+        SiteModel siteModel = null;
         Reader siteDescriptorReader = null;
         try {
             if (siteDescriptor != null && siteDescriptor.exists()) {
@@ -960,8 +959,8 @@ public class DefaultSiteTool implements SiteTool {
                 // interpolate ${this.*} = early interpolation
                 siteDescriptorContent = getInterpolatedSiteDescriptorContent(project, siteDescriptorContent, true);
 
-                decorationModel = readDecorationModel(siteDescriptorContent);
-                decorationModel.setLastModified(siteDescriptor.lastModified());
+                siteModel = readSiteModel(siteDescriptorContent);
+                siteModel.setLastModified(siteDescriptor.lastModified());
             } else {
                 LOGGER.debug("No" + (depth == 0 ? "" : (" parent level " + depth)) + " site descriptor.");
             }
@@ -975,8 +974,8 @@ public class DefaultSiteTool implements SiteTool {
         // 3. look for parent project
         MavenProject parentProject = project.getParent();
 
-        // 4. merge with parent project DecorationModel
-        if (parentProject != null && (decorationModel == null || decorationModel.isMergeParent())) {
+        // 4. merge with parent project SiteModel
+        if (parentProject != null && (siteModel == null || siteModel.isMergeParent())) {
             depth++;
             LOGGER.debug("Looking for site descriptor of level " + depth + " parent project: " + parentProject.getId());
 
@@ -992,50 +991,50 @@ public class DefaultSiteTool implements SiteTool {
                 // has different configuration. But this is a rare case (this only has impact if parent is from reactor)
             }
 
-            DecorationModel parentDecorationModel = getDecorationModel(
+            SiteModel parentSiteModel = getSiteModel(
                             depth, parentSiteDirectory, locale, parentProject, repoSession, remoteProjectRepositories)
                     .getKey();
 
-            // MSHARED-116 requires an empty decoration model (instead of a null one)
+            // MSHARED-116 requires site model (instead of a null one)
             // MSHARED-145 requires us to do this only if there is a parent to merge it with
-            if (decorationModel == null && parentDecorationModel != null) {
+            if (siteModel == null && parentSiteModel != null) {
                 // we have no site descriptor: merge the parent into an empty one because the default one
                 // (default-site.xml) will break menu and breadcrumb composition.
-                decorationModel = new DecorationModel();
+                siteModel = new SiteModel();
             }
 
             String name = project.getName();
-            if (decorationModel != null && StringUtils.isNotEmpty(decorationModel.getName())) {
-                name = decorationModel.getName();
+            if (siteModel != null && StringUtils.isNotEmpty(siteModel.getName())) {
+                name = siteModel.getName();
             }
 
-            // Merge the parent and child DecorationModels
+            // Merge the parent and child SiteModels
             String projectDistMgmnt = getDistMgmntSiteUrl(project);
             String parentDistMgmnt = getDistMgmntSiteUrl(parentProject);
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Site decoration model inheritance: assembling child with level " + depth
+                LOGGER.debug("Site model inheritance: assembling child with level " + depth
                         + " parent: distributionManagement.site.url child = " + projectDistMgmnt + " and parent = "
                         + parentDistMgmnt);
             }
             assembler.assembleModelInheritance(
                     name,
-                    decorationModel,
-                    parentDecorationModel,
+                    siteModel,
+                    parentSiteModel,
                     projectDistMgmnt,
                     parentDistMgmnt == null ? projectDistMgmnt : parentDistMgmnt);
         }
 
-        return new AbstractMap.SimpleEntry<DecorationModel, MavenProject>(decorationModel, parentProject);
+        return new AbstractMap.SimpleEntry<SiteModel, MavenProject>(siteModel, parentProject);
     }
 
     /**
      * @param siteDescriptorContent not null
-     * @return the decoration model object
+     * @return the site model object
      * @throws SiteToolException if any
      */
-    private DecorationModel readDecorationModel(String siteDescriptorContent) throws SiteToolException {
+    private SiteModel readSiteModel(String siteDescriptorContent) throws SiteToolException {
         try {
-            return new DecorationXpp3Reader().read(new StringReader(siteDescriptorContent));
+            return new SiteXpp3Reader().read(new StringReader(siteDescriptorContent));
         } catch (XmlPullParserException e) {
             throw new SiteToolException("Error parsing site descriptor", e);
         } catch (IOException e) {
@@ -1043,7 +1042,7 @@ public class DefaultSiteTool implements SiteTool {
         }
     }
 
-    private DecorationModel getDefaultDecorationModel() throws SiteToolException {
+    private SiteModel getDefaultSiteModel() throws SiteToolException {
         String siteDescriptorContent;
 
         Reader reader = null;
@@ -1056,14 +1055,14 @@ public class DefaultSiteTool implements SiteTool {
             IOUtil.close(reader);
         }
 
-        return readDecorationModel(siteDescriptorContent);
+        return readSiteModel(siteDescriptorContent);
     }
 
-    private String decorationModelToString(DecorationModel decoration) throws SiteToolException {
+    private String siteModelToString(SiteModel siteModel) throws SiteToolException {
         StringWriter writer = new StringWriter();
 
         try {
-            new DecorationXpp3Writer().write(writer, decoration);
+            new SiteXpp3Writer().write(writer, siteModel);
             return writer.toString();
         } catch (IOException e) {
             throw new SiteToolException("Error reading site descriptor", e);

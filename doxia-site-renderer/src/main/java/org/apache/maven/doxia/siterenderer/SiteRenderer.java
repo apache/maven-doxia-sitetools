@@ -28,7 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.SiteModel;
 
 /**
  * Site Renderer interface: render a collection of documents into a site, ie decorated with a site template.
@@ -66,7 +66,7 @@ public interface SiteRenderer {
      *
      * @param skin a skin
      * @param attributes attributes to use
-     * @param decoration a decoration model
+     * @param siteModel a site model
      * @param defaultTitle default title
      * @param locale locale to use
      * @return a SiteRenderingContext.
@@ -75,7 +75,7 @@ public interface SiteRenderer {
      * @since 1.7.3 was previously with skin as File instead of Artifact
      */
     SiteRenderingContext createContextForSkin(
-            Artifact skin, Map<String, ?> attributes, DecorationModel decoration, String defaultTitle, Locale locale)
+            Artifact skin, Map<String, ?> attributes, SiteModel siteModel, String defaultTitle, Locale locale)
             throws RendererException, IOException;
 
     /**

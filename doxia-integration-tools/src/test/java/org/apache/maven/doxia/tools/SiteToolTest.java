@@ -35,10 +35,10 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.LinkItem;
-import org.apache.maven.doxia.site.decoration.Skin;
-import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
+import org.apache.maven.doxia.site.LinkItem;
+import org.apache.maven.doxia.site.SiteModel;
+import org.apache.maven.doxia.site.Skin;
+import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
 import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
@@ -351,14 +351,14 @@ public class SiteToolTest {
      * @throws Exception
      */
     @Test
-    public void testGetDecorationModel() throws Exception {
+    public void testGetSiteModel() throws Exception {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
         List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
 
         // model from current local build
-        DecorationModel model = tool.getDecorationModel(
+        SiteModel model = tool.getSiteModel(
                 new File(project.getBasedir(), "src/site"),
                 SiteTool.DEFAULT_LOCALE,
                 project,
@@ -384,7 +384,7 @@ public class SiteToolTest {
         project.setGroupId("org.apache.maven");
         project.setArtifactId("maven");
         project.setVersion("3.8.6");
-        DecorationModel modelFromRepo = tool.getDecorationModel(
+        SiteModel modelFromRepo = tool.getSiteModel(
                 null,
                 SiteTool.DEFAULT_LOCALE,
                 project,
@@ -405,14 +405,14 @@ public class SiteToolTest {
      * @throws Exception
      */
     @Test
-    public void testGetDefaultDecorationModel() throws Exception {
+    public void testGetDefaultSiteModel() throws Exception {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("no-site-test");
         String siteDirectory = "src/site";
         List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
 
-        DecorationModel model = tool.getDecorationModel(
+        SiteModel model = tool.getSiteModel(
                 new File(project.getBasedir(), siteDirectory),
                 SiteTool.DEFAULT_LOCALE,
                 project,
@@ -462,7 +462,7 @@ public class SiteToolTest {
         assertTrue(siteDescriptorContent.contains(
                 "Interpolatesite &quot;quoted&quot; &amp; &apos;quoted&apos; &lt;sdf&gt;"));
 
-        DecorationModel model = tool.getDecorationModel(
+        SiteModel model = tool.getSiteModel(
                 new File(project.getBasedir(), "src/site"),
                 SiteTool.DEFAULT_LOCALE,
                 project,
@@ -478,7 +478,7 @@ public class SiteToolTest {
 
     // MSHARED-217 -> DOXIATOOLS-34 -> DOXIASITETOOLS-118
     @Test
-    public void testDecorationModelInheritanceAndInterpolation() throws Exception {
+    public void testSiteModelInheritanceAndInterpolation() throws Exception {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub parentProject = new SiteToolMavenProjectStub("interpolation-parent-test");
@@ -490,7 +490,7 @@ public class SiteToolTest {
 
         List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList(parentProject);
 
-        DecorationModel model = tool.getDecorationModel(
+        SiteModel model = tool.getSiteModel(
                 new File(childProject.getBasedir(), "src/site"),
                 SiteTool.DEFAULT_LOCALE,
                 childProject,
@@ -534,10 +534,10 @@ public class SiteToolTest {
         assertEquals("PATH = PATH property from pom", links.next().getName());
     }
 
-    private void writeModel(DecorationModel model, String to) throws Exception {
+    private void writeModel(SiteModel model, String to) throws Exception {
         Writer writer = WriterFactory.newXmlWriter(getTestFile("target/test-classes/" + to));
         try {
-            new DecorationXpp3Writer().write(writer, model);
+            new SiteXpp3Writer().write(writer, model);
         } finally {
             IOUtil.close(writer);
         }

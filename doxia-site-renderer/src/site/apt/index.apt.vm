@@ -29,7 +29,7 @@
 
 Doxia Sitetools - Site Renderer
 
-  The Site Renderer handles the rendering of sites, assembling a common site decoration template (also called <a skin>)
+  The Site Renderer handles the rendering of sites, assembling a common site template (also called <a skin>)
   with a collection of documents.
 
   Documents can be dynamically generated with {{{/doxia/doxia/doxia-sink-api/}Doxia Sink API}}, like Maven reports,
@@ -41,7 +41,7 @@ Doxia Sitetools - Site Renderer
 
 * Doxia Site Skins
 
-  A default site decoration template is included (see <<<default-site.vm>>>), but other decoration templates can be used at will,
+  A default site template is included (see <<<default-site.vm>>>), but other templates can be used at will,
   either as a standalone template or packaged in a {{{../doxia-skin-model/}<<skin>> artifact}}.
 
   Maven team provides {{{/skins/}a collection of skins}} for projects use.
@@ -50,7 +50,7 @@ Doxia Sitetools - Site Renderer
 
 * Velocity processing
 
-  Site decoration and documents with file names ending in <<<.vm>>> are processed by Velocity.
+  Site and documents with file names ending in <<<.vm>>> are processed by Velocity.
 
   The Velocity context contains some variables related to rendering context that you can use:
 
@@ -59,7 +59,7 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<alignedFileName>>>           | <<<String>>>         | The file name of the (HTML) document being rendered, relative to the document being rendered. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<decoration>>>                | {{{../doxia-decoration-model/apidocs/org/apache/maven/doxia/site/decoration/DecorationModel.html}<<<DecorationModel>>>}} | This is a model that represents the data in your {{{../doxia-decoration-model/decoration.html}<<<site.xml>>>}}. |
+| <<<decoration>>>                | {{{../doxia-site-model/apidocs/org/apache/maven/doxia/site/SiteModel.html}<<<SiteModel>>>}} | <<Deprecated>>}: use <<<site>>>. |
 *---------------------------------+----------------------+-------------------------------+
 | <<<currentFileName>>>           | <<<String>>>         | The file name of the (HTML) document being rendered, relative to the site root. |
 *---------------------------------+----------------------+-------------------------------+
@@ -70,6 +70,8 @@ Doxia Sitetools - Site Renderer
 | <<<publishDate>>>               | <<<Date>>>           | An optional hardcoded publish date that has been set programmatically. |
 *---------------------------------+----------------------+-------------------------------+
 | <<<relativePath>>>              | <<<String>>>         | The path to the site root from the document being rendered. |
+*---------------------------------+----------------------+-------------------------------+
+| <<<site>>>                      | {{{../doxia-site-model/apidocs/org/apache/maven/doxia/site/SiteModel.html}<<<SiteModel>>>}} | This is a model that represents the data in your {{{../doxia-site-model/site.html}<<<site.xml>>>}}. |
 *---------------------------------+----------------------+-------------------------------+
 | <<<supportedLocales>>>          | <<<List\<Locale\>>>> | The list of locales that the site will contain. |
 *---------------------------------+----------------------+-------------------------------+
@@ -88,7 +90,7 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+------------------------------------------------------+-------------------------------+
 
   Additionally, there are {{{https://velocity.apache.org/tools/${velocityToolsVersion}/tools-summary.html} Velocity Generic Tools}} populated
-  with the site locale, the decoration model's date format, and site renderer's resource bundle:
+  with the site locale, the site model's date format, and site renderer's resource bundle:
 
 #set( $generic = "https://velocity.apache.org/tools/${velocityToolsVersion}/tools-summary.html" )
 *------------------+---------------------------------------------------------------+-------------------------------+

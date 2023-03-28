@@ -49,6 +49,6 @@ Doxia Sitetools Skin Model
 
   Some documentation is available on {{{/plugins/maven-site-plugin/examples/creatingskins.html}how to create a new skin}},
   by copying other skins to benefit from examples of breadcrumbs or menu generation from
-  {{{../doxia-decoration-model/index.html}decoration model}}.
+  {{{../doxia-site-model/index.html}site model}}.
 
   Since Doxia Sitetools 1.7, a skin descriptor can be added in <<<META-INF/maven/skin.xml>>>.

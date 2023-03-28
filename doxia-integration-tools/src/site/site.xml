@@ -33,7 +33,7 @@ under the License.
     </menu>
 
     <menu name="Reference">
-      <item name="site.xml Decoration Model" href="../doxia-decoration-model/decoration.html"/>
+      <item name="site.xml Model" href="../doxia-site-model/site.html"/>
     </menu>
 
     <menu ref="reports" />

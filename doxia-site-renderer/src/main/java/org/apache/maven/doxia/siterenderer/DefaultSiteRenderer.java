@@ -65,7 +65,7 @@ import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.parser.module.ParserModule;
 import org.apache.maven.doxia.parser.module.ParserModuleManager;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.skin.SkinModel;
 import org.apache.maven.doxia.site.skin.io.xpp3.SkinXpp3Reader;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
@@ -283,7 +283,7 @@ public class DefaultSiteRenderer implements Renderer {
 
             boolean modified = !outputFile.exists()
                     || (inputFile.lastModified() > outputFile.lastModified())
-                    || (siteRenderingContext.getDecoration().getLastModified() > outputFile.lastModified());
+                    || (siteRenderingContext.getSiteModel().getLastModified() > outputFile.lastModified());
 
             if (modified || docRenderer.isOverwrite()) {
                 if (!outputFile.getParentFile().exists()) {
@@ -418,10 +418,8 @@ public class DefaultSiteRenderer implements Renderer {
      */
     protected Context createToolManagedVelocityContext(SiteRenderingContext siteRenderingContext) {
         Locale locale = siteRenderingContext.getLocale();
-        String dateFormat =
-                siteRenderingContext.getDecoration().getPublishDate().getFormat();
-        String timeZoneId =
-                siteRenderingContext.getDecoration().getPublishDate().getTimezone();
+        String dateFormat = siteRenderingContext.getSiteModel().getPublishDate().getFormat();
+        String timeZoneId = siteRenderingContext.getSiteModel().getPublishDate().getTimezone();
         TimeZone timeZone =
                 "system".equalsIgnoreCase(timeZoneId) ? TimeZone.getDefault() : TimeZone.getTimeZone(timeZoneId);
 
@@ -484,7 +482,9 @@ public class DefaultSiteRenderer implements Renderer {
 
         context.put("alignedFileName", PathTool.calculateLink(currentFileName, docRenderingContext.getRelativePath()));
 
-        context.put("decoration", siteRenderingContext.getDecoration());
+        context.put("site", siteRenderingContext.getSiteModel());
+        // TODO Deprecated -- will be removed!
+        context.put("decoration", siteRenderingContext.getSiteModel());
 
         context.put("locale", siteRenderingContext.getLocale());
         context.put("supportedLocales", Collections.unmodifiableList(siteRenderingContext.getSiteLocales()));
@@ -538,9 +538,9 @@ public class DefaultSiteRenderer implements Renderer {
 
         // DOXIASITETOOLS-70: Prepend the project name to the title, if any
         StringBuilder title = new StringBuilder();
-        if (siteRenderingContext.getDecoration() != null
-                && StringUtils.isNotEmpty(siteRenderingContext.getDecoration().getName())) {
-            title.append(siteRenderingContext.getDecoration().getName());
+        if (siteRenderingContext.getSiteModel() != null
+                && StringUtils.isNotEmpty(siteRenderingContext.getSiteModel().getName())) {
+            title.append(siteRenderingContext.getSiteModel().getName());
         } else if (StringUtils.isNotEmpty(siteRenderingContext.getDefaultTitle())) {
             title.append(siteRenderingContext.getDefaultTitle());
         }
@@ -608,12 +608,11 @@ public class DefaultSiteRenderer implements Renderer {
                         : velocity.getEngine().getTemplate(templateName, encoding);
             } catch (ParseErrorException pee) {
                 throw new RendererException(
-                        "Velocity parsing error while reading the site decoration template " + "from " + skin.getId()
-                                + " skin",
+                        "Velocity parsing error while reading the site template " + "from " + skin.getId() + " skin",
                         pee);
             } catch (ResourceNotFoundException rnfe) {
                 throw new RendererException(
-                        "Could not find the site decoration template " + "from " + skin.getId() + " skin", rnfe);
+                        "Could not find the site template " + "from " + skin.getId() + " skin", rnfe);
             }
 
             try {
@@ -621,9 +620,9 @@ public class DefaultSiteRenderer implements Renderer {
                 template.merge(context, sw);
                 writer.write(sw.toString().replaceAll("\r?\n", SystemUtils.LINE_SEPARATOR));
             } catch (VelocityException ve) {
-                throw new RendererException("Velocity error while merging site decoration template.", ve);
+                throw new RendererException("Velocity error while merging site template.", ve);
             } catch (IOException ioe) {
-                throw new RendererException("IO exception while merging site decoration template.", ioe);
+                throw new RendererException("IO exception while merging site template.", ioe);
             }
         } finally {
             IOUtil.close(writer);
@@ -635,12 +634,12 @@ public class DefaultSiteRenderer implements Renderer {
     }
 
     private SiteRenderingContext createSiteRenderingContext(
-            Map<String, ?> attributes, DecorationModel decoration, String defaultTitle, Locale locale) {
+            Map<String, ?> attributes, SiteModel siteModel, String defaultTitle, Locale locale) {
         SiteRenderingContext context = new SiteRenderingContext();
 
         context.setTemplateProperties(attributes);
         context.setLocale(locale);
-        context.setDecoration(decoration);
+        context.setSiteModel(siteModel);
         context.setDefaultTitle(defaultTitle);
 
         return context;
@@ -648,9 +647,9 @@ public class DefaultSiteRenderer implements Renderer {
 
     /** {@inheritDoc} */
     public SiteRenderingContext createContextForSkin(
-            Artifact skin, Map<String, ?> attributes, DecorationModel decoration, String defaultTitle, Locale locale)
+            Artifact skin, Map<String, ?> attributes, SiteModel siteModel, String defaultTitle, Locale locale)
             throws IOException, RendererException {
-        SiteRenderingContext context = createSiteRenderingContext(attributes, decoration, defaultTitle, locale);
+        SiteRenderingContext context = createSiteRenderingContext(attributes, siteModel, defaultTitle, locale);
 
         context.setSkin(skin);
 

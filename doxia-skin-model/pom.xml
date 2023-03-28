@@ -48,7 +48,7 @@ under the License.
           <models>
             <model>src/main/mdo/skin.mdo</model>
           </models>
-          <!-- TODO Do not forget to update the version in the decoration description. See DOXIASITETOOLS-98. -->
+          <!-- TODO Do not forget to update the version in the description. See DOXIASITETOOLS-98. -->
           <version>2.0.0</version>
           <firstVersion>1.7.0</firstVersion>
         </configuration>
