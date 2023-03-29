@@ -62,6 +62,7 @@ import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
 import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.InterpolationPostProcessor;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
@@ -444,8 +445,23 @@ public class DefaultSiteTool implements SiteTool {
             }
         }
 
+        interpolator.addPostProcessor(new InterpolationPostProcessor() {
+            @Override
+            public Object execute(String expression, Object value) {
+                if (value != null) {
+                    // we're going to parse this back in as XML so we need to escape XML markup
+                    return value.toString()
+                            .replace("&", "&amp;")
+                            .replace("<", "&lt;")
+                            .replace(">", "&gt;")
+                            .replace("\"", "&quot;")
+                            .replace("'", "&apos;");
+                }
+                return null;
+            }
+        });
+
         try {
-            // FIXME: this does not escape xml entities, see MSITE-226, PLXCOMP-118
             return interpolator.interpolate(siteDescriptorContent);
         } catch (InterpolationException e) {
             throw new SiteToolException("Cannot interpolate site descriptor", e);

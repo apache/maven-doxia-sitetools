@@ -449,15 +449,31 @@ public class SiteToolTest {
         String siteDescriptorContent = FileUtils.fileRead(descriptorFile);
         assertNotNull(siteDescriptorContent);
         assertTrue(siteDescriptorContent.contains("${project.name}"));
-        assertFalse(siteDescriptorContent.contains("Interpolatesite"));
+        assertFalse(siteDescriptorContent.contains(
+                "Interpolatesite &quot;quoted&quot; &amp; &apos;quoted&apos; &lt;sdf&gt;"));
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("interpolated-site");
+        List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList(project);
 
         siteDescriptorContent = tool.getInterpolatedSiteDescriptorContent(
                 new HashMap<String, String>(), project, siteDescriptorContent);
         assertNotNull(siteDescriptorContent);
         assertFalse(siteDescriptorContent.contains("${project.name}"));
-        assertTrue(siteDescriptorContent.contains("Interpolatesite"));
+        assertTrue(siteDescriptorContent.contains(
+                "Interpolatesite &quot;quoted&quot; &amp; &apos;quoted&apos; &lt;sdf&gt;"));
+
+        DecorationModel model = tool.getDecorationModel(
+                new File(project.getBasedir(), "src/site"),
+                SiteTool.DEFAULT_LOCALE,
+                project,
+                reactorProjects,
+                newRepoSession(),
+                project.getRemoteProjectRepositories());
+        assertNotNull(model);
+
+        assertEquals(
+                "Test " + project.getName(),
+                model.getBody().getMenus().get(0).getItems().get(1).getName());
     }
 
     // MSHARED-217 -> DOXIATOOLS-34 -> DOXIASITETOOLS-118
