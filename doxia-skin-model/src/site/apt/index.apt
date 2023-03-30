@@ -41,7 +41,7 @@ Doxia Sitetools Skin Model
 * Doxia Sitetools Skin
 
   A Doxia Sitetools skin must contain a Velocity template named <<<META-INF/maven/site.vm>>>: it will be called
-  by {{{../doxia-site-renderer/index.html}Doxia Sitetools &#x2013; Site Renderer}} with additional variables about the
+  by {{{../doxia-site-renderer/index.html}Site Renderer}} with additional variables about the
   rendered document as documented in the {{{../doxia-site-renderer/index.html#Site_Template}Site Template section}},
   the main variable being <<<bodyContent>>>.
 

@@ -27,7 +27,6 @@ import org.apache.maven.doxia.markup.HtmlMarkup;
 import org.apache.maven.doxia.module.xhtml5.Xhtml5Sink;
 import org.apache.maven.doxia.siterenderer.DocumentContent;
 import org.apache.maven.doxia.siterenderer.DocumentRenderingContext;
-import org.apache.maven.doxia.util.HtmlTools;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -108,9 +107,8 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
     @Override
     public void author_() {
         if (getTextBuffer().length() > 0) {
-            String text = HtmlTools.escapeHTML(getTextBuffer().toString());
-            text = StringUtils.replace(text, "&amp;#", "&#");
-            authors.add(text.trim());
+            String text = getTextBuffer().toString().trim();
+            authors.add(text);
         }
 
         resetTextBuffer();

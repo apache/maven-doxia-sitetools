@@ -546,7 +546,7 @@ public class DefaultSiteRenderer implements Renderer {
         }
 
         if (title.length() > 0 && StringUtils.isNotEmpty(content.getTitle())) {
-            title.append(" &#x2013; "); // Symbol Name: En Dash, Html Entity: &ndash;
+            title.append(" \u2013 "); // Symbol Name: En Dash
         }
         if (StringUtils.isNotEmpty(content.getTitle())) {
             title.append(content.getTitle());
