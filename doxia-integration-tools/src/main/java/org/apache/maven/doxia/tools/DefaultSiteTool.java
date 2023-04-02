@@ -891,7 +891,7 @@ public class DefaultSiteTool implements SiteTool {
         }
 
         if (!found) {
-            localeStr = "";
+            localeStr = SiteTool.DEFAULT_LOCALE.toString();
             ArtifactRequest request =
                     createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
             try {
