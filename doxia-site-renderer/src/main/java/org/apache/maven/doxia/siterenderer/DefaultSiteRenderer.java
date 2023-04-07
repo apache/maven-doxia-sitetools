@@ -399,8 +399,9 @@ public class DefaultSiteRenderer implements Renderer {
             siteContext.getProcessedContentOutput().mkdirs();
         }
 
-        String input = docRenderingContext.getInputName();
-        File outputFile = new File(siteContext.getProcessedContentOutput(), input.substring(0, input.length() - 3));
+        String inputName = docRenderingContext.getInputName();
+        // Remove .vm suffix
+        File outputFile = new File(siteContext.getProcessedContentOutput(), inputName.substring(0, inputName.length() - 3));
 
         File outputParent = outputFile.getParentFile();
         if (!outputParent.exists()) {
