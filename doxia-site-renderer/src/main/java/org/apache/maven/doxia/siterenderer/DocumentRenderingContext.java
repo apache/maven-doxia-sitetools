@@ -126,6 +126,8 @@ public class DocumentRenderingContext {
         } else {
             // document does not come from a Doxia source but direct Sink API
             this.editable = false;
+            // FIXME This is wrong. Javadoc says document is a name, not a path and a direct document does
+            // not have an extension, so nothing needs to be stripped here.
             // make sure output name ends in .html
             this.outputName = document.substring(0, document.lastIndexOf('.')).replace('\\', '/') + ".html";
         }
