@@ -103,14 +103,16 @@ public class DocumentRenderingContext {
             boolean editable,
             String generator) {
         this.basedir = basedir;
-        this.basedirRelativePath = basedirRelativePath;
-        this.inputName = document;
         this.parserId = parserId;
         this.extension = extension;
         this.generator = generator;
         this.attributes = new HashMap<String, String>();
 
+        document = document.replace('\\', '/');
+        this.inputName = document;
+
         if (StringUtils.isNotEmpty(extension)) {
+            this.basedirRelativePath = basedirRelativePath.replace('\\', '/');
             // document comes from a Doxia source: see DoxiaDocumentRenderer
             this.editable = editable;
 
@@ -124,15 +126,14 @@ public class DocumentRenderingContext {
             String fileNameWithoutExt = document.substring(0, document.length() - extension.length() - 1);
             this.outputName = fileNameWithoutExt + ".html";
         } else {
-            // document does not come from a Doxia source but direct Sink API
+            // document does not come from a Doxia source but direct Sink API, so no file extension to strip
+            this.basedirRelativePath = null;
             this.editable = false;
-            // FIXME This is wrong. Javadoc says document is a name, not a path and a direct document does
-            // not have an extension, so nothing needs to be stripped here.
-            // make sure output name ends in .html
-            this.outputName = document.substring(0, document.lastIndexOf('.')).replace('\\', '/') + ".html";
+            this.outputName = document + ".html";
         }
 
-        this.relativePath = PathTool.getRelativePath(basedir.getPath(), new File(basedir, inputName).getPath());
+        this.relativePath = PathTool.getRelativePath(basedir.getPath(), new File(basedir, inputName).getPath())
+                .replace('\\', '/');
     }
 
     /**

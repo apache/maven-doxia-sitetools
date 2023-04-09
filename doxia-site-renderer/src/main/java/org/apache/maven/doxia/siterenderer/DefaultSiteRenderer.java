@@ -229,7 +229,6 @@ public class DefaultSiteRenderer implements Renderer {
                 }
 
                 String key = docRenderingContext.getOutputName();
-                key = StringUtils.replace(key, "\\", "/");
 
                 if (files.containsKey(key)) {
                     DocumentRenderer docRenderer = files.get(key);
@@ -479,7 +478,7 @@ public class DefaultSiteRenderer implements Renderer {
 
         context.put("relativePath", docRenderingContext.getRelativePath());
 
-        String currentFileName = docRenderingContext.getOutputName().replace('\\', '/');
+        String currentFileName = docRenderingContext.getOutputName();
         context.put("currentFileName", currentFileName);
 
         context.put("alignedFileName", PathTool.calculateLink(currentFileName, docRenderingContext.getRelativePath()));
