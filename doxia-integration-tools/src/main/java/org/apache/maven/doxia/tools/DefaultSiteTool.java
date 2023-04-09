@@ -358,10 +358,13 @@ public class DefaultSiteTool implements SiteTool {
         Objects.requireNonNull(locale, "locale cannot be null");
 
         try {
-            return resolveSiteDescriptor(project, repoSession, remoteProjectRepositories, locale);
-        } catch (ArtifactNotFoundException e) {
-            LOGGER.debug("Unable to locate site descriptor", e);
-            return null;
+            File siteDescriptor = resolveSiteDescriptor(project, repoSession, remoteProjectRepositories, locale);
+            if (siteDescriptor == null) {
+                LOGGER.debug("Site descriptor not found");
+                return null;
+            } else {
+                return siteDescriptor;
+            }
         } catch (ArtifactResolutionException e) {
             throw new SiteToolException("Unable to locate site descriptor", e);
         } catch (IOException e) {
@@ -815,17 +818,16 @@ public class DefaultSiteTool implements SiteTool {
      * @param repoSession the repository system session not null
      * @param remoteProjectRepositories not null
      * @param locale not null
-     * @return the resolved site descriptor
+     * @return the resolved site descriptor or null if not found in repositories.
      * @throws IOException if any
      * @throws ArtifactResolutionException if any
-     * @throws ArtifactNotFoundException if any
      */
     private File resolveSiteDescriptor(
             MavenProject project,
             RepositorySystemSession repoSession,
             List<RemoteRepository> remoteProjectRepositories,
             Locale locale)
-            throws IOException, ArtifactResolutionException, ArtifactNotFoundException {
+            throws IOException, ArtifactResolutionException {
         String variant = locale.getVariant();
         String country = locale.getCountry();
         String language = locale.getLanguage();
@@ -847,7 +849,8 @@ public class DefaultSiteTool implements SiteTool {
                 siteDescriptor = result.getArtifact().getFile();
                 found = true;
             } catch (ArtifactResolutionException e) {
-                if (e.getCause() instanceof ArtifactNotFoundException) {
+                // This is a workaround for MNG-7758/MRESOLVER-335
+                if (e.getResult().getExceptions().stream().anyMatch(re -> re instanceof ArtifactNotFoundException)) {
                     LOGGER.debug("No site descriptor found for '" + project.getId() + "' for locale '" + localeStr
                             + "', trying without variant...");
                 } else {
@@ -869,7 +872,8 @@ public class DefaultSiteTool implements SiteTool {
                 siteDescriptor = result.getArtifact().getFile();
                 found = true;
             } catch (ArtifactResolutionException e) {
-                if (e.getCause() instanceof ArtifactNotFoundException) {
+                // This is a workaround for MNG-7758/MRESOLVER-335
+                if (e.getResult().getExceptions().stream().anyMatch(re -> re instanceof ArtifactNotFoundException)) {
                     LOGGER.debug("No site descriptor found for '" + project.getId() + "' for locale '" + localeStr
                             + "', trying without country...");
                 } else {
@@ -891,7 +895,8 @@ public class DefaultSiteTool implements SiteTool {
                 siteDescriptor = result.getArtifact().getFile();
                 found = true;
             } catch (ArtifactResolutionException e) {
-                if (e.getCause() instanceof ArtifactNotFoundException) {
+                // This is a workaround for MNG-7758/MRESOLVER-335
+                if (e.getResult().getExceptions().stream().anyMatch(re -> re instanceof ArtifactNotFoundException)) {
                     LOGGER.debug("No site descriptor found for '" + project.getId() + "' for locale '" + localeStr
                             + "', trying without language (default locale)...");
                 } else {
@@ -912,9 +917,10 @@ public class DefaultSiteTool implements SiteTool {
 
                 siteDescriptor = result.getArtifact().getFile();
             } catch (ArtifactResolutionException e) {
-                if (e.getCause() instanceof ArtifactNotFoundException) {
+                // This is a workaround for MNG-7758/MRESOLVER-335
+                if (e.getResult().getExceptions().stream().anyMatch(re -> re instanceof ArtifactNotFoundException)) {
                     LOGGER.debug("No site descriptor found for '" + project.getId() + "' with default locale");
-                    throw (ArtifactNotFoundException) e.getCause();
+                    return null;
                 }
 
                 throw e;
