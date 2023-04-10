@@ -900,7 +900,7 @@ public class DefaultSiteTool implements SiteTool {
                 siteDescriptor = result.getArtifact().getFile();
             } catch (ArtifactResolutionException e) {
                 if (e.getCause() instanceof ArtifactNotFoundException) {
-                    LOGGER.debug("No site descriptor found for '" + project.getId() + "' with default locale.");
+                    LOGGER.debug("No site descriptor found for '" + project.getId() + "' with default locale");
                     throw (ArtifactNotFoundException) e.getCause();
                 }
 
@@ -962,7 +962,7 @@ public class DefaultSiteTool implements SiteTool {
                 siteModel = readSiteModel(siteDescriptorContent);
                 siteModel.setLastModified(siteDescriptor.lastModified());
             } else {
-                LOGGER.debug("No" + (depth == 0 ? "" : (" parent level " + depth)) + " site descriptor.");
+                LOGGER.debug("No" + (depth == 0 ? "" : (" parent level " + depth)) + " site descriptor");
             }
         } catch (IOException e) {
             throw new SiteToolException(
