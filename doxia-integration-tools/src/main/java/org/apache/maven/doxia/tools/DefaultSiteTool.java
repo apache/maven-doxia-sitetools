@@ -29,6 +29,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +75,9 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.LocalArtifactRequest;
+import org.eclipse.aether.repository.LocalArtifactResult;
+import org.eclipse.aether.repository.LocalRepositoryManager;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
@@ -835,6 +839,8 @@ public class DefaultSiteTool implements SiteTool {
             ArtifactRequest request =
                     createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
 
+            deletePseudoSiteDescriptorMarkerFile(repoSession, request);
+
             try {
                 ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
 
@@ -854,6 +860,8 @@ public class DefaultSiteTool implements SiteTool {
             localeStr = language + "_" + country;
             ArtifactRequest request =
                     createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
+
+            deletePseudoSiteDescriptorMarkerFile(repoSession, request);
 
             try {
                 ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
@@ -875,6 +883,8 @@ public class DefaultSiteTool implements SiteTool {
             ArtifactRequest request =
                     createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
 
+            deletePseudoSiteDescriptorMarkerFile(repoSession, request);
+
             try {
                 ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
 
@@ -894,6 +904,9 @@ public class DefaultSiteTool implements SiteTool {
             localeStr = SiteTool.DEFAULT_LOCALE.toString();
             ArtifactRequest request =
                     createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
+
+            deletePseudoSiteDescriptorMarkerFile(repoSession, request);
+
             try {
                 ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
 
@@ -909,6 +922,29 @@ public class DefaultSiteTool implements SiteTool {
         }
 
         return siteDescriptor;
+    }
+
+    // TODO Remove this transient method when everyone has migrated to Maven Site Plugin 4.0.0+
+    private void deletePseudoSiteDescriptorMarkerFile(RepositorySystemSession repoSession, ArtifactRequest request) {
+        LocalRepositoryManager lrm = repoSession.getLocalRepositoryManager();
+
+        LocalArtifactRequest localRequest = new LocalArtifactRequest();
+        localRequest.setArtifact(request.getArtifact());
+
+        LocalArtifactResult localResult = lrm.find(repoSession, localRequest);
+        File localArtifactFile = localResult.getFile();
+
+        try {
+            if (localResult.isAvailable() && Files.size(localArtifactFile.toPath()) == 0L) {
+                LOGGER.debug(
+                        "Deleting 0-byte pseudo marker file for artifact '{}' at '{}'",
+                        localRequest.getArtifact(),
+                        localArtifactFile);
+                Files.delete(localArtifactFile.toPath());
+            }
+        } catch (IOException e) {
+            LOGGER.debug("Failed to delete 0-byte pseudo marker file for artifact '{}'", localRequest.getArtifact(), e);
+        }
     }
 
     /**
