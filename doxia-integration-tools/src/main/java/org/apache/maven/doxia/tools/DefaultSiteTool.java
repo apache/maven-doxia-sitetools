@@ -934,8 +934,8 @@ public class DefaultSiteTool implements SiteTool {
     private void deletePseudoSiteDescriptorMarkerFile(RepositorySystemSession repoSession, ArtifactRequest request) {
         LocalRepositoryManager lrm = repoSession.getLocalRepositoryManager();
 
-        LocalArtifactRequest localRequest = new LocalArtifactRequest();
-        localRequest.setArtifact(request.getArtifact());
+        LocalArtifactRequest localRequest =
+                new LocalArtifactRequest(request.getArtifact(), request.getRepositories(), request.getRequestContext());
 
         LocalArtifactResult localResult = lrm.find(repoSession, localRequest);
         File localArtifactFile = localResult.getFile();
