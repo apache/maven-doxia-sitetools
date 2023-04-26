@@ -18,8 +18,7 @@
  */
 package org.apache.maven.doxia.siterenderer;
 
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.io.Writer;
 
 /**
@@ -35,12 +34,11 @@ public interface DocumentRenderer {
      * @param writer the Writer for the document output.
      * @param siteRenderer the site renderer to merge document content to.
      * @param siteRenderingContext the site rendering context.
-     * @throws org.apache.maven.doxia.siterenderer.RendererException if it bombs.
-     * @throws java.io.FileNotFoundException if it bombs.
-     * @throws java.io.UnsupportedEncodingException if it bombs.
+     * @throws RendererException if it bombs.
+     * @throws IOException if it bombs.
      */
     void renderDocument(Writer writer, SiteRenderer siteRenderer, SiteRenderingContext siteRenderingContext)
-            throws RendererException, FileNotFoundException, UnsupportedEncodingException;
+            throws IOException, RendererException;
 
     /**
      * The name of the output document.

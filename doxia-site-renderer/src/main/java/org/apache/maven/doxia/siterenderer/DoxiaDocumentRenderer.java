@@ -18,8 +18,7 @@
  */
 package org.apache.maven.doxia.siterenderer;
 
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.io.Writer;
 
 /**
@@ -43,7 +42,7 @@ public class DoxiaDocumentRenderer implements DocumentRenderer {
 
     /** {@inheritDoc} */
     public void renderDocument(Writer writer, SiteRenderer siteRenderer, SiteRenderingContext siteRenderingContext)
-            throws RendererException, FileNotFoundException, UnsupportedEncodingException {
+            throws IOException, RendererException {
         siteRenderer.renderDocument(writer, docRenderingContext, siteRenderingContext);
     }
 

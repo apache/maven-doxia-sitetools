@@ -24,14 +24,12 @@ import javax.inject.Singleton;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -313,7 +311,7 @@ public class DefaultSiteRenderer implements Renderer {
     /** {@inheritDoc} */
     public void renderDocument(
             Writer writer, DocumentRenderingContext docRenderingContext, SiteRenderingContext siteContext)
-            throws RendererException, FileNotFoundException, UnsupportedEncodingException {
+            throws RendererException {
         SiteRendererSink sink = new SiteRendererSink(docRenderingContext);
 
         File doc = new File(docRenderingContext.getBasedir(), docRenderingContext.getInputName());
@@ -730,12 +728,6 @@ public class DefaultSiteRenderer implements Renderer {
         } catch (InvalidVersionSpecificationException e) {
             throw new RendererException("Invalid skin doxia-sitetools prerequisite: " + prerequisite, e);
         }
-    }
-
-    /** {@inheritDoc} */
-    public void copyResources(SiteRenderingContext siteRenderingContext, File resourcesDirectory, File outputDirectory)
-            throws IOException {
-        throw new AssertionError("copyResources( SiteRenderingContext, File, File ) is deprecated.");
     }
 
     /** {@inheritDoc} */

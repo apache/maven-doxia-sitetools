@@ -367,8 +367,6 @@ public class DefaultSiteTool implements SiteTool {
             }
         } catch (ArtifactResolutionException e) {
             throw new SiteToolException("Unable to locate site descriptor", e);
-        } catch (IOException e) {
-            throw new SiteToolException("Unable to locate site descriptor", e);
         }
     }
 
@@ -819,7 +817,6 @@ public class DefaultSiteTool implements SiteTool {
      * @param remoteProjectRepositories not null
      * @param locale not null
      * @return the resolved site descriptor or null if not found in repositories.
-     * @throws IOException if any
      * @throws ArtifactResolutionException if any
      */
     private File resolveSiteDescriptor(
@@ -827,7 +824,7 @@ public class DefaultSiteTool implements SiteTool {
             RepositorySystemSession repoSession,
             List<RemoteRepository> remoteProjectRepositories,
             Locale locale)
-            throws IOException, ArtifactResolutionException {
+            throws ArtifactResolutionException {
         String variant = locale.getVariant();
         String country = locale.getCountry();
         String language = locale.getLanguage();

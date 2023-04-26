@@ -19,9 +19,7 @@
 package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.Locale;
@@ -55,11 +53,12 @@ public interface SiteRenderer {
      * @param writer the Writer to use.
      * @param content the document content to be merged.
      * @param siteRenderingContext the SiteRenderingContext to use.
+     * @throws IOException if it bombs.
      * @throws RendererException if it bombs.
      * @since 1.8
      */
     void mergeDocumentIntoSite(Writer writer, DocumentContent content, SiteRenderingContext siteRenderingContext)
-            throws RendererException;
+            throws IOException, RendererException;
 
     /**
      * Create a Site Rendering Context for a site using a skin.
@@ -108,10 +107,9 @@ public interface SiteRenderer {
      * @param writer the writer to render the document to.
      * @param docRenderingContext the document's rendering context, which is expected to have a non-null parser id.
      * @param siteContext the site's rendering context
+     * @throws IOException if it bombs.
      * @throws RendererException if it bombs.
-     * @throws FileNotFoundException if it bombs.
-     * @throws UnsupportedEncodingException if it bombs.
      */
     void renderDocument(Writer writer, DocumentRenderingContext docRenderingContext, SiteRenderingContext siteContext)
-            throws RendererException, FileNotFoundException, UnsupportedEncodingException;
+            throws IOException, RendererException;
 }
