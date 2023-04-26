@@ -146,7 +146,6 @@ public class DefaultSiteRenderer implements Renderer {
     // SiteRenderer implementation
     // ----------------------------------------------------------------------
 
-    /** {@inheritDoc} */
     public Map<String, DocumentRenderer> locateDocumentFiles(SiteRenderingContext siteRenderingContext)
             throws IOException, RendererException {
         return locateDocumentFiles(siteRenderingContext, false);
@@ -566,7 +565,6 @@ public class DefaultSiteRenderer implements Renderer {
         return context;
     }
 
-    /** {@inheritDoc} */
     public void generateDocument(Writer writer, SiteRendererSink sink, SiteRenderingContext siteRenderingContext)
             throws RendererException {
         mergeDocumentIntoSite(writer, sink, siteRenderingContext);
