@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.plexus.util.PathTool;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * The rendering context of a document.
@@ -111,7 +110,7 @@ public class DocumentRenderingContext {
         document = document.replace('\\', '/');
         this.inputName = document;
 
-        if (StringUtils.isNotEmpty(extension)) {
+        if (extension != null && !extension.isEmpty()) {
             this.basedirRelativePath = basedirRelativePath.replace('\\', '/');
             // document comes from a Doxia source: see DoxiaDocumentRenderer
             this.editable = editable;
@@ -228,7 +227,7 @@ public class DocumentRenderingContext {
      * @since 1.8
      */
     public boolean isDoxiaSource() {
-        return StringUtils.isNotEmpty(extension);
+        return extension != null && !extension.isEmpty();
     }
 
     /**
