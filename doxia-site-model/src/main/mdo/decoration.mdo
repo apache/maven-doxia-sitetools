@@ -20,38 +20,38 @@ under the License.
 -->
 
 <model xmlns="http://codehaus-plexus.github.io/MODELLO/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://codehaus-plexus.github.io/MODELLO/2.0.0 https://codehaus-plexus.github.io/modello/xsd/modello-2.0.0.xsd"
-  xml.namespace="http://maven.apache.org/SITE/${version}"
-  xml.schemaLocation="https://maven.apache.org/xsd/site-${version}.xsd">
-  <id>site</id>
-  <name>Site</name>
+  xml.namespace="http://maven.apache.org/DECORATION/${version}"
+  xml.schemaLocation="http://maven.apache.org/xsd/decoration-${version}.xsd">
+  <id>decoration</id>
+  <name>Decoration</name>
   <description><![CDATA[
-    <p>This is a reference for the site descriptor used in Doxia Sitetools, also known as <code>site.xml</code>:
+    <p>This is a reference for the site decoration descriptor used in Doxia Sitetools, also known as <code>site.xml</code>:
     it is used to configure a site template (aka skin).</p>
     <p>An XSD is available at:</p>
     <ul>
       <!-- There is no property filtering in Modello, this has to be updated manually. See DOXIASITETOOLS-98. -->
-      <li><a href="https://maven.apache.org/xsd/site-2.0.0.xsd">https://maven.apache.org/xsd/site-2.0.0.xsd</a></li>
+      <li><a href="https://maven.apache.org/xsd/decoration-1.8.1.xsd">https://maven.apache.org/xsd/decoration-1.8.1.xsd</a></li>
     </ul>
     ]]></description>
 
   <defaults>
     <default>
       <key>package</key>
-      <value>org.apache.maven.doxia.site</value>
+      <value>org.apache.maven.doxia.site.decoration</value>
     </default>
   </defaults>
 
   <classes>
-    <class rootElement="true" xml.tagName="site" java.clone="deep">
-      <name>SiteModel</name>
+    <class rootElement="true" xml.tagName="project" java.clone="deep">
+      <name>DecorationModel</name>
       <description><![CDATA[
-         The <code>&lt;site&gt;</code> element is the root of the site decoration descriptor.
+         The <code>&lt;project&gt;</code> element is the root of the site decoration descriptor.
       ]]></description>
       <version>1.0.0+</version>
       <fields>
         <field xml.attribute="true">
           <name>name</name>
-          <description>The full name of the project site.</description>
+          <description>The full name of the project.</description>
           <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
@@ -133,7 +133,7 @@ under the License.
         </field>
         <field xdoc.separator="blank">
           <name>body</name>
-          <description>The main site content.</description>
+          <description>The main site content decoration.</description>
           <version>1.0.0+</version>
           <association>
             <type>Body</type>
@@ -144,8 +144,8 @@ under the License.
           <name>custom</name>
           <description><![CDATA[
             Custom configuration for use with customized Velocity templates. Data from this field are
-            accessible in Velocity template from <code>$site.custom</code> variable as DOM content.
-            Example: <code>$site.custom.getChild( 'customElement' ).getValue()</code>
+            accessible in Velocity template from <code>$decoration.custom</code> variable as DOM content.
+            Example: <code>$decoration.custom.getChild( 'customElement' ).getValue()</code>
           ]]></description>
           <version>1.0.0+</version>
           <type>DOM</type>
@@ -153,7 +153,7 @@ under the License.
         </field>
         <field xml.transient="true">
           <name>lastModified</name>
-          <description>Timestamp of the last modification of this site model.</description>
+          <description>Timestamp of the last modification of this decoration model.</description>
           <version>1.0.1+</version>
           <type>long</type>
         </field>
@@ -261,50 +261,6 @@ under the License.
             ]]>
           </code>
         </codeSegment>
-        <codeSegment>
-          <version>1.7.0+</version>
-          <code>
-    /**
-     * @since 1.7
-     * @see SiteUtils#isLink
-     */
-    public boolean isLink( String href )
-    {
-        return SiteUtils.isLink( href );
-    }
-          </code>
-        </codeSegment>
-        <codeSegment>
-          <version>1.8.0+</version>
-          <code>
-    /**
-     * @since 1.8
-     * @see SiteUtils#getCustomChild
-     */
-    public Object getCustomChild( String path )
-    {
-        return SiteUtils.getCustomChild( (org.codehaus.plexus.util.xml.Xpp3Dom) custom, path );
-    }
-
-    /**
-     * @since 1.8
-     * @see SiteUtils#getCustomValue
-     */
-    public String getCustomValue( String path )
-    {
-        return SiteUtils.getCustomValue( (org.codehaus.plexus.util.xml.Xpp3Dom) custom, path );
-    }
-
-    /**
-     * @since 1.8
-     * @see SiteUtils#getCustomValue
-     */
-    public String getCustomValue( String path, String defaultValue )
-    {
-        return SiteUtils.getCustomValue( (org.codehaus.plexus.util.xml.Xpp3Dom) custom, path, defaultValue );
-    }
-          </code>
-        </codeSegment>
       </codeSegments>
     </class>
 
@@ -312,7 +268,65 @@ under the License.
       <name>Banner</name>
       <description>Banner logo on the masthead of the site.</description>
       <version>1.0.0+</version>
-      <superClass>LinkItem</superClass>
+      <fields>
+        <!-- Ideally we want attributes DOXIA-335 -->
+        <field>
+          <name>name</name>
+          <version>1.0.0+</version>
+          <description>The name of the banner.</description>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>src</name>
+          <version>1.0.0+</version>
+          <description>The source location of an image for the banner.</description>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>alt</name>
+          <version>1.0.0+</version>
+          <description>The alt description for the banner image.</description>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>href</name>
+          <version>1.0.0+</version>
+          <description>The href of a link to be used for the banner image.</description>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>border</name>
+          <description>The border to use for the banner image.</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>width</name>
+          <description>The width to use for the banner image.</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>height</name>
+          <description>The height to use for the banner image.</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>title</name>
+          <version>1.3.0+</version>
+          <description>The title for the banner image.</description>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+      </fields>
     </class>
 
     <class java.clone="deep">
@@ -377,9 +391,16 @@ under the License.
 
     <class java.clone="deep" xsd.compositor="sequence">
       <name>Body</name>
-      <description>The main content.</description>
+      <description>The main content decoration.</description>
       <version>1.0.0+</version>
       <fields>
+        <field>
+          <name>head</name>
+          <description>Additional content (like JavaScript) to include in the HEAD block of the generated pages.</description>
+          <version>1.0.0/1.6.0</version>
+          <type>DOM</type>
+          <identifier>true</identifier>
+        </field>
         <field>
           <name>head</name>
           <description>Additional content (like JavaScript) to include in the HEAD block of the generated pages.</description>
@@ -424,6 +445,13 @@ under the License.
           <type>String</type>
           <identifier>true</identifier>
         </field>
+        <field>
+          <name>footer</name>
+          <description>If present, the contained text will be used instead of the generated copyright text.</description>
+          <version>1.1.0/1.6.0</version>
+          <type>DOM</type>
+          <identifier>true</identifier>
+        </field>
       </fields>
     </class>
 
@@ -447,19 +475,60 @@ under the License.
           <identifier>true</identifier>
         </field>
         <field xml.attribute="true">
+          <name>img</name>
+          <description>The source location of an image.</description>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>position</name>
+          <description>Where to place the image regarding the displayed name (left or right).</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>left</defaultValue>
+        </field>
+        <field xml.attribute="true">
+          <name>alt</name>
+          <description>The alt to use for the image.</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>border</name>
+          <description>The border to use for the image.</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>width</name>
+          <description>The width to use for the image.</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>height</name>
+          <description>The height to use for the image.</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
           <name>target</name>
           <description>Where the new document will be displayed when the user follows a link, i.e. _blank opens the new document in a new window.</description>
           <version>1.0.1+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
-        <field>
-          <name>image</name>
-          <version>2.0.0+</version>
-          <description>The image for the link.</description>
-          <association>
-            <type>Image</type>
-          </association>
+        <field xml.attribute="true">
+          <name>title</name>
+          <description>The title to use for the image.</description>
+          <version>1.3.0+</version>
+          <type>String</type>
           <identifier>true</identifier>
         </field>
       </fields>
@@ -490,7 +559,7 @@ under the License.
           <name>inheritAsRef</name>
           <description><![CDATA[
             If this is a reference, setting to <code>true</code> means that it will be populated
-            in the site, whereas if it is <code>false</code>, it is populated in the parent and then inherited.
+            in the project, whereas if it is <code>false</code>, it is populated in the parent and then inherited.
           ]]></description>
           <version>1.0.0+</version>
           <type>boolean</type>
@@ -505,13 +574,54 @@ under the License.
           <type>String</type>
           <identifier>true</identifier>
         </field>
-        <field>
-          <name>image</name>
-          <version>2.0.0+</version>
-          <description>The image for the menu.</description>
-          <association>
-            <type>Image</type>
-          </association>
+        <field xml.attribute="true">
+          <name>img</name>
+          <description>The source location of an menu image.</description>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>alt</name>
+          <version>1.0.1+</version>
+          <description>The alt description for the image.</description>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>position</name>
+          <description>Where to place the image regarding the displayed name (left or right).</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>left</defaultValue>
+        </field>
+        <field xml.attribute="true">
+          <name>border</name>
+          <description>The border to use for the menu image.</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>width</name>
+          <description>The width to use for the menu image.</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>height</name>
+          <description>The height to use for the menu image.</description>
+          <version>1.0.1+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>title</name>
+          <version>1.3.0+</version>
+          <description>The title for the image.</description>
+          <type>String</type>
           <identifier>true</identifier>
         </field>
         <field>
@@ -533,6 +643,13 @@ under the License.
       <version>1.0.0+</version>
       <superClass>LinkItem</superClass>
       <fields>
+        <field>
+          <name>description</name>
+          <description>A description of the menu item. This is used on any summary pages for a menu.</description>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
         <field xml.attribute="true">
           <name>collapse</name>
           <description>Whether to collapse children elements of an item menu (by default).</description>
@@ -556,58 +673,6 @@ under the License.
             <type>MenuItem</type>
             <multiplicity>*</multiplicity>
           </association>
-          <identifier>true</identifier>
-        </field>
-      </fields>
-    </class>
-
-    <class java.clone="deep">
-      <name>Image</name>
-      <description>An image.</description>
-      <version>2.0.0+</version>
-      <fields>
-        <field xml.attribute="true">
-          <name>src</name>
-          <description>The source location.</description>
-          <version>2.0.0+</version>
-          <type>String</type>
-          <required>true</required>
-          <identifier>true</identifier>
-        </field>
-        <field xml.attribute="true">
-          <name>position</name>
-          <description>Where to place the image relative to the displayed name (left or right).</description>
-          <version>2.0.0+</version>
-          <type>String</type>
-          <identifier>true</identifier>
-          <defaultValue>left</defaultValue>
-        </field>
-        <field xml.attribute="true">
-          <name>alt</name>
-          <description>The alternative text to use.</description>
-          <version>2.0.0+</version>
-          <type>String</type>
-          <identifier>true</identifier>
-        </field>
-        <field xml.attribute="true">
-          <name>width</name>
-          <description>The width to use.</description>
-          <version>2.0.0+</version>
-          <type>String</type>
-          <identifier>true</identifier>
-        </field>
-        <field xml.attribute="true">
-          <name>height</name>
-          <description>The height to use.</description>
-          <version>2.0.0+</version>
-          <type>String</type>
-          <identifier>true</identifier>
-        </field>
-        <field xml.attribute="true">
-          <name>style</name>
-          <description>The style to use.</description>
-          <version>2.0.0+</version>
-          <type>String</type>
           <identifier>true</identifier>
         </field>
       </fields>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<site xmlns="http://maven.apache.org/SITE/2.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 file:../../../target/generated-site/xsd/site-2.0.0.xsd"
+  name="Maven Dummy Site">
+  <bannerLeft name="Maven Site" href="http://maven.apache.org/">
+    <image src="http://maven.apache.org/images/apache-maven-project.png" alt="banner left" height="200px" width="200px" style="border: solid;" />
+  </bannerLeft>
+  <bannerRight name="right" />
+  <publishDate position="top" format="yyyyMMdd" timezone="Europe/Berlin" />
+  <version position="bottom" />
+  <edit>foo</edit>
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-stylus-skin</artifactId>
+  </skin>
+  <poweredBy>
+    <logo name="first" />
+    <logo name="second" href="foo" target="_blank">
+      <image src="logo.png" position="left" alt="second logo" width="10px" height="10px" style="border: dotted;" />
+    </logo>
+  </poweredBy>
+  <body>
+    <head>head injection</head>
+    <links>
+      <item name="Maven" href="http://maven.apache.org/" />
+      <item name="Maven" href="http://maven.apache.org/" target="_blank">
+        <image src="link.jpeg" position="left" alt="second link" width="10px" height="10px" style="border: dotted;" />
+      </item>
+    </links>
+    <breadcrumbs>
+      <item name="Maven" href="http://maven.apache.org/" />
+      <item name="Maven" href="http://maven.apache.org/" target="_blank">
+        <image src="breadcrumb.jpeg" position="left" alt="second breadcrumb" width="10px" height="10px" style="border: dotted;" />
+      </item>
+    </breadcrumbs>
+
+    <menu name="Overview">
+      <item name="Test" href="/test.html" />
+    </menu>
+    <menu name="Details" inherit="bottom" inheritAsRef="false" ref="foo">
+      <image src="menu.jpeg" position="left" alt="second menu" width="10px" height="10px" style="border: dotted;" />
+      <item name="Test" href="/test.html" collapse="false" ref="foo">
+        <image src="item.jpeg" position="left" alt="second menu" width="10px" height="10px" style="border: dotted;" />
+        <item name="Nested Test" href="/test.html" collapse="false" ref="foo">
+          <image src="nested-item.jpeg" position="left" alt="second menu" width="10px" height="10px" style="border: dotted;" />
+        </item>
+      </item>
+    </menu>
+    <menu ref="reports" />
+
+    <footer>footer injection</footer>
+  </body>
+
+  <custom>
+    <options>
+      <foo>bar</foo>
+    </options>
+  </custom>
+</site>

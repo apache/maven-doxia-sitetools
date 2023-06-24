@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.maven.doxia.site.Banner;
 import org.apache.maven.doxia.site.Body;
+import org.apache.maven.doxia.site.Image;
 import org.apache.maven.doxia.site.LinkItem;
 import org.apache.maven.doxia.site.Logo;
 import org.apache.maven.doxia.site.Menu;
@@ -169,7 +170,7 @@ public class SiteModelInheritanceAssemblerTest {
         assertEquals("http://jakarta.apache.org/", childModel.getBannerLeft().getHref(), "check left banner href");
         assertEquals(
                 "http://jakarta.apache.org/images/jakarta-logo.gif",
-                childModel.getBannerLeft().getSrc(),
+                childModel.getBannerLeft().getImage().getSrc(),
                 "check left banner image");
 
         assertEquals(
@@ -178,12 +179,12 @@ public class SiteModelInheritanceAssemblerTest {
                 "check right banner href");
         assertEquals(
                 "http://jakarta.apache.org/commons/images/logo.png",
-                childModel.getBannerRight().getSrc(),
+                childModel.getBannerRight().getImage().getSrc(),
                 "check right banner image");
 
         Logo poweredBy = childModel.getPoweredBy().get(0);
         assertEquals("http://tomcat.apache.org/", poweredBy.getHref(), "check powered by logo href");
-        assertEquals("http://tomcat.apache.org/logo.gif", poweredBy.getImg(), "check powered by logo image");
+        assertEquals("http://tomcat.apache.org/logo.gif", poweredBy.getImage().getSrc(), "check powered by logo image");
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get(0);
         assertEquals("http://www.apache.org/", breadcrumb.getHref(), "check breadcrumb href");
@@ -221,14 +222,20 @@ public class SiteModelInheritanceAssemblerTest {
 
     private static void assertPathsResolvedForRelativeUrls(final SiteModel childModel) {
         assertEquals("../banner/left", childModel.getBannerLeft().getHref(), "check left banner href");
-        assertEquals("../images/jakarta-logo.gif", childModel.getBannerLeft().getSrc(), "check left banner image");
+        assertEquals(
+                "../images/jakarta-logo.gif",
+                childModel.getBannerLeft().getImage().getSrc(),
+                "check left banner image");
 
         assertEquals("../banner/right/", childModel.getBannerRight().getHref(), "check right banner href");
-        assertEquals("../commons/images/logo.png", childModel.getBannerRight().getSrc(), "check right banner image");
+        assertEquals(
+                "../commons/images/logo.png",
+                childModel.getBannerRight().getImage().getSrc(),
+                "check right banner image");
 
         Logo poweredBy = childModel.getPoweredBy().get(0);
         assertEquals("../tomcat", poweredBy.getHref(), "check powered by logo href");
-        assertEquals("../tomcat/logo.gif", poweredBy.getImg(), "check powered by logo image");
+        assertEquals("../tomcat/logo.gif", poweredBy.getImage().getSrc(), "check powered by logo image");
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get(0);
         assertEquals("../apache", breadcrumb.getHref(), "check breadcrumb href");
@@ -269,14 +276,20 @@ public class SiteModelInheritanceAssemblerTest {
 
     private static void assertPathsResolvedForSubsiteUrls(final SiteModel childModel) {
         assertEquals("../banner/left", childModel.getBannerLeft().getHref(), "check left banner href");
-        assertEquals("../images/jakarta-logo.gif", childModel.getBannerLeft().getSrc(), "check left banner image");
+        assertEquals(
+                "../images/jakarta-logo.gif",
+                childModel.getBannerLeft().getImage().getSrc(),
+                "check left banner image");
 
         assertEquals("../banner/right/", childModel.getBannerRight().getHref(), "check right banner href");
-        assertEquals("../commons/images/logo.png", childModel.getBannerRight().getSrc(), "check right banner image");
+        assertEquals(
+                "../commons/images/logo.png",
+                childModel.getBannerRight().getImage().getSrc(),
+                "check right banner image");
 
         Logo poweredBy = childModel.getPoweredBy().get(0);
         assertEquals("../tomcat", poweredBy.getHref(), "check powered by logo href");
-        assertEquals("../tomcat/logo.gif", poweredBy.getImg(), "check powered by logo image");
+        assertEquals("../tomcat/logo.gif", poweredBy.getImage().getSrc(), "check powered by logo image");
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get(0);
         assertEquals("../apache", breadcrumb.getHref(), "check breadcrumb href");
@@ -314,15 +327,20 @@ public class SiteModelInheritanceAssemblerTest {
 
     private static void assertPathsResolvedForRelativeUrlsDepthOfTwo(final SiteModel childModel) {
         assertEquals("../../banner/left", childModel.getBannerLeft().getHref(), "check left banner href");
-        assertEquals("../../images/jakarta-logo.gif", childModel.getBannerLeft().getSrc(), "check left banner image");
+        assertEquals(
+                "../../images/jakarta-logo.gif",
+                childModel.getBannerLeft().getImage().getSrc(),
+                "check left banner image");
 
         assertEquals("../../banner/right/", childModel.getBannerRight().getHref(), "check right banner href");
         assertEquals(
-                "../../commons/images/logo.png", childModel.getBannerRight().getSrc(), "check right banner image");
+                "../../commons/images/logo.png",
+                childModel.getBannerRight().getImage().getSrc(),
+                "check right banner image");
 
         Logo poweredBy = childModel.getPoweredBy().get(0);
         assertEquals("../../tomcat", poweredBy.getHref(), "check powered by logo href");
-        assertEquals("../../tomcat/logo.gif", poweredBy.getImg(), "check powered by logo image");
+        assertEquals("../../tomcat/logo.gif", poweredBy.getImage().getSrc(), "check powered by logo image");
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get(0);
         assertEquals("../../apache", breadcrumb.getHref(), "check breadcrumb href");
@@ -360,15 +378,20 @@ public class SiteModelInheritanceAssemblerTest {
 
     private static void assertPathsResolvedForReverseRelativeUrls(final SiteModel childModel) {
         assertEquals("doxia/banner/left", childModel.getBannerLeft().getHref(), "check left banner href");
-        assertEquals("doxia/images/jakarta-logo.gif", childModel.getBannerLeft().getSrc(), "check left banner image");
+        assertEquals(
+                "doxia/images/jakarta-logo.gif",
+                childModel.getBannerLeft().getImage().getSrc(),
+                "check left banner image");
 
         assertEquals("doxia/banner/right/", childModel.getBannerRight().getHref(), "check right banner href");
         assertEquals(
-                "doxia/commons/images/logo.png", childModel.getBannerRight().getSrc(), "check right banner image");
+                "doxia/commons/images/logo.png",
+                childModel.getBannerRight().getImage().getSrc(),
+                "check right banner image");
 
         Logo poweredBy = childModel.getPoweredBy().get(0);
         assertEquals("doxia/tomcat", poweredBy.getHref(), "check powered by logo href");
-        assertEquals("doxia/tomcat/logo.gif", poweredBy.getImg(), "check powered by logo image");
+        assertEquals("doxia/tomcat/logo.gif", poweredBy.getImage().getSrc(), "check powered by logo image");
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get(0);
         assertEquals("doxia/apache", breadcrumb.getHref(), "check breadcrumb href");
@@ -407,17 +430,19 @@ public class SiteModelInheritanceAssemblerTest {
     private static void assertPathsResolvedForReverseRelativeUrlsDepthOfTwo(final SiteModel childModel) {
         assertEquals("doxia/core/banner/left", childModel.getBannerLeft().getHref(), "check left banner href");
         assertEquals(
-                "doxia/core/images/jakarta-logo.gif", childModel.getBannerLeft().getSrc(), "check left banner image");
+                "doxia/core/images/jakarta-logo.gif",
+                childModel.getBannerLeft().getImage().getSrc(),
+                "check left banner image");
 
         assertEquals("doxia/core/banner/right/", childModel.getBannerRight().getHref(), "check right banner href");
         assertEquals(
                 "doxia/core/commons/images/logo.png",
-                childModel.getBannerRight().getSrc(),
+                childModel.getBannerRight().getImage().getSrc(),
                 "check right banner image");
 
         Logo poweredBy = childModel.getPoweredBy().get(0);
         assertEquals("doxia/core/tomcat", poweredBy.getHref(), "check powered by logo href");
-        assertEquals("doxia/core/tomcat/logo.gif", poweredBy.getImg(), "check powered by logo image");
+        assertEquals("doxia/core/tomcat/logo.gif", poweredBy.getImage().getSrc(), "check powered by logo image");
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get(0);
         assertEquals("doxia/core/apache", breadcrumb.getHref(), "check breadcrumb href");
@@ -460,7 +485,7 @@ public class SiteModelInheritanceAssemblerTest {
                 "check left banner href");
         assertEquals(
                 "http://jakarta.apache.org/images/jakarta-logo.gif",
-                childModel.getBannerLeft().getSrc(),
+                childModel.getBannerLeft().getImage().getSrc(),
                 "check left banner image");
 
         assertEquals(
@@ -469,12 +494,15 @@ public class SiteModelInheritanceAssemblerTest {
                 "check right banner href");
         assertEquals(
                 "http://jakarta.apache.org/commons/images/logo.png",
-                childModel.getBannerRight().getSrc(),
+                childModel.getBannerRight().getImage().getSrc(),
                 "check right banner image");
 
         Logo poweredBy = childModel.getPoweredBy().get(0);
         assertEquals("http://jakarta.apache.org/tomcat", poweredBy.getHref(), "check powered by logo href");
-        assertEquals("http://jakarta.apache.org/tomcat/logo.gif", poweredBy.getImg(), "check powered by logo image");
+        assertEquals(
+                "http://jakarta.apache.org/tomcat/logo.gif",
+                poweredBy.getImage().getSrc(),
+                "check powered by logo image");
 
         LinkItem breadcrumb = childModel.getBody().getBreadcrumbs().get(0);
         assertEquals("http://jakarta.apache.org/apache", breadcrumb.getHref(), "check breadcrumb href");
@@ -877,16 +905,20 @@ public class SiteModelInheritanceAssemblerTest {
         Banner banner = new Banner();
         banner.setName(name);
         banner.setHref(href);
-        banner.setSrc(src);
-        banner.setAlt(alt);
+        Image image = new Image();
+        image.setSrc(src);
+        image.setAlt(alt);
+        banner.setImage(image);
         return banner;
     }
 
-    private Logo createLogo(String name, String href, String img) {
+    private Logo createLogo(String name, String href, String src) {
         Logo logo = new Logo();
-        logo.setHref(href);
-        logo.setImg(img);
         logo.setName(name);
+        logo.setHref(href);
+        Image image = new Image();
+        image.setSrc(src);
+        logo.setImage(image);
         return logo;
     }
 

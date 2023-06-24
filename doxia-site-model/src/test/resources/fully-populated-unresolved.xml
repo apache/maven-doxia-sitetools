@@ -19,26 +19,24 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+<site xmlns="http://maven.apache.org/SITE/2.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 file:../../../target/generated-site/xsd/decoration-1.0.0.xsd"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 file:../../../target/generated-site/xsd/site-2.0.0.xsd"
   name="Empty">
-  <bannerLeft>
-    <name>name</name>
-    <src>../src</src>
-    <href>../href</href>
+  <bannerLeft name="name" href="../href">
+    <image src="../src" />
   </bannerLeft>
-  <bannerRight>
-    <name>name</name>
-    <src>../src</src>
-    <href>../href</href>
+  <bannerRight name="name" href="../href">
+    <image src="../src" />
   </bannerRight>
 
   <publishDate format="fmt" position="top"/>
   <version position="right" />
 
   <poweredBy>
-    <logo name="Maven" href="http://maven.apache.org" img="http://maven.apache.org/images/maven-feather.png"/>
+    <logo name="Maven" href="http://maven.apache.org">
+      <image src="http://maven.apache.org/images/maven-feather.png" />
+    </logo>
   </poweredBy>
 
   <skin>
@@ -61,4 +59,4 @@ under the License.
   <custom>
     <junk>junk</junk>
   </custom>
-</project>
+</site>

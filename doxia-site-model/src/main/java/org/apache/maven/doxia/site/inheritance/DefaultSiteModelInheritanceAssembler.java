@@ -24,7 +24,6 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.doxia.site.Banner;
 import org.apache.maven.doxia.site.Body;
 import org.apache.maven.doxia.site.LinkItem;
 import org.apache.maven.doxia.site.Logo;
@@ -55,12 +54,12 @@ public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanc
 
         if (child.getBannerLeft() == null && parent.getBannerLeft() != null) {
             child.setBannerLeft(parent.getBannerLeft().clone());
-            rebaseBannerPaths(child.getBannerLeft(), urlContainer);
+            rebaseLinkItemPaths(child.getBannerLeft(), urlContainer);
         }
 
         if (child.getBannerRight() == null && parent.getBannerRight() != null) {
             child.setBannerRight(parent.getBannerRight().clone());
-            rebaseBannerPaths(child.getBannerRight(), urlContainer);
+            rebaseLinkItemPaths(child.getBannerRight(), urlContainer);
         }
 
         if (child.isDefaultPublishDate() && parent.getPublishDate() != null) {
@@ -97,15 +96,15 @@ public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanc
         }
 
         if (siteModel.getBannerLeft() != null) {
-            relativizeBannerPaths(siteModel.getBannerLeft(), baseUrl);
+            relativizeLinkItemPaths(siteModel.getBannerLeft(), baseUrl);
         }
 
         if (siteModel.getBannerRight() != null) {
-            relativizeBannerPaths(siteModel.getBannerRight(), baseUrl);
+            relativizeLinkItemPaths(siteModel.getBannerRight(), baseUrl);
         }
 
         for (Logo logo : siteModel.getPoweredBy()) {
-            relativizeLogoPaths(logo, baseUrl);
+            relativizeLinkItemPaths(logo, baseUrl);
         }
 
         if (siteModel.getBody() != null) {
@@ -119,31 +118,10 @@ public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanc
 
             for (Menu menu : siteModel.getBody().getMenus()) {
                 relativizeMenuPaths(menu.getItems(), baseUrl);
+                if (menu.getImage() != null) {
+                    menu.getImage().setSrc(relativizeLink(menu.getImage().getSrc(), baseUrl));
+                }
             }
-        }
-    }
-
-    /**
-     * Resolves all relative paths between the elements in a banner. The banner element might contain relative paths
-     * to the oldBaseUrl, these are changed to the newBannerUrl.
-     *
-     * @param banner
-     * @param baseUrl
-     */
-    private void relativizeBannerPaths(final Banner banner, final String baseUrl) {
-        // banner has been checked to be not null, both href and src may be empty or null
-        banner.setHref(relativizeLink(banner.getHref(), baseUrl));
-        banner.setSrc(relativizeLink(banner.getSrc(), baseUrl));
-    }
-
-    private void rebaseBannerPaths(final Banner banner, final URLRebaser urlContainer) {
-        if (banner.getHref() != null) // it may be empty
-        {
-            banner.setHref(urlContainer.rebaseLink(banner.getHref()));
-        }
-
-        if (banner.getSrc() != null) {
-            banner.setSrc(urlContainer.rebaseLink(banner.getSrc()));
         }
     }
 
@@ -207,6 +185,10 @@ public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanc
                 final Menu clone = menu.clone();
 
                 rebaseMenuPaths(clone.getItems(), urlContainer);
+                if (clone.getImage() != null) {
+                    clone.getImage()
+                            .setSrc(urlContainer.rebaseLink(clone.getImage().getSrc()));
+                }
 
                 menus.add(topCounter, clone);
                 topCounter++;
@@ -214,6 +196,10 @@ public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanc
                 final Menu clone = menu.clone();
 
                 rebaseMenuPaths(clone.getItems(), urlContainer);
+                if (clone.getImage() != null) {
+                    clone.getImage()
+                            .setSrc(urlContainer.rebaseLink(clone.getImage().getSrc()));
+                }
 
                 menus.add(clone);
             }
@@ -238,20 +224,16 @@ public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanc
 
     private void relativizeLinkItemPaths(final LinkItem item, final String baseUrl) {
         item.setHref(relativizeLink(item.getHref(), baseUrl));
+        if (item.getImage() != null) {
+            item.getImage().setSrc(relativizeLink(item.getImage().getSrc(), baseUrl));
+        }
     }
 
     private void rebaseLinkItemPaths(final LinkItem item, final URLRebaser urlContainer) {
         item.setHref(urlContainer.rebaseLink(item.getHref()));
-    }
-
-    private void relativizeLogoPaths(final Logo logo, final String baseUrl) {
-        logo.setImg(relativizeLink(logo.getImg(), baseUrl));
-        relativizeLinkItemPaths(logo, baseUrl);
-    }
-
-    private void rebaseLogoPaths(final Logo logo, final URLRebaser urlContainer) {
-        logo.setImg(urlContainer.rebaseLink(logo.getImg()));
-        rebaseLinkItemPaths(logo, urlContainer);
+        if (item.getImage() != null) {
+            item.getImage().setSrc(urlContainer.rebaseLink(item.getImage().getSrc()));
+        }
     }
 
     private List<LinkItem> mergeLinkItemLists(
@@ -293,7 +275,7 @@ public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanc
             if (!logos.contains(logo)) {
                 final Logo clone = logo.clone();
 
-                rebaseLogoPaths(clone, urlContainer);
+                rebaseLinkItemPaths(clone, urlContainer);
 
                 logos.add(clone);
             }

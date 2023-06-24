@@ -19,21 +19,18 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/DECORATION/1.8.0"
+<site xmlns="http://maven.apache.org/SITE/2.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 file:../../../target/generated-site/xsd/decoration-1.8.0.xsd"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 file:../../../target/generated-site/xsd/site-2.0.0.xsd"
   name="Child">
-  <bannerLeft>
-    <name>The Jakarta Project</name>
-    <href>http://jakarta.apache.org/</href>
-  </bannerLeft>
-  <bannerRight>
-    <name>Jakarta Commons Sandbox</name>
-    <src>http://jakarta.apache.org/commons/images/logo.png</src>
-    <href>http://jakarta.apache.org/commons/sandbox</href>
+  <bannerLeft name="The Jakarta Project" href="http://jakarta.apache.org/" />
+  <bannerRight name="Jakarta Commons Sandbox" href="http://jakarta.apache.org/commons/sandbox">
+    <image src="http://jakarta.apache.org/commons/images/logo.png" />
   </bannerRight>
   <poweredBy>
-    <logo name="Maven" href="http://maven.apache.org" img="../images/maven-feather.png"/>
+    <logo name="Maven" href="http://maven.apache.org">
+      <image src="../images/maven-feather.png" />
+    </logo>
   </poweredBy>
   <skin>
     <groupId>org.apache.maven.skins</groupId>
@@ -66,4 +63,4 @@ under the License.
       <item name="Copyright" href="../copyrightParent.html"/>
     </menu>
   </body>
-</project>
+</site>

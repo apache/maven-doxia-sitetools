@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import java.io.File;
+import java.io.StringReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +39,7 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.doxia.site.LinkItem;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.Skin;
+import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
 import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
 import org.apache.maven.project.MavenProject;
@@ -127,7 +129,7 @@ public class SiteToolTest {
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
         Skin skin = new Skin();
         skin.setGroupId("org.apache.maven.skins");
-        skin.setArtifactId("maven-stylus-skin");
+        skin.setArtifactId("maven-fluido-skin");
         assertNotNull(
                 tool.getSkinArtifactFromRepository(newRepoSession(), project.getRemoteProjectRepositories(), skin));
     }
@@ -370,13 +372,13 @@ public class SiteToolTest {
         assertEquals("Maven Site", model.getBannerLeft().getName());
         assertEquals(
                 "http://maven.apache.org/images/apache-maven-project.png",
-                model.getBannerLeft().getSrc());
+                model.getBannerLeft().getImage().getSrc());
         assertEquals("http://maven.apache.org/", model.getBannerLeft().getHref());
         assertNotNull(model.getBannerRight());
         assertNull(model.getBannerRight().getName());
         assertEquals(
                 "http://maven.apache.org/images/maven-small.gif",
-                model.getBannerRight().getSrc());
+                model.getBannerRight().getImage().getSrc());
         assertNull(model.getBannerRight().getHref());
 
         // model from repo: https://repo1.maven.org/maven2/org/apache/maven/maven/3.8.6/maven-3.8.6-site.xml
@@ -396,7 +398,7 @@ public class SiteToolTest {
         assertEquals("dummy", modelFromRepo.getBannerLeft().getName());
         assertEquals(
                 "https://maven.apache.org/images/apache-maven-project.png",
-                modelFromRepo.getBannerLeft().getSrc());
+                modelFromRepo.getBannerLeft().getImage().getSrc());
         assertEquals("https://maven.apache.org/", modelFromRepo.getBannerLeft().getHref());
         assertNull(modelFromRepo.getBannerRight());
     }
@@ -532,6 +534,37 @@ public class SiteToolTest {
 
         // property overrides env
         assertEquals("PATH = PATH property from pom", links.next().getName());
+    }
+
+    /**
+     * @throws Exception
+     */
+    @Test
+    public void testConvertOldToNewSiteModel() throws Exception {
+        assertNotNull(tool);
+
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("old-to-new-site-model-conversion-test");
+        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+
+        // model from current local build
+        SiteModel model = tool.getSiteModel(
+                new File(project.getBasedir(), "src/site"),
+                SiteTool.DEFAULT_LOCALE,
+                project,
+                reactorProjects,
+                newRepoSession(),
+                project.getRemoteProjectRepositories());
+        assertNotNull(model);
+
+        File descriptorFile =
+                getTestFile("src/test/resources/unit/old-to-new-site-model-conversion-test/src/site/new-site.xml");
+        assertNotNull(descriptorFile);
+        assertTrue(descriptorFile.exists());
+
+        String siteDescriptorContent = FileUtils.fileRead(descriptorFile);
+        SiteModel newModel = new SiteXpp3Reader().read(new StringReader(siteDescriptorContent));
+        assertNotNull(newModel);
+        assertEquals(newModel, model);
     }
 
     private void writeModel(SiteModel model, String to) throws Exception {

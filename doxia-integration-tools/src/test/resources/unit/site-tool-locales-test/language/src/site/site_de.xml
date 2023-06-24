@@ -19,18 +19,19 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project name="Maven Dummy Site">
-  <bannerLeft>
-    <name>Maven Site</name>
-    <src>http://maven.apache.org/images/apache-maven-project.png</src>
-    <href>http://maven.apache.org/</href>
+<site xmlns="http://maven.apache.org/SITE/2.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 file:../../../target/generated-site/xsd/site-2.0.0.xsd"
+  name="Maven Dummy Site">
+  <bannerLeft name="Maven Site" href="http://maven.apache.org/">
+    <image src="http://maven.apache.org/images/apache-maven-project.png" />
   </bannerLeft>
   <bannerRight>
-    <src>http://maven.apache.org/images/maven-small.gif</src>
+    <image src="http://maven.apache.org/images/maven-small.gif" />
   </bannerRight>
   <skin>
     <groupId>org.apache.maven.skins</groupId>
-    <artifactId>maven-stylus-skin</artifactId>
+    <artifactId>maven-fluido-skin</artifactId>
   </skin>
   <body>
     <links>
@@ -42,4 +43,4 @@ under the License.
     </menu>
     <menu ref="reports"/>
   </body>
-</project>
+</site>

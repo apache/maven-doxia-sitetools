@@ -63,11 +63,6 @@ under the License.
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
         <configuration>
-          <models>
-            <model>src/main/mdo/site.mdo</model>
-          </models>
-          <!-- TODO Do not forget to update the version in the description. See DOXIASITETOOLS-98. -->
-          <version>2.0.0</version>
           <firstVersion>1.0.0</firstVersion>
         </configuration>
         <executions>
@@ -80,6 +75,28 @@ under the License.
               <goal>xsd</goal>
             </goals>
             <phase>generate-sources</phase>
+            <configuration>
+              <models>
+                <model>src/main/mdo/site.mdo</model>
+              </models>
+              <!-- TODO Do not forget to update the version in the description. See DOXIASITETOOLS-98. -->
+              <version>2.0.0</version>
+            </configuration>
+          </execution>
+          <execution>
+            <id>old-descriptor</id>
+            <goals>
+              <goal>java</goal>
+              <goal>xpp3-reader</goal>
+              <goal>xsd</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <models>
+                <model>src/main/mdo/decoration.mdo</model>
+              </models>
+              <version>1.8.1</version>
+            </configuration>
           </execution>
           <execution>
             <id>descriptor-xdoc</id>
@@ -87,6 +104,26 @@ under the License.
               <goal>xdoc</goal>
             </goals>
             <phase>pre-site</phase>
+            <configuration>
+              <models>
+                <model>src/main/mdo/site.mdo</model>
+              </models>
+              <!-- TODO Do not forget to update the version in the description. See DOXIASITETOOLS-98. -->
+              <version>2.0.0</version>
+            </configuration>
+          </execution>
+          <execution>
+            <id>old-descriptor-xdoc</id>
+            <goals>
+              <goal>xdoc</goal>
+            </goals>
+            <phase>pre-site</phase>
+            <configuration>
+              <models>
+                <model>src/main/mdo/decoration.mdo</model>
+              </models>
+              <version>1.8.1</version>
+            </configuration>
           </execution>
           <execution>
             <id>descriptor-xsd</id>
@@ -95,6 +132,25 @@ under the License.
             </goals>
             <phase>pre-site</phase>
             <configuration>
+              <models>
+                <model>src/main/mdo/site.mdo</model>
+              </models>
+              <!-- TODO Do not forget to update the version in the description. See DOXIASITETOOLS-98. -->
+              <version>2.0.0</version>
+              <outputDirectory>${project.build.directory}/generated-site/resources/xsd</outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>old-descriptor-xsd</id>
+            <goals>
+              <goal>xsd</goal>
+            </goals>
+            <phase>pre-site</phase>
+            <configuration>
+              <models>
+                <model>src/main/mdo/decoration.mdo</model>
+              </models>
+              <version>1.8.1</version>
               <outputDirectory>${project.build.directory}/generated-site/resources/xsd</outputDirectory>
             </configuration>
           </execution>

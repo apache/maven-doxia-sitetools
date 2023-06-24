@@ -19,23 +19,22 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+<site xmlns="http://maven.apache.org/SITE/2.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 file:../../../target/generated-site/xsd/decoration-1.0.0.xsd"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 file:../../../target/generated-site/xsd/site-2.0.0.xsd"
   name="Parent Name">
-  <bannerLeft>
-    <name>The Jakarta Project</name>
-    <src>http://maven.apache.org/images/jakarta-logo.gif</src>
-    <href>http://maven.apache.org/banner/left</href>
+  <bannerLeft name="The Jakarta Project" href="http://maven.apache.org/banner/left">
+    <image src="http://maven.apache.org/images/jakarta-logo.gif" />
   </bannerLeft>
-  <bannerRight>
-    <name>Jakarta Commons Sandbox</name>
-    <src>http://maven.apache.org/commons/images/logo.png</src>
-    <href>http://maven.apache.org/banner/right/</href>
+  <bannerRight name="Jakarta Commons Sandbox" href="http://maven.apache.org/banner/right/">
+    <image src="http://maven.apache.org/commons/images/logo.png" />
   </bannerRight>
 
+
   <poweredBy>
-    <logo name="Tomcat" href="tomcat" img="http://maven.apache.org/tomcat/logo.gif"/>
+    <logo name="Tomcat" href="tomcat">
+      <image src="http://maven.apache.org/tomcat/logo.gif" />
+    </logo>
   </poweredBy>
 
   <body>
@@ -50,4 +49,4 @@ under the License.
       <item name="Special" href="http://maven.apache.org/special/"/>
     </menu>
   </body>
-</project>
+</site>
