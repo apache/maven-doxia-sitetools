@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,8 +68,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.*;
 
 /**
@@ -253,7 +250,7 @@ public class DefaultSiteRendererTest {
 
         siteRenderer.render(Collections.singletonList(docRenderer), context, new File("target/output"));
 
-        verify(docRenderer).renderDocument(isNull(Writer.class), eq(siteRenderer), eq(context));
+        verify(docRenderer).renderDocument(isNull(), eq(siteRenderer), eq(context));
     }
 
     @Test
