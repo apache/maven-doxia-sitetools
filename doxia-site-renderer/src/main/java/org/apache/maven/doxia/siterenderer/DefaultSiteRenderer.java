@@ -154,7 +154,7 @@ public class DefaultSiteRenderer implements Renderer {
     /** {@inheritDoc} */
     public Map<String, DocumentRenderer> locateDocumentFiles(
             SiteRenderingContext siteRenderingContext, boolean editable) throws IOException, RendererException {
-        Map<String, DocumentRenderer> files = new LinkedHashMap<String, DocumentRenderer>();
+        Map<String, DocumentRenderer> files = new LinkedHashMap<>();
         Map<String, String> moduleExcludes = siteRenderingContext.getModuleExcludes();
 
         // look in every site directory (in general src/site or target/generated-site)
@@ -177,7 +177,7 @@ public class DefaultSiteRenderer implements Renderer {
     }
 
     private List<String> filterExtensionIgnoreCase(List<String> fileNames, String extension) {
-        List<String> filtered = new LinkedList<String>(fileNames);
+        List<String> filtered = new LinkedList<>(fileNames);
         for (Iterator<String> it = filtered.iterator(); it.hasNext(); ) {
             String name = it.next();
 

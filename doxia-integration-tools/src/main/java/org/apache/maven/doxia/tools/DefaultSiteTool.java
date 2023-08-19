@@ -674,7 +674,7 @@ public class DefaultSiteTool implements SiteTool {
         }
 
         String[] localesArray = StringUtils.split(locales, ",");
-        List<Locale> localesList = new ArrayList<Locale>(localesArray.length);
+        List<Locale> localesList = new ArrayList<>(localesArray.length);
         List<Locale> availableLocales = Arrays.asList(Locale.getAvailableLocales());
 
         for (String localeString : localesArray) {
@@ -1063,7 +1063,7 @@ public class DefaultSiteTool implements SiteTool {
                     parentDistMgmnt == null ? projectDistMgmnt : parentDistMgmnt);
         }
 
-        return new AbstractMap.SimpleEntry<SiteModel, MavenProject>(siteModel, parentProject);
+        return new AbstractMap.SimpleEntry<>(siteModel, parentProject);
     }
 
     /**

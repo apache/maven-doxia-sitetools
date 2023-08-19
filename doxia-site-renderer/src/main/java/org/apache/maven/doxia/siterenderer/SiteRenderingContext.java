@@ -50,7 +50,7 @@ public class SiteRenderingContext {
 
     private Locale locale = Locale.ROOT;
 
-    private List<Locale> siteLocales = new ArrayList<Locale>();
+    private List<Locale> siteLocales = new ArrayList<>();
 
     private SiteModel siteModel;
 
@@ -62,7 +62,7 @@ public class SiteRenderingContext {
 
     private File rootDirectory;
 
-    private List<File> siteDirectories = new ArrayList<File>();
+    private List<File> siteDirectories = new ArrayList<>();
 
     private Map<String, String> moduleExcludes;
 

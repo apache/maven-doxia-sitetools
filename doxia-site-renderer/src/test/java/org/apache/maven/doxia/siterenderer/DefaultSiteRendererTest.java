@@ -260,7 +260,7 @@ public class DefaultSiteRendererTest {
         SiteRenderingContext siteRenderingContext = new SiteRenderingContext();
         siteRenderingContext.setSiteModel(new SiteModel());
 
-        Map<String, Object> attributes = new HashMap<String, Object>();
+        Map<String, Object> attributes = new HashMap<>();
 
         /*
          * We need to add doxiaSiteRendererVersion manually because version property from pom.properties
@@ -289,7 +289,7 @@ public class DefaultSiteRendererTest {
 
         File skinFile = skinJar;
 
-        Map<String, Object> attributes = new HashMap<String, Object>();
+        Map<String, Object> attributes = new HashMap<>();
 
         /*
          * We need to add doxiaSiteRendererVersion manually because version property from pom.properties
@@ -322,7 +322,7 @@ public class DefaultSiteRendererTest {
             throws RendererException, IOException {
         File skinFile = minimalSkinJar;
 
-        final Map<String, String> attributes = new HashMap<String, String>();
+        final Map<String, String> attributes = new HashMap<>();
         attributes.put("outputEncoding", "UTF-8");
 
         Artifact skin = new DefaultArtifact(
@@ -498,7 +498,7 @@ public class DefaultSiteRendererTest {
 
         /** {@inheritDoc} */
         protected Map<String, String> getTestDocuments() throws IOException {
-            Map<String, String> testDocs = new HashMap<String, String>();
+            Map<String, String> testDocs = new HashMap<>();
 
             File dir = new File(getBasedir(), "target/output");
 

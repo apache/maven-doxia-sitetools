@@ -61,7 +61,7 @@ public class JavascriptVerifier extends AbstractVerifier {
         try (WebClient webClient = new WebClient()) {
             webClient.getOptions().setCssEnabled(false);
 
-            final List<String> collectedAlerts = new ArrayList<String>(4);
+            final List<String> collectedAlerts = new ArrayList<>(4);
             webClient.setAlertHandler(new CollectingAlertHandler(collectedAlerts));
 
             HtmlPage page = (HtmlPage) webClient.getPage(jsTest.toURI().toURL());
