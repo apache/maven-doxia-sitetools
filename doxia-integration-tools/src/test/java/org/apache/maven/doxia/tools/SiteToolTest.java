@@ -355,7 +355,7 @@ public class SiteToolTest {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
-        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+        List<MavenProject> reactorProjects = new ArrayList<>();
 
         // model from current local build
         SiteModel model = tool.getSiteModel(
@@ -410,7 +410,7 @@ public class SiteToolTest {
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("no-site-test");
         String siteDirectory = "src/site";
-        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+        List<MavenProject> reactorProjects = new ArrayList<>();
 
         SiteModel model = tool.getSiteModel(
                 new File(project.getBasedir(), siteDirectory),
@@ -455,8 +455,8 @@ public class SiteToolTest {
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("interpolated-site");
         List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList(project);
 
-        siteDescriptorContent = tool.getInterpolatedSiteDescriptorContent(
-                new HashMap<String, String>(), project, siteDescriptorContent);
+        siteDescriptorContent =
+                tool.getInterpolatedSiteDescriptorContent(new HashMap<>(), project, siteDescriptorContent);
         assertNotNull(siteDescriptorContent);
         assertFalse(siteDescriptorContent.contains("${project.name}"));
         assertTrue(siteDescriptorContent.contains(

@@ -42,7 +42,7 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
 
     private String title;
 
-    private List<String> authors = new ArrayList<String>();
+    private List<String> authors = new ArrayList<>();
 
     private final StringWriter headWriter;
 

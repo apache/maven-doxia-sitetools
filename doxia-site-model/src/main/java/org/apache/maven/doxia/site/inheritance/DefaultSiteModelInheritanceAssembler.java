@@ -195,7 +195,7 @@ public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanc
 
     private List<Menu> mergeMenus(
             final List<Menu> childMenus, final List<Menu> parentMenus, final URLRebaser urlContainer) {
-        List<Menu> menus = new ArrayList<Menu>(childMenus.size() + parentMenus.size());
+        List<Menu> menus = new ArrayList<>(childMenus.size() + parentMenus.size());
 
         for (Menu menu : childMenus) {
             menus.add(menu);
@@ -259,7 +259,7 @@ public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanc
             final List<LinkItem> parentList,
             final URLRebaser urlContainer,
             boolean cutParentAfterDuplicate) {
-        List<LinkItem> items = new ArrayList<LinkItem>(childList.size() + parentList.size());
+        List<LinkItem> items = new ArrayList<>(childList.size() + parentList.size());
 
         for (LinkItem item : parentList) {
             if (!items.contains(item) && !childList.contains(item)) {
@@ -287,7 +287,7 @@ public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanc
 
     private List<Logo> mergePoweredByLists(
             final List<Logo> childList, final List<Logo> parentList, final URLRebaser urlContainer) {
-        List<Logo> logos = new ArrayList<Logo>(childList.size() + parentList.size());
+        List<Logo> logos = new ArrayList<>(childList.size() + parentList.size());
 
         for (Logo logo : parentList) {
             if (!logos.contains(logo)) {

@@ -310,7 +310,7 @@ public class MavenProjectStub extends MavenProject {
     /** {@inheritDoc} */
     public void addCompileSourceRoot(String string) {
         if (compileSourceRoots == null) {
-            compileSourceRoots = new ArrayList<String>(Collections.singletonList(string));
+            compileSourceRoots = new ArrayList<>(Collections.singletonList(string));
         } else {
             compileSourceRoots.add(string);
         }
@@ -319,7 +319,7 @@ public class MavenProjectStub extends MavenProject {
     /** {@inheritDoc} */
     public void addScriptSourceRoot(String string) {
         if (scriptSourceRoots == null) {
-            scriptSourceRoots = new ArrayList<String>(Collections.singletonList(string));
+            scriptSourceRoots = new ArrayList<>(Collections.singletonList(string));
         } else {
             scriptSourceRoots.add(string);
         }
@@ -328,7 +328,7 @@ public class MavenProjectStub extends MavenProject {
     /** {@inheritDoc} */
     public void addTestCompileSourceRoot(String string) {
         if (testCompileSourceRoots == null) {
-            testCompileSourceRoots = new ArrayList<String>(Collections.singletonList(string));
+            testCompileSourceRoots = new ArrayList<>(Collections.singletonList(string));
         } else {
             testCompileSourceRoots.add(string);
         }
@@ -1165,7 +1165,7 @@ public class MavenProjectStub extends MavenProject {
     /** {@inheritDoc} */
     public void addAttachedArtifact(Artifact artifact) {
         if (attachedArtifacts == null) {
-            this.attachedArtifacts = new ArrayList<Artifact>(Collections.singletonList(artifact));
+            this.attachedArtifacts = new ArrayList<>(Collections.singletonList(artifact));
         } else {
             attachedArtifacts.add(artifact);
         }

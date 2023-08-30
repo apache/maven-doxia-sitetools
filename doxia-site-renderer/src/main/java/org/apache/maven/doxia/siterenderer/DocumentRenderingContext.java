@@ -105,7 +105,7 @@ public class DocumentRenderingContext {
         this.parserId = parserId;
         this.extension = extension;
         this.generator = generator;
-        this.attributes = new HashMap<String, String>();
+        this.attributes = new HashMap<>();
 
         document = document.replace('\\', '/');
         this.inputName = document;
