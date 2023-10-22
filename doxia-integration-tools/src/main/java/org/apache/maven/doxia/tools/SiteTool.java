@@ -69,7 +69,6 @@ public interface SiteTool {
      * locale defines a variant and/or a country and/or a language.
      * @return the most specific site descriptor file for the given locale
      */
-    // used by maven-pdf-plugin (should not?)
     File getSiteDescriptor(File siteDirectory, Locale locale);
 
     /**
