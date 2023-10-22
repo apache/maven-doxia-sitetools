@@ -89,7 +89,7 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
     /**
      * {@inheritDoc}
      *
-     * Reset text buffer, since text content before title mustn't be in title.
+     * Reset text buffer, since text content before title must not be in title.
      * @see org.apache.maven.doxia.module.xhtml5.Xhtml5Sink#title()
      */
     @Override
