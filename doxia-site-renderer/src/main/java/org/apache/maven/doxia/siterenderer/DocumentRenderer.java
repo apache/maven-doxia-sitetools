@@ -41,10 +41,23 @@ public interface DocumentRenderer {
             throws IOException, RendererException;
 
     /**
-     * The name of the output document.
+     * The output path of the document.
+     * <p>
+     * Note: This method won't be {@code default} anymore when {@link #getOutputName()} is removed.
+     * You are advised to implement it as soon as possible.
      *
+     * @since 2.0.0
      * @return the name of the output document.
      */
+    default String getOutputPath() {
+        return getOutputName();
+    }
+
+    /**
+     * @deprecated Method name does not properly reflect its purpose. Implement and use
+     * {@link #getOutputPath()} instead.
+     */
+    @Deprecated
     String getOutputName();
 
     /**

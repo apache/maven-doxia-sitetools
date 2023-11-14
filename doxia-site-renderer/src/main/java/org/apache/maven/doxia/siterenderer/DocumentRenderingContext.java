@@ -36,9 +36,9 @@ public class DocumentRenderingContext {
 
     private final String basedirRelativePath;
 
-    private final String inputName;
+    private final String inputPath;
 
-    private final String outputName;
+    private final String outputPath;
 
     private final String parserId;
 
@@ -58,7 +58,7 @@ public class DocumentRenderingContext {
      * </p>
      *
      * @param basedir the pseudo-source base directory.
-     * @param document the pseudo-source document name: will be used to compute output name (same name with extension
+     * @param document the pseudo-source document path: will be used to compute output path (same path with extension
      *            replaced with <code>.html</code>).
      * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
      * @since 1.8
@@ -84,7 +84,7 @@ public class DocumentRenderingContext {
      *
      * @param basedir the source base directory (not null, pseudo value when not a Doxia source).
      * @param basedirRelativePath the relative path from root (null if not Doxia source)
-     * @param document the source document name.
+     * @param document the source document path.
      * @param parserId the Doxia module parser id associated to this document, may be null if document not rendered from
      *            a Doxia source.
      * @param extension the source document filename extension, may be null if document not rendered from
@@ -108,7 +108,7 @@ public class DocumentRenderingContext {
         this.attributes = new HashMap<>();
 
         document = document.replace('\\', '/');
-        this.inputName = document;
+        this.inputPath = document;
 
         if (extension != null && !extension.isEmpty()) {
             this.basedirRelativePath = basedirRelativePath.replace('\\', '/');
@@ -122,16 +122,16 @@ public class DocumentRenderingContext {
             if (DefaultSiteRenderer.endsWithIgnoreCase(document, ".vm")) {
                 document = document.substring(0, document.length() - 3);
             }
-            String fileNameWithoutExt = document.substring(0, document.length() - extension.length() - 1);
-            this.outputName = fileNameWithoutExt + ".html";
+            String filePathWithoutExt = document.substring(0, document.length() - extension.length() - 1);
+            this.outputPath = filePathWithoutExt + ".html";
         } else {
             // document does not come from a Doxia source but direct Sink API, so no file extension to strip
             this.basedirRelativePath = null;
             this.editable = false;
-            this.outputName = document + ".html";
+            this.outputPath = document + ".html";
         }
 
-        this.relativePath = PathTool.getRelativePath(basedir.getPath(), new File(basedir, inputName).getPath())
+        this.relativePath = PathTool.getRelativePath(basedir.getPath(), new File(basedir, inputPath).getPath())
                 .replace('\\', '/');
     }
 
@@ -145,22 +145,38 @@ public class DocumentRenderingContext {
     }
 
     /**
-     * <p>Getter for the field <code>inputName</code>.</p>
+     * <p>Getter for the field <code>inputPath</code>.</p>
      *
      * @return a {@link java.lang.String} object.
      */
-    public String getInputName() {
-        return inputName;
+    public String getInputPath() {
+        return inputPath;
     }
 
     /**
-     * Get html output name, relative to site root.
+     * @deprecated Method name does not properly reflect its purpose. Use {@link #getInputPath()} instead.
+     */
+    @Deprecated
+    public String getInputName() {
+        return getInputPath();
+    }
+
+    /**
+     * Get html output path, relative to site root.
      *
-     * @return html output name
+     * @return html output path
      * @see PathTool#getRelativePath(String)
      */
+    public String getOutputPath() {
+        return outputPath;
+    }
+
+    /**
+     * @deprecated Method name does not properly reflect its purpose. Use {@link #getOutputPath()} instead.
+     */
+    @Deprecated
     public String getOutputName() {
-        return outputName;
+        return getOutputPath();
     }
 
     /**
@@ -257,7 +273,7 @@ public class DocumentRenderingContext {
      * @since 1.8
      */
     public String getDoxiaSourcePath() {
-        return isDoxiaSource() ? (basedirRelativePath + '/' + inputName) : null;
+        return isDoxiaSource() ? (basedirRelativePath + '/' + inputPath) : null;
     }
 
     /**

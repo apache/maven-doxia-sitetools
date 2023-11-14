@@ -395,10 +395,10 @@ public class DefaultSiteRenderer implements Renderer {
             siteContext.getProcessedContentOutput().mkdirs();
         }
 
-        String inputName = docRenderingContext.getInputName();
+        String inputPath = docRenderingContext.getInputName();
         // Remove .vm suffix
         File outputFile =
-                new File(siteContext.getProcessedContentOutput(), inputName.substring(0, inputName.length() - 3));
+                new File(siteContext.getProcessedContentOutput(), inputPath.substring(0, inputPath.length() - 3));
 
         File outputParent = outputFile.getParentFile();
         if (!outputParent.exists()) {
@@ -475,10 +475,15 @@ public class DefaultSiteRenderer implements Renderer {
 
         context.put("relativePath", docRenderingContext.getRelativePath());
 
-        String currentFileName = docRenderingContext.getOutputName();
-        context.put("currentFileName", currentFileName);
+        String currentFilePath = docRenderingContext.getOutputName();
+        context.put("currentFilePath", currentFilePath);
+        // TODO Deprecated -- will be removed!
+        context.put("currentFileName", currentFilePath);
 
-        context.put("alignedFileName", PathTool.calculateLink(currentFileName, docRenderingContext.getRelativePath()));
+        String alignedFilePath = PathTool.calculateLink(currentFilePath, docRenderingContext.getRelativePath());
+        context.put("alignedFilePath", alignedFilePath);
+        // TODO Deprecated -- will be removed!
+        context.put("alignedFileName", alignedFilePath);
 
         context.put("site", siteRenderingContext.getSiteModel());
         // TODO Deprecated -- will be removed!

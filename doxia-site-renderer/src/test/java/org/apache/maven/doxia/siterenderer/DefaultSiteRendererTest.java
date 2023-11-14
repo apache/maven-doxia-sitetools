@@ -138,7 +138,7 @@ public class DefaultSiteRendererTest {
     @Test
     public void testRenderExceptionMessageWhenLineNumberIsNotAvailable() throws Exception {
         final File testBasedir = getTestFile("src/test/resources/site/xdoc");
-        final String testDocumentName = "head.xml";
+        final String testDocument = "head.xml";
         final String exceptionMessage = "parse error occurred";
 
         Doxia doxiaInstance = container.lookup(Doxia.class);
@@ -150,7 +150,7 @@ public class DefaultSiteRendererTest {
         ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
 
         DocumentRenderingContext docRenderingContext =
-                new DocumentRenderingContext(testBasedir, "", testDocumentName, "xdoc", "", false);
+                new DocumentRenderingContext(testBasedir, "", testDocument, "xdoc", "", false);
 
         try {
             siteRenderer.renderDocument(null, docRenderingContext, new SiteRenderingContext());
@@ -158,7 +158,7 @@ public class DefaultSiteRendererTest {
         } catch (RendererException e) {
             assertEquals(
                     String.format(
-                            "Error parsing '%s%s%s'", testBasedir.getAbsolutePath(), File.separator, testDocumentName),
+                            "Error parsing '%s%s%s'", testBasedir.getAbsolutePath(), File.separator, testDocument),
                     e.getMessage());
         }
     }

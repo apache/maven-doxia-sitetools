@@ -39,38 +39,38 @@ public class RenderingContextTest {
      * @throws java.lang.Exception if any.
      */
     @Test
-    public void testFileNameWithDot() throws Exception {
+    public void testFilePathWithDot() throws Exception {
         File baseDir = new File(getBasedir() + File.separatorChar + "test" + File.separatorChar + "resources");
 
-        String docName = "file.with.dot.in.name.xml";
+        String document = "file.with.dot.in.name.xml";
         DocumentRenderingContext docRenderingContext =
-                new DocumentRenderingContext(baseDir, "test", docName, "", "xml", false);
-        assertEquals("file.with.dot.in.name.html", docRenderingContext.getOutputName());
+                new DocumentRenderingContext(baseDir, "test", document, "", "xml", false);
+        assertEquals("file.with.dot.in.name.html", docRenderingContext.getOutputPath());
         assertEquals(".", docRenderingContext.getRelativePath());
 
-        docName = "file.with.dot.in.name";
-        docRenderingContext = new DocumentRenderingContext(baseDir, docName, "generator"); // not Doxia source
-        assertEquals("file.with.dot.in.name.html", docRenderingContext.getOutputName());
+        document = "file.with.dot.in.name";
+        docRenderingContext = new DocumentRenderingContext(baseDir, document, "generator"); // not Doxia source
+        assertEquals("file.with.dot.in.name.html", docRenderingContext.getOutputPath());
         assertEquals(".", docRenderingContext.getRelativePath());
 
-        docName = "index.xml.vm";
-        docRenderingContext = new DocumentRenderingContext(baseDir, "test", docName, "", "xml", false);
-        assertEquals("index.html", docRenderingContext.getOutputName());
+        document = "index.xml.vm";
+        docRenderingContext = new DocumentRenderingContext(baseDir, "test", document, "", "xml", false);
+        assertEquals("index.html", docRenderingContext.getOutputPath());
         assertEquals(".", docRenderingContext.getRelativePath());
 
-        docName = "download.apt.vm";
-        docRenderingContext = new DocumentRenderingContext(baseDir, "test", docName, "", "apt", false);
-        assertEquals("download.html", docRenderingContext.getOutputName());
+        document = "download.apt.vm";
+        docRenderingContext = new DocumentRenderingContext(baseDir, "test", document, "", "apt", false);
+        assertEquals("download.html", docRenderingContext.getOutputPath());
         assertEquals(".", docRenderingContext.getRelativePath());
 
-        docName = "path/file.apt";
-        docRenderingContext = new DocumentRenderingContext(baseDir, "test", docName, "", "apt", false);
-        assertEquals("path/file.html", docRenderingContext.getOutputName());
+        document = "path/file.apt";
+        docRenderingContext = new DocumentRenderingContext(baseDir, "test", document, "", "apt", false);
+        assertEquals("path/file.html", docRenderingContext.getOutputPath());
         assertEquals("..", docRenderingContext.getRelativePath());
 
-        docName = "path/file";
-        docRenderingContext = new DocumentRenderingContext(baseDir, docName, "generator"); // not Doxia source
-        assertEquals("path/file.html", docRenderingContext.getOutputName());
+        document = "path/file";
+        docRenderingContext = new DocumentRenderingContext(baseDir, document, "generator"); // not Doxia source
+        assertEquals("path/file.html", docRenderingContext.getOutputPath());
         assertEquals("..", docRenderingContext.getRelativePath());
     }
 }

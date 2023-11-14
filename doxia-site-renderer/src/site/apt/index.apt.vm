@@ -57,11 +57,15 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 || Variable                       || Type                || Description                 ||
 *---------------------------------+----------------------+-------------------------------+
-| <<<alignedFileName>>>           | <<<String>>>         | The file name of the (HTML) document being rendered, relative to the document being rendered. |
+| <<<alignedFileName>>>           | <<<String>>>         | <<Deprecated>>: use <<<alignedFilePath>>>. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<decoration>>>                | {{{../doxia-site-model/apidocs/org/apache/maven/doxia/site/SiteModel.html}<<<SiteModel>>>}} | <<Deprecated>>}: use <<<site>>>. |
+| <<<alignedFilePath>>>           | <<<String>>>         | The file path of the (HTML) document being rendered, relative to the document being rendered. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<currentFileName>>>           | <<<String>>>         | The file name of the (HTML) document being rendered, relative to the site root. |
+| <<<decoration>>>                | {{{../doxia-site-model/apidocs/org/apache/maven/doxia/site/SiteModel.html}<<<SiteModel>>>}} | <<Deprecated>>: use <<<site>>>. |
+*---------------------------------+----------------------+-------------------------------+
+| <<<currentFileName>>>           | <<<String>>>         |  <<Deprecated>>: use <<<currentFilePath>>>. |
+*---------------------------------+----------------------+-------------------------------+
+| <<<currentFilePath>>>           | <<<String>>>         | The file path of the (HTML) document being rendered, relative to the site root. |
 *---------------------------------+----------------------+-------------------------------+
 | <<<doxiaSiteRendererVersion>>>  | <<<String>>>         | The version of the Doxia Site Renderer in use. |
 *---------------------------------+----------------------+-------------------------------+
