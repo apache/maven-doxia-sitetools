@@ -134,12 +134,6 @@ under the License.
       </dependency>
       <!-- Plexus -->
       <dependency>
-        <groupId>com.google.inject</groupId>
-        <artifactId>guice</artifactId>
-        <version>4.2.3</version>
-        <classifier>no_aop</classifier>
-      </dependency>
-      <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-i18n</artifactId>
         <version>1.0-beta-10</version>
