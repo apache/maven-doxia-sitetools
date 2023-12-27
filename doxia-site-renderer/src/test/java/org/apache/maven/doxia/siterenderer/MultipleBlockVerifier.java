@@ -20,14 +20,14 @@ package org.apache.maven.doxia.siterenderer;
 
 import java.util.Iterator;
 
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
-import com.gargoylesoftware.htmlunit.html.HtmlListItem;
-import com.gargoylesoftware.htmlunit.html.HtmlMain;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
-import com.gargoylesoftware.htmlunit.html.HtmlSection;
-import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlHeading1;
+import org.htmlunit.html.HtmlListItem;
+import org.htmlunit.html.HtmlMain;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlParagraph;
+import org.htmlunit.html.HtmlSection;
+import org.htmlunit.html.HtmlUnorderedList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

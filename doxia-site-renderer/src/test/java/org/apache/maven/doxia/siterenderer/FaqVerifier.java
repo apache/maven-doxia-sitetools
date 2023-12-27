@@ -20,20 +20,20 @@ package org.apache.maven.doxia.siterenderer;
 
 import java.util.Iterator;
 
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlDefinitionDescription;
-import com.gargoylesoftware.htmlunit.html.HtmlDefinitionList;
-import com.gargoylesoftware.htmlunit.html.HtmlDefinitionTerm;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
-import com.gargoylesoftware.htmlunit.html.HtmlListItem;
-import com.gargoylesoftware.htmlunit.html.HtmlMain;
-import com.gargoylesoftware.htmlunit.html.HtmlOrderedList;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
-import com.gargoylesoftware.htmlunit.html.HtmlPreformattedText;
-import com.gargoylesoftware.htmlunit.html.HtmlSection;
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlDefinitionDescription;
+import org.htmlunit.html.HtmlDefinitionList;
+import org.htmlunit.html.HtmlDefinitionTerm;
+import org.htmlunit.html.HtmlDivision;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlHeading1;
+import org.htmlunit.html.HtmlListItem;
+import org.htmlunit.html.HtmlMain;
+import org.htmlunit.html.HtmlOrderedList;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlParagraph;
+import org.htmlunit.html.HtmlPreformattedText;
+import org.htmlunit.html.HtmlSection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
