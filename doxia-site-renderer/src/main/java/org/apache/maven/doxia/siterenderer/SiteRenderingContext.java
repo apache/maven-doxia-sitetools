@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.site.SiteModel;
@@ -71,6 +72,8 @@ public class SiteRenderingContext {
     private Date publishDate;
 
     private File processedContentOutput;
+
+    private ParserConfigurationRetriever parserConfigurationRetriever;
 
     /**
      * If input documents should be validated before parsing.
@@ -387,5 +390,21 @@ public class SiteRenderingContext {
      */
     public void setRootDirectory(File rootDirectory) {
         this.rootDirectory = rootDirectory;
+    }
+
+    /**
+     *
+     * @return the retriever for parser configurations (only relevant for Doxia sources)
+     * @since 2.0.0
+     */
+    public ParserConfigurationRetriever getParserConfigurationRetriever() {
+        if (parserConfigurationRetriever == null) {
+            return p -> Optional.empty();
+        }
+        return parserConfigurationRetriever;
+    }
+
+    public void setParserConfigurationRetriever(ParserConfigurationRetriever parserConfigurationRetriever) {
+        this.parserConfigurationRetriever = parserConfigurationRetriever;
     }
 }

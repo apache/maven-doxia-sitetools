@@ -168,7 +168,13 @@ public class DefaultSiteRenderer implements Renderer {
                     String excludes = (moduleExcludes == null) ? null : moduleExcludes.get(module.getParserId());
 
                     addModuleFiles(
-                            siteRenderingContext.getRootDirectory(), moduleBasedir, module, excludes, files, editable);
+                            siteRenderingContext.getParserConfigurationRetriever(),
+                            siteRenderingContext.getRootDirectory(),
+                            moduleBasedir,
+                            module,
+                            excludes,
+                            files,
+                            editable);
                 }
             }
         }
@@ -190,6 +196,7 @@ public class DefaultSiteRenderer implements Renderer {
     }
 
     private void addModuleFiles(
+            ParserConfigurationRetriever parserConfigurationRetriever,
             File rootDir,
             File moduleBasedir,
             ParserModule module,
@@ -217,8 +224,18 @@ public class DefaultSiteRenderer implements Renderer {
             docs.addAll(velocityFiles);
 
             for (String doc : docs) {
+                ParserConfiguration parserConfiguration = parserConfigurationRetriever
+                        .apply(moduleBasedir.toPath().resolve(doc))
+                        .orElse(null);
                 DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
-                        moduleBasedir, moduleRelativePath, doc, module.getParserId(), extension, editable);
+                        moduleBasedir,
+                        moduleRelativePath,
+                        doc,
+                        module.getParserId(),
+                        parserConfiguration,
+                        extension,
+                        editable,
+                        null);
 
                 // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
                 if (endsWithIgnoreCase(doc, ".vm")) {
@@ -320,9 +337,13 @@ public class DefaultSiteRenderer implements Renderer {
             String resource = doc.getAbsolutePath();
 
             Parser parser = doxia.getParser(docRenderingContext.getParserId());
-            // DOXIASITETOOLS-146 don't render comments from source markup
-            parser.setEmitComments(false);
-
+            ParserConfiguration parserConfiguration = docRenderingContext.getParserConfiguration();
+            if (parserConfiguration != null) {
+                parserConfiguration.accept(parser);
+            } else {
+                // DOXIASITETOOLS-146 don't render comments from source markup
+                parser.setEmitComments(false);
+            }
             // TODO: DOXIA-111: the filter used here must be checked generally.
             if (docRenderingContext.getAttribute("velocity") != null) {
                 LOGGER.debug("Processing Velocity for " + docRenderingContext.getDoxiaSourcePath());

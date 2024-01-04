@@ -42,6 +42,8 @@ public class DocumentRenderingContext {
 
     private final String parserId;
 
+    private final ParserConfiguration parserConfiguration;
+
     private final String relativePath;
 
     private final String extension;
@@ -101,8 +103,39 @@ public class DocumentRenderingContext {
             String extension,
             boolean editable,
             String generator) {
+        this(basedir, basedirRelativePath, document, parserId, null, extension, editable, generator);
+    }
+
+    /**
+     * <p>
+     * Constructor for document rendering context.
+     * </p>
+     *
+     * @param basedir the source base directory (not null, pseudo value when not a Doxia source).
+     * @param basedirRelativePath the relative path from root (null if not Doxia source)
+     * @param document the source document path.
+     * @param parserId the Doxia module parser id associated to this document, may be null if document not rendered from
+     *            a Doxia markup source.
+     * @param parserConfiguration the configuration to use for the Doxia parser, may be {@null} if default should be used or if
+     *        document is not rendered from a Doxia markup source
+     * @param extension the source document filename extension, may be null if document not rendered from
+     *            a Doxia source.
+     * @param editable is the document editable as source, i.e. not generated?
+     * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
+     * @since 2.0
+     */
+    public DocumentRenderingContext(
+            File basedir,
+            String basedirRelativePath,
+            String document,
+            String parserId,
+            ParserConfiguration parserConfiguration,
+            String extension,
+            boolean editable,
+            String generator) {
         this.basedir = basedir;
         this.parserId = parserId;
+        this.parserConfiguration = parserConfiguration;
         this.extension = extension;
         this.generator = generator;
         this.attributes = new HashMap<>();
@@ -285,5 +318,14 @@ public class DocumentRenderingContext {
      */
     public String getDoxiaSourcePath(String base) {
         return PathTool.calculateLink(getDoxiaSourcePath(), base);
+    }
+
+    /**
+     * Get the configuration to use for the parsing the document or {@code null} if the default configuration should be used (or if this context
+     * is not for a Doxia markup source, i.e. not parsing is involved).
+     * @return the parser configuration or {@code null}.
+     */
+    public ParserConfiguration getParserConfiguration() {
+        return parserConfiguration;
     }
 }
