@@ -122,7 +122,7 @@ public class DocumentRenderingContext {
      *            a Doxia source.
      * @param editable is the document editable as source, i.e. not generated?
      * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
-     * @since 2.0
+     * @since 2.0.0
      */
     public DocumentRenderingContext(
             File basedir,
@@ -322,8 +322,9 @@ public class DocumentRenderingContext {
 
     /**
      * Get the configuration to use for the parsing the document or {@code null} if the default configuration should be used (or if this context
-     * is not for a Doxia markup source, i.e. not parsing is involved).
+     * is not for a Doxia markup source, i.e. no parsing is involved).
      * @return the parser configuration or {@code null}.
+     * @since 2.0.0
      */
     public ParserConfiguration getParserConfiguration() {
         return parserConfiguration;

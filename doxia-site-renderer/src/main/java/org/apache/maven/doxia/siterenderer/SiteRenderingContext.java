@@ -393,8 +393,8 @@ public class SiteRenderingContext {
     }
 
     /**
-     *
-     * @return the retriever for parser configurations (only relevant for Doxia sources)
+     * Returns the retriever for parser configurations (only relevant for Doxia sources).
+     * @return the retriever for parser configurations (only relevant for Doxia sources), never {@code null}
      * @since 2.0.0
      */
     public ParserConfigurationRetriever getParserConfigurationRetriever() {
@@ -404,6 +404,11 @@ public class SiteRenderingContext {
         return parserConfigurationRetriever;
     }
 
+    /**
+     * Sets the retriever for parser configurations (only relevant for Doxia sources).
+     * @param parserConfigurationRetriever the retriever for parser configurations (only relevant for Doxia sources)
+     * @since 2.0.0
+     */
     public void setParserConfigurationRetriever(ParserConfigurationRetriever parserConfigurationRetriever) {
         this.parserConfigurationRetriever = parserConfigurationRetriever;
     }

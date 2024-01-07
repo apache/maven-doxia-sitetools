@@ -18,8 +18,6 @@
  */
 package org.apache.maven.doxia.siterenderer;
 
-import java.util.function.Consumer;
-
 import org.apache.maven.doxia.parser.Parser;
 
 /**
@@ -27,12 +25,11 @@ import org.apache.maven.doxia.parser.Parser;
  * @since 2.0.0
  */
 @FunctionalInterface
-public interface ParserConfiguration extends Consumer<Parser> {
+public interface ParserConfiguration {
 
     /**
      * Applies the configuration to the given parser.
      * @param parser the parser to configure
      */
-    @Override
-    void accept(Parser parser);
+    void configure(Parser parser);
 }

@@ -225,7 +225,7 @@ public class DefaultSiteRenderer implements Renderer {
 
             for (String doc : docs) {
                 ParserConfiguration parserConfiguration = parserConfigurationRetriever
-                        .apply(moduleBasedir.toPath().resolve(doc))
+                        .retrieve(moduleBasedir.toPath().resolve(doc))
                         .orElse(null);
                 DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
                         moduleBasedir,
@@ -339,10 +339,11 @@ public class DefaultSiteRenderer implements Renderer {
             Parser parser = doxia.getParser(docRenderingContext.getParserId());
             ParserConfiguration parserConfiguration = docRenderingContext.getParserConfiguration();
             if (parserConfiguration != null) {
-                parserConfiguration.accept(parser);
+                parserConfiguration.configure(parser);
             } else {
                 // DOXIASITETOOLS-146 don't render comments from source markup
                 parser.setEmitComments(false);
+                // TODO: add parser.setEmitAnchorsForIndexableEntries(true);
             }
             // TODO: DOXIA-111: the filter used here must be checked generally.
             if (docRenderingContext.getAttribute("velocity") != null) {
