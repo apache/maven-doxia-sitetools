@@ -69,7 +69,7 @@ under the License.
     <javaVersion>8</javaVersion>
     <doxiaVersion>2.0.0-M8</doxiaVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
-    <mavenVersion>3.2.5</mavenVersion>
+    <mavenVersion>3.3.9</mavenVersion>
     <aetherVersion>1.0.0.v20140518</aetherVersion>
     <wagonVersion>3.5.3</wagonVersion>
     <l10nPluginVersion>1.0.0</l10nPluginVersion>
