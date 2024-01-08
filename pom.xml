@@ -70,7 +70,7 @@ under the License.
     <doxiaVersion>2.0.0-M8</doxiaVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
     <mavenVersion>3.2.5</mavenVersion>
-    <aetherVersion>1.0.0.v20140518</aetherVersion>
+    <aetherVersion>1.1.0</aetherVersion>
     <wagonVersion>3.5.3</wagonVersion>
     <l10nPluginVersion>1.0.0</l10nPluginVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
