@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.maven.doxia.markup.HtmlMarkup;
 import org.apache.maven.doxia.module.xhtml5.Xhtml5Sink;
+import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.siterenderer.DocumentContent;
 import org.apache.maven.doxia.siterenderer.DocumentRenderingContext;
 import org.codehaus.plexus.util.StringUtils;
@@ -93,13 +94,13 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
      * @see org.apache.maven.doxia.module.xhtml5.Xhtml5Sink#title()
      */
     @Override
-    public void title() {
+    public void title(SinkEventAttributes attributes) {
         resetTextBuffer();
     }
 
     /** {@inheritDoc} */
     @Override
-    public void author() {
+    public void author(SinkEventAttributes attributes) {
         resetTextBuffer();
     }
 
@@ -116,7 +117,7 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
 
     /** {@inheritDoc} */
     @Override
-    public void date() {
+    public void date(SinkEventAttributes attributes) {
         resetTextBuffer();
     }
 
@@ -148,7 +149,7 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
      * @see org.apache.maven.doxia.module.xhtml5.Xhtml5Sink#body()
      */
     @Override
-    public void body() {
+    public void body(SinkEventAttributes attributes) {
         // nop
     }
 
@@ -160,7 +161,7 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
 
     /** {@inheritDoc} */
     @Override
-    public void head() {
+    public void head(SinkEventAttributes attributes) {
         setHeadFlag(true);
     }
 
