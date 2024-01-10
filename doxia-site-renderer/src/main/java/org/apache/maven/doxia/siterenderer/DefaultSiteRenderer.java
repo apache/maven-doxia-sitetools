@@ -343,7 +343,7 @@ public class DefaultSiteRenderer implements Renderer {
             } else {
                 // DOXIASITETOOLS-146 don't render comments from source markup
                 parser.setEmitComments(false);
-                // TODO: add parser.setEmitAnchorsForIndexableEntries(true);
+                parser.setEmitAnchorsForIndexableEntries(true);
             }
             // TODO: DOXIA-111: the filter used here must be checked generally.
             if (docRenderingContext.getAttribute("velocity") != null) {
