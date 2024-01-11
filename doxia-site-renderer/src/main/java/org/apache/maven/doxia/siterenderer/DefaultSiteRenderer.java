@@ -225,7 +225,7 @@ public class DefaultSiteRenderer implements Renderer {
 
             for (String doc : docs) {
                 ParserConfiguration parserConfiguration = parserConfigurationRetriever
-                        .retrieve(moduleBasedir.toPath().resolve(doc))
+                        .retrieve(module.getParserId())
                         .orElse(null);
                 DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
                         moduleBasedir,

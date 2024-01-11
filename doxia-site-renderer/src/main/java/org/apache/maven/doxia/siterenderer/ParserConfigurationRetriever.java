@@ -18,20 +18,19 @@
  */
 package org.apache.maven.doxia.siterenderer;
 
-import java.nio.file.Path;
 import java.util.Optional;
 
 /**
- * Retrieves a {@link ParserConfiguration} for a particular Doxia markup source path.
+ * Retrieves a {@link ParserConfiguration} for a particular Doxia parser id.
  * @since 2.0.0
  */
 @FunctionalInterface
 public interface ParserConfigurationRetriever {
 
     /**
-     * Retrieves the parser configuration applicable for the given path.
-     * @param filePath the markup source file path
+     * Retrieves the parser configuration applicable for the given parser id.
+     * @param parserId the id of the parser for which to retrieve the configuration
      * @return The applicable parser configuration, may be {@link Optional.empty} if no applicable configuration found
      */
-    Optional<ParserConfiguration> retrieve(Path filePath);
+    Optional<ParserConfiguration> retrieve(String parserId);
 }
