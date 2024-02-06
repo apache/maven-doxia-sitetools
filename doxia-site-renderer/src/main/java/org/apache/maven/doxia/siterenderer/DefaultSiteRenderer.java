@@ -33,9 +33,14 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -498,6 +503,16 @@ public class DefaultSiteRenderer implements Renderer {
             context.put("doxiaSiteRendererVersion", DOXIA_SITE_RENDERER_VERSION);
         }
 
+        String doxiaSourcePath = docRenderingContext.getDoxiaSourcePath();
+        if (doxiaSourcePath != null) {
+            Path path = Paths.get(doxiaSourcePath);
+            try {
+                FileTime lastModifiedTime = Files.getLastModifiedTime(path);
+                context.put("lastModificationDate", new Date(lastModifiedTime.toMillis()));
+            } catch (IOException e) {
+                LOGGER.warn("Could not get last modification date for file '{}'", path);
+            }
+        }
         // Add user properties
         Map<String, ?> templateProperties = siteRenderingContext.getTemplateProperties();
 
