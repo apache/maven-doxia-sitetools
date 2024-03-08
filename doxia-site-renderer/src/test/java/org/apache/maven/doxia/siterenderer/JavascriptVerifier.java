@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.htmlunit.CollectingAlertHandler;
 import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlHeading1;
 import org.htmlunit.html.HtmlMain;
@@ -82,6 +83,9 @@ public class JavascriptVerifier extends AbstractVerifier {
             HtmlSection section = (HtmlSection) elementIterator.next();
             assertNotNull(section);
 
+            HtmlAnchor anchor = (HtmlAnchor) elementIterator.next();
+            assertNotNull(anchor);
+            assertEquals("Test", anchor.getAttribute("id"));
             HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
             assertNotNull(h1);
             assertEquals("Test", h1.asNormalizedText().trim());

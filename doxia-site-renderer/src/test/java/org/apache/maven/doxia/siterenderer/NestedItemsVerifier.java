@@ -20,12 +20,13 @@ package org.apache.maven.doxia.siterenderer;
 
 import java.util.Iterator;
 
+import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlDefinitionDescription;
 import org.htmlunit.html.HtmlDefinitionList;
 import org.htmlunit.html.HtmlDefinitionTerm;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlHeading1;
-import org.htmlunit.html.HtmlHeading3;
+import org.htmlunit.html.HtmlHeading2;
 import org.htmlunit.html.HtmlListItem;
 import org.htmlunit.html.HtmlMain;
 import org.htmlunit.html.HtmlOrderedList;
@@ -62,6 +63,9 @@ public class NestedItemsVerifier extends AbstractVerifier {
         HtmlSection section = (HtmlSection) elementIterator.next();
         assertNotNull(section);
 
+        HtmlAnchor anchor = (HtmlAnchor) elementIterator.next();
+        assertNotNull(anchor);
+        assertEquals("List_Section", anchor.getAttribute("id"));
         HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
         assertNotNull(h1);
         assertEquals("List Section", h1.asNormalizedText().trim());
@@ -73,12 +77,12 @@ public class NestedItemsVerifier extends AbstractVerifier {
         section = (HtmlSection) elementIterator.next();
         assertNotNull(section);
 
-        section = (HtmlSection) elementIterator.next();
-        assertNotNull(section);
-
-        HtmlHeading3 h3 = (HtmlHeading3) elementIterator.next();
-        assertNotNull(h3);
-        assertEquals("Unordered lists", h3.asNormalizedText().trim());
+        anchor = (HtmlAnchor) elementIterator.next();
+        assertNotNull(anchor);
+        assertEquals("Unordered_lists", anchor.getAttribute("id"));
+        HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
+        assertNotNull(h2);
+        assertEquals("Unordered lists", h2.asNormalizedText().trim());
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
         assertNotNull(p);
@@ -164,9 +168,12 @@ public class NestedItemsVerifier extends AbstractVerifier {
         section = (HtmlSection) elementIterator.next();
         assertNotNull(section);
 
-        h3 = (HtmlHeading3) elementIterator.next();
-        assertNotNull(h3);
-        assertEquals("Ordered lists", h3.asNormalizedText().trim());
+        anchor = (HtmlAnchor) elementIterator.next();
+        assertNotNull(anchor);
+        assertEquals("Ordered_lists", anchor.getAttribute("id"));
+        h2 = (HtmlHeading2) elementIterator.next();
+        assertNotNull(h2);
+        assertEquals("Ordered lists", h2.asNormalizedText().trim());
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull(p);
@@ -248,9 +255,12 @@ public class NestedItemsVerifier extends AbstractVerifier {
         section = (HtmlSection) elementIterator.next();
         assertNotNull(section);
 
-        h3 = (HtmlHeading3) elementIterator.next();
-        assertNotNull(h3);
-        assertEquals("Definition lists", h3.asNormalizedText().trim());
+        anchor = (HtmlAnchor) elementIterator.next();
+        assertNotNull(anchor);
+        assertEquals("Definition_lists", anchor.getAttribute("id"));
+        h2 = (HtmlHeading2) elementIterator.next();
+        assertNotNull(h2);
+        assertEquals("Definition lists", h2.asNormalizedText().trim());
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull(p);

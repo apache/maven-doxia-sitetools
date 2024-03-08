@@ -20,6 +20,7 @@ package org.apache.maven.doxia.siterenderer;
 
 import java.util.Iterator;
 
+import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlHeading1;
 import org.htmlunit.html.HtmlListItem;
@@ -57,6 +58,9 @@ public class MultipleBlockVerifier extends AbstractVerifier {
         HtmlSection section = (HtmlSection) elementIterator.next();
         assertNotNull(section);
 
+        HtmlAnchor anchor = (HtmlAnchor) elementIterator.next();
+        assertNotNull(anchor);
+        assertEquals("section_name", anchor.getAttribute("id"));
         HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
         assertNotNull(h1);
         assertEquals("section name", h1.asNormalizedText().trim());

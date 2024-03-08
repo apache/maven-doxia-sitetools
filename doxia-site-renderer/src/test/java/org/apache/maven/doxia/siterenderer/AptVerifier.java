@@ -59,6 +59,9 @@ public class AptVerifier extends AbstractVerifier {
 
         HtmlSection section = (HtmlSection) elementIterator.next();
 
+        HtmlAnchor anchor = (HtmlAnchor) elementIterator.next();
+        assertNotNull(anchor);
+        assertEquals("Links", anchor.getAttribute("id"));
         HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
         assertNotNull(h1);
         assertEquals("Links", h1.asNormalizedText().trim());
@@ -101,6 +104,9 @@ public class AptVerifier extends AbstractVerifier {
         section = (HtmlSection) elementIterator.next();
         assertNotNull(section);
 
+        anchor = (HtmlAnchor) elementIterator.next();
+        assertNotNull(anchor);
+        assertEquals("Section_formatting.3A_italic_bold_mono", anchor.getAttribute("id"));
         h1 = (HtmlHeading1) elementIterator.next();
         assertNotNull(h1);
         // Note: htmlunit strips the white space, actual result is ok
@@ -122,6 +128,9 @@ public class AptVerifier extends AbstractVerifier {
         section = (HtmlSection) elementIterator.next();
         assertNotNull(section);
 
+        anchor = (HtmlAnchor) elementIterator.next();
+        assertNotNull(anchor);
+        assertEquals("SubSection_formatting.3A_italic_bold_mono", anchor.getAttribute("id"));
         HtmlHeading2 h2 = (HtmlHeading2) elementIterator.next();
         assertNotNull(h2);
         // Note: htmlunit strips the white space, actual result is ok
