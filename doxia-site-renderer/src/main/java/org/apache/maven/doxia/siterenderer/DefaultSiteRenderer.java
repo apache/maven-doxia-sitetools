@@ -564,7 +564,7 @@ public class DefaultSiteRenderer implements Renderer {
         // document date (got from Doxia Sink date() API)
         context.put("documentDate", content.getDate());
 
-        // document rendering context, to get eventual inputName
+        // document rendering context, to get eventual inputPath
         context.put("docRenderingContext", content.getRenderingContext());
 
         return context;
