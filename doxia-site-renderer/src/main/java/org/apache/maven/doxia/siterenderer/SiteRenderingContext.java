@@ -72,6 +72,8 @@ public class SiteRenderingContext {
 
     private File processedContentOutput;
 
+    private ParserConfigurator parserConfigurator;
+
     /**
      * If input documents should be validated before parsing.
      * By default no validation is performed.
@@ -387,5 +389,23 @@ public class SiteRenderingContext {
      */
     public void setRootDirectory(File rootDirectory) {
         this.rootDirectory = rootDirectory;
+    }
+
+    /**
+     * Return the configurator for {@link Parser}s.
+     * @return the parser configurator (may be {@code null} in which case the default configuration is applied)
+     * @since 4.0
+     */
+    public ParserConfigurator getParserConfigurator() {
+        return parserConfigurator;
+    }
+
+    /**
+     * Set the configurator to use for {@link Parser}s.
+     * @param parserConfigurator the configurator
+     * @since 4.0
+     */
+    public void setParserConfigurator(ParserConfigurator parserConfigurator) {
+        this.parserConfigurator = parserConfigurator;
     }
 }
