@@ -582,7 +582,7 @@ public class DefaultSiteRenderer implements Renderer {
         String templateName = siteRenderingContext.getTemplateName();
 
         LOGGER.debug("Processing Velocity for template " + templateName + " on "
-                + content.getRenderingContext().getInputName());
+                + content.getRenderingContext().getDoxiaSourcePath());
 
         Context context = createSiteTemplateVelocityContext(content, siteRenderingContext);
 
