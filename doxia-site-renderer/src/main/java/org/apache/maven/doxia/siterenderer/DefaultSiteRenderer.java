@@ -366,7 +366,7 @@ public class DefaultSiteRenderer implements Renderer {
                 }
             }
 
-            doxia.parse(reader, docRenderingContext.getParserId(), sink, docRenderingContext.getInputName());
+            doxia.parse(reader, docRenderingContext.getParserId(), sink, docRenderingContext.getDoxiaSourcePath());
         } catch (ParserNotFoundException e) {
             throw new RendererException("Error getting a parser for '" + doc + "'", e);
         } catch (ParseException e) {
