@@ -145,7 +145,7 @@ public class DefaultSiteRendererTest {
         Doxia doxiaSpy = spy(doxiaInstance);
         Mockito.doThrow(new ParseException(exceptionMessage))
                 .when(doxiaSpy)
-                .parse(Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any(), Mockito.anyString());
+                .parse(Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any(), Mockito.nullable(String.class));
         SiteRenderer siteRenderer = container.lookup(SiteRenderer.class);
         ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
 
@@ -176,7 +176,7 @@ public class DefaultSiteRendererTest {
         Doxia doxiaSpy = spy(doxiaInstance);
         Mockito.doThrow(new ParseException(exceptionMessage, 42, 36))
                 .when(doxiaSpy)
-                .parse(Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any(), Mockito.anyString());
+                .parse(Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any(), Mockito.nullable(String.class));
         SiteRenderer siteRenderer = container.lookup(SiteRenderer.class);
         ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
 
