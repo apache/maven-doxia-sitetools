@@ -42,7 +42,7 @@ Doxia Sitetool Site Model
 * Inheritance
 
  Site model can be merged from a parent <<<site.xml>>> into a child <<<site.xml>>> using
- <<<SiteModelInheritanceAssembler>>> ({{{./apidocs/org/apache/maven/doxia/site/site/inheritance/SiteModelInheritanceAssembler.html}javadoc}})
+ <<<SiteModelInheritanceAssembler>>> ({{{./apidocs/org/apache/maven/doxia/site/inheritance/SiteModelInheritanceAssembler.html}javadoc}})
  with its <<<DefaultSiteModelInheritanceAssembler>>> implementation
  ({{{./xref/org/apache/maven/doxia/site/inheritance/DefaultSiteModelInheritanceAssembler.html}source}}).
 

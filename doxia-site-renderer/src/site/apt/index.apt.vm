@@ -90,7 +90,7 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+------------------------------------------------------+-------------------------------+
 | <<<StringUtils>>>               | {{{$plexus/StringUtils.html}<<<StringUtils>>>}}      |                               |
 *---------------------------------+------------------------------------------------------+-------------------------------+
-| <<<plexus>>>                    | {{{https://github.com/eclipse/sisu.plexus/blob/master/org.eclipse.sisu.plexus/src/org/codehaus/plexus/PlexusContainer.java}<<<PlexusContainer>>>}} |  |
+| <<<plexus>>>                    | {{{https://github.com/eclipse/sisu.plexus/blob/master/org.eclipse.sisu.plexus/src/main/java/org/codehaus/plexus/PlexusContainer.java}<<<PlexusContainer>>>}} |  |
 *---------------------------------+------------------------------------------------------+-------------------------------+
 
   Additionally, there are {{{https://velocity.apache.org/tools/${velocityToolsVersion}/tools-summary.html} Velocity Generic Tools}} populated
@@ -155,7 +155,7 @@ Doxia Sitetools - Site Renderer
 | <project properties>            | <<<String>>>         | Properties defined in POM are directly available. |
 *---------------------------------+----------------------+-------------------------------+
 
-  See <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/render/AbstractSiteRenderingMojo.html${esc.hash}createSiteRenderingContext(java.util.Locale)}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
+  See <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/render/AbstractSiteRenderingMojo.html${esc.hash}createSiteRenderingContext-java.util.Locale-}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
   source for more details.
 
 ** Site Template
@@ -178,7 +178,7 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<title>>>                     | <<<String>>>         | The title of the document, including the project or site name. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<docRenderingContext>>>       | {{{./apidocs/org/apache/maven/doxia/siterenderer/RenderingContext.html}<<<RenderingContext>>>}} | (since 1.8) The document rendering context. |
+| <<<docRenderingContext>>>       | {{{./apidocs/org/apache/maven/doxia/siterenderer/DocumentRenderingContext.html}<<<DocumentRenderingContext>>>}} | (since 1.8) The document rendering context. |
 *---------------------------------+----------------------+-------------------------------+
 
   See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html${esc.hash}L616}DefaultSiteRenderer.createSiteTemplateVelocityContext(...)}}>>>
