@@ -21,6 +21,7 @@ package org.apache.maven.doxia.siterenderer;
 import java.util.Iterator;
 
 import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlCode;
 import org.htmlunit.html.HtmlDefinitionDescription;
 import org.htmlunit.html.HtmlDefinitionList;
 import org.htmlunit.html.HtmlDefinitionTerm;
@@ -186,11 +187,10 @@ public class FaqVerifier extends AbstractVerifier {
         assertEquals("code", element.getTagName());
         assertEquals("<source></source>", element.asNormalizedText().trim());
 
-        HtmlDivision div = (HtmlDivision) elementIterator.next();
-        assertEquals("verbatim source", div.getAttribute("class"));
-
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
-        assertEquals("<source>1.5</source>", pre.asNormalizedText().trim());
+        assertNotNull(pre);
+        HtmlCode code = (HtmlCode) elementIterator.next();
+        assertEquals("<source>1.5</source>", code.asNormalizedText().trim());
 
         p = (HtmlParagraph) elementIterator.next();
 

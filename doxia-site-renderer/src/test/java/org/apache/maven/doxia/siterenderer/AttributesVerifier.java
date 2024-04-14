@@ -22,7 +22,7 @@ import java.util.Iterator;
 
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlBold;
-import org.htmlunit.html.HtmlDivision;
+import org.htmlunit.html.HtmlCode;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlHeading1;
 import org.htmlunit.html.HtmlHeading2;
@@ -177,16 +177,17 @@ public class AttributesVerifier extends AbstractVerifier {
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("/index.html", a.getAttribute("href"));
 
-        HtmlDivision div = (HtmlDivision) elementIterator.next();
-        assertEquals("verbatim source", div.getAttribute("class"));
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
+        assertNotNull(pre);
         assertEquals("pretty", pre.getAttribute("class"));
+        HtmlCode code = (HtmlCode) elementIterator.next();
+        assertNotNull(code);
 
-        div = (HtmlDivision) elementIterator.next();
-        assertEquals("verbatim source", div.getAttribute("class"));
-        assertEquals("", div.getAttribute("id"));
         pre = (HtmlPreformattedText) elementIterator.next();
+        assertNotNull(pre);
         assertEquals("pretty", pre.getAttribute("id"));
+        code = (HtmlCode) elementIterator.next();
+        assertNotNull(code);
 
         section = (HtmlSection) elementIterator.next();
         anchor = (HtmlAnchor) elementIterator.next();

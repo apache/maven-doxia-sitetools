@@ -21,6 +21,7 @@ package org.apache.maven.doxia.siterenderer;
 import java.util.Iterator;
 
 import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlCode;
 import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlHeading1;
@@ -139,12 +140,11 @@ public class EntitiesVerifier extends AbstractVerifier {
         assertNotNull(h2);
         assertEquals("CDATA", h2.asNormalizedText().trim());
 
-        HtmlDivision div = (HtmlDivision) elementIterator.next();
-        assertNotNull(div);
-
         HtmlPreformattedText pre = (HtmlPreformattedText) elementIterator.next();
         assertNotNull(pre);
-        assertEquals("<project xmlns:ant=\"jelly:ant\">", pre.asNormalizedText().trim());
+        HtmlCode code = (HtmlCode) elementIterator.next();
+        assertNotNull(code);
+        assertEquals("<project xmlns:ant=\"jelly:ant\">", code.asNormalizedText().trim());
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull(p);
