@@ -25,7 +25,6 @@ import org.htmlunit.html.HtmlCode;
 import org.htmlunit.html.HtmlDefinitionDescription;
 import org.htmlunit.html.HtmlDefinitionList;
 import org.htmlunit.html.HtmlDefinitionTerm;
-import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlHeading1;
 import org.htmlunit.html.HtmlListItem;

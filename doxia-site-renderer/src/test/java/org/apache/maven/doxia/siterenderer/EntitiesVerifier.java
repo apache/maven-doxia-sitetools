@@ -22,7 +22,6 @@ import java.util.Iterator;
 
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlCode;
-import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlHeading1;
 import org.htmlunit.html.HtmlHeading2;
@@ -144,7 +143,8 @@ public class EntitiesVerifier extends AbstractVerifier {
         assertNotNull(pre);
         HtmlCode code = (HtmlCode) elementIterator.next();
         assertNotNull(code);
-        assertEquals("<project xmlns:ant=\"jelly:ant\">", code.asNormalizedText().trim());
+        assertEquals(
+                "<project xmlns:ant=\"jelly:ant\">", code.asNormalizedText().trim());
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull(p);
