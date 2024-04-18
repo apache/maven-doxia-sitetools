@@ -38,6 +38,25 @@ import org.codehaus.plexus.util.WriterFactory;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class SiteRenderingContext {
+
+    public static class SiteDirectory {
+        private File path;
+        private boolean editable;
+
+        public SiteDirectory(File path, boolean editable) {
+            this.path = path;
+            this.editable = editable;
+        }
+
+        public File getPath() {
+            return path;
+        }
+
+        public boolean isEditable() {
+            return editable;
+        }
+    }
+
     private String inputEncoding = ReaderFactory.FILE_ENCODING;
 
     private String outputEncoding = WriterFactory.UTF_8;
@@ -62,7 +81,7 @@ public class SiteRenderingContext {
 
     private File rootDirectory;
 
-    private List<File> siteDirectories = new ArrayList<>();
+    private List<SiteDirectory> siteDirectories = new ArrayList<>();
 
     private Map<String, String> moduleExcludes;
 
@@ -259,21 +278,30 @@ public class SiteRenderingContext {
     }
 
     /**
+     * @deprecated use {@link #addSiteDirectory(SiteDirectory)}
+     */
+    @Deprecated
+    public void addSiteDirectory(File siteDirectory) {
+        addSiteDirectory(new SiteDirectory(siteDirectory, true));
+    }
+
+    /**
      * Add a site directory, expected to have a Doxia Site layout, ie one directory per Doxia parser module containing
      * files with parser extension. Typical values are <code>src/site</code> or <code>target/generated-site</code>.
      *
-     * @param siteDirectory a {@link java.io.File} object.
+     * @param siteDirectory a {@link SiteDirectory} object.
+     * @since 2.0.0
      */
-    public void addSiteDirectory(File siteDirectory) {
+    public void addSiteDirectory(SiteDirectory siteDirectory) {
         this.siteDirectories.add(siteDirectory);
     }
 
     /**
      * <p>Getter for the field <code>siteDirectories</code>.</p>
      *
-     * @return List of site directories files.
+     * @return List of site directories.
      */
-    public List<File> getSiteDirectories() {
+    public List<SiteDirectory> getSiteDirectories() {
         return siteDirectories;
     }
 

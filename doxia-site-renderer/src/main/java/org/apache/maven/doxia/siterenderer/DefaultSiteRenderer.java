@@ -66,6 +66,7 @@ import org.apache.maven.doxia.parser.module.ParserModuleManager;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.skin.SkinModel;
 import org.apache.maven.doxia.site.skin.io.xpp3.SkinXpp3Reader;
+import org.apache.maven.doxia.siterenderer.SiteRenderingContext.SiteDirectory;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.util.XmlValidator;
 import org.apache.velocity.Template;
@@ -146,29 +147,30 @@ public class DefaultSiteRenderer implements Renderer {
     // SiteRenderer implementation
     // ----------------------------------------------------------------------
 
+    /** {@inheritDoc} */
     public Map<String, DocumentRenderer> locateDocumentFiles(SiteRenderingContext siteRenderingContext)
             throws IOException, RendererException {
-        return locateDocumentFiles(siteRenderingContext, false);
-    }
-
-    /** {@inheritDoc} */
-    public Map<String, DocumentRenderer> locateDocumentFiles(
-            SiteRenderingContext siteRenderingContext, boolean editable) throws IOException, RendererException {
         Map<String, DocumentRenderer> files = new LinkedHashMap<>();
         Map<String, String> moduleExcludes = siteRenderingContext.getModuleExcludes();
 
         // look in every site directory (in general src/site or target/generated-site)
-        for (File siteDirectory : siteRenderingContext.getSiteDirectories()) {
-            if (siteDirectory.exists()) {
+        for (SiteDirectory siteDirectory : siteRenderingContext.getSiteDirectories()) {
+            File siteDirectoryPath = siteDirectory.getPath();
+            if (siteDirectoryPath.exists()) {
                 Collection<ParserModule> modules = parserModuleManager.getParserModules();
                 // use every Doxia parser module
                 for (ParserModule module : modules) {
-                    File moduleBasedir = new File(siteDirectory, module.getSourceDirectory());
+                    File moduleBasedir = new File(siteDirectoryPath, module.getSourceDirectory());
 
                     String excludes = (moduleExcludes == null) ? null : moduleExcludes.get(module.getParserId());
 
                     addModuleFiles(
-                            siteRenderingContext.getRootDirectory(), moduleBasedir, module, excludes, files, editable);
+                            siteRenderingContext.getRootDirectory(),
+                            moduleBasedir,
+                            module,
+                            excludes,
+                            files,
+                            siteDirectory.isEditable());
                 }
             }
         }
@@ -771,8 +773,8 @@ public class DefaultSiteRenderer implements Renderer {
         }
 
         // Copy extra site resources
-        for (File siteDirectory : siteRenderingContext.getSiteDirectories()) {
-            File resourcesDirectory = new File(siteDirectory, "resources");
+        for (SiteDirectory siteDirectory : siteRenderingContext.getSiteDirectories()) {
+            File resourcesDirectory = new File(siteDirectory.getPath(), "resources");
 
             if (resourcesDirectory != null && resourcesDirectory.exists()) {
                 copyDirectory(resourcesDirectory, outputDirectory);

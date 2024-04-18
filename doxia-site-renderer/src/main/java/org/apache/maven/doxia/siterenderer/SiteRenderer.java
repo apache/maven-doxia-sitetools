@@ -91,14 +91,25 @@ public interface SiteRenderer {
      * Locate Doxia document source files in the site source context.
      *
      * @param siteRenderingContext the SiteRenderingContext to use
-     * @param editable Doxia document renderer as editable? (should not set editable if generated Doxia source)
      * @return the Doxia document renderers in a Map keyed by output file name.
      * @throws IOException if it bombs.
      * @throws RendererException if it bombs.
+     * @since 2.0.0
+     */
+    Map<String, DocumentRenderer> locateDocumentFiles(SiteRenderingContext siteRenderingContext)
+            throws IOException, RendererException;
+
+    /**
+     * @see #locateDocumentFiles(SiteRenderingContext)
+     * @deprecated {@code editable} parameter is ignored since {@link SiteRenderingContext#getSiteDirectories()}
+     *             contain this information on a per-directory basis now.
      * @since 1.8
      */
-    Map<String, DocumentRenderer> locateDocumentFiles(SiteRenderingContext siteRenderingContext, boolean editable)
-            throws IOException, RendererException;
+    @Deprecated
+    default Map<String, DocumentRenderer> locateDocumentFiles(
+            SiteRenderingContext siteRenderingContext, boolean editable) throws IOException, RendererException {
+        return locateDocumentFiles(siteRenderingContext);
+    }
 
     /**
      * Render a document written in a Doxia markup language. This method is an internal method, used by

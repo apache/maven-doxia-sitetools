@@ -46,6 +46,7 @@ import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
+import org.apache.maven.doxia.siterenderer.SiteRenderingContext.SiteDirectory;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.xsd.AbstractXmlValidator;
 import org.codehaus.plexus.PlexusContainer;
@@ -330,7 +331,7 @@ public class DefaultSiteRendererTest {
         skin.setFile(skinFile);
         SiteRenderingContext siteRenderingContext =
                 siteRenderer.createContextForSkin(skin, attributes, siteModel, "defaultTitle", Locale.ROOT);
-        siteRenderingContext.addSiteDirectory(getTestFile(siteDir));
+        siteRenderingContext.addSiteDirectory(new SiteDirectory(getTestFile(siteDir), true));
         siteRenderingContext.setValidate(validate);
 
         return siteRenderingContext;
