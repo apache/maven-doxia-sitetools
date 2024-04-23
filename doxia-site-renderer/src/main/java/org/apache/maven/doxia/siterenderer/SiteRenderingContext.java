@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.skin.SkinModel;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -420,18 +421,18 @@ public class SiteRenderingContext {
     }
 
     /**
-     * Return the configurator for {@link Parser}s.
+     * Return the configurator for {@link Parser parsers}.
      * @return the parser configurator (may be {@code null} in which case the default configuration is applied)
-     * @since 4.0
+     * @since 2.0.0
      */
     public ParserConfigurator getParserConfigurator() {
         return parserConfigurator;
     }
 
     /**
-     * Set the configurator to use for {@link Parser}s.
+     * Set the configurator to use for {@link Parser parsers}.
      * @param parserConfigurator the configurator
-     * @since 4.0
+     * @since 2.0.0
      */
     public void setParserConfigurator(ParserConfigurator parserConfigurator) {
         this.parserConfigurator = parserConfigurator;
