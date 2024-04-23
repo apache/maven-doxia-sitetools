@@ -91,7 +91,7 @@ public interface SiteRenderer {
      * Locate Doxia document source files in the site source context.
      *
      * @param siteRenderingContext the SiteRenderingContext to use
-     * @return the Doxia document renderers in a Map keyed by output file name.
+     * @return the Doxia document renderers in a Map keyed by output file path.
      * @throws IOException if it bombs.
      * @throws RendererException if it bombs.
      * @since 2.0.0

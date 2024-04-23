@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RenderingContextTest {
 
     /**
-     * Test getRelativePath() with various file names.
+     * Test getRelativePath() with various file paths.
      *
      * @throws java.lang.Exception if any.
      */
