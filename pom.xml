@@ -23,7 +23,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>41</version>
+    <version>42</version>
     <relativePath />
   </parent>
 
@@ -67,10 +67,10 @@ under the License.
 
   <properties>
     <javaVersion>8</javaVersion>
+    <mavenVersion>3.6.3</mavenVersion>
     <doxiaVersion>2.0.0-M10</doxiaVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
-    <mavenVersion>3.2.5</mavenVersion>
-    <aetherVersion>1.0.0.v20140518</aetherVersion>
+    <resolverVersion>1.4.1</resolverVersion>
     <wagonVersion>3.5.3</wagonVersion>
     <l10nPluginVersion>1.0.0</l10nPluginVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>

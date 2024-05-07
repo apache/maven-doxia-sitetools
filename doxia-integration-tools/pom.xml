@@ -69,7 +69,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-aether-provider</artifactId>
+      <artifactId>maven-resolver-provider</artifactId>
       <version>${mavenVersion}</version>
       <scope>provided</scope>
     </dependency>
@@ -80,9 +80,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-api</artifactId>
-      <version>${aetherVersion}</version>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-api</artifactId>
+      <version>${resolverVersion}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -161,21 +161,21 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-impl</artifactId>
-      <version>${aetherVersion}</version>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-impl</artifactId>
+      <version>${resolverVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-connector-basic</artifactId>
-      <version>${aetherVersion}</version>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-connector-basic</artifactId>
+      <version>${resolverVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-transport-wagon</artifactId>
-      <version>${aetherVersion}</version>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-transport-wagon</artifactId>
+      <version>${resolverVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
