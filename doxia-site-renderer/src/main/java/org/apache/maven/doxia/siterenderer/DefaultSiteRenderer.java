@@ -547,22 +547,27 @@ public class DefaultSiteRenderer implements Renderer {
         // Add infos from document
         context.put("authors", content.getAuthors());
 
-        context.put("shortTitle", content.getTitle());
+        String shortTitle = content.getTitle();
+        context.put("shortTitle", shortTitle);
 
-        // DOXIASITETOOLS-70: Prepend the project name to the title, if any
-        StringBuilder title = new StringBuilder();
-        if (siteRenderingContext.getSiteModel() != null
-                && StringUtils.isNotEmpty(siteRenderingContext.getSiteModel().getName())) {
-            title.append(siteRenderingContext.getSiteModel().getName());
+        String projectTitle = null;
+        if (StringUtils.isNotEmpty(siteRenderingContext.getSiteModel().getName())) {
+            projectTitle = siteRenderingContext.getSiteModel().getName();
         } else if (StringUtils.isNotEmpty(siteRenderingContext.getDefaultTitle())) {
-            title.append(siteRenderingContext.getDefaultTitle());
+            projectTitle = siteRenderingContext.getDefaultTitle();
         }
 
-        if (title.length() > 0 && StringUtils.isNotEmpty(content.getTitle())) {
+        StringBuilder title = new StringBuilder();
+        if (StringUtils.isNotEmpty(shortTitle)) {
+            title.append(shortTitle);
+        }
+
+        if (title.length() > 0 && StringUtils.isNotEmpty(projectTitle)) {
             title.append(" \u2013 "); // Symbol Name: En Dash
         }
-        if (StringUtils.isNotEmpty(content.getTitle())) {
-            title.append(content.getTitle());
+
+        if (StringUtils.isNotEmpty(projectTitle)) {
+            title.append(projectTitle);
         }
 
         context.put("title", title.length() > 0 ? title.toString() : null);
