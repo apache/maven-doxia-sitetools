@@ -67,7 +67,6 @@ import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
@@ -134,12 +133,6 @@ public class DefaultSiteTool implements SiteTool {
      */
     @Inject
     protected SiteModelInheritanceAssembler assembler;
-
-    /**
-     * Project builder.
-     */
-    @Inject
-    protected ProjectBuilder projectBuilder;
 
     // ----------------------------------------------------------------------
     // Public methods
