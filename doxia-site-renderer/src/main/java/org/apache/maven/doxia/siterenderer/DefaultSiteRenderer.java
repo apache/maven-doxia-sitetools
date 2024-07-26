@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -208,6 +209,8 @@ public class DefaultSiteRenderer implements Renderer {
 
         List<String> allFiles = FileUtils.getFileNames(moduleBasedir, "**/*", excludes, false);
 
+        Map<String, String> caseInsensitiveFiles = new HashMap<>();
+
         for (String extension : module.getExtensions()) {
             String fullExtension = "." + extension;
 
@@ -243,23 +246,22 @@ public class DefaultSiteRenderer implements Renderer {
                 // -----------------------------------------------------------------------
                 // Handle key without case differences
                 // -----------------------------------------------------------------------
-                for (Map.Entry<String, DocumentRenderer> entry : files.entrySet()) {
-                    if (entry.getKey().equalsIgnoreCase(key)) {
-                        DocumentRenderingContext originalDocRenderingContext =
-                                entry.getValue().getRenderingContext();
+                String originalKey = caseInsensitiveFiles.put(key.toLowerCase(), key);
+                if (originalKey != null) {
+                    DocumentRenderingContext originalDocRenderingContext =
+                            files.get(originalKey).getRenderingContext();
 
-                        File originalDoc = new File(
-                                originalDocRenderingContext.getBasedir(), originalDocRenderingContext.getInputName());
+                    File originalDoc = new File(
+                            originalDocRenderingContext.getBasedir(), originalDocRenderingContext.getInputName());
 
-                        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                            throw new RendererException("File '" + module.getSourceDirectory() + File.separator + doc
-                                    + "' clashes with existing '" + originalDoc + "'.");
-                        }
+                    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                        throw new RendererException("File '" + module.getSourceDirectory() + File.separator + doc
+                                + "' clashes with existing '" + originalDoc + "'.");
+                    }
 
-                        if (LOGGER.isWarnEnabled()) {
-                            LOGGER.warn("File '" + module.getSourceDirectory() + File.separator + doc
-                                    + "' could clash with existing '" + originalDoc + "'.");
-                        }
+                    if (LOGGER.isWarnEnabled()) {
+                        LOGGER.warn("File '" + module.getSourceDirectory() + File.separator + doc
+                                + "' could clash with existing '" + originalDoc + "'.");
                     }
                 }
 
