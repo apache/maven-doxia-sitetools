@@ -20,14 +20,14 @@ under the License.
 
 <document xmlns="http://maven.apache.org/XDOC/2.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 file:../../../../../../../doxia/doxia-modules/doxia-module-xdoc/src/main/resources/xdoc-2.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 https://maven.apache.org/xsd/xdoc-2.0.xsd">
     <properties>
         <title>Test List Issue</title>
     </properties>
 
     <body>
         <section name="List Section">
-            <h3>Unordered lists</h3>
+            <h2>Unordered lists</h2>
             <p>
                Below is an unordered list, followed by six paragraphs.
             </p>
@@ -92,7 +92,7 @@ under the License.
                Paragraph 6 below list.
             </p>
 
-            <h3>Ordered lists</h3>
+            <h2>Ordered lists</h2>
             <p>
                Below is an ordered list, followed by six paragraphs.
             </p>
@@ -157,7 +157,7 @@ under the License.
                Paragraph 6 below list.
             </p>
 
-            <h3>Definition lists</h3>
+            <h2>Definition lists</h2>
             <p>
                Below is a definition list, followed by six paragraphs.
             </p>

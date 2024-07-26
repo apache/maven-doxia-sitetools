@@ -22,19 +22,20 @@ under the License.
       <!-- A test snippet... -->
 <!-- END SNIPPET: macrotest -->
 
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+<site xmlns="http://maven.apache.org/SITE/2.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 file:../../../../../doxia-decoration-model/target/generated-site/xsd/decoration-1.0.0.xsd"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 file:../../../target/generated-site/xsd/site-2.0.0.xsd"
   name="Plexus">
-  <bannerLeft>
-    <name>Plexus</name>
-    <src>http://plexus.codehaus.org/images/plexus-logo.png</src>
-    <href>http://plexus.codehaus.org</href>
+  <bannerLeft name="Plexus" href="http://plexus.codehaus.org">
+    <image src="http://plexus.codehaus.org/images/plexus-logo.png" />
   </bannerLeft>
-  <bannerRight>
-    <src>http://media.codehaus.org/images/unity-codehaus-logo.png</src>
-    <href>http://www.codehaus.org</href>
+  <bannerRight href="http://www.codehaus.org">
+    <image src="http://media.codehaus.org/images/unity-codehaus-logo.png" />
   </bannerRight>
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+  </skin>
   <body>
     <links>
       <item name="Plexus" href="http://plexus.codehaus.org"/>
@@ -54,4 +55,4 @@ under the License.
       </item>
     </menu>
   </body>
-</project>
+</site>

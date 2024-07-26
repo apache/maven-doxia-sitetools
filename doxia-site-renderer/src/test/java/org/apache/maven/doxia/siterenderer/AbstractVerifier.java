@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,11 +16,12 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
+
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
 
 import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -33,8 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author ltheussl
  */
-public abstract class AbstractVerifier
-{
+public abstract class AbstractVerifier {
     /**
      * Get a HtmlPage from a file.
      *
@@ -44,18 +42,16 @@ public abstract class AbstractVerifier
      *
      * @throws Exception if something goes wrong.
      */
-    protected HtmlPage htmlPage( String htmlFile )
-            throws Exception
-    {
-        File file = getTestFile( htmlFile );
-        assertNotNull( file );
-        assertTrue( file.exists() );
+    protected HtmlPage htmlPage(String htmlFile) throws Exception {
+        File file = getTestFile(htmlFile);
+        assertNotNull(file);
+        assertTrue(file.exists());
 
         // HtmlUnit
-        try ( WebClient webClient = new WebClient() ) {
-            webClient.getOptions().setCssEnabled( false );
-    
-            return webClient.getPage( file.toURI().toURL() );
+        try (WebClient webClient = new WebClient()) {
+            webClient.getOptions().setCssEnabled(false);
+
+            return webClient.getPage(file.toURI().toURL());
         }
     }
 
@@ -66,6 +62,5 @@ public abstract class AbstractVerifier
      *
      * @throws java.lang.Exception if something goes wrong
      */
-    public abstract void verify( String file )
-            throws Exception;
+    public abstract void verify(String file) throws Exception;
 }

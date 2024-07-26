@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,15 +16,14 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
 /**
  * <p>RendererException class.</p>
  *
  * @author Emmanuel Venisse
  */
-public class RendererException
-    extends Exception
-{
+public class RendererException extends Exception {
 
     private static final long serialVersionUID = 3141592653589793238L;
 
@@ -35,9 +32,8 @@ public class RendererException
      *
      * @param message a custom message.
      */
-    public RendererException( String message )
-    {
-        super( message );
+    public RendererException(String message) {
+        super(message);
     }
 
     /**
@@ -46,8 +42,7 @@ public class RendererException
      * @param message a custom message.
      * @param t the cause.
      */
-    public RendererException( String message, Throwable t )
-    {
-        super( message, t );
+    public RendererException(String message, Throwable t) {
+        super(message, t);
     }
 }

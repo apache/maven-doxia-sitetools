@@ -41,7 +41,7 @@ Doxia Sitetools Skin Model
 * Doxia Sitetools Skin
 
   A Doxia Sitetools skin must contain a Velocity template named <<<META-INF/maven/site.vm>>>: it will be called
-  by {{{../doxia-site-renderer/index.html}Doxia Sitetools &#x2013; Site Renderer}} with additional variables about the
+  by {{{../doxia-site-renderer/index.html}Site Renderer}} with additional variables about the
   rendered document as documented in the {{{../doxia-site-renderer/index.html#Site_Template}Site Template section}},
   the main variable being <<<bodyContent>>>.
 
@@ -49,6 +49,6 @@ Doxia Sitetools Skin Model
 
   Some documentation is available on {{{/plugins/maven-site-plugin/examples/creatingskins.html}how to create a new skin}},
   by copying other skins to benefit from examples of breadcrumbs or menu generation from
-  {{{../doxia-decoration-model/index.html}decoration model}}.
+  {{{../doxia-site-model/index.html}site model}}.
 
   Since Doxia Sitetools 1.7, a skin descriptor can be added in <<<META-INF/maven/skin.xml>>>.

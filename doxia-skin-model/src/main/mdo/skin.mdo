@@ -19,7 +19,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<model xmlns="https://codehaus-plexus.github.io/MODELLO/1.4.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://codehaus-plexus.github.io/MODELLO/1.4.1 https://codehaus-plexus.github.io/modello/xsd/modello-1.4.1.xsd"
+<model xmlns="http://codehaus-plexus.github.io/MODELLO/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://codehaus-plexus.github.io/MODELLO/2.0.0 https://codehaus-plexus.github.io/modello/xsd/modello-2.0.0.xsd"
   xml.namespace="http://maven.apache.org/SKIN/${version}"
   xml.schemaLocation="http://maven.apache.org/xsd/skin-${version}.xsd">
   <id>skin</id>
@@ -29,7 +29,7 @@ under the License.
     <p>An XSD is available at:</p>
     <ul>
       <!-- There is no property filtering in Modello, this has to be updated manually. See DOXIASITETOOLS-98. -->
-      <li><a href="http://maven.apache.org/xsd/skin-1.7.0.xsd">http://maven.apache.org/xsd/skin-1.7.0.xsd</a></li>
+      <li><a href="https://maven.apache.org/xsd/skin-2.0.0.xsd">https://maven.apache.org/xsd/skin-2.0.0.xsd</a></li>
     </ul>
     ]]></description>
 
@@ -88,7 +88,7 @@ under the License.
           <name>doxiaSitetools</name>
           <version>1.7.0+</version>
           <type>String</type>
-          <defaultValue>1.7</defaultValue>
+          <defaultValue>2.0.0-M12</defaultValue>
           <description><![CDATA[
             The minimum version of Doxia Sitetools required to use the resulting skin.
             ]]>

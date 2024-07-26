@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.tools;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.tools;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.tools;
 
 import java.text.Collator;
 import java.util.Comparator;
@@ -33,9 +32,7 @@ import org.apache.maven.reporting.MavenReport;
  * TODO move to reporting API?
  * TODO allow reports to define their order in some other way?
  */
-public class ReportComparator
-    implements Comparator<MavenReport>
-{
+public class ReportComparator implements Comparator<MavenReport> {
     /** the local */
     private final Locale locale;
 
@@ -44,15 +41,13 @@ public class ReportComparator
      *
      * @param locale not null
      */
-    public ReportComparator( Locale locale )
-    {
-        this.locale = Objects.requireNonNull( locale, "locale cannot be null" );
+    public ReportComparator(Locale locale) {
+        this.locale = Objects.requireNonNull(locale, "locale cannot be null");
     }
 
     /** {@inheritDoc} */
-    public int compare( MavenReport r1, MavenReport r2 )
-    {
-        Collator collator = Collator.getInstance( locale );
-        return collator.compare( r1.getName( locale ), r2.getName( locale ) );
+    public int compare(MavenReport r1, MavenReport r2) {
+        Collator collator = Collator.getInstance(locale);
+        return collator.compare(r1.getName(locale), r2.getName(locale));
     }
 }

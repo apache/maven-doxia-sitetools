@@ -27,19 +27,19 @@
         <img src="project.png" dummy="" width="150" height="93" style="border: 1px solid silver" alt="Project" />
       </p>
       <!-- DOXIA-78 -->
-      <table border="1" class="none">
+      <table class="none">
         <tr>
           <th>Name</th>
-          <th colspan="2" align="center" width="50%">Telephone</th>
+          <th colspan="2" style="text-align: center; width: 50%;">Telephone</th>
         </tr>
         <tr>
-          <th rowspan="2" valign="middle">Telephone</th>
-          <td align="right">555 77 854</td>
-          <td align="right">555 77 855</td>
+          <th rowspan="2" style="vertical-align: middle;">Telephone</th>
+          <td style="text-align: right;">555 77 854</td>
+          <td style="text-align: right;">555 77 855</td>
         </tr>
         <tr>
-          <td valign="top">555 77 854</td>
-          <td valign="bottom">555 77 855</td>
+          <td style="vertical-align: top;">555 77 854</td>
+          <td style="vertical-align: bottom;">555 77 855</td>
         </tr>
       </table>
       <p>
@@ -54,7 +54,7 @@
       <p style="color: red; margin-left: 20px"></p>
 
       <!-- Anchors / Links -->
-      <a name="Anchor"/>
+      <a id="Anchor"/>
       <p>
         Link to <a href="#Anchor">anchor</a>.
         Link to anchor <a href="#Anchor">showing alternate text</a>.

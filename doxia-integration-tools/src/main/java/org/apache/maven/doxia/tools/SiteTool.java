@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.tools;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.tools;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.tools;
 
 import java.io.File;
 import java.util.List;
@@ -25,62 +24,52 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.site.SiteModel;
+import org.apache.maven.doxia.site.Skin;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.RemoteRepository;
 
 /**
  * Tool to play with <a href="http://maven.apache.org/doxia/">Doxia</a> objects
- * like <code>DecorationModel</code>.
+ * like <code>SiteModel</code>.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-public interface SiteTool
-{
+public interface SiteTool {
     /**
-     * The locale by default for a Maven Site
-     * @see Locale#ENGLISH
+     * The locale by default for a Maven Site.
+     *
+     * @see Locale#ROOT
      */
-    Locale DEFAULT_LOCALE = Locale.ENGLISH;
+    Locale DEFAULT_LOCALE = Locale.ROOT;
 
     /**
      * Get a skin artifact from one of the repositories.
      *
-     * @param localRepository the Maven local repository, not null.
-     * @param remoteArtifactRepositories the Maven remote repositories, not null.
-     * @param decoration the Doxia site descriptor model, not null.
-     * @return the <code>Skin</code> artifact defined in a <code>DecorationModel</code> from a given project and a
-     * local repository
+     * @param repoSession the repository system session, not null.
+     * @param remoteProjectRepositories the Maven remote project repositories, not null.
+     * @param skin the Skin model, not null.
+     * @return the <code>Skin</code> artifact defined in a <code>SiteModel</code> from a given project
      * @throws SiteToolException if any
      */
-    Artifact getSkinArtifactFromRepository( ArtifactRepository localRepository,
-                                            List<ArtifactRepository> remoteArtifactRepositories,
-                                            DecorationModel decoration )
-        throws SiteToolException;
-
-    /**
-     * Get the default skin artifact for a project from one of the repositories.
-     *
-     * @param localRepository the Maven local repository, not null.
-     * @param remoteArtifactRepositories the Maven remote repositories, not null.
-     * @return the default <code>Skin</code> artifact from a given project and a local repository
-     * @throws SiteToolException if any
-     * @see #getSkinArtifactFromRepository(ArtifactRepository, List, DecorationModel)
-     */
-    Artifact getDefaultSkinArtifact( ArtifactRepository localRepository,
-                                     List<ArtifactRepository> remoteArtifactRepositories )
-        throws SiteToolException;
+    Artifact getSkinArtifactFromRepository(
+            RepositorySystemSession repoSession, List<RemoteRepository> remoteProjectRepositories, Skin skin)
+            throws SiteToolException;
 
     /**
      * Get a site descriptor from the project's site directory.
      *
      * @param siteDirectory the site directory, not null
-     * @param locale the locale wanted for the site descriptor. If not null, searching for
-     * <code>site_<i>localeLanguage</i>.xml</code>, otherwise searching for <code>site.xml</code>.
-     * @return the site descriptor file
-     */ // used by maven-pdf-plugin (should not?)
-    File getSiteDescriptor( File siteDirectory, Locale locale );
+     * @param locale the locale wanted for the site descriptor, not null. Most specific
+     * to least specific lookup from <code>site_language_country_variant.xml</code>,
+     * <code>site_language_country.xml</code>, <code>site_language.xml}</code>,
+     * to <code>site.xml</code> as last resort for {@link Locale#ROOT}, if provided
+     * locale defines a variant and/or a country and/or a language.
+     * @return the most specific site descriptor file for the given locale
+     */
+    File getSiteDescriptor(File siteDirectory, Locale locale);
 
     /**
      * Interpolating several expressions in the site descriptor content. Actually, the expressions can be in
@@ -111,54 +100,58 @@ public interface SiteTool
      * @param siteDescriptorContent the site descriptor file, not null.
      * @return the interpolated site descriptor content.
      * @throws SiteToolException if errors happened during the interpolation.
-     */ // used by maven-pdf-plugin (should not?)
-    String getInterpolatedSiteDescriptorContent( Map<String, String> props, MavenProject aProject,
-                                                 String siteDescriptorContent )
-        throws SiteToolException;
+     */
+    // used by maven-pdf-plugin (should not?)
+    String getInterpolatedSiteDescriptorContent(
+            Map<String, String> props, MavenProject aProject, String siteDescriptorContent) throws SiteToolException;
 
     /**
-     * Get a decoration model for a project.
+     * Get a site model for a project.
      *
      * @param siteDirectory the site directory, may be null if project from repository
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
+     * @param locale the locale used for the i18n in SiteModel, not null.
+     * See {@link #getSiteDescriptor(File, Locale)} for details.
      * @param project the Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.
-     * @param localRepository the Maven local repository, not null.
-     * @param repositories the Maven remote repositories, not null.
-     * @return the <code>DecorationModel</code> object corresponding to the <code>site.xml</code> file with some
+     * @param repoSession the repository system session, not null.
+     * @param remoteProjectRepositories the Maven remote project repositories, not null.
+     * @return the <code>SiteModel</code> object corresponding to the <code>site.xml</code> file with some
      * interpolations.
      * @throws SiteToolException if any
      * @since 1.7, was previously with other parameter types and order
      */
-    DecorationModel getDecorationModel( File siteDirectory, Locale locale, MavenProject project,
-                                        List<MavenProject> reactorProjects, ArtifactRepository localRepository,
-                                        List<ArtifactRepository> repositories )
-        throws SiteToolException;
+    SiteModel getSiteModel(
+            File siteDirectory,
+            Locale locale,
+            MavenProject project,
+            List<MavenProject> reactorProjects,
+            RepositorySystemSession repoSession,
+            List<RemoteRepository> remoteProjectRepositories)
+            throws SiteToolException;
 
     /**
-     * Populate the pre-defined <code>reports</code> menu of the decoration model,
+     * Populate the pre-defined <code>reports</code> menu of the site model,
      * if used through <code>&lt;menu ref="reports"/&gt;</code>. Notice this menu reference is translated into
      * 2 separate menus: "Project Information" and "Project Reports".
      *
-     * @param decorationModel the Doxia Sitetools DecorationModel, not null.
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
+     * @param siteModel the Doxia Sitetools SiteModel, not null.
+     * @param locale the locale used for the i18n in SiteModel, not null.
+     * See {@link #getSiteDescriptor(File, Locale)} for details.
      * @param reportsPerCategory reports per category to put in "Reports" or "Information" menus, not null.
      * @see MavenReport#CATEGORY_PROJECT_INFORMATION
      * @see MavenReport#CATEGORY_PROJECT_REPORTS
      */
-    void populateReportsMenu( DecorationModel decorationModel, Locale locale,
-                              Map<String, List<MavenReport>> reportsPerCategory );
+    void populateReportsMenu(SiteModel siteModel, Locale locale, Map<String, List<MavenReport>> reportsPerCategory);
 
     /**
      * Extracts from a comma-separated list the locales that are available in <code>site-tool</code>
-     * resource bundle. Notice that <code>default</code> value will be changed to the default locale of
-     * the JVM.
+     * resource bundle.
      *
      * @param locales A comma separated list of locales
-     * @return a list of <code>Locale</code>, which at least contains the Maven default locale which is english
+     * @return a list of <code>Locale</code>s.
      * @since 1.7, was previously getAvailableLocales(String)
      */
-    List<Locale> getSiteLocales( String locales );
+    List<Locale> getSiteLocales(String locales);
 
     /**
      * Calculate the relative path between two URLs or between two files.
@@ -182,21 +175,5 @@ public interface SiteTool
      * @param from the <code>from</code> url of file as string
      * @return a relative path from <code>from</code> to <code>to</code>.
      */
-    String getRelativePath( String to, String from );
-
-    /**
-     * Returns the parent POM with interpolated URLs.
-     * If called from Maven 3, just returns <code>project.getParent()</code>, which is already
-     * interpolated. But when called from Maven 2, attempts to source this value from the
-     * <code>reactorProjects</code> parameters if available (reactor env model attributes
-     * are interpolated), or if the reactor is unavailable (-N) resorts to the
-     * <code>project.getParent().getUrl()</code> value which will NOT have been interpolated.
-     *
-     * @param aProject a Maven project, not null.
-     * @param reactorProjects the Maven reactor projects, not null.
-     * @param localRepository the Maven local repository, not null.
-     * @return the parent project with interpolated URLs.
-     */
-    MavenProject getParentProject( MavenProject aProject, List<MavenProject> reactorProjects,
-                                   ArtifactRepository localRepository );
+    String getRelativePath(String to, String from);
 }

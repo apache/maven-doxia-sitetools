@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
 import java.util.List;
 
@@ -26,8 +25,7 @@ import java.util.List;
  *
  * @since 1.8
  */
-public interface DocumentContent
-{
+public interface DocumentContent {
     /**
      * Get the title of the document.
      * @return the document title
@@ -62,5 +60,5 @@ public interface DocumentContent
      * Get the document rendering context.
      * @return the document rendering context
      */
-    RenderingContext getRenderingContext();
+    DocumentRenderingContext getRenderingContext();
 }

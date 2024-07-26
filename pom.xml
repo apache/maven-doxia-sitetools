@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -18,20 +17,19 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>36</version>
+    <version>42</version>
     <relativePath />
   </parent>
 
   <groupId>org.apache.maven.doxia</groupId>
   <artifactId>doxia-sitetools</artifactId>
-  <version>2.0.0-M4-SNAPSHOT</version>
+  <version>2.0.0-M20-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Doxia Sitetools</name>
@@ -40,7 +38,7 @@ under the License.
   <inceptionYear>2005</inceptionYear>
 
   <modules>
-    <module>doxia-decoration-model</module>
+    <module>doxia-site-model</module>
     <module>doxia-skin-model</module>
     <module>doxia-integration-tools</module>
     <module>doxia-site-renderer</module>
@@ -49,8 +47,8 @@ under the License.
   <scm>
     <connection>scm:git:https://gitbox.apache.org/repos/asf/maven-doxia-sitetools.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/maven-doxia-sitetools.git</developerConnection>
+    <tag>master</tag>
     <url>https://github.com/apache/maven-doxia-sitetools/tree/${project.scm.tag}</url>
-    <tag>doxia-sitetools-2.0.0-M3</tag>
   </scm>
   <issueManagement>
     <system>jira</system>
@@ -69,14 +67,14 @@ under the License.
 
   <properties>
     <javaVersion>8</javaVersion>
-    <doxiaVersion>2.0.0-M3</doxiaVersion>
+    <mavenVersion>3.6.3</mavenVersion>
+    <doxiaVersion>2.0.0-M12</doxiaVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
-    <mavenVersion>3.2.5</mavenVersion>
-    <aetherVersion>1.0.0.v20140518</aetherVersion>
-    <wagonVersion>2.8</wagonVersion>
-    <junitVersion>5.8.2</junitVersion>
+    <resolverVersion>1.4.1</resolverVersion>
+    <wagonVersion>3.5.3</wagonVersion>
+    <l10nPluginVersion>1.0.0</l10nPluginVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
-    <project.build.outputTimestamp>2022-06-20T18:19:40Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2024-05-22T19:36:02Z</project.build.outputTimestamp>
   </properties>
 
   <dependencyManagement>
@@ -114,17 +112,12 @@ under the License.
       </dependency>
       <dependency>
         <groupId>org.apache.maven.doxia</groupId>
-        <artifactId>doxia-module-xhtml</artifactId>
-        <version>${doxiaVersion}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.doxia</groupId>
         <artifactId>doxia-module-xhtml5</artifactId>
         <version>${doxiaVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.doxia</groupId>
-        <artifactId>doxia-decoration-model</artifactId>
+        <artifactId>doxia-site-model</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -136,15 +129,9 @@ under the License.
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>2.11.0</version>
+        <version>2.16.1</version>
       </dependency>
       <!-- Plexus -->
-      <dependency>
-        <groupId>com.google.inject</groupId>
-        <artifactId>guice</artifactId>
-        <version>4.2.3</version>
-        <classifier>no_aop</classifier>
-      </dependency>
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-i18n</artifactId>
@@ -155,11 +142,6 @@ under the License.
             <artifactId>plexus-component-api</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-utils</artifactId>
-        <version>3.4.2</version>
       </dependency>
       <!--  SLF4J -->
       <dependency>
@@ -180,14 +162,23 @@ under the License.
       </dependency>
       <!-- Test -->
       <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>${junitVersion}</version>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.10.2</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>${junitVersion}</version>
+        <groupId>com.google.inject</groupId>
+        <artifactId>guice</artifactId>
+        <version>6.0.0</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-testing</artifactId>
+        <version>1.3.0</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -268,11 +259,6 @@ under the License.
           </execution>
         </executions>
       </plugin> -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M5</version>
-      </plugin>
     </plugins>
   </build>
 
@@ -331,8 +317,8 @@ under the License.
                   <packages>org.apache.maven.doxia.siterenderer*</packages>
                 </group>
                 <group>
-                  <title>Doxia Decoration Model</title>
-                  <packages>org.apache.maven.doxia.site.decoration*</packages>
+                  <title>Doxia Site Model</title>
+                  <packages>org.apache.maven.doxia.site*</packages>
                 </group>
                 <group>
                   <title>Doxia Skin Model</title>

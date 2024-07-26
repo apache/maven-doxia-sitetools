@@ -20,7 +20,9 @@
 
 <!DOCTYPE document [
 <!-- These are the entity sets for ISO Latin 1 characters for the XHTML -->
-<!ENTITY % HTMLlat1 SYSTEM "xhtml-lat1.ent">
+<!ENTITY % HTMLlat1 PUBLIC
+   "-//W3C//ENTITIES Latin 1 for XHTML//EN"
+   "https://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
 %HTMLlat1;
 <!-- Some entities from http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent -->
 <!ENTITY Alpha    "&#913;"> <!-- greek capital letter alpha, U+0391 -->
@@ -32,7 +34,7 @@
 ]>
 <document xmlns="http://maven.apache.org/XDOC/2.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 file://xdoc-2.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 https://maven.apache.org/xsd/xdoc-2.0.xsd">
   <properties>
     <title>Test entities, cdatas and comments</title>
     <!-- Test comment: DOXIA-312 -->
@@ -50,17 +52,17 @@
 
     <section name="section name with entities: '&amp;' '&Alpha;' '&nbsp;' '&tritPos;'">
 
-      <h3>Entities</h3>
-      <h2>Generic Entities: '&amp;' '&lt;' '&gt;' '&quot;' '&apos;'</h2>
+      <h2>Entities</h2>
+      <h3>Generic Entities: '&amp;' '&lt;' '&gt;' '&quot;' '&apos;'</h3>
       <p>'&amp;' '&lt;' '&gt;' '&quot;' '&apos;'</p>
 
-      <h2>Local Entities: '&Alpha;' '&Beta;' '&Gamma;' '&tritPos;'</h2>
+      <h3>Local Entities: '&Alpha;' '&Beta;' '&Gamma;' '&tritPos;'</h3>
       <p>'&Alpha;' '&Beta;' '&Gamma;' '&tritPos;&#x1d7ed;' '&flo;&#x159;' '&myCustomEntity;'</p>
 
-      <h2>DTD Entities: '&nbsp;' '&iexcl;' '&cent;'</h2>
+      <h3>DTD Entities: '&nbsp;' '&iexcl;' '&cent;'</h3>
       <p>'&nbsp;' '&iexcl;' '&cent;'</p>
 
-      <h3>CDATA</h3>
+      <h2>CDATA</h2>
       <source><![CDATA[<project xmlns:ant="jelly:ant">]]></source>
       <p><![CDATA['&nbsp;' '&iexcl;']]></p>
 

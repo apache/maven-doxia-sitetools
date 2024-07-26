@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer.sink;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.siterenderer.sink;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer.sink;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -26,9 +25,9 @@ import java.util.List;
 
 import org.apache.maven.doxia.markup.HtmlMarkup;
 import org.apache.maven.doxia.module.xhtml5.Xhtml5Sink;
+import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.siterenderer.DocumentContent;
-import org.apache.maven.doxia.siterenderer.RenderingContext;
-import org.apache.maven.doxia.util.HtmlTools;
+import org.apache.maven.doxia.siterenderer.DocumentRenderingContext;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -38,57 +37,50 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author <a href="mailto:evenisse@codehaus.org">Emmanuel Venisse</a>
  */
-@SuppressWarnings( "checkstyle:methodname" )
-public class SiteRendererSink
-    extends Xhtml5Sink
-    implements DocumentContent
-{
+@SuppressWarnings("checkstyle:methodname")
+public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
     private String date;
 
     private String title;
 
-    private List<String> authors = new ArrayList<String>();
+    private List<String> authors = new ArrayList<>();
 
     private final StringWriter headWriter;
 
     private final Writer writer;
 
-    private RenderingContext renderingContext;
+    private DocumentRenderingContext docRenderingContext;
 
     /**
      * Construct a new SiteRendererSink for a document.
      *
-     * @param renderingContext the document's RenderingContext.
+     * @param docRenderingContext the document's rendering context.
      */
-    public SiteRendererSink( RenderingContext renderingContext )
-    {
-        this( new StringWriter(), renderingContext );
+    public SiteRendererSink(DocumentRenderingContext docRenderingContext) {
+        this(new StringWriter(), docRenderingContext);
     }
 
     /**
      * Construct a new SiteRendererSink for a document.
      *
      * @param writer the writer for the sink.
-     * @param renderingContext the document's RenderingContext.
+     * @param docRenderingContext the document's rendering context.
      */
-    private SiteRendererSink( StringWriter writer, RenderingContext renderingContext )
-    {
-        super( writer );
+    private SiteRendererSink(StringWriter writer, DocumentRenderingContext docRenderingContext) {
+        super(writer);
 
         this.writer = writer;
         this.headWriter = new StringWriter();
-        this.renderingContext = renderingContext;
+        this.docRenderingContext = docRenderingContext;
 
         /* the template is expected to have used the main tag, which can be used only once */
-        super.contentStack.push( HtmlMarkup.MAIN );
+        super.contentStack.push(HtmlMarkup.MAIN);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void title_()
-    {
-        if ( getTextBuffer().length() > 0 )
-        {
+    public void title_() {
+        if (getTextBuffer().length() > 0) {
             title = getTextBuffer().toString();
         }
 
@@ -98,31 +90,26 @@ public class SiteRendererSink
     /**
      * {@inheritDoc}
      *
-     * Reset text buffer, since text content before title mustn't be in title.
+     * Reset text buffer, since text content before title must not be in title.
      * @see org.apache.maven.doxia.module.xhtml5.Xhtml5Sink#title()
      */
     @Override
-    public void title()
-    {
+    public void title(SinkEventAttributes attributes) {
         resetTextBuffer();
     }
 
     /** {@inheritDoc} */
     @Override
-    public void author()
-    {
+    public void author(SinkEventAttributes attributes) {
         resetTextBuffer();
     }
 
     /** {@inheritDoc} */
     @Override
-    public void author_()
-    {
-        if ( getTextBuffer().length() > 0 )
-        {
-            String text = HtmlTools.escapeHTML( getTextBuffer().toString() );
-            text = StringUtils.replace( text, "&amp;#", "&#" );
-            authors.add( text.trim() );
+    public void author_() {
+        if (getTextBuffer().length() > 0) {
+            String text = getTextBuffer().toString().trim();
+            authors.add(text);
         }
 
         resetTextBuffer();
@@ -130,17 +117,14 @@ public class SiteRendererSink
 
     /** {@inheritDoc} */
     @Override
-    public void date()
-    {
+    public void date(SinkEventAttributes attributes) {
         resetTextBuffer();
     }
 
     /** {@inheritDoc} */
     @Override
-    public void date_()
-    {
-        if ( getTextBuffer().length() > 0 )
-        {
+    public void date_() {
+        if (getTextBuffer().length() > 0) {
             date = getTextBuffer().toString().trim();
         }
 
@@ -154,8 +138,7 @@ public class SiteRendererSink
      * @see org.apache.maven.doxia.module.xhtml5.Xhtml5Sink#body_()
      */
     @Override
-    public void body_()
-    {
+    public void body_() {
         // nop
     }
 
@@ -166,94 +149,79 @@ public class SiteRendererSink
      * @see org.apache.maven.doxia.module.xhtml5.Xhtml5Sink#body()
      */
     @Override
-    public void body()
-    {
+    public void body(SinkEventAttributes attributes) {
         // nop
     }
 
     /** {@inheritDoc} */
     @Override
-    public void head_()
-    {
-        setHeadFlag( false );
+    public void head_() {
+        setHeadFlag(false);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void head()
-    {
-        setHeadFlag( true );
+    public void head(SinkEventAttributes attributes) {
+        setHeadFlag(true);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void write( String text )
-    {
+    protected void write(String text) {
         String txt = text;
 
-        if ( isHeadFlag() )
-        {
-            headWriter.write( unifyEOLs( txt ) );
+        if (isHeadFlag()) {
+            headWriter.write(unifyEOLs(txt));
 
             return;
         }
 
-        if ( renderingContext != null )
-        {
-            String relativePathToBasedir = renderingContext.getRelativePath();
+        if (docRenderingContext != null) {
+            String relativePathToBasedir = docRenderingContext.getRelativePath();
 
-            if ( relativePathToBasedir == null )
-            {
-                txt = StringUtils.replace( txt, "$relativePath", "." );
-            }
-            else
-            {
-                txt = StringUtils.replace( txt, "$relativePath", relativePathToBasedir );
+            if (relativePathToBasedir == null) {
+                txt = StringUtils.replace(txt, "$relativePath", ".");
+            } else {
+                txt = StringUtils.replace(txt, "$relativePath", relativePathToBasedir);
             }
         }
 
-        super.write( txt );
+        super.write(txt);
     }
 
     // DocumentContent interface
 
     /** {@inheritDoc} */
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
     /** {@inheritDoc} */
-    public List<String> getAuthors()
-    {
+    public List<String> getAuthors() {
         return authors;
     }
 
     /** {@inheritDoc} */
-    public String getDate()
-    {
+    public String getDate() {
         return date;
     }
 
     /** {@inheritDoc} */
-    public String getBody()
-    {
+    public String getBody() {
         String body = writer.toString();
 
         return body.length() > 0 ? body : null;
     }
 
     /** {@inheritDoc} */
-    public String getHead()
-    {
+    public String getHead() {
         String head = headWriter.toString();
 
         return head.length() > 0 ? head : null;
     }
 
     /** {@inheritDoc} */
-    public RenderingContext getRenderingContext()
-    {
-        return renderingContext;
+    public DocumentRenderingContext getRenderingContext() {
+        return docRenderingContext;
     }
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,61 +16,52 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.io.Writer;
 
 /**
  * Renderer for a document that has a source file to be parsed by Doxia.
- * Details about the source file are in {@link RenderingContext}, which is expected to have
+ * Details about the source file are in {@link DocumentRenderingContext}, which is expected to have
  * a non-null parserId and extension.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class DoxiaDocumentRenderer
-    implements DocumentRenderer
-{
-    private RenderingContext renderingContext;
+public class DoxiaDocumentRenderer implements DocumentRenderer {
+    private DocumentRenderingContext docRenderingContext;
 
     /**
      * Constructor.
      *
-     * @param renderingContext the document's RenderingContext to use.
+     * @param docRenderingContext the document's rendering context to use.
      */
-    public DoxiaDocumentRenderer( RenderingContext renderingContext )
-    {
-        this.renderingContext = renderingContext;
+    public DoxiaDocumentRenderer(DocumentRenderingContext docRenderingContext) {
+        this.docRenderingContext = docRenderingContext;
     }
 
     /** {@inheritDoc} */
-    public void renderDocument( Writer writer, Renderer siteRenderer, SiteRenderingContext siteRenderingContext )
-        throws RendererException, FileNotFoundException, UnsupportedEncodingException
-    {
-        siteRenderer.renderDocument( writer, renderingContext, siteRenderingContext );
+    public void renderDocument(Writer writer, SiteRenderer siteRenderer, SiteRenderingContext siteRenderingContext)
+            throws IOException, RendererException {
+        siteRenderer.renderDocument(writer, docRenderingContext, siteRenderingContext);
     }
 
     /** {@inheritDoc} */
-    public String getOutputName()
-    {
-        return renderingContext.getOutputName();
+    public String getOutputName() {
+        return docRenderingContext.getOutputName();
     }
 
     /** {@inheritDoc} */
-    public RenderingContext getRenderingContext()
-    {
-        return renderingContext;
+    public DocumentRenderingContext getRenderingContext() {
+        return docRenderingContext;
     }
 
     /** {@inheritDoc} */
-    public boolean isOverwrite()
-    {
+    public boolean isOverwrite() {
         return false;
     }
 
-    public boolean isExternalReport()
-    {
+    public boolean isExternalReport() {
         return false;
     }
-
 }

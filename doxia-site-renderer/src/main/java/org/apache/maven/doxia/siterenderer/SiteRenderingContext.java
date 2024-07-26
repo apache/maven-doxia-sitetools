@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,7 +27,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.parser.Parser;
+import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.skin.SkinModel;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
@@ -38,8 +38,26 @@ import org.codehaus.plexus.util.WriterFactory;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class SiteRenderingContext
-{
+public class SiteRenderingContext {
+
+    public static class SiteDirectory {
+        private File path;
+        private boolean editable;
+
+        public SiteDirectory(File path, boolean editable) {
+            this.path = path;
+            this.editable = editable;
+        }
+
+        public File getPath() {
+            return path;
+        }
+
+        public boolean isEditable() {
+            return editable;
+        }
+    }
+
     private String inputEncoding = ReaderFactory.FILE_ENCODING;
 
     private String outputEncoding = WriterFactory.UTF_8;
@@ -50,33 +68,31 @@ public class SiteRenderingContext
 
     private Map<String, ?> templateProperties;
 
-    private Locale locale = Locale.getDefault();
+    private Locale locale = Locale.ROOT;
 
-    private List<Locale> siteLocales = new ArrayList<Locale>();
+    private List<Locale> siteLocales = new ArrayList<>();
 
-    private DecorationModel decoration;
+    private SiteModel siteModel;
 
-    private String defaultWindowTitle;
+    private String defaultTitle;
 
     private Artifact skin;
 
     private SkinModel skinModel;
 
-    private boolean usingDefaultTemplate;
-
     private File rootDirectory;
 
-    private List<File> siteDirectories = new ArrayList<File>();
+    private List<SiteDirectory> siteDirectories = new ArrayList<>();
 
     private Map<String, String> moduleExcludes;
-
-    private List<ExtraDoxiaModuleReference> modules = new ArrayList<ExtraDoxiaModuleReference>();
 
     private boolean validate;
 
     private Date publishDate;
 
     private File processedContentOutput;
+
+    private ParserConfigurator parserConfigurator;
 
     /**
      * If input documents should be validated before parsing.
@@ -85,8 +101,7 @@ public class SiteRenderingContext
      * @return true if validation is switched on.
      * @since 1.1.3
      */
-    public boolean isValidate()
-    {
+    public boolean isValidate() {
         return validate;
     }
 
@@ -96,8 +111,7 @@ public class SiteRenderingContext
      * @param validate true to switch on validation.
      * @since 1.1.3
      */
-    public void setValidate( boolean validate )
-    {
+    public void setValidate(boolean validate) {
         this.validate = validate;
     }
 
@@ -106,8 +120,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.lang.String} object.
      */
-    public String getTemplateName()
-    {
+    public String getTemplateName() {
         return templateName;
     }
 
@@ -116,8 +129,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.lang.ClassLoader} object.
      */
-    public ClassLoader getTemplateClassLoader()
-    {
+    public ClassLoader getTemplateClassLoader() {
         return templateClassLoader;
     }
 
@@ -126,8 +138,7 @@ public class SiteRenderingContext
      *
      * @param templateClassLoader a {@link java.lang.ClassLoader} object.
      */
-    public void setTemplateClassLoader( ClassLoader templateClassLoader )
-    {
+    public void setTemplateClassLoader(ClassLoader templateClassLoader) {
         this.templateClassLoader = templateClassLoader;
     }
 
@@ -136,8 +147,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.Map} object.
      */
-    public Map<String, ?> getTemplateProperties()
-    {
+    public Map<String, ?> getTemplateProperties() {
         return templateProperties;
     }
 
@@ -146,9 +156,8 @@ public class SiteRenderingContext
      *
      * @param templateProperties a {@link java.util.Map} object.
      */
-    public void setTemplateProperties( Map<String, ?> templateProperties )
-    {
-        this.templateProperties = Collections.unmodifiableMap( templateProperties );
+    public void setTemplateProperties(Map<String, ?> templateProperties) {
+        this.templateProperties = Collections.unmodifiableMap(templateProperties);
     }
 
     /**
@@ -156,8 +165,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.util.Locale} object.
      */
-    public Locale getLocale()
-    {
+    public Locale getLocale() {
         return locale;
     }
 
@@ -166,70 +174,63 @@ public class SiteRenderingContext
      *
      * @param locale a {@link java.util.Locale} object.
      */
-    public void setLocale( Locale locale )
-    {
+    public void setLocale(Locale locale) {
         this.locale = locale;
     }
 
-   /**
+    /**
      * <p>Getter for the field <code>siteLocales</code> -
      * a list of locales available for this site context.</p>
      *
      * @return a {@link java.util.List} object with {@link java.util.Locale} objects.
      */
-    public List<Locale> getSiteLocales()
-    {
+    public List<Locale> getSiteLocales() {
         return siteLocales;
     }
 
-   /**
-    * <p>Adds passed locales to the list of site locales.</p>
-    *
-    * @param locales List of {@link java.util.Locale} objects to add to the site locales list.
-    */
-    public void addSiteLocales( List<Locale> locales )
-    {
-        siteLocales.addAll( locales );
-    }
-
     /**
-     * <p>Getter for the field <code>decoration</code>.</p>
+     * <p>Adds passed locales to the list of site locales.</p>
      *
-     * @return a {@link org.apache.maven.doxia.site.decoration.DecorationModel} object.
+     * @param locales List of {@link java.util.Locale} objects to add to the site locales list.
      */
-    public DecorationModel getDecoration()
-    {
-        return decoration;
+    public void addSiteLocales(List<Locale> locales) {
+        siteLocales.addAll(locales);
     }
 
     /**
-     * <p>Setter for the field <code>decoration</code>.</p>
+     * <p>Getter for the field <code>siteModel</code>.</p>
      *
-     * @param decoration a {@link org.apache.maven.doxia.site.decoration.DecorationModel} object.
+     * @return a {@link org.apache.maven.doxia.site.SiteModel} object.
      */
-    public void setDecoration( DecorationModel decoration )
-    {
-        this.decoration = decoration;
+    public SiteModel getSiteModel() {
+        return siteModel;
     }
 
     /**
-     * <p>Setter for the field <code>defaultWindowTitle</code>.</p>
+     * <p>Setter for the field <code>siteModel</code>.</p>
      *
-     * @param defaultWindowTitle a {@link java.lang.String} object.
+     * @param siteModel a {@link org.apache.maven.doxia.site.SiteModel} object.
      */
-    public void setDefaultWindowTitle( String defaultWindowTitle )
-    {
-        this.defaultWindowTitle = defaultWindowTitle;
+    public void setSiteModel(SiteModel siteModel) {
+        this.siteModel = siteModel;
     }
 
     /**
-     * <p>Getter for the field <code>defaultWindowTitle</code>.</p>
+     * <p>Setter for the field <code>defaultTitle</code>.</p>
+     *
+     * @param defaultTitle a {@link java.lang.String} object.
+     */
+    public void setDefaultTitle(String defaultTitle) {
+        this.defaultTitle = defaultTitle;
+    }
+
+    /**
+     * <p>Getter for the field <code>defaultTitle</code>.</p>
      *
      * @return a {@link java.lang.String} object.
      */
-    public String getDefaultWindowTitle()
-    {
-        return defaultWindowTitle;
+    public String getDefaultTitle() {
+        return defaultTitle;
     }
 
     /**
@@ -237,8 +238,7 @@ public class SiteRenderingContext
      *
      * @return a {@link Artifact} object.
      */
-    public Artifact getSkin()
-    {
+    public Artifact getSkin() {
         return skin;
     }
 
@@ -247,8 +247,7 @@ public class SiteRenderingContext
      *
      * @param skin an {@link Artifact} object.
      */
-    public void setSkin( Artifact skin )
-    {
+    public void setSkin(Artifact skin) {
         this.skin = skin;
     }
 
@@ -257,8 +256,7 @@ public class SiteRenderingContext
      *
      * @return a {@link SkinModel} object.
      */
-    public SkinModel getSkinModel()
-    {
+    public SkinModel getSkinModel() {
         return skinModel;
     }
 
@@ -267,8 +265,7 @@ public class SiteRenderingContext
      *
      * @param skinModel a {@link SkinModel} object.
      */
-    public void setSkinModel( SkinModel skinModel )
-    {
+    public void setSkinModel(SkinModel skinModel) {
         this.skinModel = skinModel;
     }
 
@@ -277,72 +274,36 @@ public class SiteRenderingContext
      *
      * @param templateName a {@link java.lang.String} object.
      */
-    public void setTemplateName( String templateName )
-    {
+    public void setTemplateName(String templateName) {
         this.templateName = templateName;
     }
 
     /**
-     * <p>Setter for the field <code>usingDefaultTemplate</code>.</p>
-     *
-     * @param usingDefaultTemplate a boolean.
+     * @deprecated use {@link #addSiteDirectory(SiteDirectory)}
      */
-    public void setUsingDefaultTemplate( boolean usingDefaultTemplate )
-    {
-        this.usingDefaultTemplate = usingDefaultTemplate;
-    }
-
-    /**
-     * <p>isUsingDefaultTemplate.</p>
-     *
-     * @return a boolean.
-     */
-    public boolean isUsingDefaultTemplate()
-    {
-        return usingDefaultTemplate;
+    @Deprecated
+    public void addSiteDirectory(File siteDirectory) {
+        addSiteDirectory(new SiteDirectory(siteDirectory, true));
     }
 
     /**
      * Add a site directory, expected to have a Doxia Site layout, ie one directory per Doxia parser module containing
      * files with parser extension. Typical values are <code>src/site</code> or <code>target/generated-site</code>.
      *
-     * @param siteDirectory a {@link java.io.File} object.
+     * @param siteDirectory a {@link SiteDirectory} object.
+     * @since 2.0.0
      */
-    public void addSiteDirectory( File siteDirectory )
-    {
-        this.siteDirectories.add( siteDirectory );
-    }
-
-    /**
-     * Add a extra-module source directory: used for Maven 1.x <code>${basedir}/xdocs</code> layout, which contains
-     * <code>xdoc</code> and <code>fml</code>.
-     *
-     * @param moduleBasedir The base directory for module's source files.
-     * @param moduleParserId module's Doxia parser id.
-     */
-    public void addModuleDirectory( File moduleBasedir, String moduleParserId )
-    {
-        this.modules.add( new ExtraDoxiaModuleReference( moduleParserId, moduleBasedir ) );
+    public void addSiteDirectory(SiteDirectory siteDirectory) {
+        this.siteDirectories.add(siteDirectory);
     }
 
     /**
      * <p>Getter for the field <code>siteDirectories</code>.</p>
      *
-     * @return List of site directories files.
+     * @return List of site directories.
      */
-    public List<File> getSiteDirectories()
-    {
+    public List<SiteDirectory> getSiteDirectories() {
         return siteDirectories;
-    }
-
-    /**
-     * <p>Getter for the field <code>modules</code>.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    public List<ExtraDoxiaModuleReference> getModules()
-    {
-        return modules;
     }
 
     /**
@@ -350,8 +311,7 @@ public class SiteRenderingContext
      *
      * @return a map defining exclude patterns (comma separated) by parser id.
      */
-    public Map<String, String> getModuleExcludes()
-    {
+    public Map<String, String> getModuleExcludes() {
         return moduleExcludes;
     }
 
@@ -360,8 +320,7 @@ public class SiteRenderingContext
      *
      * @param moduleExcludes a {@link java.util.Map} object.
      */
-    public void setModuleExcludes( Map<String, String> moduleExcludes )
-    {
+    public void setModuleExcludes(Map<String, String> moduleExcludes) {
         this.moduleExcludes = moduleExcludes;
     }
 
@@ -370,8 +329,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.lang.String} object.
      */
-    public String getInputEncoding()
-    {
+    public String getInputEncoding() {
         return inputEncoding;
     }
 
@@ -380,8 +338,7 @@ public class SiteRenderingContext
      *
      * @param inputEncoding a {@link java.lang.String} object.
      */
-    public void setInputEncoding( String inputEncoding )
-    {
+    public void setInputEncoding(String inputEncoding) {
         this.inputEncoding = inputEncoding;
     }
 
@@ -390,8 +347,7 @@ public class SiteRenderingContext
      *
      * @return a {@link java.lang.String} object.
      */
-    public String getOutputEncoding()
-    {
+    public String getOutputEncoding() {
         return outputEncoding;
     }
 
@@ -400,51 +356,46 @@ public class SiteRenderingContext
      *
      * @param outputEncoding a {@link java.lang.String} object.
      */
-    public void setOutputEncoding( String outputEncoding )
-    {
+    public void setOutputEncoding(String outputEncoding) {
         this.outputEncoding = outputEncoding;
     }
 
     /**
      * <p>If you want to specify a specific publish date instead of the current date.</p>
-     * 
+     *
      * @return the publish date, can be {@code null}
      */
-    public Date getPublishDate()
-    {
+    public Date getPublishDate() {
         return publishDate;
     }
 
     /**
      * <p>Specify a specific publish date instead of the current date.</p>
-     * 
+     *
      * @param publishDate the publish date
      */
-    public void setPublishDate( Date publishDate )
-    {
+    public void setPublishDate(Date publishDate) {
         this.publishDate = publishDate;
     }
 
     /**
      * Directory where to save content after Velocity processing (<code>*.vm</code>), but before parsing it with Doxia.
-     * 
+     *
      * @return not null if the documents are to be saved
      * @since 1.7
      */
-    public File getProcessedContentOutput()
-    {
+    public File getProcessedContentOutput() {
         return processedContentOutput;
     }
 
     /**
      * Where to (eventually) save content after Velocity processing (<code>*.vm</code>), but before parsing it with
      * Doxia?
-     * 
+     *
      * @param processedContentOutput not null if the documents are to be saved
      * @since 1.7
      */
-    public void setProcessedContentOutput( File processedContentOutput )
-    {
+    public void setProcessedContentOutput(File processedContentOutput) {
         this.processedContentOutput = processedContentOutput;
     }
 
@@ -455,8 +406,7 @@ public class SiteRenderingContext
      * @return the root directory
      * @since 1.8
      */
-    public File getRootDirectory()
-    {
+    public File getRootDirectory() {
         return rootDirectory;
     }
 
@@ -466,8 +416,25 @@ public class SiteRenderingContext
      * @param rootDirectory the root directory
      * @since 1.8
      */
-    public void setRootDirectory( File rootDirectory )
-    {
+    public void setRootDirectory(File rootDirectory) {
         this.rootDirectory = rootDirectory;
+    }
+
+    /**
+     * Return the configurator for {@link Parser parsers}.
+     * @return the parser configurator (may be {@code null} in which case the default configuration is applied)
+     * @since 2.0.0
+     */
+    public ParserConfigurator getParserConfigurator() {
+        return parserConfigurator;
+    }
+
+    /**
+     * Set the configurator to use for {@link Parser parsers}.
+     * @param parserConfigurator the configurator
+     * @since 2.0.0
+     */
+    public void setParserConfigurator(ParserConfigurator parserConfigurator) {
+        this.parserConfigurator = parserConfigurator;
     }
 }

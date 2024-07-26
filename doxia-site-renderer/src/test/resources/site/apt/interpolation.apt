@@ -29,5 +29,5 @@
 Things you can do with Velocity
 
  * project = ${project.name} ${project.version}
- * $currentFileName
+ * $currentFilePath
 

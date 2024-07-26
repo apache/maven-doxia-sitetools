@@ -19,16 +19,15 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/DECORATION/1.6.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd">
-  <bannerLeft>
-    <name>project.artifactId = ${project.artifactId}</name>
-  </bannerLeft>
-  <bannerRight>
-    <name>this.artifactId = ${this.artifactId}</name>
-  </bannerRight>
-
+<site xmlns="http://maven.apache.org/SITE/2.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 file:../../../target/generated-site/xsd/site-2.0.0.xsd">
+  <bannerLeft name="project.artifactId = ${project.artifactId}" />
+  <bannerRight name="this.artifactId = ${this.artifactId}" />
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+  </skin>
   <body>
     <links>
       <!-- late interpolation from project model -->
@@ -49,4 +48,4 @@ under the License.
       <item name="project.name = ${project.name}" href="${this.url}" />
     </breadcrumbs>
   </body>
-</project>
+</site>

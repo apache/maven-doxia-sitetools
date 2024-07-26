@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.tools;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.tools;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.tools;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,6 +29,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,41 +41,58 @@ import java.util.Objects;
 import java.util.StringTokenizer;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.doxia.site.Banner;
+import org.apache.maven.doxia.site.Body;
+import org.apache.maven.doxia.site.Image;
+import org.apache.maven.doxia.site.LinkItem;
+import org.apache.maven.doxia.site.Logo;
+import org.apache.maven.doxia.site.Menu;
+import org.apache.maven.doxia.site.MenuItem;
+import org.apache.maven.doxia.site.PublishDate;
+import org.apache.maven.doxia.site.SiteModel;
+import org.apache.maven.doxia.site.Skin;
+import org.apache.maven.doxia.site.Version;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
-import org.apache.maven.doxia.site.decoration.Menu;
-import org.apache.maven.doxia.site.decoration.MenuItem;
-import org.apache.maven.doxia.site.decoration.Skin;
-import org.apache.maven.doxia.site.decoration.inheritance.DecorationModelInheritanceAssembler;
 import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
-import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Writer;
+import org.apache.maven.doxia.site.inheritance.SiteModelInheritanceAssembler;
+import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
+import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
 import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.model.Site;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.i18n.I18N;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
 import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.InterpolationPostProcessor;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.pull.MXParser;
+import org.codehaus.plexus.util.xml.pull.XmlPullParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.repository.LocalArtifactRequest;
+import org.eclipse.aether.repository.LocalArtifactResult;
+import org.eclipse.aether.repository.LocalRepositoryManager;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.transfer.ArtifactNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,26 +103,24 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 @Named
-public class DefaultSiteTool
-    implements SiteTool
-{
-    private static final Logger LOGGER = LoggerFactory.getLogger( DefaultSiteTool.class );
+public class DefaultSiteTool implements SiteTool {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSiteTool.class);
 
     // ----------------------------------------------------------------------
     // Components
     // ----------------------------------------------------------------------
 
     /**
-     * The component that is used to resolve additional artifacts required.
+     * The component that is used to resolve additional required artifacts.
      */
     @Inject
-    private ArtifactResolver artifactResolver;
+    protected RepositorySystem repositorySystem;
 
     /**
-     * The component used for creating artifact instances.
+     * The component used for getting artifact handlers.
      */
     @Inject
-    private ArtifactFactory artifactFactory;
+    private ArtifactHandlerManager artifactHandlerManager;
 
     /**
      * Internationalization.
@@ -117,64 +132,49 @@ public class DefaultSiteTool
      * The component for assembling inheritance.
      */
     @Inject
-    protected DecorationModelInheritanceAssembler assembler;
-
-    /**
-     * Project builder.
-     */
-    @Inject
-    protected ProjectBuilder projectBuilder;
+    protected SiteModelInheritanceAssembler assembler;
 
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
 
-    public Artifact getSkinArtifactFromRepository( ArtifactRepository localRepository,
-                                                   List<ArtifactRepository> remoteArtifactRepositories,
-                                                   DecorationModel decoration )
-        throws SiteToolException
-    {
-        Objects.requireNonNull( localRepository, "localRepository cannot be null" );
-        Objects.requireNonNull( remoteArtifactRepositories, "remoteArtifactRepositories cannot be null" );
-        Objects.requireNonNull( decoration, "decoration cannot be null" );
-        Skin skin = Objects.requireNonNull( decoration.getSkin(), "decoration.skin cannot be null" );
+    /** {@inheritDoc} */
+    public Artifact getSkinArtifactFromRepository(
+            RepositorySystemSession repoSession, List<RemoteRepository> remoteProjectRepositories, Skin skin)
+            throws SiteToolException {
+        Objects.requireNonNull(repoSession, "repoSession cannot be null");
+        Objects.requireNonNull(remoteProjectRepositories, "remoteProjectRepositories cannot be null");
+        Objects.requireNonNull(skin, "skin cannot be null");
 
         String version = skin.getVersion();
-        Artifact artifact;
-        try
-        {
-            if ( version == null )
-            {
+        try {
+            if (version == null) {
                 version = Artifact.RELEASE_VERSION;
             }
-            VersionRange versionSpec = VersionRange.createFromVersionSpec( version );
-            artifact = artifactFactory.createDependencyArtifact( skin.getGroupId(), skin.getArtifactId(), versionSpec,
-                                                                 "jar", null, null );
+            VersionRange versionSpec = VersionRange.createFromVersionSpec(version);
+            String type = "jar";
+            Artifact artifact = new DefaultArtifact(
+                    skin.getGroupId(),
+                    skin.getArtifactId(),
+                    versionSpec,
+                    Artifact.SCOPE_RUNTIME,
+                    type,
+                    null,
+                    artifactHandlerManager.getArtifactHandler(type));
+            ArtifactRequest request =
+                    new ArtifactRequest(RepositoryUtils.toArtifact(artifact), remoteProjectRepositories, "remote-skin");
+            ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
 
-            artifactResolver.resolve( artifact, remoteArtifactRepositories, localRepository );
-        }
-        catch ( InvalidVersionSpecificationException e )
-        {
-            throw new SiteToolException( "The skin version '" + version + "' is not valid", e );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new SiteToolException( "Unable to find skin", e );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new SiteToolException( "The skin does not exist", e );
-        }
+            return RepositoryUtils.toArtifact(result.getArtifact());
+        } catch (InvalidVersionSpecificationException e) {
+            throw new SiteToolException("The skin version '" + version + "' is not valid", e);
+        } catch (ArtifactResolutionException e) {
+            if (e.getCause() instanceof ArtifactNotFoundException) {
+                throw new SiteToolException("The skin does not exist", e.getCause());
+            }
 
-        return artifact;
-    }
-
-    public Artifact getDefaultSkinArtifact( ArtifactRepository localRepository,
-                                            List<ArtifactRepository> remoteArtifactRepositories )
-        throws SiteToolException
-    {
-        DecorationModel decorationModel = getDefaultDecorationModel();
-        return getSkinArtifactFromRepository( localRepository, remoteArtifactRepositories, decorationModel );
+            throw new SiteToolException("Unable to find skin", e);
+        }
     }
 
     /**
@@ -183,17 +183,14 @@ public class DefaultSiteTool
      * implemented method from a different library such as org.apache.http.client.utils.URIUtils#resolve.
      */
     @Deprecated
-    public String getRelativePath( String to, String from )
-    {
-        Objects.requireNonNull( to, "to cannot be null" );
-        Objects.requireNonNull( from, "from cannot be null" );
+    public String getRelativePath(String to, String from) {
+        Objects.requireNonNull(to, "to cannot be null");
+        Objects.requireNonNull(from, "from cannot be null");
 
-        if ( to.contains( ":" ) && from.contains( ":" ) )
-        {
-            String toScheme = to.substring( 0, to.lastIndexOf( ':' ) );
-            String fromScheme = from.substring( 0, from.lastIndexOf( ':' ) );
-            if ( !toScheme.equals( fromScheme ) )
-            {
+        if (to.contains(":") && from.contains(":")) {
+            String toScheme = to.substring(0, to.lastIndexOf(':'));
+            String fromScheme = from.substring(0, from.lastIndexOf(':'));
+            if (!toScheme.equals(fromScheme)) {
                 return to;
             }
         }
@@ -204,62 +201,44 @@ public class DefaultSiteTool
         String toPath = to;
         String fromPath = from;
 
-        try
-        {
-            toUrl = new URL( to );
-        }
-        catch ( MalformedURLException e )
-        {
-            try
-            {
-                toUrl = new File( getNormalizedPath( to ) ).toURI().toURL();
-            }
-            catch ( MalformedURLException e1 )
-            {
-                LOGGER.warn( "Unable to load a URL for '" + to + "'", e );
+        try {
+            toUrl = new URL(to);
+        } catch (MalformedURLException e) {
+            try {
+                toUrl = new File(getNormalizedPath(to)).toURI().toURL();
+            } catch (MalformedURLException e1) {
+                LOGGER.warn("Unable to load a URL for '" + to + "'", e);
                 return to;
             }
         }
 
-        try
-        {
-            fromUrl = new URL( from );
-        }
-        catch ( MalformedURLException e )
-        {
-            try
-            {
-                fromUrl = new File( getNormalizedPath( from ) ).toURI().toURL();
-            }
-            catch ( MalformedURLException e1 )
-            {
-                LOGGER.warn( "Unable to load a URL for '" + from + "'", e );
+        try {
+            fromUrl = new URL(from);
+        } catch (MalformedURLException e) {
+            try {
+                fromUrl = new File(getNormalizedPath(from)).toURI().toURL();
+            } catch (MalformedURLException e1) {
+                LOGGER.warn("Unable to load a URL for '" + from + "'", e);
                 return to;
             }
         }
 
-        if ( toUrl != null && fromUrl != null )
-        {
+        if (toUrl != null && fromUrl != null) {
             // URLs, determine if they share protocol and domain info
 
-            if ( ( toUrl.getProtocol().equalsIgnoreCase( fromUrl.getProtocol() ) )
-                && ( toUrl.getHost().equalsIgnoreCase( fromUrl.getHost() ) )
-                && ( toUrl.getPort() == fromUrl.getPort() ) )
-            {
+            if ((toUrl.getProtocol().equalsIgnoreCase(fromUrl.getProtocol()))
+                    && (toUrl.getHost().equalsIgnoreCase(fromUrl.getHost()))
+                    && (toUrl.getPort() == fromUrl.getPort())) {
                 // shared URL domain details, use URI to determine relative path
 
                 toPath = toUrl.getFile();
                 fromPath = fromUrl.getFile();
-            }
-            else
-            {
+            } else {
                 // don't share basic URL information, no relative available
 
                 return to;
             }
-        }
-        else if ( ( toUrl != null && fromUrl == null ) || ( toUrl == null && fromUrl != null ) )
-        {
+        } else if ((toUrl != null && fromUrl == null) || (toUrl == null && fromUrl != null)) {
             // one is a URL and the other isn't, no relative available.
 
             return to;
@@ -269,88 +248,93 @@ public class DefaultSiteTool
         // share the common protocol and domain info and we are left
         // with their URI information
 
-        String relativePath = getRelativeFilePath( fromPath, toPath );
+        String relativePath = getRelativeFilePath(fromPath, toPath);
 
-        if ( relativePath == null )
-        {
+        if (relativePath == null) {
             relativePath = to;
         }
 
-        if ( LOGGER.isDebugEnabled() && !relativePath.toString().equals( to ) )
-        {
-            LOGGER.debug( "Mapped url: " + to + " to relative path: " + relativePath );
+        if (LOGGER.isDebugEnabled() && !relativePath.toString().equals(to)) {
+            LOGGER.debug("Mapped url: " + to + " to relative path: " + relativePath);
         }
 
         return relativePath;
     }
 
-    private static String getRelativeFilePath( final String oldPath, final String newPath )
-    {
+    private static String getRelativeFilePath(final String oldPath, final String newPath) {
         // normalize the path delimiters
 
-        String fromPath = new File( oldPath ).getPath();
-        String toPath = new File( newPath ).getPath();
+        String fromPath = new File(oldPath).getPath();
+        String toPath = new File(newPath).getPath();
 
         // strip any leading slashes if its a windows path
-        if ( toPath.matches( "^\\[a-zA-Z]:" ) )
-        {
-            toPath = toPath.substring( 1 );
+        if (toPath.matches("^\\[a-zA-Z]:")) {
+            toPath = toPath.substring(1);
         }
-        if ( fromPath.matches( "^\\[a-zA-Z]:" ) )
-        {
-            fromPath = fromPath.substring( 1 );
+        if (fromPath.matches("^\\[a-zA-Z]:")) {
+            fromPath = fromPath.substring(1);
         }
 
         // lowercase windows drive letters.
-        if ( fromPath.startsWith( ":", 1 ) )
-        {
-            fromPath = Character.toLowerCase( fromPath.charAt( 0 ) ) + fromPath.substring( 1 );
+        if (fromPath.startsWith(":", 1)) {
+            fromPath = Character.toLowerCase(fromPath.charAt(0)) + fromPath.substring(1);
         }
-        if ( toPath.startsWith( ":", 1 ) )
-        {
-            toPath = Character.toLowerCase( toPath.charAt( 0 ) ) + toPath.substring( 1 );
+        if (toPath.startsWith(":", 1)) {
+            toPath = Character.toLowerCase(toPath.charAt(0)) + toPath.substring(1);
         }
 
         // check for the presence of windows drives. No relative way of
         // traversing from one to the other.
 
-        if ( ( toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) )
-            && ( !toPath.substring( 0, 1 ).equals( fromPath.substring( 0, 1 ) ) ) )
-        {
+        if ((toPath.startsWith(":", 1) && fromPath.startsWith(":", 1))
+                && (!toPath.substring(0, 1).equals(fromPath.substring(0, 1)))) {
             // they both have drive path element but they don't match, no
             // relative path
 
             return null;
         }
 
-        if ( ( toPath.startsWith( ":", 1 ) && !fromPath.startsWith( ":", 1 ) )
-            || ( !toPath.startsWith( ":", 1 ) && fromPath.startsWith( ":", 1 ) ) )
-        {
+        if ((toPath.startsWith(":", 1) && !fromPath.startsWith(":", 1))
+                || (!toPath.startsWith(":", 1) && fromPath.startsWith(":", 1))) {
 
             // one has a drive path element and the other doesn't, no relative
             // path.
 
             return null;
-
         }
 
-        final String relativePath = buildRelativePath( toPath, fromPath, File.separatorChar );
+        final String relativePath = buildRelativePath(toPath, fromPath, File.separatorChar);
 
         return relativePath.toString();
     }
 
     /** {@inheritDoc} */
-    public File getSiteDescriptor( File siteDirectory, Locale locale )
-    {
-        Objects.requireNonNull( siteDirectory, "siteDirectory cannot be null" );
-        final Locale llocale = ( locale == null ) ? new Locale( "" ) : locale;
+    public File getSiteDescriptor(File siteDirectory, Locale locale) {
+        Objects.requireNonNull(siteDirectory, "siteDirectory cannot be null");
+        Objects.requireNonNull(locale, "locale cannot be null");
 
-        File siteDescriptor = new File( siteDirectory, "site_" + llocale.getLanguage() + ".xml" );
+        String variant = locale.getVariant();
+        String country = locale.getCountry();
+        String language = locale.getLanguage();
 
-        if ( !siteDescriptor.isFile() )
-        {
-            siteDescriptor = new File( siteDirectory, "site.xml" );
+        File siteDescriptor = null;
+
+        if (!variant.isEmpty()) {
+            siteDescriptor = new File(siteDirectory, "site_" + language + "_" + country + "_" + variant + ".xml");
         }
+
+        if ((siteDescriptor == null || !siteDescriptor.isFile()) && !country.isEmpty()) {
+            siteDescriptor = new File(siteDirectory, "site_" + language + "_" + country + ".xml");
+        }
+
+        if ((siteDescriptor == null || !siteDescriptor.isFile()) && !language.isEmpty()) {
+            siteDescriptor = new File(siteDirectory, "site_" + language + ".xml");
+        }
+
+        if (siteDescriptor == null || !siteDescriptor.isFile()) {
+            siteDescriptor = new File(siteDirectory, "site.xml");
+        }
+
         return siteDescriptor;
     }
 
@@ -358,342 +342,282 @@ public class DefaultSiteTool
      * Get a site descriptor from one of the repositories.
      *
      * @param project the Maven project, not null.
-     * @param localRepository the Maven local repository, not null.
-     * @param repositories the Maven remote repositories, not null.
-     * @param locale the locale wanted for the site descriptor. If not null, searching for
-     * <code>site_<i>localeLanguage</i>.xml</code>, otherwise searching for <code>site.xml</code>.
+     * @param repoSession the repository system session, not null.
+     * @param remoteProjectRepositories the Maven remote project repositories, not null.
+     * @param locale the locale wanted for the site descriptor, not null.
+     * See {@link #getSiteDescriptor(File, Locale)} for details.
      * @return the site descriptor into the local repository after download of it from repositories or null if not
      * found in repositories.
      * @throws SiteToolException if any
      */
-    File getSiteDescriptorFromRepository( MavenProject project, ArtifactRepository localRepository,
-                                                 List<ArtifactRepository> repositories, Locale locale )
-        throws SiteToolException
-    {
-        Objects.requireNonNull( project, "project cannot be null" );
-        Objects.requireNonNull( localRepository, "localRepository cannot be null" );
-        Objects.requireNonNull( repositories, "repositories cannot be null" );
+    File getSiteDescriptorFromRepository(
+            MavenProject project,
+            RepositorySystemSession repoSession,
+            List<RemoteRepository> remoteProjectRepositories,
+            Locale locale)
+            throws SiteToolException {
+        Objects.requireNonNull(project, "project cannot be null");
+        Objects.requireNonNull(repoSession, "repoSession cannot be null");
+        Objects.requireNonNull(remoteProjectRepositories, "remoteProjectRepositories cannot be null");
+        Objects.requireNonNull(locale, "locale cannot be null");
 
-        final Locale llocale = ( locale == null ) ? new Locale( "" ) : locale;
-
-        try
-        {
-            return resolveSiteDescriptor( project, localRepository, repositories, llocale );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            LOGGER.debug( "Unable to locate site descriptor", e );
-            return null;
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new SiteToolException( "Unable to locate site descriptor", e );
-        }
-        catch ( IOException e )
-        {
-            throw new SiteToolException( "Unable to locate site descriptor", e );
+        try {
+            File siteDescriptor = resolveSiteDescriptor(project, repoSession, remoteProjectRepositories, locale);
+            if (siteDescriptor == null) {
+                LOGGER.debug("Site descriptor not found");
+                return null;
+            } else {
+                return siteDescriptor;
+            }
+        } catch (ArtifactResolutionException e) {
+            throw new SiteToolException("Unable to locate site descriptor", e);
         }
     }
 
     /** {@inheritDoc} */
-    public DecorationModel getDecorationModel( File siteDirectory, Locale locale, MavenProject project,
-                                               List<MavenProject> reactorProjects, ArtifactRepository localRepository,
-                                               List<ArtifactRepository> repositories )
-        throws SiteToolException
-    {
-        Objects.requireNonNull( project, "project cannot be null" );
-        Objects.requireNonNull( reactorProjects, "reactorProjects cannot be null" );
-        Objects.requireNonNull( localRepository, "localRepository cannot be null" );
-        Objects.requireNonNull( repositories, "repositories cannot be null" );
+    public SiteModel getSiteModel(
+            File siteDirectory,
+            Locale locale,
+            MavenProject project,
+            List<MavenProject> reactorProjects,
+            RepositorySystemSession repoSession,
+            List<RemoteRepository> remoteProjectRepositories)
+            throws SiteToolException {
+        Objects.requireNonNull(locale, "locale cannot be null");
+        Objects.requireNonNull(project, "project cannot be null");
+        Objects.requireNonNull(reactorProjects, "reactorProjects cannot be null");
+        Objects.requireNonNull(repoSession, "repoSession cannot be null");
+        Objects.requireNonNull(remoteProjectRepositories, "remoteProjectRepositories cannot be null");
 
-        final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale;
+        LOGGER.debug("Computing site model of '" + project.getId() + "' for "
+                + (locale.equals(SiteTool.DEFAULT_LOCALE) ? "default locale" : "locale '" + locale + "'"));
 
-        LOGGER.debug( "Computing decoration model of " + project.getId() + " for locale " + llocale );
-
-        Map.Entry<DecorationModel, MavenProject> result =
-            getDecorationModel( 0, siteDirectory, llocale, project, reactorProjects, localRepository, repositories );
-        DecorationModel decorationModel = result.getKey();
+        Map.Entry<SiteModel, MavenProject> result =
+                getSiteModel(0, siteDirectory, locale, project, repoSession, remoteProjectRepositories);
+        SiteModel siteModel = result.getKey();
         MavenProject parentProject = result.getValue();
 
-        if ( decorationModel == null )
-        {
-            LOGGER.debug( "Using default site descriptor" );
-            decorationModel = getDefaultDecorationModel();
+        if (siteModel == null) {
+            LOGGER.debug("Using default site descriptor");
+            siteModel = getDefaultSiteModel();
         }
 
-        // DecorationModel back to String to interpolate, then go back to DecorationModel
-        String siteDescriptorContent = decorationModelToString( decorationModel );
+        // SiteModel back to String to interpolate, then go back to SiteModel
+        String siteDescriptorContent = siteModelToString(siteModel);
 
         // "classical" late interpolation, after full inheritance
-        siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent, false );
+        siteDescriptorContent = getInterpolatedSiteDescriptorContent(project, siteDescriptorContent, false);
 
-        decorationModel = readDecorationModel( siteDescriptorContent );
+        siteModel = readSiteModel(siteDescriptorContent, project, locale);
 
-        if ( parentProject != null )
-        {
-            populateParentMenu( decorationModel, llocale, project, parentProject, true );
+        if (parentProject != null) {
+            populateParentMenu(siteModel, locale, project, parentProject, true);
         }
 
-        try
-        {
-            populateModulesMenu( decorationModel, llocale, project, reactorProjects, localRepository, true );
-        }
-        catch ( IOException e )
-        {
-            throw new SiteToolException( "Error while populating modules menu", e );
+        try {
+            populateModulesMenu(siteModel, locale, project, reactorProjects, true);
+        } catch (IOException e) {
+            throw new SiteToolException("Error while populating modules menu", e);
         }
 
-        return decorationModel;
+        return siteModel;
     }
 
     /** {@inheritDoc} */
-    public String getInterpolatedSiteDescriptorContent( Map<String, String> props, MavenProject aProject,
-                                                        String siteDescriptorContent )
-        throws SiteToolException
-    {
-        Objects.requireNonNull( props, "props cannot be null" );
+    public String getInterpolatedSiteDescriptorContent(
+            Map<String, String> props, MavenProject aProject, String siteDescriptorContent) throws SiteToolException {
+        Objects.requireNonNull(props, "props cannot be null");
 
         // "classical" late interpolation
-        return getInterpolatedSiteDescriptorContent( aProject, siteDescriptorContent, false );
+        return getInterpolatedSiteDescriptorContent(aProject, siteDescriptorContent, false);
     }
 
-    private String getInterpolatedSiteDescriptorContent( MavenProject aProject,
-                                                        String siteDescriptorContent, boolean isEarly )
-        throws SiteToolException
-    {
-        Objects.requireNonNull( aProject, "aProject cannot be null" );
-        Objects.requireNonNull( siteDescriptorContent, "siteDescriptorContent cannot be null" );
+    private String getInterpolatedSiteDescriptorContent(
+            MavenProject aProject, String siteDescriptorContent, boolean isEarly) throws SiteToolException {
+        Objects.requireNonNull(aProject, "aProject cannot be null");
+        Objects.requireNonNull(siteDescriptorContent, "siteDescriptorContent cannot be null");
 
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
 
-        if ( isEarly )
-        {
-            interpolator.addValueSource( new PrefixedObjectValueSource( "this.", aProject ) );
-            interpolator.addValueSource( new PrefixedPropertiesValueSource( "this.", aProject.getProperties() ) );
-        }
-        else
-        {
-            interpolator.addValueSource( new PrefixedObjectValueSource( "project.", aProject ) );
-            interpolator.addValueSource( new MapBasedValueSource( aProject.getProperties() ) );
+        if (isEarly) {
+            interpolator.addValueSource(new PrefixedObjectValueSource("this.", aProject));
+            interpolator.addValueSource(new PrefixedPropertiesValueSource("this.", aProject.getProperties()));
+        } else {
+            interpolator.addValueSource(new PrefixedObjectValueSource("project.", aProject));
+            interpolator.addValueSource(new MapBasedValueSource(aProject.getProperties()));
 
-            try
-            {
-                interpolator.addValueSource( new EnvarBasedValueSource() );
-            }
-            catch ( IOException e )
-            {
+            try {
+                interpolator.addValueSource(new EnvarBasedValueSource());
+            } catch (IOException e) {
                 // Prefer logging?
-                throw new SiteToolException( "Cannot interpolate environment properties", e );
+                throw new SiteToolException("Cannot interpolate environment properties", e);
             }
         }
 
-        try
-        {
-            // FIXME: this does not escape xml entities, see MSITE-226, PLXCOMP-118
-            return interpolator.interpolate( siteDescriptorContent );
-        }
-        catch ( InterpolationException e )
-        {
-            throw new SiteToolException( "Cannot interpolate site descriptor", e );
-        }
-    }
+        interpolator.addPostProcessor(new InterpolationPostProcessor() {
+            @Override
+            public Object execute(String expression, Object value) {
+                if (value != null) {
+                    // we're going to parse this back in as XML so we need to escape XML markup
+                    return value.toString()
+                            .replace("&", "&amp;")
+                            .replace("<", "&lt;")
+                            .replace(">", "&gt;")
+                            .replace("\"", "&quot;")
+                            .replace("'", "&apos;");
+                }
+                return null;
+            }
+        });
 
-    /** {@inheritDoc} */
-    public MavenProject getParentProject( MavenProject aProject, List<MavenProject> reactorProjects,
-                                          ArtifactRepository localRepository )
-    {
-        Objects.requireNonNull( aProject, "aProject cannot be null" );
-        Objects.requireNonNull( reactorProjects, "reactorProjects cannot be null" );
-        Objects.requireNonNull( localRepository, "localRepository cannot be null" );
-
-        return aProject.getParent();
+        try {
+            return interpolator.interpolate(siteDescriptorContent);
+        } catch (InterpolationException e) {
+            throw new SiteToolException("Cannot interpolate site descriptor", e);
+        }
     }
 
     /**
-     * Populate the pre-defined <code>parent</code> menu of the decoration model,
+     * Populate the pre-defined <code>parent</code> menu of the site model,
      * if used through <code>&lt;menu ref="parent"/&gt;</code>.
      *
-     * @param decorationModel the Doxia Sitetools DecorationModel, not null.
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
+     * @param siteModel the Doxia Sitetools SiteModel, not null.
+     * @param locale the locale used for the i18n in SiteModel, not null.
      * @param project a Maven project, not null.
      * @param parentProject a Maven parent project, not null.
      * @param keepInheritedRefs used for inherited references.
      */
-    private void populateParentMenu( DecorationModel decorationModel, Locale locale, MavenProject project,
-                                    MavenProject parentProject, boolean keepInheritedRefs )
-    {
-        Objects.requireNonNull( decorationModel, "decorationModel cannot be null" );
-        Objects.requireNonNull( project, "project cannot be null" );
-        Objects.requireNonNull( parentProject, "parentProject cannot be null" );
+    private void populateParentMenu(
+            SiteModel siteModel,
+            Locale locale,
+            MavenProject project,
+            MavenProject parentProject,
+            boolean keepInheritedRefs) {
+        Objects.requireNonNull(siteModel, "siteModel cannot be null");
+        Objects.requireNonNull(locale, "locale cannot be null");
+        Objects.requireNonNull(project, "project cannot be null");
+        Objects.requireNonNull(parentProject, "parentProject cannot be null");
 
-        Menu menu = decorationModel.getMenuRef( "parent" );
+        Menu menu = siteModel.getMenuRef("parent");
 
-        if ( menu == null )
-        {
+        if (menu == null) {
             return;
         }
 
-        if ( keepInheritedRefs && menu.isInheritAsRef() )
-        {
+        if (keepInheritedRefs && menu.isInheritAsRef()) {
             return;
         }
 
-        final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale;
+        String parentUrl = getDistMgmntSiteUrl(parentProject);
 
-        String parentUrl = getDistMgmntSiteUrl( parentProject );
-
-        if ( parentUrl != null )
-        {
-            if ( parentUrl.endsWith( "/" ) )
-            {
+        if (parentUrl != null) {
+            if (parentUrl.endsWith("/")) {
                 parentUrl += "index.html";
-            }
-            else
-            {
+            } else {
                 parentUrl += "/index.html";
             }
 
-            parentUrl = getRelativePath( parentUrl, getDistMgmntSiteUrl( project ) );
-        }
-        else
-        {
+            parentUrl = getRelativePath(parentUrl, getDistMgmntSiteUrl(project));
+        } else {
             // parent has no url, assume relative path is given by site structure
             File parentBasedir = parentProject.getBasedir();
             // First make sure that the parent is available on the file system
-            if ( parentBasedir != null )
-            {
+            if (parentBasedir != null) {
                 // Try to find the relative path to the parent via the file system
                 String parentPath = parentBasedir.getAbsolutePath();
                 String projectPath = project.getBasedir().getAbsolutePath();
-                parentUrl = getRelativePath( parentPath, projectPath ) + "/index.html";
+                parentUrl = getRelativePath(parentPath, projectPath) + "/index.html";
             }
         }
 
         // Only add the parent menu if we were able to find a URL for it
-        if ( parentUrl == null )
-        {
-            LOGGER.warn( "Unable to find a URL to the parent project. The parent menu will NOT be added." );
-        }
-        else
-        {
-            if ( menu.getName() == null )
-            {
-                menu.setName( i18n.getString( "site-tool", llocale, "decorationModel.menu.parentproject" ) );
+        if (parentUrl == null) {
+            LOGGER.warn("Unable to find a URL to the parent project. The parent menu will NOT be added.");
+        } else {
+            if (menu.getName() == null) {
+                menu.setName(i18n.getString("site-tool", locale, "siteModel.menu.parentproject"));
             }
 
             MenuItem item = new MenuItem();
-            item.setName( parentProject.getName() );
-            item.setHref( parentUrl );
-            menu.addItem( item );
+            item.setName(parentProject.getName());
+            item.setHref(parentUrl);
+            menu.addItem(item);
         }
     }
 
     /**
-     * Populate the pre-defined <code>modules</code> menu of the decoration model,
+     * Populate the pre-defined <code>modules</code> menu of the model,
      * if used through <code>&lt;menu ref="modules"/&gt;</code>.
      *
-     * @param decorationModel the Doxia Sitetools DecorationModel, not null.
-     * @param locale the locale used for the i18n in DecorationModel. If null, using the default locale in the jvm.
+     * @param siteModel the Doxia Sitetools SiteModel, not null.
+     * @param locale the locale used for the i18n in SiteModel, not null.
      * @param project a Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.
-     * @param localRepository the Maven local repository, not null.
      * @param keepInheritedRefs used for inherited references.
      * @throws SiteToolException if any
      * @throws IOException
      */
-    private void populateModulesMenu( DecorationModel decorationModel, Locale locale, MavenProject project,
-                                     List<MavenProject> reactorProjects, ArtifactRepository localRepository,
-                                     boolean keepInheritedRefs )
-        throws SiteToolException, IOException
-    {
-        Objects.requireNonNull( project, "project cannot be null" );
-        Objects.requireNonNull( reactorProjects, "reactorProjects cannot be null" );
-        Objects.requireNonNull( localRepository, "localRepository cannot be null" );
-        Objects.requireNonNull( decorationModel, "decorationModel cannot be null" );
+    private void populateModulesMenu(
+            SiteModel siteModel,
+            Locale locale,
+            MavenProject project,
+            List<MavenProject> reactorProjects,
+            boolean keepInheritedRefs)
+            throws SiteToolException, IOException {
+        Objects.requireNonNull(siteModel, "siteModel cannot be null");
+        Objects.requireNonNull(locale, "locale cannot be null");
+        Objects.requireNonNull(project, "project cannot be null");
+        Objects.requireNonNull(reactorProjects, "reactorProjects cannot be null");
 
-        Menu menu = decorationModel.getMenuRef( "modules" );
+        Menu menu = siteModel.getMenuRef("modules");
 
-        if ( menu == null )
-        {
+        if (menu == null) {
             return;
         }
 
-        if ( keepInheritedRefs && menu.isInheritAsRef() )
-        {
+        if (keepInheritedRefs && menu.isInheritAsRef()) {
             return;
         }
-
-        final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale ;
 
         // we require child modules and reactors to process module menu
-        if ( project.getModules().size() > 0 )
-        {
-            if ( menu.getName() == null )
-            {
-                menu.setName( i18n.getString( "site-tool", llocale, "decorationModel.menu.projectmodules" ) );
+        if (!project.getModules().isEmpty()) {
+            if (menu.getName() == null) {
+                menu.setName(i18n.getString("site-tool", locale, "siteModel.menu.projectmodules"));
             }
 
-            for ( String module : (List<String>) project.getModules() )
-            {
-                MavenProject moduleProject = getModuleFromReactor( project, reactorProjects, module );
+            for (String module : project.getModules()) {
+                MavenProject moduleProject = getModuleFromReactor(project, reactorProjects, module);
 
-                if ( moduleProject == null )
-                {
-                    LOGGER.warn( "Module " + module
-                        + " not found in reactor: loading locally" );
-
-                    File f = new File( project.getBasedir(), module + "/pom.xml" );
-                    if ( f.exists() )
-                    {
-                        try
-                        {
-                            ProjectBuildingRequest request = new DefaultProjectBuildingRequest();
-                            request.setLocalRepository( localRepository );
-
-                            ProjectBuildingResult result = projectBuilder.build( f, request );
-                            moduleProject = result.getProject();
-                        }
-                        catch ( ProjectBuildingException e )
-                        {
-                            throw new SiteToolException( "Unable to read local module POM", e );
-                        }
-                    }
-                    else
-                    {
-                        LOGGER.warn( "No filesystem module POM available" );
-
-                        moduleProject = new MavenProject();
-                        moduleProject.setName( module );
-                        moduleProject.setDistributionManagement( new DistributionManagement() );
-                        moduleProject.getDistributionManagement().setSite( new Site() );
-                        moduleProject.getDistributionManagement().getSite().setUrl( module );
-                    }
+                if (moduleProject == null) {
+                    LOGGER.debug("Module " + module + " not found in reactor");
+                    continue;
                 }
 
-                String siteUrl = getDistMgmntSiteUrl( moduleProject );
-                String itemName =
-                    ( moduleProject.getName() == null ) ? moduleProject.getArtifactId() : moduleProject.getName();
+                final String pluginId = "org.apache.maven.plugins:maven-site-plugin";
+                String skipFlag = getPluginParameter(moduleProject, pluginId, "skip");
+                if (skipFlag == null) {
+                    skipFlag = moduleProject.getProperties().getProperty("maven.site.skip");
+                }
 
-                appendMenuItem( project, menu, itemName, siteUrl, moduleProject.getArtifactId() );
+                String siteUrl = "true".equalsIgnoreCase(skipFlag) ? null : getDistMgmntSiteUrl(moduleProject);
+                String itemName =
+                        (moduleProject.getName() == null) ? moduleProject.getArtifactId() : moduleProject.getName();
+                String defaultSiteUrl = "true".equalsIgnoreCase(skipFlag) ? null : moduleProject.getArtifactId();
+
+                appendMenuItem(project, menu, itemName, siteUrl, defaultSiteUrl);
             }
-        }
-        else if ( decorationModel.getMenuRef( "modules" ).getInherit() == null )
-        {
+        } else if (siteModel.getMenuRef("modules").getInherit() == null) {
             // only remove if project has no modules AND menu is not inherited, see MSHARED-174
-            decorationModel.removeMenuRef( "modules" );
+            siteModel.removeMenuRef("modules");
         }
     }
 
-    private static MavenProject getModuleFromReactor( MavenProject project, List<MavenProject> reactorProjects,
-                                                      String module )
-        throws IOException
-    {
-        File moduleBasedir = new File( project.getBasedir(), module ).getCanonicalFile();
+    private MavenProject getModuleFromReactor(MavenProject project, List<MavenProject> reactorProjects, String module)
+            throws IOException {
+        File moduleBasedir = new File(project.getBasedir(), module).getCanonicalFile();
 
-        for ( MavenProject reactorProject : reactorProjects )
-        {
-            if ( moduleBasedir.equals( reactorProject.getBasedir() ) )
-            {
+        for (MavenProject reactorProject : reactorProjects) {
+            if (moduleBasedir.equals(reactorProject.getBasedir())) {
                 return reactorProject;
             }
         }
@@ -703,111 +627,95 @@ public class DefaultSiteTool
     }
 
     /** {@inheritDoc} */
-    public void populateReportsMenu( DecorationModel decorationModel, Locale locale,
-                                     Map<String, List<MavenReport>> categories )
-    {
-        Objects.requireNonNull( decorationModel, "decorationModel cannot be null" );
-        Objects.requireNonNull( categories, "categories cannot be null" );
+    public void populateReportsMenu(SiteModel siteModel, Locale locale, Map<String, List<MavenReport>> categories) {
+        Objects.requireNonNull(siteModel, "siteModel cannot be null");
+        Objects.requireNonNull(locale, "locale cannot be null");
+        Objects.requireNonNull(categories, "categories cannot be null");
 
-        Menu menu = decorationModel.getMenuRef( "reports" );
+        Menu menu = siteModel.getMenuRef("reports");
 
-        if ( menu == null )
-        {
+        if (menu == null) {
             return;
         }
 
-        final Locale llocale = ( locale == null ) ? Locale.getDefault() : locale;
-
-        if ( menu.getName() == null )
-        {
-            menu.setName( i18n.getString( "site-tool", llocale, "decorationModel.menu.projectdocumentation" ) );
+        if (menu.getName() == null) {
+            menu.setName(i18n.getString("site-tool", locale, "siteModel.menu.projectdocumentation"));
         }
 
         boolean found = false;
-        if ( menu.getItems().isEmpty() )
-        {
-            List<MavenReport> categoryReports = categories.get( MavenReport.CATEGORY_PROJECT_INFORMATION );
-            if ( !isEmptyList( categoryReports ) )
-            {
+        if (menu.getItems().isEmpty()) {
+            List<MavenReport> categoryReports = categories.get(MavenReport.CATEGORY_PROJECT_INFORMATION);
+            if (!isEmptyList(categoryReports)) {
                 MenuItem item = createCategoryMenu(
-                                                    i18n.getString( "site-tool", llocale,
-                                                                    "decorationModel.menu.projectinformation" ),
-                                                    "/project-info.html", categoryReports, llocale );
-                menu.getItems().add( item );
+                        i18n.getString("site-tool", locale, "siteModel.menu.projectinformation"),
+                        "/project-info.html",
+                        categoryReports,
+                        locale);
+                menu.getItems().add(item);
                 found = true;
             }
 
-            categoryReports = categories.get( MavenReport.CATEGORY_PROJECT_REPORTS );
-            if ( !isEmptyList( categoryReports ) )
-            {
-                MenuItem item =
-                    createCategoryMenu( i18n.getString( "site-tool", llocale, "decorationModel.menu.projectreports" ),
-                                        "/project-reports.html", categoryReports, llocale );
-                menu.getItems().add( item );
+            categoryReports = categories.get(MavenReport.CATEGORY_PROJECT_REPORTS);
+            if (!isEmptyList(categoryReports)) {
+                MenuItem item = createCategoryMenu(
+                        i18n.getString("site-tool", locale, "siteModel.menu.projectreports"),
+                        "/project-reports.html",
+                        categoryReports,
+                        locale);
+                menu.getItems().add(item);
                 found = true;
             }
         }
-        if ( !found )
-        {
-            decorationModel.removeMenuRef( "reports" );
+        if (!found) {
+            siteModel.removeMenuRef("reports");
         }
     }
 
     /** {@inheritDoc} */
-    public List<Locale> getSiteLocales( String locales )
-    {
-        if ( locales == null )
-        {
-            return Collections.singletonList( DEFAULT_LOCALE );
+    public List<Locale> getSiteLocales(String locales) {
+        if (locales == null) {
+            return Collections.singletonList(DEFAULT_LOCALE);
         }
 
-        String[] localesArray = StringUtils.split( locales, "," );
-        List<Locale> localesList = new ArrayList<Locale>( localesArray.length );
+        String[] localesArray = StringUtils.split(locales, ",");
+        List<Locale> localesList = new ArrayList<>(localesArray.length);
+        List<Locale> availableLocales = Arrays.asList(Locale.getAvailableLocales());
 
-        for ( String localeString : localesArray )
-        {
-            Locale locale = codeToLocale( localeString );
+        for (String localeString : localesArray) {
+            Locale locale = codeToLocale(localeString);
 
-            if ( locale == null )
-            {
+            if (locale == null) {
                 continue;
             }
 
-            if ( !Arrays.asList( Locale.getAvailableLocales() ).contains( locale ) )
-            {
-                if ( LOGGER.isWarnEnabled() )
-                {
-                    LOGGER.warn( "The locale defined by '" + locale
-                        + "' is not available in this Java Virtual Machine ("
-                        + System.getProperty( "java.version" )
-                        + " from " + System.getProperty( "java.vendor" ) + ") - IGNORING" );
+            if (!availableLocales.contains(locale)) {
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("The locale defined by '" + locale
+                            + "' is not available in this Java Virtual Machine ("
+                            + System.getProperty("java.version")
+                            + " from " + System.getProperty("java.vendor") + ") - IGNORING");
                 }
                 continue;
             }
 
-            // Default bundles are in English
-            if ( ( !locale.getLanguage().equals( DEFAULT_LOCALE.getLanguage() ) )
-                && ( !i18n.getBundle( "site-tool", locale ).getLocale().getLanguage()
-                    .equals( locale.getLanguage() ) ) )
-            {
-                if ( LOGGER.isWarnEnabled() )
-                {
-                    LOGGER.warn( "The locale '" + locale + "' (" + locale.getDisplayName( Locale.ENGLISH )
-                        + ") is not currently supported by Maven Site - IGNORING."
-                        + "\nContributions are welcome and greatly appreciated!"
-                        + "\nIf you want to contribute a new translation, please visit "
-                        + "http://maven.apache.org/plugins/localization.html for detailed instructions." );
+            Locale bundleLocale = i18n.getBundle("site-tool", locale).getLocale();
+            if (!(bundleLocale.equals(locale) || bundleLocale.getLanguage().equals(locale.getLanguage()))) {
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("The locale '" + locale + "' (" + locale.getDisplayName(Locale.ENGLISH)
+                            + ") is not currently supported by Maven Site - IGNORING."
+                            + System.lineSeparator() + "Contributions are welcome and greatly appreciated!"
+                            + System.lineSeparator() + "If you want to contribute a new translation, please visit "
+                            + "https://maven.apache.org/plugins/localization.html for detailed instructions.");
                 }
 
                 continue;
             }
 
-            localesList.add( locale );
+            localesList.add(locale);
         }
 
-        if ( localesList.isEmpty() )
-        {
-            localesList = Collections.singletonList( DEFAULT_LOCALE );
+        if (localesList.isEmpty()) {
+            localesList = Collections.singletonList(DEFAULT_LOCALE);
         }
 
         return localesList;
@@ -816,54 +724,52 @@ public class DefaultSiteTool
     /**
      * Converts a locale code like "en", "en_US" or "en_US_win" to a <code>java.util.Locale</code>
      * object.
-     * <p>If localeCode = <code>default</code>, return the current value of the default locale for this instance
+     * <p>If localeCode = <code>system</code>, return the current value of the default locale for this instance
      * of the Java Virtual Machine.</p>
+     * <p>If localeCode = <code>default</code>, return the root locale.</p>
      *
      * @param localeCode the locale code string.
      * @return a java.util.Locale object instanced or null if errors occurred
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Locale.html">java.util.Locale#getDefault()</a>
+     * @see Locale#getDefault()
+     * @see SiteTool#DEFAULT_LOCALE
      */
-    private Locale codeToLocale( String localeCode )
-    {
-        if ( localeCode == null )
-        {
+    private Locale codeToLocale(String localeCode) {
+        if (localeCode == null) {
             return null;
         }
 
-        if ( "default".equalsIgnoreCase( localeCode ) )
-        {
+        if ("system".equalsIgnoreCase(localeCode)) {
             return Locale.getDefault();
+        }
+
+        if ("default".equalsIgnoreCase(localeCode)) {
+            return SiteTool.DEFAULT_LOCALE;
         }
 
         String language = "";
         String country = "";
         String variant = "";
 
-        StringTokenizer tokenizer = new StringTokenizer( localeCode, "_" );
+        StringTokenizer tokenizer = new StringTokenizer(localeCode, "_");
         final int maxTokens = 3;
-        if ( tokenizer.countTokens() > maxTokens )
-        {
-            if ( LOGGER.isWarnEnabled() )
-            {
-                LOGGER.warn( "Invalid java.util.Locale format for '" + localeCode + "' entry - IGNORING" );
+        if (tokenizer.countTokens() > maxTokens) {
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Invalid java.util.Locale format for '" + localeCode + "' entry - IGNORING");
             }
             return null;
         }
 
-        if ( tokenizer.hasMoreTokens() )
-        {
+        if (tokenizer.hasMoreTokens()) {
             language = tokenizer.nextToken();
-            if ( tokenizer.hasMoreTokens() )
-            {
+            if (tokenizer.hasMoreTokens()) {
                 country = tokenizer.nextToken();
-                if ( tokenizer.hasMoreTokens() )
-                {
+                if (tokenizer.hasMoreTokens()) {
                     variant = tokenizer.nextToken();
                 }
             }
         }
 
-        return new Locale( language, country, variant );
+        return new Locale(language, country, variant);
     }
 
     // ----------------------------------------------------------------------
@@ -875,14 +781,12 @@ public class DefaultSiteTool
      * @return the path normalized, i.e. by eliminating "/../" and "/./" in the path.
      * @see FilenameUtils#normalize(String)
      */
-    protected static String getNormalizedPath( String path )
-    {
-        String normalized = FilenameUtils.normalize( path );
-        if ( normalized == null )
-        {
+    protected static String getNormalizedPath(String path) {
+        String normalized = FilenameUtils.normalize(path);
+        if (normalized == null) {
             normalized = path;
         }
-        return ( normalized == null ) ? null : normalized.replace( '\\', '/' );
+        return (normalized == null) ? null : normalized.replace('\\', '/');
     }
 
     // ----------------------------------------------------------------------
@@ -891,84 +795,163 @@ public class DefaultSiteTool
 
     /**
      * @param project not null
-     * @param localRepository not null
-     * @param repositories not null
-     * @param locale not null
-     * @return the resolved site descriptor
-     * @throws IOException if any
-     * @throws ArtifactResolutionException if any
-     * @throws ArtifactNotFoundException if any
+     * @param localeStr not null
+     * @param remoteProjectRepositories not null
+     * @return the site descriptor artifact request
      */
-    private File resolveSiteDescriptor( MavenProject project, ArtifactRepository localRepository,
-                                        List<ArtifactRepository> repositories, Locale locale )
-        throws IOException, ArtifactResolutionException, ArtifactNotFoundException
-    {
-        File result;
+    private ArtifactRequest createSiteDescriptorArtifactRequest(
+            MavenProject project, String localeStr, List<RemoteRepository> remoteProjectRepositories) {
+        String type = "xml";
+        ArtifactHandler artifactHandler = artifactHandlerManager.getArtifactHandler(type);
+        Artifact artifact = new DefaultArtifact(
+                project.getGroupId(),
+                project.getArtifactId(),
+                project.getVersion(),
+                Artifact.SCOPE_RUNTIME,
+                type,
+                "site" + (localeStr.isEmpty() ? "" : "_" + localeStr),
+                artifactHandler);
+        return new ArtifactRequest(
+                RepositoryUtils.toArtifact(artifact), remoteProjectRepositories, "remote-site-descriptor");
+    }
 
-        // TODO: this is a bit crude - proper type, or proper handling as metadata rather than an artifact in 2.1?
-        Artifact artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(),
-                                                                          project.getArtifactId(),
-                                                                          project.getVersion(), "xml",
-                                                                          "site_" + locale.getLanguage() );
+    /**
+     * @param project not null
+     * @param repoSession the repository system session not null
+     * @param remoteProjectRepositories not null
+     * @param locale not null
+     * @return the resolved site descriptor or null if not found in repositories.
+     * @throws ArtifactResolutionException if any
+     */
+    private File resolveSiteDescriptor(
+            MavenProject project,
+            RepositorySystemSession repoSession,
+            List<RemoteRepository> remoteProjectRepositories,
+            Locale locale)
+            throws ArtifactResolutionException {
+        String variant = locale.getVariant();
+        String country = locale.getCountry();
+        String language = locale.getLanguage();
 
+        String localeStr = null;
+        File siteDescriptor = null;
         boolean found = false;
-        try
-        {
-            artifactResolver.resolve( artifact, repositories, localRepository );
 
-            result = artifact.getFile();
+        if (!variant.isEmpty()) {
+            localeStr = language + "_" + country + "_" + variant;
+            ArtifactRequest request =
+                    createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
 
-            // we use zero length files to avoid re-resolution (see below)
-            if ( result.length() > 0 )
-            {
+            deletePseudoSiteDescriptorMarkerFile(repoSession, request);
+
+            try {
+                ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
+
+                siteDescriptor = result.getArtifact().getFile();
                 found = true;
-            }
-            else
-            {
-                LOGGER.debug( "No site descriptor found for " + project.getId() + " for locale "
-                    + locale.getLanguage() + ", trying without locale..." );
+            } catch (ArtifactResolutionException e) {
+                // This is a workaround for MNG-7758/MRESOLVER-335
+                if (e.getResult().getExceptions().stream().anyMatch(re -> re instanceof ArtifactNotFoundException)) {
+                    LOGGER.debug("No site descriptor found for '" + project.getId() + "' for locale '" + localeStr
+                            + "', trying without variant...");
+                } else {
+                    throw e;
+                }
             }
         }
-        catch ( ArtifactNotFoundException e )
-        {
-            LOGGER.debug( "Unable to locate site descriptor for locale " + locale.getLanguage(), e );
 
-            // we can afford to write an empty descriptor here as we don't expect it to turn up later in the remote
-            // repository, because the parent was already released (and snapshots are updated automatically if changed)
-            result = new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) );
-            result.getParentFile().mkdirs();
-            result.createNewFile();
+        if (!found && !country.isEmpty()) {
+            localeStr = language + "_" + country;
+            ArtifactRequest request =
+                    createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
+
+            deletePseudoSiteDescriptorMarkerFile(repoSession, request);
+
+            try {
+                ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
+
+                siteDescriptor = result.getArtifact().getFile();
+                found = true;
+            } catch (ArtifactResolutionException e) {
+                // This is a workaround for MNG-7758/MRESOLVER-335
+                if (e.getResult().getExceptions().stream().anyMatch(re -> re instanceof ArtifactNotFoundException)) {
+                    LOGGER.debug("No site descriptor found for '" + project.getId() + "' for locale '" + localeStr
+                            + "', trying without country...");
+                } else {
+                    throw e;
+                }
+            }
         }
 
-        if ( !found )
-        {
-            artifact = artifactFactory.createArtifactWithClassifier( project.getGroupId(), project.getArtifactId(),
-                                                                     project.getVersion(), "xml", "site" );
-            try
-            {
-                artifactResolver.resolve( artifact, repositories, localRepository );
+        if (!found && !language.isEmpty()) {
+            localeStr = language;
+            ArtifactRequest request =
+                    createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
+
+            deletePseudoSiteDescriptorMarkerFile(repoSession, request);
+
+            try {
+                ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
+
+                siteDescriptor = result.getArtifact().getFile();
+                found = true;
+            } catch (ArtifactResolutionException e) {
+                // This is a workaround for MNG-7758/MRESOLVER-335
+                if (e.getResult().getExceptions().stream().anyMatch(re -> re instanceof ArtifactNotFoundException)) {
+                    LOGGER.debug("No site descriptor found for '" + project.getId() + "' for locale '" + localeStr
+                            + "', trying without language (default locale)...");
+                } else {
+                    throw e;
+                }
             }
-            catch ( ArtifactNotFoundException e )
-            {
-                // see above regarding this zero length file
-                result = new File( localRepository.getBasedir(), localRepository.pathOf( artifact ) );
-                result.getParentFile().mkdirs();
-                result.createNewFile();
+        }
+
+        if (!found) {
+            localeStr = SiteTool.DEFAULT_LOCALE.toString();
+            ArtifactRequest request =
+                    createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
+
+            deletePseudoSiteDescriptorMarkerFile(repoSession, request);
+
+            try {
+                ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
+
+                siteDescriptor = result.getArtifact().getFile();
+            } catch (ArtifactResolutionException e) {
+                // This is a workaround for MNG-7758/MRESOLVER-335
+                if (e.getResult().getExceptions().stream().anyMatch(re -> re instanceof ArtifactNotFoundException)) {
+                    LOGGER.debug("No site descriptor found for '" + project.getId() + "' with default locale");
+                    return null;
+                }
 
                 throw e;
             }
-
-            result = artifact.getFile();
-
-            // we use zero length files to avoid re-resolution (see below)
-            if ( result.length() == 0 )
-            {
-                LOGGER.debug( "No site descriptor found for " + project.getId() + " without locale." );
-                result = null;
-            }
         }
 
-        return result;
+        return siteDescriptor;
+    }
+
+    // TODO Remove this transient method when everyone has migrated to Maven Site Plugin 4.0.0+
+    private void deletePseudoSiteDescriptorMarkerFile(RepositorySystemSession repoSession, ArtifactRequest request) {
+        LocalRepositoryManager lrm = repoSession.getLocalRepositoryManager();
+
+        LocalArtifactRequest localRequest =
+                new LocalArtifactRequest(request.getArtifact(), request.getRepositories(), request.getRequestContext());
+
+        LocalArtifactResult localResult = lrm.find(repoSession, localRequest);
+        File localArtifactFile = localResult.getFile();
+
+        try {
+            if (localResult.isAvailable() && Files.size(localArtifactFile.toPath()) == 0L) {
+                LOGGER.debug(
+                        "Deleting 0-byte pseudo marker file for artifact '{}' at '{}'",
+                        localRequest.getArtifact(),
+                        localArtifactFile);
+                Files.delete(localArtifactFile.toPath());
+            }
+        } catch (IOException e) {
+            LOGGER.debug("Failed to delete 0-byte pseudo marker file for artifact '{}'", localRequest.getArtifact(), e);
+        }
     }
 
     /**
@@ -976,218 +959,364 @@ public class DefaultSiteTool
      * @param siteDirectory, can be null if project.basedir is null, ie POM from repository
      * @param locale not null
      * @param project not null
-     * @param reactorProjects not null
-     * @param localRepository not null
-     * @param repositories not null
-     * @return the decoration model depending the locale and the parent project
+     * @param repoSession not null
+     * @param remoteProjectRepositories not null
+     * @return the site model depending the locale and the parent project
      * @throws SiteToolException if any
      */
-    private Map.Entry<DecorationModel, MavenProject> getDecorationModel( int depth, File siteDirectory, Locale locale,
-                                                                         MavenProject project,
-                                                                         List<MavenProject> reactorProjects,
-                                                                         ArtifactRepository localRepository,
-                                                                         List<ArtifactRepository> repositories )
-        throws SiteToolException
-    {
+    private Map.Entry<SiteModel, MavenProject> getSiteModel(
+            int depth,
+            File siteDirectory,
+            Locale locale,
+            MavenProject project,
+            RepositorySystemSession repoSession,
+            List<RemoteRepository> remoteProjectRepositories)
+            throws SiteToolException {
         // 1. get site descriptor File
         File siteDescriptor;
-        if ( project.getBasedir() == null )
-        {
+        if (project.getBasedir() == null) {
             // POM is in the repository: look into the repository for site descriptor
-            try
-            {
-                siteDescriptor = getSiteDescriptorFromRepository( project, localRepository, repositories, locale );
+            try {
+                siteDescriptor =
+                        getSiteDescriptorFromRepository(project, repoSession, remoteProjectRepositories, locale);
+            } catch (SiteToolException e) {
+                throw new SiteToolException("The site descriptor cannot be resolved from the repository", e);
             }
-            catch ( SiteToolException e )
-            {
-                throw new SiteToolException( "The site descriptor cannot be resolved from the repository", e );
-            }
-        }
-        else
-        {
+        } else {
             // POM is in build directory: look for site descriptor as local file
-            siteDescriptor = getSiteDescriptor( siteDirectory, locale );
+            siteDescriptor = getSiteDescriptor(siteDirectory, locale);
         }
 
-        // 2. read DecorationModel from site descriptor File and do early interpolation (${this.*})
-        DecorationModel decorationModel = null;
+        // 2. read SiteModel from site descriptor File and do early interpolation (${this.*})
+        SiteModel siteModel = null;
         Reader siteDescriptorReader = null;
-        try
-        {
-            if ( siteDescriptor != null && siteDescriptor.exists() )
-            {
-                LOGGER.debug( "Reading" + ( depth == 0 ? "" : ( " parent level " + depth ) )
-                    + " site descriptor from " + siteDescriptor );
+        try {
+            if (siteDescriptor != null && siteDescriptor.exists()) {
+                LOGGER.debug("Reading" + (depth == 0 ? "" : (" parent level " + depth)) + " site descriptor from "
+                        + siteDescriptor);
 
-                siteDescriptorReader = ReaderFactory.newXmlReader( siteDescriptor );
+                siteDescriptorReader = ReaderFactory.newXmlReader(siteDescriptor);
 
-                String siteDescriptorContent = IOUtil.toString( siteDescriptorReader );
+                String siteDescriptorContent = IOUtil.toString(siteDescriptorReader);
 
                 // interpolate ${this.*} = early interpolation
-                siteDescriptorContent = getInterpolatedSiteDescriptorContent( project, siteDescriptorContent, true );
+                siteDescriptorContent = getInterpolatedSiteDescriptorContent(project, siteDescriptorContent, true);
 
-                decorationModel = readDecorationModel( siteDescriptorContent );
-                decorationModel.setLastModified( siteDescriptor.lastModified() );
+                siteModel = readSiteModel(siteDescriptorContent, project, locale);
+                siteModel.setLastModified(siteDescriptor.lastModified());
+            } else {
+                LOGGER.debug("No" + (depth == 0 ? "" : (" parent level " + depth)) + " site descriptor");
             }
-            else
-            {
-                LOGGER.debug( "No" + ( depth == 0 ? "" : ( " parent level " + depth ) ) + " site descriptor." );
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new SiteToolException( "The site descriptor for " + project.getId() + " cannot be read from "
-                + siteDescriptor, e );
-        }
-        finally
-        {
-            IOUtil.close( siteDescriptorReader );
+        } catch (IOException e) {
+            throw new SiteToolException(
+                    "The site descriptor for '" + project.getId() + "' cannot be read from " + siteDescriptor, e);
+        } finally {
+            IOUtil.close(siteDescriptorReader);
         }
 
         // 3. look for parent project
-        MavenProject parentProject = getParentProject( project, reactorProjects, localRepository );
+        MavenProject parentProject = project.getParent();
 
-        // 4. merge with parent project DecorationModel
-        if ( parentProject != null && ( decorationModel == null || decorationModel.isMergeParent() ) )
-        {
+        // 4. merge with parent project SiteModel
+        if (parentProject != null && (siteModel == null || siteModel.isMergeParent())) {
             depth++;
-            LOGGER.debug( "Looking for site descriptor of level " + depth + " parent project: "
-                + parentProject.getId() );
+            LOGGER.debug("Looking for site descriptor of level " + depth + " parent project: " + parentProject.getId());
 
             File parentSiteDirectory = null;
-            if ( parentProject.getBasedir() != null )
-            {
+            if (parentProject.getBasedir() != null) {
                 // extrapolate parent project site directory
-                String siteRelativePath = getRelativeFilePath( project.getBasedir().getAbsolutePath(),
-                                                               siteDescriptor.getParentFile().getAbsolutePath() );
+                String siteRelativePath = getRelativeFilePath(
+                        project.getBasedir().getAbsolutePath(),
+                        siteDescriptor.getParentFile().getAbsolutePath());
 
-                parentSiteDirectory = new File( parentProject.getBasedir(), siteRelativePath );
+                parentSiteDirectory = new File(parentProject.getBasedir(), siteRelativePath);
                 // notice: using same siteRelativePath for parent as current project; may be wrong if site plugin
                 // has different configuration. But this is a rare case (this only has impact if parent is from reactor)
             }
 
-            DecorationModel parentDecorationModel =
-                getDecorationModel( depth, parentSiteDirectory, locale, parentProject, reactorProjects, localRepository,
-                                    repositories ).getKey();
+            SiteModel parentSiteModel = getSiteModel(
+                            depth, parentSiteDirectory, locale, parentProject, repoSession, remoteProjectRepositories)
+                    .getKey();
 
-            // MSHARED-116 requires an empty decoration model (instead of a null one)
+            // MSHARED-116 requires site model (instead of a null one)
             // MSHARED-145 requires us to do this only if there is a parent to merge it with
-            if ( decorationModel == null && parentDecorationModel != null )
-            {
+            if (siteModel == null && parentSiteModel != null) {
                 // we have no site descriptor: merge the parent into an empty one because the default one
                 // (default-site.xml) will break menu and breadcrumb composition.
-                decorationModel = new DecorationModel();
+                siteModel = new SiteModel();
             }
 
             String name = project.getName();
-            if ( decorationModel != null && StringUtils.isNotEmpty( decorationModel.getName() ) )
-            {
-                name = decorationModel.getName();
+            if (siteModel != null && StringUtils.isNotEmpty(siteModel.getName())) {
+                name = siteModel.getName();
             }
 
-            // Merge the parent and child DecorationModels
-            String projectDistMgmnt = getDistMgmntSiteUrl( project );
-            String parentDistMgmnt = getDistMgmntSiteUrl( parentProject );
-            if ( LOGGER.isDebugEnabled() )
-            {
-                LOGGER.debug( "Site decoration model inheritance: assembling child with level " + depth
-                    + " parent: distributionManagement.site.url child = " + projectDistMgmnt + " and parent = "
-                    + parentDistMgmnt );
+            // Merge the parent and child SiteModels
+            String projectDistMgmnt = getDistMgmntSiteUrl(project);
+            String parentDistMgmnt = getDistMgmntSiteUrl(parentProject);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Site model inheritance: assembling child with level " + depth
+                        + " parent: distributionManagement.site.url child = " + projectDistMgmnt + " and parent = "
+                        + parentDistMgmnt);
             }
-            assembler.assembleModelInheritance( name, decorationModel, parentDecorationModel, projectDistMgmnt,
-                                                parentDistMgmnt == null ? projectDistMgmnt : parentDistMgmnt );
+            assembler.assembleModelInheritance(
+                    name,
+                    siteModel,
+                    parentSiteModel,
+                    projectDistMgmnt,
+                    parentDistMgmnt == null ? projectDistMgmnt : parentDistMgmnt);
         }
 
-        return new AbstractMap.SimpleEntry<DecorationModel, MavenProject>( decorationModel, parentProject );
+        return new AbstractMap.SimpleEntry<>(siteModel, parentProject);
     }
 
     /**
      * @param siteDescriptorContent not null
-     * @return the decoration model object
+     * @return the site model object
      * @throws SiteToolException if any
      */
-    private DecorationModel readDecorationModel( String siteDescriptorContent )
-        throws SiteToolException
-    {
-        try
-        {
-            return new DecorationXpp3Reader().read( new StringReader( siteDescriptorContent ) );
-        }
-        catch ( XmlPullParserException e )
-        {
-            throw new SiteToolException( "Error parsing site descriptor", e );
-        }
-        catch ( IOException e )
-        {
-            throw new SiteToolException( "Error reading site descriptor", e );
+    private SiteModel readSiteModel(String siteDescriptorContent, MavenProject project, Locale locale)
+            throws SiteToolException {
+        try {
+            if (project != null && isOldSiteModel(siteDescriptorContent)) {
+                LOGGER.warn(
+                        "Site model of '" + project.getId() + "' for "
+                                + (locale.equals(SiteTool.DEFAULT_LOCALE)
+                                        ? "default locale"
+                                        : "locale '" + locale + "'")
+                                + " is still using the old pre-version 2.0.0 model. You MUST migrate to the new model as soon as possible otherwise your build will break in the future!");
+                return convertOldToNewSiteModel(
+                        new DecorationXpp3Reader().read(new StringReader(siteDescriptorContent)));
+            } else {
+                return new SiteXpp3Reader().read(new StringReader(siteDescriptorContent));
+            }
+        } catch (XmlPullParserException e) {
+            throw new SiteToolException("Error parsing site descriptor", e);
+        } catch (IOException e) {
+            throw new SiteToolException("Error reading site descriptor", e);
         }
     }
 
-    private DecorationModel getDefaultDecorationModel()
-        throws SiteToolException
-    {
+    private SiteModel convertOldToNewSiteModel(DecorationModel oldModel) {
+        SiteModel newModel = new SiteModel();
+        newModel.setName(oldModel.getName());
+        newModel.setCombineSelf(oldModel.getCombineSelf());
+        if (oldModel.getBannerLeft() != null) {
+            newModel.setBannerLeft(convertBanner(oldModel.getBannerLeft()));
+        }
+        if (oldModel.getBannerRight() != null) {
+            newModel.setBannerRight(convertBanner(oldModel.getBannerRight()));
+        }
+        if (!oldModel.isDefaultPublishDate()) {
+            PublishDate newPublishDate = new PublishDate();
+            newPublishDate.setFormat(oldModel.getPublishDate().getFormat());
+            newPublishDate.setPosition(oldModel.getPublishDate().getPosition());
+            newPublishDate.setTimezone(oldModel.getPublishDate().getTimezone());
+            newModel.setPublishDate(newPublishDate);
+        }
+        if (!oldModel.isDefaultVersion()) {
+            Version newVersion = new Version();
+            newVersion.setPosition(oldModel.getVersion().getPosition());
+            newModel.setVersion(newVersion);
+        }
+        newModel.setEdit(oldModel.getEdit());
+        if (oldModel.getSkin() != null) {
+            Skin newSkin = new Skin();
+            newSkin.setGroupId(oldModel.getSkin().getGroupId());
+            newSkin.setArtifactId(oldModel.getSkin().getArtifactId());
+            newSkin.setVersion(oldModel.getSkin().getVersion());
+            newModel.setSkin(newSkin);
+        }
+        // poweredBy
+        for (org.apache.maven.doxia.site.decoration.Logo oldLogo : oldModel.getPoweredBy()) {
+            Logo newLogo = new Logo();
+            newLogo.setName(oldLogo.getName());
+            newLogo.setHref(oldLogo.getHref());
+            newLogo.setTarget(oldLogo.getTarget());
+            if (oldLogo.getImg() != null) {
+                newLogo.setImage(convertImage(
+                        oldLogo.getImg(),
+                        oldLogo.getPosition(),
+                        oldLogo.getHeight(),
+                        oldLogo.getWidth(),
+                        oldLogo.getBorder(),
+                        oldLogo.getAlt()));
+            }
+            newModel.addPoweredBy(newLogo);
+        }
+        newModel.setLastModified(oldModel.getLastModified());
+        if (oldModel.getBody() != null) {
+            Body newBody = new Body();
+            newBody.setHead(oldModel.getBody().getHead());
+            for (org.apache.maven.doxia.site.decoration.LinkItem oldLink :
+                    oldModel.getBody().getLinks()) {
+                newBody.addLink(convertLinkItem(oldLink));
+            }
+            for (org.apache.maven.doxia.site.decoration.LinkItem oldBreadcrumb :
+                    oldModel.getBody().getBreadcrumbs()) {
+                newBody.addBreadcrumb(convertLinkItem(oldBreadcrumb));
+            }
+
+            for (org.apache.maven.doxia.site.decoration.Menu oldMenu :
+                    oldModel.getBody().getMenus()) {
+                Menu newMenu = new Menu();
+                newMenu.setName(oldMenu.getName());
+                newMenu.setInherit(oldMenu.getInherit());
+                newMenu.setInheritAsRef(oldMenu.isInheritAsRef());
+                newMenu.setRef(oldMenu.getRef());
+                if (oldMenu.getImg() != null) {
+                    newMenu.setImage(convertImage(
+                            oldMenu.getImg(),
+                            oldMenu.getPosition(),
+                            oldMenu.getHeight(),
+                            oldMenu.getWidth(),
+                            oldMenu.getBorder(),
+                            oldMenu.getAlt()));
+                }
+                newMenu.setItems(convertMenuItems(oldMenu.getItems()));
+                newBody.addMenu(newMenu);
+            }
+
+            newBody.setFooter(oldModel.getBody().getFooter());
+            newModel.setBody(newBody);
+        }
+        newModel.setCustom(oldModel.getCustom());
+
+        return newModel;
+    }
+
+    private Banner convertBanner(org.apache.maven.doxia.site.decoration.Banner oldBanner) {
+        Banner newBanner = new Banner();
+        newBanner.setName(oldBanner.getName());
+        newBanner.setHref(oldBanner.getHref());
+        if (oldBanner.getSrc() != null) {
+            newBanner.setImage(convertImage(
+                    oldBanner.getSrc(),
+                    null,
+                    oldBanner.getHeight(),
+                    oldBanner.getWidth(),
+                    oldBanner.getBorder(),
+                    oldBanner.getAlt()));
+        }
+
+        return newBanner;
+    }
+
+    private Image convertImage(String src, String position, String height, String width, String border, String alt) {
+        Image newImage = new Image();
+        newImage.setSrc(src);
+        newImage.setPosition(position);
+        newImage.setHeight(height);
+        newImage.setWidth(width);
+        if (border != null) {
+            newImage.setStyle("border: " + border + ";");
+        }
+        newImage.setAlt(alt);
+
+        return newImage;
+    }
+
+    private LinkItem convertLinkItem(org.apache.maven.doxia.site.decoration.LinkItem oldLinkItem) {
+        LinkItem newLinkItem = new LinkItem();
+        newLinkItem.setName(oldLinkItem.getName());
+        newLinkItem.setHref(oldLinkItem.getHref());
+        newLinkItem.setTarget(oldLinkItem.getTarget());
+        if (oldLinkItem.getImg() != null) {
+            newLinkItem.setImage(convertImage(
+                    oldLinkItem.getImg(),
+                    oldLinkItem.getPosition(),
+                    oldLinkItem.getHeight(),
+                    oldLinkItem.getWidth(),
+                    oldLinkItem.getBorder(),
+                    oldLinkItem.getAlt()));
+        }
+
+        return newLinkItem;
+    }
+
+    private List<MenuItem> convertMenuItems(List<org.apache.maven.doxia.site.decoration.MenuItem> oldMenuItems) {
+        List<MenuItem> newMenuItems = new ArrayList<>();
+        for (org.apache.maven.doxia.site.decoration.MenuItem oldMenuItem : oldMenuItems) {
+            MenuItem newMenuItem = new MenuItem();
+            newMenuItem.setName(oldMenuItem.getName());
+            newMenuItem.setHref(oldMenuItem.getHref());
+            newMenuItem.setTarget(oldMenuItem.getTarget());
+            newMenuItem.setCollapse(oldMenuItem.isCollapse());
+            newMenuItem.setRef(oldMenuItem.getRef());
+            newMenuItem.setItems(convertMenuItems(oldMenuItem.getItems()));
+            if (oldMenuItem.getImg() != null) {
+                newMenuItem.setImage(convertImage(
+                        oldMenuItem.getImg(),
+                        oldMenuItem.getPosition(),
+                        oldMenuItem.getHeight(),
+                        oldMenuItem.getWidth(),
+                        oldMenuItem.getBorder(),
+                        oldMenuItem.getAlt()));
+            }
+            newMenuItems.add(newMenuItem);
+        }
+
+        return newMenuItems;
+    }
+
+    private boolean isOldSiteModel(String siteDescriptorContent) throws XmlPullParserException, IOException {
+        XmlPullParser parser = new MXParser();
+        parser.setInput(new StringReader(siteDescriptorContent));
+
+        if (!(parser.getEventType() == XmlPullParser.START_DOCUMENT && parser.next() == XmlPullParser.START_TAG)) {
+            return false;
+        }
+        if ("project".equals(parser.getName())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private SiteModel getDefaultSiteModel() throws SiteToolException {
         String siteDescriptorContent;
 
         Reader reader = null;
-        try
-        {
-            reader = ReaderFactory.newXmlReader( getClass().getResourceAsStream( "/default-site.xml" ) );
-            siteDescriptorContent = IOUtil.toString( reader );
-        }
-        catch ( IOException e )
-        {
-            throw new SiteToolException( "Error reading default site descriptor", e );
-        }
-        finally
-        {
-            IOUtil.close( reader );
+        try {
+            reader = ReaderFactory.newXmlReader(getClass().getResourceAsStream("/default-site.xml"));
+            siteDescriptorContent = IOUtil.toString(reader);
+        } catch (IOException e) {
+            throw new SiteToolException("Error reading default site descriptor", e);
+        } finally {
+            IOUtil.close(reader);
         }
 
-        return readDecorationModel( siteDescriptorContent );
+        return readSiteModel(siteDescriptorContent, null, SiteTool.DEFAULT_LOCALE);
     }
 
-    private String decorationModelToString( DecorationModel decoration )
-        throws SiteToolException
-    {
+    private String siteModelToString(SiteModel siteModel) throws SiteToolException {
         StringWriter writer = new StringWriter();
 
-        try
-        {
-            new DecorationXpp3Writer().write( writer, decoration );
+        try {
+            new SiteXpp3Writer().write(writer, siteModel);
             return writer.toString();
-        }
-        catch ( IOException e )
-        {
-            throw new SiteToolException( "Error reading site descriptor", e );
-        }
-        finally
-        {
-            IOUtil.close( writer );
+        } catch (IOException e) {
+            throw new SiteToolException("Error reading site descriptor", e);
+        } finally {
+            IOUtil.close(writer);
         }
     }
 
-    private static String buildRelativePath( final String toPath,  final String fromPath, final char separatorChar )
-    {
+    private static String buildRelativePath(final String toPath, final String fromPath, final char separatorChar) {
         // use tokenizer to traverse paths and for lazy checking
-        StringTokenizer toTokeniser = new StringTokenizer( toPath, String.valueOf( separatorChar ) );
-        StringTokenizer fromTokeniser = new StringTokenizer( fromPath, String.valueOf( separatorChar ) );
+        StringTokenizer toTokeniser = new StringTokenizer(toPath, String.valueOf(separatorChar));
+        StringTokenizer fromTokeniser = new StringTokenizer(fromPath, String.valueOf(separatorChar));
 
         int count = 0;
 
         // walk along the to path looking for divergence from the from path
-        while ( toTokeniser.hasMoreTokens() && fromTokeniser.hasMoreTokens() )
-        {
-            if ( separatorChar == '\\' )
-            {
-                if ( !fromTokeniser.nextToken().equalsIgnoreCase( toTokeniser.nextToken() ) )
-                {
+        while (toTokeniser.hasMoreTokens() && fromTokeniser.hasMoreTokens()) {
+            if (separatorChar == '\\') {
+                if (!fromTokeniser.nextToken().equalsIgnoreCase(toTokeniser.nextToken())) {
                     break;
                 }
-            }
-            else
-            {
-                if ( !fromTokeniser.nextToken().equals( toTokeniser.nextToken() ) )
-                {
+            } else {
+                if (!fromTokeniser.nextToken().equals(toTokeniser.nextToken())) {
                     break;
                 }
             }
@@ -1198,11 +1327,10 @@ public class DefaultSiteTool
         // reinitialize the tokenizers to count positions to retrieve the
         // gobbled token
 
-        toTokeniser = new StringTokenizer( toPath, String.valueOf( separatorChar ) );
-        fromTokeniser = new StringTokenizer( fromPath, String.valueOf( separatorChar ) );
+        toTokeniser = new StringTokenizer(toPath, String.valueOf(separatorChar));
+        fromTokeniser = new StringTokenizer(fromPath, String.valueOf(separatorChar));
 
-        while ( count-- > 0 )
-        {
+        while (count-- > 0) {
             fromTokeniser.nextToken();
             toTokeniser.nextToken();
         }
@@ -1210,31 +1338,26 @@ public class DefaultSiteTool
         StringBuilder relativePath = new StringBuilder();
 
         // add back refs for the rest of from location.
-        while ( fromTokeniser.hasMoreTokens() )
-        {
+        while (fromTokeniser.hasMoreTokens()) {
             fromTokeniser.nextToken();
 
-            relativePath.append( ".." );
+            relativePath.append("..");
 
-            if ( fromTokeniser.hasMoreTokens() )
-            {
-                relativePath.append( separatorChar );
+            if (fromTokeniser.hasMoreTokens()) {
+                relativePath.append(separatorChar);
             }
         }
 
-        if ( relativePath.length() != 0 && toTokeniser.hasMoreTokens() )
-        {
-            relativePath.append( separatorChar );
+        if (relativePath.length() != 0 && toTokeniser.hasMoreTokens()) {
+            relativePath.append(separatorChar);
         }
 
         // add fwd fills for whatever's left of to.
-        while ( toTokeniser.hasMoreTokens() )
-        {
-            relativePath.append( toTokeniser.nextToken() );
+        while (toTokeniser.hasMoreTokens()) {
+            relativePath.append(toTokeniser.nextToken());
 
-            if ( toTokeniser.hasMoreTokens() )
-            {
-                relativePath.append( separatorChar );
+            if (toTokeniser.hasMoreTokens()) {
+                relativePath.append(separatorChar);
             }
         }
         return relativePath.toString();
@@ -1245,35 +1368,31 @@ public class DefaultSiteTool
      * @param menu not null
      * @param name not null
      * @param href could be null
-     * @param defaultHref not null
+     * @param defaultHref could be null
      */
-    private void appendMenuItem( MavenProject project, Menu menu, String name, String href, String defaultHref )
-    {
+    private void appendMenuItem(MavenProject project, Menu menu, String name, String href, String defaultHref) {
         String selectedHref = href;
 
-        if ( selectedHref == null )
-        {
+        if (selectedHref == null) {
             selectedHref = defaultHref;
         }
 
         MenuItem item = new MenuItem();
-        item.setName( name );
+        item.setName(name);
 
-        String baseUrl = getDistMgmntSiteUrl( project );
-        if ( baseUrl != null )
-        {
-            selectedHref = getRelativePath( selectedHref, baseUrl );
-        }
+        if (selectedHref != null) {
+            String baseUrl = getDistMgmntSiteUrl(project);
+            if (baseUrl != null) {
+                selectedHref = getRelativePath(selectedHref, baseUrl);
+            }
 
-        if ( selectedHref.endsWith( "/" ) )
-        {
-            item.setHref( selectedHref + "index.html" );
+            if (selectedHref.endsWith("/")) {
+                item.setHref(selectedHref + "index.html");
+            } else {
+                item.setHref(selectedHref + "/index.html");
+            }
         }
-        else
-        {
-            item.setHref( selectedHref + "/index.html" );
-        }
-        menu.addItem( item );
+        menu.addItem(item);
     }
 
     /**
@@ -1283,22 +1402,20 @@ public class DefaultSiteTool
      * @param locale not null
      * @return the menu item object
      */
-    private MenuItem createCategoryMenu( String name, String href, List<MavenReport> categoryReports, Locale locale )
-    {
+    private MenuItem createCategoryMenu(String name, String href, List<MavenReport> categoryReports, Locale locale) {
         MenuItem item = new MenuItem();
-        item.setName( name );
-        item.setCollapse( true );
-        item.setHref( href );
+        item.setName(name);
+        item.setCollapse(true);
+        item.setHref(href);
 
         // MSHARED-172, allow reports to define their order in some other way?
-        //Collections.sort( categoryReports, new ReportComparator( locale ) );
+        // Collections.sort( categoryReports, new ReportComparator( locale ) );
 
-        for ( MavenReport report : categoryReports )
-        {
+        for (MavenReport report : categoryReports) {
             MenuItem subitem = new MenuItem();
-            subitem.setName( report.getName( locale ) );
-            subitem.setHref( report.getOutputName() + ".html" );
-            item.getItems().add( subitem );
+            subitem.setName(report.getName(locale));
+            subitem.setHref(report.getOutputName() + ".html");
+            item.getItems().add(subitem);
         }
 
         return item;
@@ -1314,8 +1431,7 @@ public class DefaultSiteTool
      * @param list could be null
      * @return true if the list is <code>null</code> or empty
      */
-    private static boolean isEmptyList( List<?> list )
-    {
+    private static boolean isEmptyList(List<?> list) {
         return list == null || list.isEmpty();
     }
 
@@ -1325,34 +1441,70 @@ public class DefaultSiteTool
      * @param project not null
      * @return could be null
      */
-    private static String getDistMgmntSiteUrl( MavenProject project )
-    {
-        return getDistMgmntSiteUrl( project.getDistributionManagement() );
+    private static String getDistMgmntSiteUrl(MavenProject project) {
+        return getDistMgmntSiteUrl(project.getDistributionManagement());
     }
 
-    private static String getDistMgmntSiteUrl( DistributionManagement distMgmnt )
-    {
-        if ( distMgmnt != null && distMgmnt.getSite() != null && distMgmnt.getSite().getUrl() != null )
-        {
-            return urlEncode( distMgmnt.getSite().getUrl() );
+    private static String getDistMgmntSiteUrl(DistributionManagement distMgmnt) {
+        if (distMgmnt != null
+                && distMgmnt.getSite() != null
+                && distMgmnt.getSite().getUrl() != null) {
+            // TODO This needs to go, it is just logically wrong
+            return urlEncode(distMgmnt.getSite().getUrl());
         }
 
         return null;
     }
 
-    private static String urlEncode( final String url )
-    {
-        if ( url == null )
-        {
+    /**
+     * @param project the project
+     * @param pluginId The id of the plugin
+     * @return The information about the plugin.
+     */
+    private static Plugin getPlugin(MavenProject project, String pluginId) {
+        if ((project.getBuild() == null) || (project.getBuild().getPluginsAsMap() == null)) {
             return null;
         }
 
-        try
-        {
-            return new File( url ).toURI().toURL().toExternalForm();
+        Plugin plugin = project.getBuild().getPluginsAsMap().get(pluginId);
+
+        if ((plugin == null)
+                && (project.getBuild().getPluginManagement() != null)
+                && (project.getBuild().getPluginManagement().getPluginsAsMap() != null)) {
+            plugin = project.getBuild().getPluginManagement().getPluginsAsMap().get(pluginId);
         }
-        catch ( MalformedURLException ex )
-        {
+
+        return plugin;
+    }
+
+    /**
+     * @param project the project
+     * @param pluginId The pluginId
+     * @param param The child which should be checked.
+     * @return The value of the dom tree.
+     */
+    private static String getPluginParameter(MavenProject project, String pluginId, String param) {
+        Plugin plugin = getPlugin(project, pluginId);
+        if (plugin != null) {
+            Xpp3Dom xpp3Dom = (Xpp3Dom) plugin.getConfiguration();
+            if (xpp3Dom != null
+                    && xpp3Dom.getChild(param) != null
+                    && StringUtils.isNotEmpty(xpp3Dom.getChild(param).getValue())) {
+                return xpp3Dom.getChild(param).getValue();
+            }
+        }
+
+        return null;
+    }
+
+    private static String urlEncode(final String url) {
+        if (url == null) {
+            return null;
+        }
+
+        try {
+            return new File(url).toURI().toURL().toExternalForm();
+        } catch (MalformedURLException ex) {
             return url; // this will then throw somewhere else
         }
     }

@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.tools.stubs;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.doxia.tools.stubs;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.doxia.tools.stubs;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.tools.stubs;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
@@ -34,13 +34,12 @@ import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Site;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.eclipse.aether.repository.RemoteRepository;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-public class SiteToolMavenProjectStub
-    extends MavenProjectStub
-{
+public class SiteToolMavenProjectStub extends MavenProjectStub {
     private Build build;
 
     private File basedir;
@@ -49,103 +48,95 @@ public class SiteToolMavenProjectStub
 
     private Properties properties;
 
-    public SiteToolMavenProjectStub( String projectName )
-    {
-        basedir = new File( super.getBasedir() + "/src/test/resources/unit/" + projectName );
+    public SiteToolMavenProjectStub(String projectName) {
+        basedir = new File(super.getBasedir() + "/src/test/resources/unit/" + projectName);
 
         Model model = null;
 
-        try
-        {
-            model = new MavenXpp3Reader().read( new FileInputStream( new File( getBasedir(), "pom.xml" ) ) );
-            setModel( model );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
+        try {
+            model = new MavenXpp3Reader().read(new FileInputStream(new File(getBasedir(), "pom.xml")));
+            setModel(model);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
-        setGroupId( model.getGroupId() );
-        setArtifactId( model.getArtifactId() );
-        setVersion( model.getVersion() );
-        setName( model.getName() );
-        setUrl( model.getUrl() );
-        setPackaging( model.getPackaging() );
-        setProperties( model.getProperties() );
+        setGroupId(model.getGroupId());
+        setArtifactId(model.getArtifactId());
+        setVersion(model.getVersion());
+        setName(model.getName());
+        setUrl(model.getUrl());
+        setPackaging(model.getPackaging());
+        setProperties(model.getProperties());
 
         build = new Build();
-        build.setFinalName( model.getArtifactId() );
-        build.setDirectory( super.getBasedir() + "/target/test/unit/" + projectName + "/target" );
-        build.setSourceDirectory( getBasedir() + "/src/main/java" );
-        build.setOutputDirectory( build.getDirectory() + "/classes" );
-        build.setTestSourceDirectory( getBasedir() + "/src/test/java" );
-        build.setTestOutputDirectory( build.getDirectory() + "/test-classes" );
+        build.setFinalName(model.getArtifactId());
+        build.setDirectory(super.getBasedir() + "/target/test/unit/" + projectName + "/target");
+        build.setSourceDirectory(getBasedir() + "/src/main/java");
+        build.setOutputDirectory(build.getDirectory() + "/classes");
+        build.setTestSourceDirectory(getBasedir() + "/src/test/java");
+        build.setTestOutputDirectory(build.getDirectory() + "/test-classes");
 
-        List<String> compileSourceRoots = new ArrayList<String>();
-        compileSourceRoots.add( getBasedir() + "/src/main/java" );
-        setCompileSourceRoots( compileSourceRoots );
+        List<String> compileSourceRoots = new ArrayList<>();
+        compileSourceRoots.add(getBasedir() + "/src/main/java");
+        setCompileSourceRoots(compileSourceRoots);
 
-        List<String> testCompileSourceRoots = new ArrayList<String>();
-        testCompileSourceRoots.add( getBasedir() + "/src/test/java" );
-        setTestCompileSourceRoots( testCompileSourceRoots );
+        List<String> testCompileSourceRoots = new ArrayList<>();
+        testCompileSourceRoots.add(getBasedir() + "/src/test/java");
+        setTestCompileSourceRoots(testCompileSourceRoots);
     }
 
     /** {@inheritDoc} */
-    public Build getBuild()
-    {
+    public Build getBuild() {
         return build;
     }
 
     /** {@inheritDoc} */
-    public void setBuild( Build build )
-    {
+    public void setBuild(Build build) {
         this.build = build;
     }
 
     /** {@inheritDoc} */
-    public File getBasedir()
-    {
+    public File getBasedir() {
         return basedir;
     }
 
     /** {@inheritDoc} */
-    public void setBasedir( File basedir )
-    {
+    public void setBasedir(File basedir) {
         this.basedir = basedir;
     }
 
     /** {@inheritDoc} */
-    public List<ArtifactRepository> getRemoteArtifactRepositories()
-    {
-        ArtifactRepository repository = new DefaultArtifactRepository( "central", "https://repo1.maven.org/maven2",
-                                                                       new DefaultRepositoryLayout() );
+    public List<ArtifactRepository> getRemoteArtifactRepositories() {
+        ArtifactRepository repository = new DefaultArtifactRepository(
+                "central", "https://repo1.maven.org/maven2", new DefaultRepositoryLayout());
 
-        return Collections.singletonList( repository );
+        return Collections.singletonList(repository);
     }
 
     /** {@inheritDoc} */
-    public Properties getProperties()
-    {
+    public List<RemoteRepository> getRemoteProjectRepositories() {
+        return RepositoryUtils.toRepos(getRemoteArtifactRepositories());
+    }
+
+    /** {@inheritDoc} */
+    public Properties getProperties() {
         return properties;
     }
 
     /** {@inheritDoc} */
-    public void setProperties( Properties properties )
-    {
+    public void setProperties(Properties properties) {
         this.properties = properties;
     }
 
-    public void setDistgributionManagementSiteUrl( String url )
-    {
+    public void setDistgributionManagementSiteUrl(String url) {
         Site site = new Site();
-        site.setUrl( url );
+        site.setUrl(url);
         distributionManagement = new DistributionManagement();
-        distributionManagement.setSite( site );
+        distributionManagement.setSite(site);
     }
 
     /** {@inheritDoc} */
-    public DistributionManagement getDistributionManagement()
-    {
+    public DistributionManagement getDistributionManagement() {
         return distributionManagement;
     }
 }

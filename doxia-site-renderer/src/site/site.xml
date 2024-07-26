@@ -35,7 +35,7 @@
     </menu>
 
     <menu name="Reference">
-      <item name="site.xml Decoration Model" href="../doxia-decoration-model/decoration.html"/>
+      <item name="Site Model" href="../doxia-site-model/site.html"/>
       <item name="Skin Model" href="../doxia-skin-model/skin.html"/>
     </menu>
 

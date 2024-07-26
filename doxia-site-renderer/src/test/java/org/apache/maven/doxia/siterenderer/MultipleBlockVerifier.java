@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.siterenderer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,18 +16,19 @@ package org.apache.maven.doxia.siterenderer;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
-import com.gargoylesoftware.htmlunit.html.HtmlListItem;
-import com.gargoylesoftware.htmlunit.html.HtmlMain;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlParagraph;
-import com.gargoylesoftware.htmlunit.html.HtmlSection;
-import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
+package org.apache.maven.doxia.siterenderer;
 
 import java.util.Iterator;
+
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlHeading1;
+import org.htmlunit.html.HtmlListItem;
+import org.htmlunit.html.HtmlMain;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlParagraph;
+import org.htmlunit.html.HtmlSection;
+import org.htmlunit.html.HtmlUnorderedList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -39,20 +38,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  * @author ltheussl
  */
-public class MultipleBlockVerifier
-    extends AbstractVerifier
-{
+public class MultipleBlockVerifier extends AbstractVerifier {
     /** {@inheritDoc} */
-    public void verify( String file )
-            throws Exception
-    {
-        HtmlPage page = htmlPage( file );
-        assertNotNull( page );
+    public void verify(String file) throws Exception {
+        HtmlPage page = htmlPage(file);
+        assertNotNull(page);
 
-        HtmlElement element = page.getHtmlElementById( "contentBox" );
-        assertNotNull( element );
+        HtmlElement element = page.getHtmlElementById("contentBox");
+        assertNotNull(element);
         HtmlMain main = (HtmlMain) element;
-        assertNotNull( main );
+        assertNotNull(main);
 
         Iterator<HtmlElement> elementIterator = main.getHtmlElementDescendants().iterator();
 
@@ -61,72 +56,75 @@ public class MultipleBlockVerifier
         // ----------------------------------------------------------------------
 
         HtmlSection section = (HtmlSection) elementIterator.next();
-        assertNotNull( section );
+        assertNotNull(section);
 
+        HtmlAnchor anchor = (HtmlAnchor) elementIterator.next();
+        assertNotNull(anchor);
+        assertEquals("section_name", anchor.getAttribute("id"));
         HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
-        assertNotNull( h1 );
-        assertEquals( "section name", h1.asNormalizedText().trim() );
+        assertNotNull(h1);
+        assertEquals("section name", h1.asNormalizedText().trim());
 
         // ----------------------------------------------------------------------
         // Paragraph
         // ----------------------------------------------------------------------
 
         HtmlParagraph p = (HtmlParagraph) elementIterator.next();
-        assertNotNull( p );
-        assertEquals( "text", p.asNormalizedText().trim() );
+        assertNotNull(p);
+        assertEquals("text", p.asNormalizedText().trim());
 
         // ----------------------------------------------------------------------
         // Unordered list
         // ----------------------------------------------------------------------
 
         HtmlUnorderedList ul = (HtmlUnorderedList) elementIterator.next();
-        assertNotNull( ul );
+        assertNotNull(ul);
 
         HtmlListItem li = (HtmlListItem) elementIterator.next();
-        assertNotNull( li );
-        assertEquals( "list1", li.getFirstChild().asNormalizedText().trim() );
+        assertNotNull(li);
+        assertEquals("list1", li.getFirstChild().asNormalizedText().trim());
 
         // ----------------------------------------------------------------------
         // Paragraph
         // ----------------------------------------------------------------------
 
         p = (HtmlParagraph) elementIterator.next();
-        assertNotNull( p );
-        assertEquals( "text2", p.asNormalizedText().trim() );
+        assertNotNull(p);
+        assertEquals("text2", p.asNormalizedText().trim());
 
         // ----------------------------------------------------------------------
         // Unordered list
         // ----------------------------------------------------------------------
 
         ul = (HtmlUnorderedList) elementIterator.next();
-        assertNotNull( ul );
+        assertNotNull(ul);
 
         li = (HtmlListItem) elementIterator.next();
-        assertNotNull( li );
-        assertEquals( "list1", li.getFirstChild().asNormalizedText().trim() );
+        assertNotNull(li);
+        assertEquals("list1", li.getFirstChild().asNormalizedText().trim());
 
         // ----------------------------------------------------------------------
         // Paragraph
         // ----------------------------------------------------------------------
 
         p = (HtmlParagraph) elementIterator.next();
-        assertNotNull( p );
-        assertEquals( "text3", p.asNormalizedText().trim() );
+        assertNotNull(p);
+        assertEquals("text3", p.asNormalizedText().trim());
 
         // ----------------------------------------------------------------------
         // Unordered list
         // ----------------------------------------------------------------------
 
         ul = (HtmlUnorderedList) elementIterator.next();
-        assertNotNull( ul );
+        assertNotNull(ul);
 
         li = (HtmlListItem) elementIterator.next();
-        assertNotNull( li );
+        assertNotNull(li);
 
         p = (HtmlParagraph) elementIterator.next();
-        assertNotNull( p );
-        assertEquals( "list1", p.getFirstChild().asNormalizedText().trim() );
+        assertNotNull(p);
+        assertEquals("list1", p.getFirstChild().asNormalizedText().trim());
 
-        assertFalse( elementIterator.hasNext() );
+        assertFalse(elementIterator.hasNext());
     }
 }

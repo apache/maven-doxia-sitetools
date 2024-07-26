@@ -20,7 +20,7 @@
 
 <document xmlns="http://maven.apache.org/XDOC/2.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 file:../../../../../../../doxia/doxia-modules/doxia-module-xdoc/src/main/resources/xdoc-2.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 https://maven.apache.org/xsd/xdoc-2.0.xsd">
   <properties>
     <title>Test DOXIA-96</title>
     <author email="vsiveton@apache.org">Vincent Siveton</author>
@@ -50,7 +50,7 @@
     <section name="TITLE 1">
       <subsection name="SUB TITLE 1.1"><p>bla bla...</p></subsection>
       <subsection name="SUB TITLE 1.2"><p>bla bla...</p>
-        <h4>SUB SUB TITLE 1.2.1</h4>
+        <h3>SUB SUB TITLE 1.2.1</h3>
       </subsection>
       <subsection name="SUB TITLE 1.3"><p>bla bla...</p></subsection>
     </section>
@@ -58,7 +58,7 @@
     <section name="TITLE 2">
       <subsection name="SUB TITLE 2.1"><p>bla bla...</p></subsection>
       <subsection name="SUB TITLE 2.2"><p>bla bla...</p>
-            <h4>SUB SUB TITLE 2.2.1</h4>
+            <h3>SUB SUB TITLE 2.2.1</h3>
         </subsection>
         <subsection name="SUB TITLE 2.3"><p>bla bla...</p></subsection>
     </section>
@@ -66,7 +66,7 @@
     <section name="TITLE 3">
         <subsection name="SUB TITLE 3.1"><p>bla bla...</p> </subsection>
         <subsection name="SUB TITLE 3.2"><p>bla bla...</p>
-            <h4>SUB SUB TITLE 3.2.1</h4>
+            <h3>SUB SUB TITLE 3.2.1</h3>
         </subsection>
         <subsection name="SUB TITLE 3.3"><p>bla bla...</p></subsection>
     </section>

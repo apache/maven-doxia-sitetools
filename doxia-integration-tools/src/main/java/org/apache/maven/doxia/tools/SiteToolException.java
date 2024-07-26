@@ -1,5 +1,3 @@
-package org.apache.maven.doxia.tools;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,15 +16,14 @@ package org.apache.maven.doxia.tools;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.doxia.tools;
 
 /**
  * An exception occurring during the execution of this tool.
  *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-public class SiteToolException
-    extends Exception
-{
+public class SiteToolException extends Exception {
     /** serialVersionUID */
     static final long serialVersionUID = 2331441332996055959L;
 
@@ -37,9 +34,8 @@ public class SiteToolException
      * @param message could be null
      * @param cause could be null
      */
-    public SiteToolException( String message, Exception cause )
-    {
-        super( message, cause );
+    public SiteToolException(String message, Exception cause) {
+        super(message, cause);
     }
 
     /**
@@ -49,9 +45,8 @@ public class SiteToolException
      * @param message could be null
      * @param cause could be null
      */
-    public SiteToolException( String message, Throwable cause )
-    {
-        super( message, cause );
+    public SiteToolException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
@@ -59,8 +54,7 @@ public class SiteToolException
      *
      * @param message could be null
      */
-    public SiteToolException( String message )
-    {
-        super( message );
+    public SiteToolException(String message) {
+        super(message);
     }
 }
