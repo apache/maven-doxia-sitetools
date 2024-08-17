@@ -246,7 +246,7 @@ public class DefaultSiteRenderer implements Renderer {
                 // -----------------------------------------------------------------------
                 // Handle key without case differences
                 // -----------------------------------------------------------------------
-                String originalKey = caseInsensitiveFiles.put(key.toLowerCase(), key);
+                String originalKey = caseInsensitiveFiles.put(key.toLowerCase(Locale.ROOT), key);
                 if (originalKey != null) {
                     DocumentRenderingContext originalDocRenderingContext =
                             files.get(originalKey).getRenderingContext();
