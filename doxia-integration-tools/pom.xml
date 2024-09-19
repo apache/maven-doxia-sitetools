@@ -197,24 +197,6 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-component-metadata</artifactId>
-        <version>2.2.0</version>
-        <executions>
-          <execution>
-            <id>create-component-descriptor</id>
-            <goals>
-              <goal>generate-metadata</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
   <reporting>
     <plugins>
       <plugin>
