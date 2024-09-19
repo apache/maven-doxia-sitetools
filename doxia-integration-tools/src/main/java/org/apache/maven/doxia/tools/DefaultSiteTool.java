@@ -1018,7 +1018,7 @@ public class DefaultSiteTool implements SiteTool {
         MavenProject parentProject = project.getParent();
 
         // 4. merge with parent project SiteModel
-        if (parentProject != null && (siteModel == null || siteModel.isMergeParent())) {
+        if (parentProject != null && (siteModel == null || siteModel.isMergeParent() || siteModel.isRequireParent())) {
             depth++;
             LOGGER.debug("Looking for site descriptor of level " + depth + " parent project: " + parentProject.getId());
 
@@ -1038,6 +1038,13 @@ public class DefaultSiteTool implements SiteTool {
                             depth, parentSiteDirectory, locale, parentProject, repoSession, remoteProjectRepositories)
                     .getKey();
 
+            if (siteModel != null) {
+                if (siteModel.isRequireParent() && parentSiteModel == null) {
+                    throw new SiteToolException(
+                            "The site descriptor for '" + project.getId() + "' requires a parent site descriptor for '"
+                                    + parentProject.getId() + "' or any of its parents but none could be found!");
+                }
+            }
             // MSHARED-116 requires site model (instead of a null one)
             // MSHARED-145 requires us to do this only if there is a parent to merge it with
             if (siteModel == null && parentSiteModel != null) {
@@ -1065,6 +1072,9 @@ public class DefaultSiteTool implements SiteTool {
                     parentSiteModel,
                     projectDistMgmnt,
                     parentDistMgmnt == null ? projectDistMgmnt : parentDistMgmnt);
+        } else if (parentProject == null && siteModel != null && siteModel.isRequireParent()) {
+            throw new SiteToolException("The site descriptor for '" + project.getId()
+                    + "' requires a parent site descriptor but no parent is defined in the POM.");
         }
 
         return new AbstractMap.SimpleEntry<>(siteModel, parentProject);
