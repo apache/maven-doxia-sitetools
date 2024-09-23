@@ -33,7 +33,7 @@ under the License.
   <description>The Site Renderer handles the rendering of sites, merging site model with document content.</description>
 
   <properties>
-    <velocityEngineVersion>2.3</velocityEngineVersion>
+    <velocityEngineVersion>2.4</velocityEngineVersion>
     <velocityToolsVersion>3.1</velocityToolsVersion>
   </properties>
 
