@@ -66,6 +66,16 @@ under the License.
            <type>String</type>
            <defaultValue>merge</defaultValue>
         </field>
+        <field xml.attribute="true">
+           <description><![CDATA[
+             Whether this "site.xml" should inherit from a parent "site.xml". If set to "true" it fails the build in case a parent site descriptor cannot be retrieved.
+             It does not necessarily need to be the direct parent but just a site descriptor anywhere in the parent hierarchy.
+           ]]></description>
+           <name>requireParent</name>
+           <version>2.0.0+</version>
+           <type>boolean</type>
+           <defaultValue>false</defaultValue>
+        </field>
         <field>
           <name>bannerLeft</name>
           <description>Banner logo on the masthead of the site to the left.</description>

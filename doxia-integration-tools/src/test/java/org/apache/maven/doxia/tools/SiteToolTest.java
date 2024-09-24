@@ -19,7 +19,6 @@
 package org.apache.maven.doxia.tools;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import java.io.File;
 import java.io.StringReader;
@@ -32,19 +31,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
-import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
-import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.doxia.site.LinkItem;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.Skin;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
+import org.apache.maven.doxia.tools.stubs.MavenProjectStub;
 import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
-import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -61,6 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -71,37 +67,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SiteToolTest {
 
     @Inject
-    private PlexusContainer container;
-
-    @Inject
-    private ArtifactRepositoryFactory artifactRepositoryFactory;
-
-    @Inject
-    @Named("default")
-    private ArtifactRepositoryLayout defaultArtifactRepositoryLayout;
-
-    @Inject
     private DefaultSiteTool tool;
-
-    /**
-     * @return the repo.
-     *
-     * @throws Exception
-     */
-    protected ArtifactRepository getLocalRepo() throws Exception {
-        String updatePolicyFlag = ArtifactRepositoryPolicy.UPDATE_POLICY_ALWAYS;
-        String checksumPolicyFlag = ArtifactRepositoryPolicy.CHECKSUM_POLICY_WARN;
-        ArtifactRepositoryPolicy snapshotsPolicy =
-                new ArtifactRepositoryPolicy(true, updatePolicyFlag, checksumPolicyFlag);
-        ArtifactRepositoryPolicy releasesPolicy =
-                new ArtifactRepositoryPolicy(true, updatePolicyFlag, checksumPolicyFlag);
-        return artifactRepositoryFactory.createArtifactRepository(
-                "local",
-                getTestFile("target/local-repo").toURI().toURL().toString(),
-                defaultArtifactRepositoryLayout,
-                snapshotsPolicy,
-                releasesPolicy);
-    }
 
     /**
      * @return the local repo directory.
@@ -109,7 +75,7 @@ public class SiteToolTest {
      * @throws Exception
      */
     protected File getLocalRepoDir() throws Exception {
-        return new File(getLocalRepo().getBasedir());
+        return getTestFile("target/local-repo");
     }
 
     protected RepositorySystemSession newRepoSession() throws Exception {
@@ -565,6 +531,59 @@ public class SiteToolTest {
         SiteModel newModel = new SiteXpp3Reader().read(new StringReader(siteDescriptorContent));
         assertNotNull(newModel);
         assertEquals(newModel, model);
+    }
+
+    @Test
+    public void testRequireParent() throws SiteToolException, Exception {
+        assertNotNull(tool);
+
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("require-parent-test");
+        MavenProjectStub parentProject = new MavenProjectStub() {
+            @Override
+            public File getBasedir() {
+                return null; // this should be a non reactor/local project
+            }
+        };
+        parentProject.setGroupId("org.apache.maven.shared.its");
+        parentProject.setArtifactId("mshared-217-parent");
+        parentProject.setVersion("1.0-SNAPSHOT");
+        project.setParent(parentProject);
+        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+
+        RepositorySystemSession repoSession = newRepoSession();
+        // coordinates for site descriptor: <groupId>:<artifactId>:xml:site:<version>
+        new SiteToolMavenProjectStub("require-parent-test");
+        org.eclipse.aether.artifact.Artifact parentArtifact = new org.eclipse.aether.artifact.DefaultArtifact(
+                "org.apache.maven.shared.its:mshared-217-parent:xml:site:1.0-SNAPSHOT");
+        File parentArtifactInRepoFile = new File(
+                repoSession.getLocalRepository().getBasedir(),
+                repoSession.getLocalRepositoryManager().getPathForLocalArtifact(parentArtifact));
+
+        // model from current local build
+        assertThrows(
+                SiteToolException.class,
+                () -> tool.getSiteModel(
+                        new File(project.getBasedir(), "src/site"),
+                        SiteTool.DEFAULT_LOCALE,
+                        project,
+                        reactorProjects,
+                        repoSession,
+                        project.getRemoteProjectRepositories()));
+
+        // now copy parent site descriptor to repo
+        FileUtils.copyFile(
+                getTestFile("src/test/resources/unit/require-parent-test/parent-site.xml"), parentArtifactInRepoFile);
+        try {
+            tool.getSiteModel(
+                    new File(project.getBasedir(), "src/site"),
+                    SiteTool.DEFAULT_LOCALE,
+                    project,
+                    reactorProjects,
+                    repoSession,
+                    project.getRemoteProjectRepositories());
+        } finally {
+            parentArtifactInRepoFile.delete();
+        }
     }
 
     private void writeModel(SiteModel model, String to) throws Exception {
