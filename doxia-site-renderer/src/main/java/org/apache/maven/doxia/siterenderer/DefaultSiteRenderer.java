@@ -700,9 +700,10 @@ public class DefaultSiteRenderer implements Renderer {
                 if (StringUtils.isNotBlank(toolsPrerequisite)
                         && (current != null)
                         && !matchVersion(current, toolsPrerequisite)) {
-                    throw new RendererException("Cannot use skin as it needs " + toolsPrerequisite
-                            + " Doxia Sitetools, but your configuration uses " + current + "."
-                            + "Check your version setup of plugins and skins to use the same doxia stack.");
+                    throw new RendererException("Your current Doxia Sitetools version " + current
+                            + " does not match the requirements of the skin (" + toolsPrerequisite
+                            + "). In order to fix this choose a skin version that is "
+                            + "compatible with this Doxia Sitetools version.");
                 }
             }
         } catch (XmlPullParserException e) {
