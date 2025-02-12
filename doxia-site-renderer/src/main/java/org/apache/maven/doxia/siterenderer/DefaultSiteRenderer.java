@@ -37,15 +37,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.function.Function;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -171,7 +172,8 @@ public class DefaultSiteRenderer implements Renderer {
                             module,
                             excludes,
                             files,
-                            siteDirectory.isEditable());
+                            siteDirectory.isEditable(),
+                            siteDirectory.isSkipDuplicates());
                 }
             }
         }
@@ -198,7 +200,8 @@ public class DefaultSiteRenderer implements Renderer {
             ParserModule module,
             String excludes,
             Map<String, DocumentRenderer> files,
-            boolean editable)
+            boolean editable,
+            boolean skipDuplicates)
             throws IOException, RendererException {
         if (!moduleBasedir.exists() || ArrayUtils.isEmpty(module.getExtensions())) {
             return;
@@ -208,8 +211,6 @@ public class DefaultSiteRenderer implements Renderer {
                 PathTool.getRelativeFilePath(rootDir.getAbsolutePath(), moduleBasedir.getAbsolutePath());
 
         List<String> allFiles = FileUtils.getFileNames(moduleBasedir, "**/*", excludes, false);
-
-        Map<String, String> caseInsensitiveFiles = new HashMap<>();
 
         for (String extension : module.getExtensions()) {
             String fullExtension = "." + extension;
@@ -230,44 +231,89 @@ public class DefaultSiteRenderer implements Renderer {
                     docRenderingContext.setAttribute("velocity", "true");
                 }
 
-                String key = docRenderingContext.getOutputName();
-
-                if (files.containsKey(key)) {
-                    DocumentRenderer docRenderer = files.get(key);
-
-                    DocumentRenderingContext originalDocRenderingContext = docRenderer.getRenderingContext();
-
-                    File originalDoc = new File(
-                            originalDocRenderingContext.getBasedir(), originalDocRenderingContext.getInputName());
-
-                    throw new RendererException("File '" + module.getSourceDirectory() + File.separator + doc
-                            + "' clashes with existing '" + originalDoc + "'.");
+                if (!checkForDuplicate(docRenderingContext, files, skipDuplicates)) {
+                    String key = docRenderingContext.getOutputName();
+                    files.put(key, new DoxiaDocumentRenderer(docRenderingContext));
                 }
-                // -----------------------------------------------------------------------
-                // Handle key without case differences
-                // -----------------------------------------------------------------------
-                String originalKey = caseInsensitiveFiles.put(key.toLowerCase(Locale.ROOT), key);
-                if (originalKey != null) {
-                    DocumentRenderingContext originalDocRenderingContext =
-                            files.get(originalKey).getRenderingContext();
-
-                    File originalDoc = new File(
-                            originalDocRenderingContext.getBasedir(), originalDocRenderingContext.getInputName());
-
-                    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                        throw new RendererException("File '" + module.getSourceDirectory() + File.separator + doc
-                                + "' clashes with existing '" + originalDoc + "'.");
-                    }
-
-                    if (LOGGER.isWarnEnabled()) {
-                        LOGGER.warn("File '" + module.getSourceDirectory() + File.separator + doc
-                                + "' could clash with existing '" + originalDoc + "'.");
-                    }
-                }
-
-                files.put(key, new DoxiaDocumentRenderer(docRenderingContext));
             }
         }
+    }
+
+    @FunctionalInterface
+    private interface DuplicateCallback {
+        /**
+         * Callback for handling duplicate files.
+         * @param message
+         * @return {@code false} if the duplicate should be ignored, {@code true} otherwise
+         * @throws RendererException
+         */
+        boolean onDuplicate(String message) throws RendererException;
+    }
+
+    /**
+     * Checks if the newDocRenderingContext clashes with an existing document renderer.
+     * This check involves checking for duplicates both case-sensitive and case-insensitive.
+     * @param newDocRenderingContext the doc rendering context of a new file
+     * @param existingDocumentRenderers the map of already existing renderers
+     * @return {@code true} if no duplicates were found, {@code false} otherwise
+     * @throws RendererException
+     */
+    private boolean checkForDuplicate(
+            DocumentRenderingContext newDocRenderingContext,
+            Map<String, DocumentRenderer> existingDocumentRenderers,
+            boolean skipDuplicates)
+            throws RendererException {
+        DuplicateCallback duplicateCallback = (message) -> {
+            if (skipDuplicates) {
+                LOGGER.debug(message + " (ignored due to flag 'skipDuplicates').");
+            } else {
+                throw new RendererException(message + ".");
+            }
+            return true;
+        };
+
+        DuplicateCallback caseInsensitiveDuplicateCallback = (message) -> {
+            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                return duplicateCallback.onDuplicate(message);
+            } else {
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn(message + " in case a case-insensitive filesystem is used.");
+                }
+                return false;
+            }
+        };
+
+        if (!checkForDuplicate(newDocRenderingContext, existingDocumentRenderers::get, duplicateCallback)) {
+            // also check for case-insensitive duplicates
+            return checkForDuplicate(
+                    newDocRenderingContext,
+                    key -> existingDocumentRenderers.entrySet().stream()
+                            .filter(e -> e.getKey().equalsIgnoreCase(key))
+                            .findFirst()
+                            .map(Entry::getValue)
+                            .orElse(null),
+                    caseInsensitiveDuplicateCallback);
+        }
+        return true;
+    }
+
+    private boolean checkForDuplicate(
+            DocumentRenderingContext newDocRenderingContext,
+            Function<String, DocumentRenderer> lookupFunction,
+            DuplicateCallback callback)
+            throws RendererException {
+        DocumentRenderer originalDocRenderer = lookupFunction.apply(newDocRenderingContext.getOutputName());
+        if (originalDocRenderer != null) {
+            DocumentRenderingContext originalDocRenderingContext = originalDocRenderer.getRenderingContext();
+
+            File originalFile =
+                    new File(originalDocRenderingContext.getBasedir(), originalDocRenderingContext.getInputName());
+
+            File newFile = new File(newDocRenderingContext.getBasedir(), newDocRenderingContext.getInputName());
+            String message = "File '" + newFile + "' clashes with existing '" + originalFile + "'";
+            return callback.onDuplicate(message);
+        }
+        return false;
     }
 
     /** {@inheritDoc} */

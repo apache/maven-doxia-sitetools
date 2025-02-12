@@ -31,9 +31,11 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 
@@ -67,9 +69,15 @@ import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -317,6 +325,42 @@ public class DefaultSiteRendererTest {
         DefaultSiteRenderer r = (DefaultSiteRenderer) siteRenderer;
         assertTrue(r.matchVersion("1.7", "1.7"));
         assertFalse(r.matchVersion("1.7", "1.8"));
+    }
+
+    @Test
+    public void testLocateDocumentFiles() throws IOException, RendererException {
+        SiteRenderingContext context = new SiteRenderingContext();
+        File sourceDirectory = getTestFile("src/test/resources/site-validate");
+        context.setRootDirectory(sourceDirectory);
+        context.addSiteDirectory(new SiteDirectory(sourceDirectory, true));
+        Set<String> outputFiles = siteRenderer.locateDocumentFiles(context).keySet();
+        Set<String> expectedOutputFiles = new HashSet<>();
+        expectedOutputFiles.add("entityTest.html");
+        assertEquals(expectedOutputFiles, outputFiles);
+    }
+
+    @Test
+    public void testLocateDocumentFilesWithNameClashes() throws IOException, RendererException {
+        SiteRenderingContext context = new SiteRenderingContext();
+        File sourceDirectory = getTestFile("src/test/resources/site-validate");
+        context.setRootDirectory(sourceDirectory);
+        context.addSiteDirectory(new SiteDirectory(sourceDirectory, true));
+        context.addSiteDirectory(new SiteDirectory(sourceDirectory, true));
+        assertThrows(RendererException.class, () -> siteRenderer.locateDocumentFiles(context));
+    }
+
+    @Test
+    public void testLocateDocumentFilesWithNameClashesInSkippingDuplicatesDirectory()
+            throws IOException, RendererException {
+        SiteRenderingContext context = new SiteRenderingContext();
+        File sourceDirectory = getTestFile("src/test/resources/site-validate");
+        context.setRootDirectory(sourceDirectory);
+        context.addSiteDirectory(new SiteDirectory(sourceDirectory, true));
+        context.addSiteDirectory(new SiteDirectory(sourceDirectory, true, true));
+        Set<String> outputFiles = siteRenderer.locateDocumentFiles(context).keySet();
+        Set<String> expectedOutputFiles = new HashSet<>();
+        expectedOutputFiles.add("entityTest.html");
+        assertEquals(expectedOutputFiles, outputFiles);
     }
 
     private SiteRenderingContext getSiteRenderingContext(SiteModel siteModel, String siteDir, boolean validate)
