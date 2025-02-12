@@ -43,10 +43,23 @@ public class SiteRenderingContext {
     public static class SiteDirectory {
         private File path;
         private boolean editable;
+        private boolean skipDuplicates;
 
         public SiteDirectory(File path, boolean editable) {
+            this(path, editable, false);
+        }
+
+        /**
+         *
+         * @param path
+         * @param editable
+         * @param skipDuplicates flag indicating if duplicates in this directory should be skipped ({@code true}) or lead to an exception ({@code false})
+         * @since 2.1
+         */
+        public SiteDirectory(File path, boolean editable, boolean skipDuplicates) {
             this.path = path;
             this.editable = editable;
+            this.skipDuplicates = skipDuplicates;
         }
 
         public File getPath() {
@@ -55,6 +68,10 @@ public class SiteRenderingContext {
 
         public boolean isEditable() {
             return editable;
+        }
+
+        public boolean isSkipDuplicates() {
+            return skipDuplicates;
         }
     }
 
