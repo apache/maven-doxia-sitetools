@@ -217,13 +217,13 @@ class SiteToolTest {
                         + "site.xml");
 
         project = new SiteToolMavenProjectStub("site-tool-locales-test/full");
-        final Locale BAVARIAN = new Locale("de", "DE", "BY");
+        Locale bavarian = new Locale("de", "DE", "BY");
         assertEquals(
                 tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), SiteTool.DEFAULT_LOCALE)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), BAVARIAN)
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), bavarian)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
                         + "site_de_DE_BY.xml");
@@ -246,7 +246,7 @@ class SiteToolTest {
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), BAVARIAN)
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), bavarian)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
                         + "site_de_DE.xml");
@@ -270,7 +270,7 @@ class SiteToolTest {
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), BAVARIAN)
+                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), bavarian)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
                         + "site_de.xml");
