@@ -37,9 +37,7 @@ import org.htmlunit.html.HtmlSection;
 import org.htmlunit.html.HtmlSubscript;
 import org.htmlunit.html.HtmlSuperscript;
 import org.htmlunit.html.HtmlTable;
-import org.htmlunit.html.HtmlTableDataCell;
 import org.htmlunit.html.HtmlTableHeaderCell;
-import org.htmlunit.html.HtmlTableRow;
 import org.htmlunit.html.HtmlUnderlined;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  *
  * @author ltheussl
  */
+@SuppressWarnings("MethodLength")
 public class AttributesVerifier extends AbstractVerifier {
     /** {@inheritDoc} */
     public void verify(String file) throws Exception {
@@ -106,24 +105,24 @@ public class AttributesVerifier extends AbstractVerifier {
         // this is a htmlunit bug
         assertEquals("tbody", element.getTagName());
 
-        HtmlTableRow tr = (HtmlTableRow) elementIterator.next();
-        HtmlTableHeaderCell th = (HtmlTableHeaderCell) elementIterator.next();
+        elementIterator.next(); // tr
+        elementIterator.next(); // tableheadercell
 
-        th = (HtmlTableHeaderCell) elementIterator.next();
+        HtmlTableHeaderCell th = (HtmlTableHeaderCell) elementIterator.next();
         assertEquals("text-align: center; width: 50%;", th.getAttribute("style"));
         assertEquals("2", th.getAttribute("colspan"));
 
-        tr = (HtmlTableRow) elementIterator.next();
+        elementIterator.next(); // tr
 
         th = (HtmlTableHeaderCell) elementIterator.next();
         assertEquals("2", th.getAttribute("rowspan"));
         assertEquals("vertical-align: middle;", th.getAttribute("style"));
 
-        HtmlTableDataCell td = (HtmlTableDataCell) elementIterator.next();
-        td = (HtmlTableDataCell) elementIterator.next();
-        tr = (HtmlTableRow) elementIterator.next();
-        td = (HtmlTableDataCell) elementIterator.next();
-        td = (HtmlTableDataCell) elementIterator.next();
+        elementIterator.next(); // td
+        elementIterator.next(); // td
+        elementIterator.next(); // tr
+        elementIterator.next(); // td
+        elementIterator.next(); // td
 
         p = (HtmlParagraph) elementIterator.next();
         assertNotNull(p);
@@ -214,7 +213,7 @@ public class AttributesVerifier extends AbstractVerifier {
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("subsection-id", a.getAttribute("id"));
-        section = (HtmlSection) elementIterator.next();
+        elementIterator.next(); // section
         anchor = (HtmlAnchor) elementIterator.next();
         assertNotNull(anchor);
         assertEquals("Subsection_with_id", anchor.getAttribute("id"));

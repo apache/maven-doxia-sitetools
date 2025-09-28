@@ -22,8 +22,6 @@ import java.util.Iterator;
 
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlCode;
-import org.htmlunit.html.HtmlDefinitionDescription;
-import org.htmlunit.html.HtmlDefinitionList;
 import org.htmlunit.html.HtmlDefinitionTerm;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlHeading1;
@@ -31,9 +29,7 @@ import org.htmlunit.html.HtmlListItem;
 import org.htmlunit.html.HtmlMain;
 import org.htmlunit.html.HtmlOrderedList;
 import org.htmlunit.html.HtmlPage;
-import org.htmlunit.html.HtmlParagraph;
 import org.htmlunit.html.HtmlPreformattedText;
-import org.htmlunit.html.HtmlSection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -43,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  * @author ltheussl
  */
+@SuppressWarnings("MethodLength")
 public class FaqVerifier extends AbstractVerifier {
     /** {@inheritDoc} */
     public void verify(String file) throws Exception {
@@ -60,7 +57,7 @@ public class FaqVerifier extends AbstractVerifier {
         //
         // ----------------------------------------------------------------------
 
-        HtmlSection section = (HtmlSection) elementIterator.next();
+        elementIterator.next(); // section
 
         HtmlAnchor a = (HtmlAnchor) elementIterator.next();
         assertEquals("top", a.getAttribute("id"));
@@ -68,7 +65,7 @@ public class FaqVerifier extends AbstractVerifier {
         HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
         assertEquals("Often Asked Questions", h1.asNormalizedText().trim());
 
-        HtmlParagraph p = (HtmlParagraph) elementIterator.next();
+        elementIterator.next(); // p
         element = elementIterator.next();
         assertEquals("b", element.getTagName());
         assertEquals("Contributing", element.asNormalizedText().trim());
@@ -90,7 +87,7 @@ public class FaqVerifier extends AbstractVerifier {
         assertEquals("b", element.getTagName());
         assertEquals("stupid", element.asNormalizedText().trim());
 
-        p = (HtmlParagraph) elementIterator.next();
+        elementIterator.next(); // p
         element = elementIterator.next();
         assertEquals("b", element.getTagName());
         assertEquals("Using Maven", element.asNormalizedText().trim());
@@ -109,7 +106,7 @@ public class FaqVerifier extends AbstractVerifier {
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("#disable-reports", a.getAttribute("href"));
 
-        section = (HtmlSection) elementIterator.next();
+        elementIterator.next(); // section
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("contributing", a.getAttribute("id"));
@@ -117,7 +114,7 @@ public class FaqVerifier extends AbstractVerifier {
         h1 = (HtmlHeading1) elementIterator.next();
         assertEquals("Contributing", h1.asNormalizedText().trim());
 
-        HtmlDefinitionList dl = (HtmlDefinitionList) elementIterator.next();
+        elementIterator.next(); // dl
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("stupid-question", a.getAttribute("id"));
@@ -130,9 +127,9 @@ public class FaqVerifier extends AbstractVerifier {
         assertEquals("b", element.getTagName());
         assertEquals("stupid", element.asNormalizedText().trim());
 
-        HtmlDefinitionDescription dd = (HtmlDefinitionDescription) elementIterator.next();
+        elementIterator.next(); // dd
 
-        p = (HtmlParagraph) elementIterator.next();
+        elementIterator.next(); // p
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("#using", a.getAttribute("href"));
@@ -154,13 +151,13 @@ public class FaqVerifier extends AbstractVerifier {
         assertEquals("b", element.getTagName());
         assertEquals("non-US-ASCII characters: àéèç", element.asNormalizedText().trim());
 
-        p = (HtmlParagraph) elementIterator.next();
+        elementIterator.next(); // p
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("#top", a.getAttribute("href"));
         assertEquals("[top]", a.asNormalizedText().trim());
 
-        section = (HtmlSection) elementIterator.next();
+        elementIterator.next(); // section
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("using", a.getAttribute("id"));
@@ -168,7 +165,7 @@ public class FaqVerifier extends AbstractVerifier {
         h1 = (HtmlHeading1) elementIterator.next();
         assertEquals("Using Maven", h1.asNormalizedText().trim());
 
-        dl = (HtmlDefinitionList) elementIterator.next();
+        elementIterator.next(); // dl
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("disable-reports", a.getAttribute("id"));
@@ -178,9 +175,9 @@ public class FaqVerifier extends AbstractVerifier {
                 "How do I disable a report on my site?",
                 dt.getFirstChild().asNormalizedText().trim());
 
-        dd = (HtmlDefinitionDescription) elementIterator.next();
+        elementIterator.next(); // dd
 
-        p = (HtmlParagraph) elementIterator.next();
+        elementIterator.next(); // p
 
         element = elementIterator.next();
         assertEquals("code", element.getTagName());
@@ -191,7 +188,7 @@ public class FaqVerifier extends AbstractVerifier {
         HtmlCode code = (HtmlCode) elementIterator.next();
         assertEquals("<source>1.5</source>", code.asNormalizedText().trim());
 
-        p = (HtmlParagraph) elementIterator.next();
+        elementIterator.next(); // p
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("#top", a.getAttribute("href"));

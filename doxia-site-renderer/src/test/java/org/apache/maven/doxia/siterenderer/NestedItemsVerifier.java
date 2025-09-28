@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  * @author ltheussl
  */
+@SuppressWarnings("MethodLength")
 public class NestedItemsVerifier extends AbstractVerifier {
     /** {@inheritDoc} */
     public void verify(String file) throws Exception {
