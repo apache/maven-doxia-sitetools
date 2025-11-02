@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-public class DefaultSiteToolTest {
+class DefaultSiteToolTest {
 
     private DefaultSiteTool tool = new DefaultSiteTool();
 
@@ -37,7 +37,7 @@ public class DefaultSiteToolTest {
      * test getNormalizedPath().
      */
     @Test
-    public void testGetNormalizedPath() {
+    void getNormalizedPath() {
         assertNull(DefaultSiteTool.getNormalizedPath(null));
         assertEquals("", DefaultSiteTool.getNormalizedPath(""));
         assertEquals("", DefaultSiteTool.getNormalizedPath("."));
@@ -62,7 +62,7 @@ public class DefaultSiteToolTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testGetRelativePath() {
+    void getRelativePath() {
         assertEquals(
                 ".." + File.separator + "bar.html",
                 tool.getRelativePath("http://example.com/foo/bar.html", "http://example.com/foo/baz.html"));
@@ -70,14 +70,14 @@ public class DefaultSiteToolTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testGetRelativePath_same() {
+    void getRelativePathSame() {
         assertTrue(tool.getRelativePath("http://example.com/foo/bar.html", "http://example.com/foo/bar.html")
                 .isEmpty());
     }
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testGetRelativePath_differentSchemes() {
+    void getRelativePathDifferentSchemes() {
         assertEquals(
                 "scp://example.com/foo/bar.html",
                 tool.getRelativePath("scp://example.com/foo/bar.html", "http://example.com/foo/bar.html"));
@@ -86,7 +86,7 @@ public class DefaultSiteToolTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testGetRelativePath_differentDomains() {
+    void getRelativePathDifferentDomains() {
         assertEquals(
                 "https://example.org/bar.html",
                 tool.getRelativePath("https://example.org/bar.html", "https://example.com/bar.html"));

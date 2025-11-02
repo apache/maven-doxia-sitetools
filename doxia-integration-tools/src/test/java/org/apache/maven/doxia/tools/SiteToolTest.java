@@ -64,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @SuppressWarnings("javadoc")
 @PlexusTest
-public class SiteToolTest {
+class SiteToolTest {
 
     @Inject
     private DefaultSiteTool tool;
@@ -89,7 +89,7 @@ public class SiteToolTest {
      * @throws Exception
      */
     @Test
-    public void testGetSkinArtifactFromRepository() throws Exception {
+    void getSkinArtifactFromRepository() throws Exception {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
@@ -112,7 +112,7 @@ public class SiteToolTest {
      */
     @Test
     @SuppressWarnings({"deprecation"})
-    public void testGetRelativePath() throws Exception {
+    void getRelativePath() throws Exception {
         assertNotNull(tool);
 
         checkGetRelativePathDirectory(tool, "", "http://maven.apache.org", "http://maven.apache.org");
@@ -197,7 +197,7 @@ public class SiteToolTest {
      * @throws Exception
      */
     @Test
-    public void testGetSiteDescriptorFromBasedir() throws Exception {
+    void getSiteDescriptorFromBasedir() throws Exception {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
@@ -294,7 +294,7 @@ public class SiteToolTest {
      * @throws Exception
      */
     @Test
-    public void testGetSiteDescriptorFromRepository() throws Exception {
+    void getSiteDescriptorFromRepository() throws Exception {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
@@ -319,7 +319,7 @@ public class SiteToolTest {
      * @throws Exception
      */
     @Test
-    public void testGetSiteModel() throws Exception {
+    void getSiteModel() throws Exception {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
@@ -373,7 +373,7 @@ public class SiteToolTest {
      * @throws Exception
      */
     @Test
-    public void testGetDefaultSiteModel() throws Exception {
+    void getDefaultSiteModel() throws Exception {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("no-site-test");
@@ -391,7 +391,7 @@ public class SiteToolTest {
     }
 
     @Test
-    public void testGetAvailableLocales() throws Exception {
+    void getAvailableLocales() throws Exception {
         assertEquals(Collections.singletonList(SiteTool.DEFAULT_LOCALE), tool.getSiteLocales("default"));
 
         assertEquals(
@@ -403,7 +403,7 @@ public class SiteToolTest {
     }
 
     @Test
-    public void testGetInterpolatedSiteDescriptorContent() throws Exception {
+    void getInterpolatedSiteDescriptorContent() throws Exception {
         assertNotNull(tool);
 
         File pomXmlFile = getTestFile("src/test/resources/unit/interpolated-site/pom.xml");
@@ -446,7 +446,7 @@ public class SiteToolTest {
 
     // MSHARED-217 -> DOXIATOOLS-34 -> DOXIASITETOOLS-118
     @Test
-    public void testSiteModelInheritanceAndInterpolation() throws Exception {
+    void siteModelInheritanceAndInterpolation() throws Exception {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub parentProject = new SiteToolMavenProjectStub("interpolation-parent-test");
@@ -506,7 +506,7 @@ public class SiteToolTest {
      * @throws Exception
      */
     @Test
-    public void testConvertOldToNewSiteModel() throws Exception {
+    void convertOldToNewSiteModel() throws Exception {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("old-to-new-site-model-conversion-test");
@@ -534,7 +534,7 @@ public class SiteToolTest {
     }
 
     @Test
-    public void testRequireParent() throws SiteToolException, Exception {
+    void requireParent() throws Exception {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("require-parent-test");

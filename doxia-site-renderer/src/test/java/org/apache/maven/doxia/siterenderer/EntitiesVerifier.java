@@ -67,7 +67,9 @@ public class EntitiesVerifier extends AbstractVerifier {
                 anchor.getAttribute("id"));
         HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
         assertNotNull(h1);
-        assertEquals(h1.asNormalizedText().trim(), "section name with entities: '&' '\u0391' ' ' '\uD835\uDFED'");
+        assertEquals(
+                "section name with entities: '&' '\u0391' ' ' '\uD835\uDFED'",
+                h1.asNormalizedText().trim());
 
         section = (HtmlSection) elementIterator.next();
         assertNotNull(section);

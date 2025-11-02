@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 20 oct. 07
  */
 @PlexusTest
-public class RenderingContextTest {
+class RenderingContextTest {
 
     /**
      * Test getRelativePath() with various file paths.
@@ -39,7 +39,7 @@ public class RenderingContextTest {
      * @throws java.lang.Exception if any.
      */
     @Test
-    public void testFilePathWithDot() throws Exception {
+    void filePathWithDot() throws Exception {
         File baseDir = new File(getBasedir() + File.separatorChar + "test" + File.separatorChar + "resources");
 
         String document = "file.with.dot.in.name.xml";

@@ -34,14 +34,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 1.2
  */
 @SuppressWarnings("javadoc")
-public class URIPathDescriptorTest {
+class URIPathDescriptorTest {
     private static final String BASE_URL = "http://maven.apache.org/";
 
     /**
      * Test of constructor, of class URIPathDescriptor.
      */
     @Test
-    public void testConstructor() {
+    void constructor() {
         final String expected = BASE_URL + "doxia";
 
         final URIPathDescriptor path = new URIPathDescriptor(BASE_URL, "doxia");
@@ -94,7 +94,7 @@ public class URIPathDescriptorTest {
      * @throws Exception
      */
     @Test
-    public void testResolveLink() {
+    void resolveLink() {
         final String expected = BASE_URL + "source";
 
         URIPathDescriptor oldPath = new URIPathDescriptor(BASE_URL, "source");
@@ -142,7 +142,7 @@ public class URIPathDescriptorTest {
      * Test of rebaseLink method, of class URIPathDescriptor.
      */
     @Test
-    public void testRebaseLink() {
+    void rebaseLink() {
         URIPathDescriptor oldPath = new URIPathDescriptor(BASE_URL, "source");
         assertEquals(
                 "../source",
@@ -213,7 +213,7 @@ public class URIPathDescriptorTest {
      * Test of relativizeLink method, of class URIPathDescriptor.
      */
     @Test
-    public void testRelativizeLink() {
+    void relativizeLink() {
         URIPathDescriptor path = new URIPathDescriptor(BASE_URL, "source");
         assertEquals("source", path.relativizeLink().toString());
 
@@ -263,7 +263,7 @@ public class URIPathDescriptorTest {
      * @throws Exception
      */
     @Test
-    public void testSameSite() throws Exception {
+    void sameSite() throws Exception {
         final URIPathDescriptor path = new URIPathDescriptor(BASE_URL, "doxia");
 
         assertTrue(path.sameSite(new URI("http://maven.apache.org/")));

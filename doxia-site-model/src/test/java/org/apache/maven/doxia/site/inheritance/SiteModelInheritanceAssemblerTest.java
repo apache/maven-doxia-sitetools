@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @SuppressWarnings("javadoc")
-public class SiteModelInheritanceAssemblerTest {
+class SiteModelInheritanceAssemblerTest {
     private final SiteModelInheritanceAssembler assembler = new DefaultSiteModelInheritanceAssembler();
 
     private static final String NAME = "Name";
@@ -56,7 +56,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testInheritance() throws IOException, XmlPullParserException {
+    void inheritance() throws Exception {
         SiteModel childModel = readModel("inheritance-child.xml");
         SiteModel parentModel = readModel("inheritance-parent.xml");
 
@@ -92,7 +92,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testSuppressedInheritance() throws IOException, XmlPullParserException {
+    void suppressedInheritance() throws Exception {
         SiteModel unassembledChildModel = readModel("inheritance-child-no-inheritance.xml");
         SiteModel childModel = readModel("inheritance-child-no-inheritance.xml");
         SiteModel parentModel = readModel("inheritance-parent.xml");
@@ -123,7 +123,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testPathsResolvedWhenEmpty() throws IOException, XmlPullParserException {
+    void pathsResolvedWhenEmpty() throws Exception {
         // Test an empty model avoids NPEs
         SiteModel childModel = readModel("empty.xml");
         SiteModel parentModel = readModel("empty.xml");
@@ -149,7 +149,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testPathsNotResolvedForExternalUrls() throws IOException, XmlPullParserException {
+    void pathsNotResolvedForExternalUrls() throws Exception {
         SiteModel parentModel = readModel("external-urls.xml");
         SiteModel childModel = readModel("empty.xml");
 
@@ -203,7 +203,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testPathsResolvedForRelativeUrls() throws IOException, XmlPullParserException {
+    void pathsResolvedForRelativeUrls() throws Exception {
         SiteModel parentModel = readModel("relative-urls.xml");
         SiteModel childModel = readModel("empty.xml");
 
@@ -254,7 +254,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testPathsResolvedForSubsiteUrls() throws IOException, XmlPullParserException {
+    void pathsResolvedForSubsiteUrls() throws Exception {
         SiteModel parentModel = readModel("subsite-urls.xml");
         SiteModel childModel = readModel("empty.xml");
 
@@ -308,7 +308,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testPathsResolvedForRelativeUrlsDepthOfTwo() throws IOException, XmlPullParserException {
+    void pathsResolvedForRelativeUrlsDepthOfTwo() throws Exception {
         SiteModel parentModel = readModel("relative-urls.xml");
         SiteModel childModel = readModel("empty.xml");
 
@@ -359,7 +359,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testPathsResolvedForReverseRelativeUrls() throws IOException, XmlPullParserException {
+    void pathsResolvedForReverseRelativeUrls() throws Exception {
         SiteModel parentModel = readModel("relative-urls.xml");
         SiteModel childModel = readModel("empty.xml");
 
@@ -410,7 +410,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testPathsResolvedForReverseRelativeUrlsDepthOfTwo() throws IOException, XmlPullParserException {
+    void pathsResolvedForReverseRelativeUrlsDepthOfTwo() throws Exception {
         SiteModel parentModel = readModel("relative-urls.xml");
         SiteModel childModel = readModel("empty.xml");
 
@@ -461,7 +461,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testPathsResolvedForUnrelatedRelativeUrls() throws IOException, XmlPullParserException {
+    void pathsResolvedForUnrelatedRelativeUrls() throws Exception {
         SiteModel parentModel = readModel("relative-urls.xml");
         SiteModel childModel = readModel("empty.xml");
 
@@ -521,7 +521,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testNullParent() throws IOException, XmlPullParserException {
+    void nullParent() throws Exception {
         SiteModel childModel = readModel("empty.xml");
 
         assembler.assembleModelInheritance(
@@ -543,7 +543,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testFullyPopulatedChild() throws IOException, XmlPullParserException {
+    void fullyPopulatedChild() throws Exception {
         SiteModel childModel = readModel("fully-populated-child.xml");
         SiteModel parentModel = readModel("fully-populated-child.xml");
 
@@ -568,7 +568,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testFullyPopulatedParentAndEmptyChild() throws IOException, XmlPullParserException {
+    void fullyPopulatedParentAndEmptyChild() throws Exception {
         SiteModel childModel = readModel("empty.xml");
         SiteModel parentModel = readModel("fully-populated-child.xml");
 
@@ -599,7 +599,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testResolvingAllExternalUrls() throws IOException, XmlPullParserException {
+    void resolvingAllExternalUrls() throws Exception {
         SiteModel model = readModel("external-urls.xml");
 
         assembler.resolvePaths(model, "http://foo.com/");
@@ -614,7 +614,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testResolvingAllRelativeUrls() throws IOException, XmlPullParserException {
+    void resolvingAllRelativeUrls() throws Exception {
         SiteModel model = readModel("relative-urls.xml");
 
         assembler.resolvePaths(model, "http://foo.com/");
@@ -630,7 +630,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testResolvingAllSiteUrls() throws IOException, XmlPullParserException {
+    void resolvingAllSiteUrls() throws Exception {
         SiteModel model = readModel("subsite-urls.xml");
 
         assembler.resolvePaths(model, "http://maven.apache.org/");
@@ -681,7 +681,7 @@ public class SiteModelInheritanceAssemblerTest {
      * @throws XmlPullParserException
      */
     @Test
-    public void testResolvingEmptyDescriptor() throws IOException, XmlPullParserException {
+    void resolvingEmptyDescriptor() throws Exception {
         SiteModel model = readModel("empty.xml");
         assembler.resolvePaths(model, "http://maven.apache.org");
         SiteModel mergedModel = readModel("empty.xml");
@@ -693,7 +693,7 @@ public class SiteModelInheritanceAssemblerTest {
      *
      */
     @Test
-    public void testDuplicateParentElements() {
+    void duplicateParentElements() {
         SiteModel model = new SiteModel();
         model.setBody(new Body());
         model.getBody().addLink(createLinkItem("Foo", "http://foo.apache.org"));
@@ -723,7 +723,7 @@ public class SiteModelInheritanceAssemblerTest {
      *
      */
     @Test
-    public void testDuplicateChildElements() {
+    void duplicateChildElements() {
         SiteModel model = new SiteModel();
         model.setBody(new Body());
         model.getBody().addLink(createLinkItem("Foo", "http://foo.apache.org"));
@@ -755,7 +755,7 @@ public class SiteModelInheritanceAssemblerTest {
      *
      */
     @Test
-    public void testBadHref() {
+    void badHref() {
         final SiteModel model = new SiteModel();
         model.setBody(new Body());
         model.getBody().addBreadcrumb(createLinkItem("Foo", "http://foo.apache.org/${property}"));
@@ -771,7 +771,7 @@ public class SiteModelInheritanceAssemblerTest {
      *
      */
     @Test
-    public void testBreadcrumbWithoutHref() {
+    void breadcrumbWithoutHref() {
         SiteModel model = new SiteModel();
         model.setBody(new Body());
         model.getBody().addBreadcrumb(createLinkItem("Foo", null));
@@ -785,7 +785,7 @@ public class SiteModelInheritanceAssemblerTest {
      *
      */
     @Test
-    public void testBreadcrumbs() {
+    void breadcrumbs() {
         String parentHref = "http://parent.com/index.html";
 
         final SiteModel parent = new SiteModel();
@@ -847,7 +847,7 @@ public class SiteModelInheritanceAssemblerTest {
      * https://issues.apache.org/jira/browse/DOXIASITETOOLS-62
      */
     @Test
-    public void testBreadcrumbCutParentAfterDuplicate() {
+    void breadcrumbCutParentAfterDuplicate() {
         SiteModel child = new SiteModel(); // B > E
         child.setBody(new Body());
         child.getBody().addBreadcrumb(createLinkItem("B", null));
@@ -874,7 +874,7 @@ public class SiteModelInheritanceAssemblerTest {
      *
      */
     @Test
-    public void testBannerWithoutHref() {
+    void bannerWithoutHref() {
         SiteModel model = new SiteModel();
         model.setBody(new Body());
 
@@ -891,7 +891,7 @@ public class SiteModelInheritanceAssemblerTest {
      *
      */
     @Test
-    public void testLogoWithoutImage() {
+    void logoWithoutImage() {
         // This should actually be validated in the model, it doesn't really make sense
         SiteModel model = new SiteModel();
         model.setBody(new Body());

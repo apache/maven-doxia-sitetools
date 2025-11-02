@@ -97,7 +97,7 @@ public class AttributesVerifier extends AbstractVerifier {
         assertEquals("Project", img.getAttribute("alt"));
 
         // test object identity to distinguish the case ATTRIBUTE_VALUE_EMPTY
-        assertSame(img.getAttribute("dummy"), HtmlElement.ATTRIBUTE_NOT_DEFINED);
+        assertSame(HtmlElement.ATTRIBUTE_NOT_DEFINED, img.getAttribute("dummy"));
 
         HtmlTable table = (HtmlTable) elementIterator.next();
         assertEquals("none", table.getAttribute("class"));

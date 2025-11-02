@@ -145,7 +145,7 @@ public class DefaultSiteRendererTest {
      * @throws Exception if something goes wrong.
      */
     @Test
-    public void testRenderExceptionMessageWhenLineNumberIsNotAvailable() throws Exception {
+    void renderExceptionMessageWhenLineNumberIsNotAvailable() throws Exception {
         final File testBasedir = getTestFile("src/test/resources/site/xdoc");
         final String testDocument = "head.xml";
         final String exceptionMessage = "parse error occurred";
@@ -176,7 +176,7 @@ public class DefaultSiteRendererTest {
      * @throws Exception if something goes wrong.
      */
     @Test
-    public void testRenderExceptionMessageWhenLineNumberIsAvailable() throws Exception {
+    void renderExceptionMessageWhenLineNumberIsAvailable() throws Exception {
         final File testBasedir = getTestFile("src/test/resources/site/xdoc");
         final String testDocumentName = "head.xml";
         final String exceptionMessage = "parse error occurred";
@@ -208,7 +208,7 @@ public class DefaultSiteRendererTest {
      * @throws Exception if something goes wrong.
      */
     @Test
-    public void testRender() throws Exception {
+    void render() throws Exception {
         // Safety
         org.apache.commons.io.FileUtils.deleteDirectory(getTestFile(OUTPUT));
 
@@ -248,7 +248,7 @@ public class DefaultSiteRendererTest {
     }
 
     @Test
-    public void testExternalReport() throws Exception {
+    void externalReport() throws Exception {
         DocumentRenderer docRenderer = mock(DocumentRenderer.class);
         when(docRenderer.isExternalReport()).thenReturn(true);
         when(docRenderer.getOutputName()).thenReturn("external/index");
@@ -263,7 +263,7 @@ public class DefaultSiteRendererTest {
     }
 
     @Test
-    public void testVelocityToolManager() throws Exception {
+    void velocityToolManager() throws Exception {
         StringWriter writer = new StringWriter();
 
         SiteRenderingContext siteRenderingContext = new SiteRenderingContext();
@@ -293,7 +293,7 @@ public class DefaultSiteRendererTest {
     }
 
     @Test
-    public void testVelocityToolManagerForSkin() throws Exception {
+    void velocityToolManagerForSkin() throws Exception {
         StringWriter writer = new StringWriter();
 
         File skinFile = skinJar;
@@ -321,14 +321,14 @@ public class DefaultSiteRendererTest {
     }
 
     @Test
-    public void testMatchVersion() throws Exception {
+    void matchVersion() throws Exception {
         DefaultSiteRenderer r = (DefaultSiteRenderer) siteRenderer;
         assertTrue(r.matchVersion("1.7", "1.7"));
         assertFalse(r.matchVersion("1.7", "1.8"));
     }
 
     @Test
-    public void testLocateDocumentFiles() throws IOException, RendererException {
+    void locateDocumentFiles() throws Exception {
         SiteRenderingContext context = new SiteRenderingContext();
         File sourceDirectory = getTestFile("src/test/resources/site-validate");
         context.setRootDirectory(sourceDirectory);
@@ -340,7 +340,7 @@ public class DefaultSiteRendererTest {
     }
 
     @Test
-    public void testLocateDocumentFilesWithNameClashes() throws IOException, RendererException {
+    void locateDocumentFilesWithNameClashes() throws Exception {
         SiteRenderingContext context = new SiteRenderingContext();
         File sourceDirectory = getTestFile("src/test/resources/site-validate");
         context.setRootDirectory(sourceDirectory);
@@ -350,8 +350,7 @@ public class DefaultSiteRendererTest {
     }
 
     @Test
-    public void testLocateDocumentFilesWithNameClashesInSkippingDuplicatesDirectory()
-            throws IOException, RendererException {
+    void locateDocumentFilesWithNameClashesInSkippingDuplicatesDirectory() throws Exception {
         SiteRenderingContext context = new SiteRenderingContext();
         File sourceDirectory = getTestFile("src/test/resources/site-validate");
         context.setRootDirectory(sourceDirectory);
@@ -418,7 +417,7 @@ public class DefaultSiteRendererTest {
         try {
             reader = ReaderFactory.newXmlReader(macro);
             String content = IOUtil.toString(reader);
-            assertEquals(content.indexOf("</macro>"), -1);
+            assertEquals(-1, content.indexOf("</macro>"));
         } finally {
             IOUtil.close(reader);
         }
