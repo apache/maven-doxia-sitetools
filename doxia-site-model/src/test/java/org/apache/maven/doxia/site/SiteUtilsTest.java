@@ -26,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SiteUtilsTest {
+class SiteUtilsTest {
     @Test
-    public void testIsLink() {
+    void isLink() {
         assertFalse(SiteUtils.isLink(null));
         assertFalse(SiteUtils.isLink(""));
         assertFalse(SiteUtils.isLink(" "));
@@ -41,7 +41,7 @@ public class SiteUtilsTest {
     }
 
     @Test
-    public void testGetCustomChild() {
+    void getCustomChild() {
         Xpp3Dom dom = new Xpp3Dom("root");
         Xpp3Dom level1 = new Xpp3Dom("level1");
         dom.addChild(level1);
