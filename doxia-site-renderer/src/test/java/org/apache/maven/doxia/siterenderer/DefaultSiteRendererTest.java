@@ -551,7 +551,7 @@ public class DefaultSiteRendererTest {
                     FileUtils.getFileNames(dir, getIncludes()[0], FileUtils.getDefaultExcludesAsString(), true);
 
             for (String file : l) {
-                file = StringUtils.replace(file, "\\", "/");
+                file = file == null || file.isEmpty() ? file : file.replace("\\", "/");
 
                 Reader reader = ReaderFactory.newXmlReader(new File(file));
                 try {

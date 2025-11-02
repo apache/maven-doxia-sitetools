@@ -28,7 +28,6 @@ import org.apache.maven.doxia.module.xhtml5.Xhtml5Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.siterenderer.DocumentContent;
 import org.apache.maven.doxia.siterenderer.DocumentRenderingContext;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Sink for site rendering of a document, to allow later merge document's output with a template.
@@ -180,9 +179,11 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
             String relativePathToBasedir = docRenderingContext.getRelativePath();
 
             if (relativePathToBasedir == null) {
-                txt = StringUtils.replace(txt, "$relativePath", ".");
+                txt = txt == null || txt.isEmpty() ? txt : txt.replace("$relativePath", ".");
             } else {
-                txt = StringUtils.replace(txt, "$relativePath", relativePathToBasedir);
+                txt = txt == null || txt.isEmpty() || relativePathToBasedir == null
+                        ? txt
+                        : txt.replace("$relativePath", relativePathToBasedir);
             }
         }
 
