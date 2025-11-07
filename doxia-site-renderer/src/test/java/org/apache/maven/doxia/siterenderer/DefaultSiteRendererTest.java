@@ -210,7 +210,7 @@ public class DefaultSiteRendererTest {
     @Test
     public void testRender() throws Exception {
         // Safety
-        FileUtils.deleteDirectory(getTestFile(OUTPUT));
+        org.apache.commons.io.FileUtils.deleteDirectory(getTestFile(OUTPUT));
 
         // ----------------------------------------------------------------------
         // Render the site from src/test/resources/site to OUTPUT
