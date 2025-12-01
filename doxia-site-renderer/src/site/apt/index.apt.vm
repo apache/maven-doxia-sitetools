@@ -34,8 +34,8 @@ Doxia Sitetools - Site Renderer
 
   Documents can be dynamically generated with {{{/doxia/doxia/doxia-sink-api/}Doxia Sink API}}, like Maven reports,
   or simply read from static files written in {{{/doxia/references/index.html}markup supported by Doxia Parsers}},
-  eventually processed by {{{https://velocity.apache.org/engine/${velocityEngineVersion}/}Velocity}}
-  if their file names end in <<<.vm>>>.
+  optionally preprocessed by {{{https://velocity.apache.org/engine/${velocityEngineVersion}/}Velocity}}
+  if their file names end with <<<.vm>>>.
 
 [doxia-site-renderer.png]
 
