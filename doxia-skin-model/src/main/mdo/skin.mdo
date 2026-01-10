@@ -29,7 +29,7 @@ under the License.
     <p>An XSD is available at:</p>
     <ul>
       <!-- There is no property filtering in Modello, this has to be updated manually. See DOXIASITETOOLS-98. -->
-      <li><a href="https://maven.apache.org/xsd/skin-2.0.0.xsd">https://maven.apache.org/xsd/skin-2.0.0.xsd</a></li>
+      <li><a href="https://maven.apache.org/xsd/skin-2.1.0.xsd">https://maven.apache.org/xsd/skin-2.1.0.xsd</a></li>
     </ul>
     ]]></description>
 
@@ -67,6 +67,16 @@ under the License.
           <type>String</type>
           <required>false</required>
         </field>
+        <field xdoc.separator="blank" xml.tagName="resource-conditions">
+          <name>resourceConditions</name>
+          <version>2.1.0+</version>
+          <description>Resource conditions</description>
+          <association>
+            <type>ResourceCondition</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <required>false</required>
+        </field>
       </fields>
       <codeSegments>
         <codeSegment>
@@ -94,6 +104,33 @@ under the License.
             ]]>
           </description>
           <required>false</required>
+        </field>
+      </fields>
+    </class>
+    <class java.clone="deep">
+      <name>ResourceCondition</name>
+      <version>2.1.0+</version>
+      <description>Describes the condition for including a specific Skin resource.</description>
+      <fields>
+        <field xml.tagName="resource-name">
+          <name>resourceName</name>
+          <version>2.1.0+</version>
+          <type>String</type>
+          <description><![CDATA[
+            The name of the resource to which this condition applies. Refers to the path within the JAR (i.e. must always use "/" as separator and must not start with a slash).
+            ]]>
+          </description>
+          <required>true</required>
+        </field>
+        <field xml.tagName="vtl-condition">
+          <name>vtlCondition</name>
+          <version>2.1.0+</version>
+          <type>String</type>
+          <description><![CDATA[
+            The Velocity (VTL) expression to be evaluated to decide if the resource should be included. Only if the condition evaluates to true, the resource will be included.
+            ]]>
+          </description>
+          <required>true</required>
         </field>
       </fields>
     </class>
