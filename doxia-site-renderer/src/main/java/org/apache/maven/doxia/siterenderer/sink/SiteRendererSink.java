@@ -130,6 +130,27 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
         resetTextBuffer();
     }
 
+    
+    @Override
+    public void verbatim(SinkEventAttributes attributes) {
+        // special handling for mermaid
+        String lang = attributes.getAttribute(SinkEventAttributes.LANG);
+        // TODO: check if mermaid support is enabled
+        if ("mermaid".equalsIgnoreCase(lang)) {
+            flushTextBuffer();
+            write("<div class=\"mermaid\">\n");
+            write(getTextBuffer().toString());
+            write("\n</div>\n");
+            resetTextBuffer();
+            addMermaidScriptToEnd();
+            return;
+        } else {
+            super.verbatim(attributes);
+        }
+        // TODO Auto-generated method stub
+        super.verbatim(attributes);
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -210,7 +231,7 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
     /** {@inheritDoc} */
     public String getBody() {
         String body = writer.toString();
-
+        // TODO: potentially add mermaid script to the end of body
         return body.length() > 0 ? body : null;
     }
 

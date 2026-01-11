@@ -30,7 +30,7 @@ under the License.
     <p>An XSD is available at:</p>
     <ul>
       <!-- There is no property filtering in Modello, this has to be updated manually. See DOXIASITETOOLS-98. -->
-      <li><a href="https://maven.apache.org/xsd/site-2.0.0.xsd">https://maven.apache.org/xsd/site-2.0.0.xsd</a></li>
+      <li><a href="https://maven.apache.org/xsd/site-2.1.0.xsd">https://maven.apache.org/xsd/site-2.1.0.xsd</a></li>
     </ul>
     ]]></description>
 
@@ -166,6 +166,18 @@ under the License.
           <description>Timestamp of the last modification of this site model.</description>
           <version>1.0.1+</version>
           <type>long</type>
+        </field>
+        <field xdoc.separator="blank">
+          <name>mermaid</name>
+          <description><![CDATA[
+            Enables rendering of mermaid.js diagrams contained in HTML.
+            Example: <code>$site.custom.getChild( 'customElement' ).getValue()</code>
+          ]]></description>
+          <version>2.1.0+</version>
+          <association>
+            <type>Mermaid</type>
+          </association>
+          <identifier>true</identifier>
         </field>
       </fields>
       <codeSegments>
@@ -649,6 +661,38 @@ under the License.
           <description>The skin version.</description>
           <version>1.0.0+</version>
           <type>String</type>
+          <identifier>true</identifier>
+        </field>
+      </fields>
+    </class>
+    
+    <class java.clone="deep">
+      <name>Mermaid</name>
+      <description>The mermaid.js configuration.</description>
+      <version>2.1.0+</version>
+      <fields>
+        <field xml.attribute="true">
+          <name>externalJsUrl</name>
+          <description>The URL from which to request the Mermaid.js used for rendering the diagrams. If not set a built-in version of Mermaid is used (which is automatically deployed to the site)</description>
+          <version>2.1.0+</version>
+          <type>String</type>
+          <required>false</required>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>useTiny</name>
+          <description>Use Tiny Mermaid (https://github.com/mermaid-js/mermaid/tree/develop/packages/tiny#tiny-mermaid). Only relevant if "externalJsUrl" is not used.</description>
+          <version>2.1.0+</version>
+          <type>Boolean</type>
+          <required>false</required>
+          <identifier>true</identifier>
+        </field>
+        <field>
+          <name>config</name>
+          <description>The Mermaid configuration in JSON format as described in https://mermaid.ai/open-source/config/setup/mermaid/interfaces/MermaidConfig.html.</description>
+          <version>2.1.0+</version>
+          <type>String</type>
+          <required>false</required>
           <identifier>true</identifier>
         </field>
       </fields>
