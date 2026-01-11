@@ -26,6 +26,8 @@ import java.util.List;
 import org.apache.maven.doxia.markup.HtmlMarkup;
 import org.apache.maven.doxia.module.xhtml5.Xhtml5Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
+import org.apache.maven.doxia.sink.impl.SinkEventAttributeSet;
+import org.apache.maven.doxia.site.MermaidConfiguration;
 import org.apache.maven.doxia.siterenderer.DocumentContent;
 import org.apache.maven.doxia.siterenderer.DocumentRenderingContext;
 
@@ -48,7 +50,11 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
 
     private final Writer writer;
 
+    private final MermaidConfiguration mermaidConfig;
+
     private DocumentRenderingContext docRenderingContext;
+
+    private boolean containsMermaidDiagram = false;
 
     /**
      * Construct a new SiteRendererSink for a document.
@@ -56,21 +62,21 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
      * @param docRenderingContext the document's rendering context.
      */
     public SiteRendererSink(DocumentRenderingContext docRenderingContext) {
-        this(new StringWriter(), docRenderingContext);
+        this(docRenderingContext, null);
     }
 
-    /**
-     * Construct a new SiteRendererSink for a document.
-     *
-     * @param writer the writer for the sink.
-     * @param docRenderingContext the document's rendering context.
-     */
-    private SiteRendererSink(StringWriter writer, DocumentRenderingContext docRenderingContext) {
+    public SiteRendererSink(DocumentRenderingContext docRenderingContext, MermaidConfiguration mermaid) {
+        this(new StringWriter(), docRenderingContext, mermaid);
+    }
+
+    private SiteRendererSink(
+            StringWriter writer, DocumentRenderingContext docRenderingContext, MermaidConfiguration mermaid) {
         super(writer);
 
         this.writer = writer;
         this.headWriter = new StringWriter();
         this.docRenderingContext = docRenderingContext;
+        this.mermaidConfig = mermaid;
 
         /* the template is expected to have used the main tag, which can be used only once */
         super.contentStack.push(HtmlMarkup.MAIN);
@@ -130,6 +136,73 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
         resetTextBuffer();
     }
 
+    @Override
+    public void verbatim(SinkEventAttributes attributes) {
+        if (mermaidConfig != null && normalizeClassAttributesForMermaid(attributes)) {
+            containsMermaidDiagram = true;
+        }
+        super.verbatim(attributes);
+    }
+
+    @Override
+    public void inline(SinkEventAttributes attributes) {
+        if (attributes.containsAttributes(SinkEventAttributeSet.Semantics.CODE)
+                && mermaidConfig != null
+                && normalizeClassAttributesForMermaid(attributes)) {
+            containsMermaidDiagram = true;
+        }
+        super.inline(attributes);
+    }
+
+    /**
+     * Normalize class attributes for Mermaid diagrams, to allow using either "mermaid" or "language-mermaid" as class.
+     *
+     * @param attributes the attributes to check and normalize.
+     * @return {@code true} if the attributes indicate a Mermaid diagram, {@code false} otherwise.
+     */
+    boolean normalizeClassAttributesForMermaid(SinkEventAttributes attributes) {
+        String lang = attributes != null ? (String) attributes.getAttribute(SinkEventAttributes.CLASS) : null;
+        if ("language-mermaid"
+                .equals(lang)) { // "language-" prefix is used by some markdown parsers, e.g. flexmark-java
+            attributes.addAttribute(SinkEventAttributes.CLASS, "mermaid");
+            return true;
+        } else if ("mermaid".equals(lang)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Include the Mermaid rendering script (either internal or external) and call it on diagrams afterwards.
+     * @see <a href="https://mermaid.ai/open-source/intro/getting-started.html#_4-calling-the-mermaid-javascript-api">Calling the Mermaid JavaScript API</a>
+     */
+    private void writeMermaidScript() {
+        if (mermaidConfig.getExternalJsUrl() != null) {
+            write("\n<script src=\"" + mermaidConfig.getExternalJsUrl() + "\"></script>\n");
+        } else {
+            write("\n<script src=\"");
+            write(docRenderingContext.getRelativePath());
+            if (mermaidConfig.isUseTiny()) {
+                // use integrated tiny version of mermaid, which is smaller and faster to load, but has some limitations
+                // (e.g. no sequence diagrams)
+                write("/js/mermaid.tiny.min.js");
+            } else {
+                // use integrated full version of mermaid, which is larger and slower to load, but has all features
+                write("/js/mermaid.min.js");
+            }
+            write("\"></script>\n");
+        }
+        write("\n<script>\n");
+        if (mermaidConfig.getConfig() != null) {
+            write("mermaid.initialize(" + mermaidConfig.getConfig() + ");\n");
+        } else {
+            // By default, mermaid.run will be called when the document is ready, rendering all elements with
+            // class="mermaid".
+            write("mermaid.initialize({startOnLoad:true, securityLevel: 'loose'});\n");
+        }
+        write("</script>\n");
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -138,7 +211,9 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
      */
     @Override
     public void body_() {
-        // nop
+        if (containsMermaidDiagram && mermaidConfig != null) {
+            writeMermaidScript();
+        }
     }
 
     /**

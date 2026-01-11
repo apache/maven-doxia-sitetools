@@ -93,6 +93,11 @@ under the License.
       <artifactId>doxia-module-fml</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-module-markdown</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <!-- plexus -->
     <dependency>
@@ -194,6 +199,21 @@ under the License.
     </dependency>
   </dependencies>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes combine.children="append">
+              <exclude>src/main/resources/js/*</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
   <profiles>
     <profile>
       <id>reporting</id>

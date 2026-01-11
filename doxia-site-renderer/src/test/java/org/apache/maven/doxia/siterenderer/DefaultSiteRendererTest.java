@@ -220,12 +220,14 @@ public class DefaultSiteRendererTest {
 
         SiteRenderingContext ctxt = getSiteRenderingContext(siteModel, "src/test/resources/site", false);
         ctxt.setRootDirectory(getTestFile(""));
-        siteRenderer.render(siteRenderer.locateDocumentFiles(ctxt, true).values(), ctxt, getTestFile(OUTPUT));
+        File outputDirectory = getTestFile(OUTPUT);
+        siteRenderer.render(siteRenderer.locateDocumentFiles(ctxt, true).values(), ctxt, outputDirectory);
 
         ctxt = getSiteRenderingContext(siteModel, "src/test/resources/site-validate", true);
         ctxt.setRootDirectory(getTestFile(""));
-        siteRenderer.render(siteRenderer.locateDocumentFiles(ctxt, true).values(), ctxt, getTestFile(OUTPUT));
+        siteRenderer.render(siteRenderer.locateDocumentFiles(ctxt, true).values(), ctxt, outputDirectory);
 
+        siteRenderer.copyResources(ctxt, outputDirectory);
         // ----------------------------------------------------------------------
         // Verify specific pages
         // ----------------------------------------------------------------------
@@ -240,7 +242,7 @@ public class DefaultSiteRendererTest {
         verifyApt();
         verifyExtensionInFilename();
         verifyNewlines();
-
+        verifyMermaidPage();
         // ----------------------------------------------------------------------
         // Validate the rendering pages
         // ----------------------------------------------------------------------
@@ -437,6 +439,11 @@ public class DefaultSiteRendererTest {
     public void verifyJavascriptPage() throws Exception {
         JavascriptVerifier verifier = new JavascriptVerifier();
         verifier.verify("target/output/javascript.html");
+    }
+
+    private void verifyMermaidPage() throws Exception {
+        MermaidVerifier verifier = new MermaidVerifier();
+        verifier.verify("target/output/mermaid.html");
     }
 
     /**

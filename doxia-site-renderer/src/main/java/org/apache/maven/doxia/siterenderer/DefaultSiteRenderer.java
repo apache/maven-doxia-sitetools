@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -194,6 +195,20 @@ public class DefaultSiteRenderer implements Renderer {
         return filtered;
     }
 
+    /**
+     * Populates the files map with {@link DocumentRenderer}s per output name in parameter {@code files} for all files in the moduleBasedir matching the module extensions,
+     * taking care of duplicates if needed.
+     *
+     * @param rootDir
+     * @param moduleBasedir
+     * @param module
+     * @param excludes
+     * @param files
+     * @param editable
+     * @param skipDuplicates
+     * @throws IOException
+     * @throws RendererException
+     */
     private void addModuleFiles(
             File rootDir,
             File moduleBasedir,
@@ -361,7 +376,9 @@ public class DefaultSiteRenderer implements Renderer {
     public void renderDocument(
             Writer writer, DocumentRenderingContext docRenderingContext, SiteRenderingContext siteContext)
             throws RendererException {
-        SiteRendererSink sink = new SiteRendererSink(docRenderingContext);
+        SiteRendererSink sink = new SiteRendererSink(
+                docRenderingContext,
+                siteContext.getSiteModel() != null ? siteContext.getSiteModel().getMermaid() : null);
 
         File doc = new File(docRenderingContext.getBasedir(), docRenderingContext.getInputName());
 
@@ -858,6 +875,44 @@ public class DefaultSiteRenderer implements Renderer {
                 writer.write("/* You can override this file with your own styles */");
             } finally {
                 IOUtil.close(writer);
+            }
+        }
+
+        if (siteRenderingContext.getSiteModel().getMermaid() != null
+                && siteRenderingContext.getSiteModel().getMermaid().getExternalJsUrl() == null) {
+            if (siteRenderingContext.getSiteModel().getMermaid().isUseTiny()) {
+                // use integrated tiny version of mermaid, which is smaller and faster to load, but has some limitations
+                // (e.g. no sequence diagrams)
+                File mermaidTinyJsFile = new File(outputDirectory, "/js/mermaid-tiny.min.js");
+                if (!mermaidTinyJsFile.exists()) {
+                    mermaidTinyJsFile.getParentFile().mkdirs();
+                    try (InputStream in = DefaultSiteRenderer.class.getResourceAsStream("/js/mermaid-tiny.min.js")) {
+                        if (in == null) {
+                            LOGGER.warn(
+                                    "Could not find the integrated tiny version of Mermaid JS. Mermaid diagrams will not be rendered.");
+                        } else {
+                            try (OutputStream out = new FileOutputStream(mermaidTinyJsFile)) {
+                                IOUtil.copy(in, out);
+                            }
+                        }
+                    }
+                }
+            } else {
+                // use integrated full version of mermaid
+                File mermaidJsFile = new File(outputDirectory, "/js/mermaid.min.js");
+                if (!mermaidJsFile.exists()) {
+                    mermaidJsFile.getParentFile().mkdirs();
+                    try (InputStream in = DefaultSiteRenderer.class.getResourceAsStream("/js/mermaid.min.js")) {
+                        if (in == null) {
+                            LOGGER.warn(
+                                    "Could not find the integrated version of Mermaid JS. Mermaid diagrams will not be rendered.");
+                        } else {
+                            try (OutputStream out = new FileOutputStream(mermaidJsFile)) {
+                                IOUtil.copy(in, out);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

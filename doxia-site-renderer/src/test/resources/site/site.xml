@@ -22,9 +22,9 @@ under the License.
       <!-- A test snippet... -->
 <!-- END SNIPPET: macrotest -->
 
-<site xmlns="http://maven.apache.org/SITE/2.0.0"
+<site xmlns="http://maven.apache.org/SITE/2.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 file:../../../target/generated-site/xsd/site-2.0.0.xsd"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.1.0 ../../../../../doxia-site-model/target/generated-site/resources/xsd/site-2.1.0.xsd"
   name="Plexus">
   <bannerLeft name="Plexus" href="http://plexus.codehaus.org">
     <image src="http://plexus.codehaus.org/images/plexus-logo.png" />
@@ -36,6 +36,8 @@ under the License.
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-fluido-skin</artifactId>
   </skin>
+  <mermaid>
+  </mermaid>
   <body>
     <links>
       <item name="Plexus" href="http://plexus.codehaus.org"/>
