@@ -20,7 +20,6 @@ package org.apache.maven.doxia.siterenderer;
 
 import javax.inject.Inject;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,7 +27,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.io.UncheckedIOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,6 +43,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarOutputStream;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.IOUtils;
@@ -98,38 +105,42 @@ public class DefaultSiteRendererTest {
     @Inject
     private PlexusContainer container;
 
-    private File skinJar = new File(getBasedir(), "target/test-classes/skin.jar");
-
-    private File minimalSkinJar = new File(getBasedir(), "target/test-classes/minimal-skin.jar");
-
     /**
      * @throws java.lang.Exception if something goes wrong.
      */
     @BeforeEach
     protected void setUp() throws Exception {
         siteRenderer = (SiteRenderer) container.lookup(SiteRenderer.class);
+    }
 
-        InputStream skinIS = getClass().getResourceAsStream("velocity-toolmanager.vm");
-        JarOutputStream jarOS = new JarOutputStream(new FileOutputStream(skinJar));
-        try {
-            jarOS.putNextEntry(new ZipEntry("META-INF/maven/site.vm"));
-            IOUtil.copy(skinIS, jarOS);
-            jarOS.closeEntry();
-        } finally {
-            IOUtil.close(skinIS);
-            IOUtil.close(jarOS);
+    private void createJarFromDirectory(Path srcDirectory, Path jarfile) throws IOException {
+        Map<String, String> env = new HashMap<>();
+        env.put("create", "true");
+        try (FileSystem zipfs = FileSystems.newFileSystem(URI.create("jar:" + jarfile.toUri()), env)) {
+            deepCopy(srcDirectory, zipfs);
         }
+    }
 
-        skinIS = new ByteArrayInputStream(
-                "<main id=\"contentBox\">$bodyContent</main>".getBytes(StandardCharsets.UTF_8));
-        jarOS = new JarOutputStream(new FileOutputStream(minimalSkinJar));
-        try {
-            jarOS.putNextEntry(new ZipEntry("META-INF/maven/site.vm"));
-            IOUtil.copy(skinIS, jarOS);
-            jarOS.closeEntry();
-        } finally {
-            IOUtil.close(skinIS);
-            IOUtil.close(jarOS);
+    private void deepCopy(Path src, FileSystem zipfs) throws IOException {
+        try (Stream<Path> stream = Files.walk(src)) {
+            stream.forEach(source -> {
+                try {
+                    // skip root
+                    if (!src.equals(source)) {
+                        Path relativeSrcPath = src.relativize(source);
+                        if (Files.isDirectory(source)) {
+                            Files.createDirectories(zipfs.getPath(relativeSrcPath.toString()));
+                        } else {
+                            Files.copy(
+                                    source,
+                                    zipfs.getPath(relativeSrcPath.toString()),
+                                    StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
         }
     }
 
@@ -212,17 +223,21 @@ public class DefaultSiteRendererTest {
         // Safety
         org.apache.commons.io.FileUtils.deleteDirectory(getTestFile(OUTPUT));
 
+        File minimalSkinJar = new File(getBasedir(), "target/test-classes/minimal-skin.jar");
+        createJarFromDirectory(getTestFile("src/test/resources/skin-minimal").toPath(), minimalSkinJar.toPath());
+
         // ----------------------------------------------------------------------
         // Render the site from src/test/resources/site to OUTPUT
         // ----------------------------------------------------------------------
         SiteModel siteModel =
                 new SiteXpp3Reader().read(new FileInputStream(getTestFile("src/test/resources/site/site.xml")));
 
-        SiteRenderingContext ctxt = getSiteRenderingContext(siteModel, "src/test/resources/site", false);
+        SiteRenderingContext ctxt =
+                getSiteRenderingContext(siteModel, minimalSkinJar, "src/test/resources/site", false);
         ctxt.setRootDirectory(getTestFile(""));
         siteRenderer.render(siteRenderer.locateDocumentFiles(ctxt, true).values(), ctxt, getTestFile(OUTPUT));
 
-        ctxt = getSiteRenderingContext(siteModel, "src/test/resources/site-validate", true);
+        ctxt = getSiteRenderingContext(siteModel, minimalSkinJar, "src/test/resources/site-validate", true);
         ctxt.setRootDirectory(getTestFile(""));
         siteRenderer.render(siteRenderer.locateDocumentFiles(ctxt, true).values(), ctxt, getTestFile(OUTPUT));
 
@@ -296,7 +311,13 @@ public class DefaultSiteRendererTest {
     void velocityToolManagerForSkin() throws Exception {
         StringWriter writer = new StringWriter();
 
-        File skinFile = skinJar;
+        File skinFile = new File(getBasedir(), "target/test-classes/skin.jar");
+        try (InputStream skinIS = getClass().getResourceAsStream("velocity-toolmanager.vm");
+                JarOutputStream jarOS = new JarOutputStream(new FileOutputStream(skinFile))) {
+            jarOS.putNextEntry(new ZipEntry("META-INF/maven/site.vm"));
+            IOUtil.copy(skinIS, jarOS);
+            jarOS.closeEntry();
+        }
 
         Map<String, Object> attributes = new HashMap<>();
 
@@ -362,9 +383,29 @@ public class DefaultSiteRendererTest {
         assertEquals(expectedOutputFiles, outputFiles);
     }
 
-    private SiteRenderingContext getSiteRenderingContext(SiteModel siteModel, String siteDir, boolean validate)
+    @Test
+    void copyResourcesConditionally() throws Exception {
+        File skinJar = new File(getBasedir(), "target/test-classes/skin-with-conditional-resources.jar");
+        createJarFromDirectory(
+                getTestFile("src/test/resources/skin-with-conditional-resources")
+                        .toPath(),
+                skinJar.toPath());
+
+        SiteModel siteModel =
+                new SiteXpp3Reader().read(new FileInputStream(getTestFile("src/test/resources/site/site.xml")));
+        SiteRenderingContext context = getSiteRenderingContext(siteModel, skinJar, "src/test/resources/site", false);
+        File sourceDirectory = getTestFile("src/test/resources/site-validate");
+        context.setRootDirectory(sourceDirectory);
+        Path outputDirectory = Files.createTempDirectory("site-output-");
+        siteRenderer.copyResources(context, outputDirectory.toFile());
+        assertTrue(Files.exists(outputDirectory.resolve("js/include.js")));
+        assertTrue(Files.exists(outputDirectory.resolve("js/include2.js")));
+        assertFalse(Files.exists(outputDirectory.resolve("js/exclude.js")));
+    }
+
+    private SiteRenderingContext getSiteRenderingContext(
+            SiteModel siteModel, File skinFile, String siteDir, boolean validate)
             throws RendererException, IOException {
-        File skinFile = minimalSkinJar;
 
         final Map<String, String> attributes = new HashMap<>();
         attributes.put("outputEncoding", "UTF-8");

@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -66,12 +67,14 @@ import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.parser.module.ParserModule;
 import org.apache.maven.doxia.parser.module.ParserModuleManager;
 import org.apache.maven.doxia.site.SiteModel;
+import org.apache.maven.doxia.site.skin.ResourceCondition;
 import org.apache.maven.doxia.site.skin.SkinModel;
 import org.apache.maven.doxia.site.skin.io.xpp3.SkinXpp3Reader;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext.SiteDirectory;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.util.XmlValidator;
 import org.apache.velocity.Template;
+import org.apache.velocity.app.Velocity;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
@@ -520,29 +523,30 @@ public class DefaultSiteRenderer implements Renderer {
     /**
      * Create a Velocity Context for a Doxia document, containing every information about rendered document.
      *
-     * @param docRenderingContext the document's rendering context
+     * @param docRenderingContext the document's rendering context (may be null in which case the context does not contain document specific information)
      * @param siteRenderingContext the site rendering context
      * @return a Velocity tools managed context
      */
     protected Context createDocumentVelocityContext(
             DocumentRenderingContext docRenderingContext, SiteRenderingContext siteRenderingContext) {
         Context context = createToolManagedVelocityContext(siteRenderingContext);
-        // ----------------------------------------------------------------------
-        // Data objects
-        // ----------------------------------------------------------------------
+        if (docRenderingContext != null) {
+            // ----------------------------------------------------------------------
+            // Data objects
+            // ----------------------------------------------------------------------
 
-        context.put("relativePath", docRenderingContext.getRelativePath());
+            context.put("relativePath", docRenderingContext.getRelativePath());
 
-        String currentFilePath = docRenderingContext.getOutputName();
-        context.put("currentFilePath", currentFilePath);
-        // TODO Deprecated -- will be removed!
-        context.put("currentFileName", currentFilePath);
+            String currentFilePath = docRenderingContext.getOutputName();
+            context.put("currentFilePath", currentFilePath);
+            // TODO Deprecated -- will be removed!
+            context.put("currentFileName", currentFilePath);
 
-        String alignedFilePath = PathTool.calculateLink(currentFilePath, docRenderingContext.getRelativePath());
-        context.put("alignedFilePath", alignedFilePath);
-        // TODO Deprecated -- will be removed!
-        context.put("alignedFileName", alignedFilePath);
-
+            String alignedFilePath = PathTool.calculateLink(currentFilePath, docRenderingContext.getRelativePath());
+            context.put("alignedFilePath", alignedFilePath);
+            // TODO Deprecated -- will be removed!
+            context.put("alignedFileName", alignedFilePath);
+        }
         context.put("site", siteRenderingContext.getSiteModel());
         // TODO Deprecated -- will be removed!
         context.put("decoration", siteRenderingContext.getSiteModel());
@@ -802,6 +806,8 @@ public class DefaultSiteRenderer implements Renderer {
     public void copyResources(SiteRenderingContext siteRenderingContext, File outputDirectory) throws IOException {
         ZipFile file = getZipFile(siteRenderingContext.getSkin().getFile());
 
+        Context velocityContext = createDocumentVelocityContext(null, siteRenderingContext);
+        Map<String, String> resourceConditions = createResourceConditionsMap(siteRenderingContext.getSkinModel());
         try {
             for (Enumeration<? extends ZipEntry> e = file.entries(); e.hasMoreElements(); ) {
                 ZipEntry entry = e.nextElement();
@@ -814,7 +820,9 @@ public class DefaultSiteRenderer implements Renderer {
                             // resource
                             continue;
                         }
-
+                        if (!isResourceRelevant(entry.getName(), velocityContext, resourceConditions)) {
+                            continue;
+                        }
                         destFile.getParentFile().mkdirs();
 
                         copyFileFromZip(file, entry, destFile);
@@ -860,6 +868,37 @@ public class DefaultSiteRenderer implements Renderer {
                 IOUtil.close(writer);
             }
         }
+    }
+
+    private boolean isResourceRelevant(String name, Context velocityContext, Map<String, String> resourceConditions) {
+        if (resourceConditions == null || !resourceConditions.containsKey(name)) {
+            LOGGER.debug("No condition for resource: " + name);
+        } else {
+            String condition = resourceConditions.get(name);
+            LOGGER.debug("Evaluating condition for resource: " + name + " with condition: " + condition);
+            StringWriter writer = new StringWriter();
+            Velocity.evaluate(velocityContext, writer, "conditional-resource-evaluation", condition);
+            String result = writer.toString().trim();
+            LOGGER.debug("Condition evaluation result: " + result);
+            if (!Boolean.parseBoolean(result)) {
+                LOGGER.debug("Excluding resource: " + name);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Map<String, String> createResourceConditionsMap(SkinModel skinModel) {
+        Map<String, String> resourceConditions = new HashMap<>();
+        if (skinModel != null && skinModel.getResourceConditions() != null) {
+            for (ResourceCondition resource : skinModel.getResourceConditions()) {
+                if (resource.getVtlCondition() != null
+                        && !resource.getVtlCondition().isEmpty()) {
+                    resourceConditions.put(resource.getResourceName(), resource.getVtlCondition());
+                }
+            }
+        }
+        return resourceConditions;
     }
 
     private static void copyFileFromZip(ZipFile file, ZipEntry entry, File destFile) throws IOException {
