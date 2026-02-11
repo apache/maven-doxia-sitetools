@@ -332,7 +332,7 @@ under the License.
       <fields>
         <field xml.attribute="true">
           <name>position</name>
-          <description>Where to place the date published (left, right, navigation-top, navigation-bottom, bottom).</description>
+          <description>Where to place the date published ("left", "right", "navigation-top", "navigation-bottom", "bottom" or "none" to hide it).</description>
           <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
@@ -369,7 +369,7 @@ under the License.
       <fields>
         <field xml.attribute="true">
           <name>position</name>
-          <description>Where to place the version published (left, right, navigation-top, navigation-bottom, bottom).</description>
+          <description>Where to place the version published ("left", "right", "navigation-top", "navigation-bottom", "bottom" or "none" to hide it).</description>
           <version>1.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
