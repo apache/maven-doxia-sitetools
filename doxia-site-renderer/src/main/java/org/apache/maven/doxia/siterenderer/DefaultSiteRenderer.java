@@ -566,7 +566,7 @@ public class DefaultSiteRenderer implements Renderer {
     /**
      * Create a Velocity Context for a Doxia document, containing every information about rendered document.
      *
-     * @param docRenderingContext the document's rendering context (may be null in which case the context does not contain document specific information)
+     * @param docRenderingContext the document's rendering context (may be {@code null} in which case the context does not contain document-specific information)
      * @param siteRenderingContext the site rendering context
      * @return a Velocity tools managed context
      */
