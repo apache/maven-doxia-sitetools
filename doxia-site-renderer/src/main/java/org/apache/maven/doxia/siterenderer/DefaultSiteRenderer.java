@@ -941,16 +941,16 @@ public class DefaultSiteRenderer implements Renderer {
 
     private boolean isResourceRelevant(String name, Context velocityContext, Map<String, String> resourceConditions) {
         if (resourceConditions == null || !resourceConditions.containsKey(name)) {
-            LOGGER.debug("No condition for resource: " + name);
+            LOGGER.debug("No condition for resource: {}", name);
         } else {
             String condition = resourceConditions.get(name);
-            LOGGER.debug("Evaluating condition for resource: " + name + " with condition: " + condition);
+            LOGGER.debug("Evaluating condition for resource: {} with condition: {}", name, condition);
             StringWriter writer = new StringWriter();
             Velocity.evaluate(velocityContext, writer, "conditional-resource-evaluation", condition);
             String result = writer.toString().trim();
-            LOGGER.debug("Condition evaluation result: " + result);
+            LOGGER.debug("Condition evaluation result: {}", result);
             if (!Boolean.parseBoolean(result)) {
-                LOGGER.debug("Excluding resource: " + name);
+                LOGGER.debug("Excluding resource: {}", name);
                 return false;
             }
         }
@@ -959,11 +959,12 @@ public class DefaultSiteRenderer implements Renderer {
 
     private Map<String, String> createResourceConditionsMap(SkinModel skinModel) {
         Map<String, String> resourceConditions = new HashMap<>();
-        if (skinModel != null && skinModel.getResourceConditions() != null) {
-            for (ResourceCondition resource : skinModel.getResourceConditions()) {
-                if (resource.getVtlCondition() != null
-                        && !resource.getVtlCondition().isEmpty()) {
-                    resourceConditions.put(resource.getResourceName(), resource.getVtlCondition());
+        for (ResourceCondition resource : skinModel.getResourceConditions()) {
+            if (resource.getVtlCondition() != null
+                    && !resource.getVtlCondition().isEmpty()) {
+                for (String resourceName : resource.getResourceNames()) {
+                    LOGGER.debug("Adding condition for resource: {} with condition: {}", resourceName, resource.getVtlCondition());
+                    resourceConditions.put(resourceName, resource.getVtlCondition());
                 }
             }
         }

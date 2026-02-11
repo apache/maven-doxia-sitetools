@@ -26,11 +26,16 @@ under the License.
   </prerequisites>
   <resource-conditions>
       <resource-condition>
-        <resource-name>js/exclude.js</resource-name>
+        <resource-names>
+          <resource-name>js/exclude.js</resource-name>
+        </resource-names>
         <vtl-condition>false</vtl-condition>
       </resource-condition>
       <resource-condition>
-        <resource-name>js/include2.js</resource-name>
+        <resource-names>
+          <resource-name>js/include2.js</resource-name>
+          <resource-name>js/include3.js</resource-name>
+        </resource-names>
         <vtl-condition><![CDATA[$site.getCustomValue( 'fluidoSkin.sourceLineNumbersEnabled', 'false' )]]></vtl-condition>
       </resource-condition>
   </resource-conditions>

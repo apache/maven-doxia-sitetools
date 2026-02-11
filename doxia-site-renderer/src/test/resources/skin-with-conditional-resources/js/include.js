@@ -1,1 +1,1 @@
-// must be copied
+// must be copied (unconditionally)

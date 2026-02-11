@@ -112,12 +112,15 @@ under the License.
       <version>2.1.0+</version>
       <description>Describes the condition for including a specific Skin resource.</description>
       <fields>
-        <field xml.tagName="resource-name">
-          <name>resourceName</name>
+        <field xml.tagName="resource-names">
+          <name>resourceNames</name>
           <version>2.1.0+</version>
-          <type>String</type>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
           <description><![CDATA[
-            The name of the resource to which this condition applies. Refers to the path within the JAR (i.e. must always use "/" as separator and must not start with a slash).
+            A list of names of resources to which this condition applies. Refers to the relative path within the JAR (i.e. must always use "/" as separator and must not start with a slash).
             ]]>
           </description>
           <required>true</required>

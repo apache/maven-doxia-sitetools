@@ -429,6 +429,7 @@ public class DefaultSiteRendererTest {
         siteRenderer.copyResources(context, outputDirectory.toFile());
         assertTrue(Files.exists(outputDirectory.resolve("js/include.js")));
         assertTrue(Files.exists(outputDirectory.resolve("js/include2.js")));
+        assertTrue(Files.exists(outputDirectory.resolve("js/include3.js")));
         assertFalse(Files.exists(outputDirectory.resolve("js/exclude.js")));
     }
 
