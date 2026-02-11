@@ -963,7 +963,10 @@ public class DefaultSiteRenderer implements Renderer {
             if (resource.getVtlCondition() != null
                     && !resource.getVtlCondition().isEmpty()) {
                 for (String resourceName : resource.getResourceNames()) {
-                    LOGGER.debug("Adding condition for resource: {} with condition: {}", resourceName, resource.getVtlCondition());
+                    LOGGER.debug(
+                            "Adding condition for resource: {} with condition: {}",
+                            resourceName,
+                            resource.getVtlCondition());
                     resourceConditions.put(resourceName, resource.getVtlCondition());
                 }
             }
