@@ -110,7 +110,7 @@ under the License.
     <class java.clone="deep">
       <name>ResourceCondition</name>
       <version>2.1.0+</version>
-      <description>Describes the condition for including a specific Skin resource.</description>
+      <description>Describes the condition for including a specific Skin resource. If multiple conditions are defined for a single resource only the first matching condition determines the outcome. Resources not matching a condition will always be included.</description>
       <fields>
         <field xml.tagName="resource-names">
           <name>resourceNames</name>

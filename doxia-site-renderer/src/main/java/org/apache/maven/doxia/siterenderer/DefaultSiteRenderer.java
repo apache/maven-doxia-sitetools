@@ -963,6 +963,12 @@ public class DefaultSiteRenderer implements Renderer {
             if (resource.getVtlCondition() != null
                     && !resource.getVtlCondition().isEmpty()) {
                 for (String resourceName : resource.getResourceNames()) {
+                    if (resourceConditions.containsKey(resourceName)) {
+                        LOGGER.warn(
+                                "Multiple conditions found for resource '{}'. Only the first one will be used.",
+                                resourceName);
+                        continue;
+                    }
                     LOGGER.debug(
                             "Adding condition for resource: {} with condition: {}",
                             resourceName,
