@@ -95,7 +95,11 @@ public class MermaidVerifier extends AbstractVerifier {
             assertEquals(2, scripts.getLength());
 
             // first one is the external Mermaid script,
-            scripts.get(0).getAttribute("src").equals("./js/mermaid.min.js");
+            String scriptSrc = scripts.get(0).getAttribute("src");
+            assertTrue(scriptSrc.contains("mermaid"));
+            // check if file exists in site
+            File scriptFile = new File(jsTest.getParentFile(), scriptSrc).getCanonicalFile();
+            assertTrue(scriptFile.exists(), "Couldn't find referenced Mermaid file: " + scriptFile);
 
             // second one is the inline script to call the Mermaid API
             scripts.get(1).asNormalizedText().trim().contains("mermaid.initialize");

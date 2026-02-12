@@ -28,6 +28,7 @@ import org.apache.maven.doxia.module.xhtml5.Xhtml5Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.sink.impl.SinkEventAttributeSet;
 import org.apache.maven.doxia.site.MermaidConfiguration;
+import org.apache.maven.doxia.siterenderer.DefaultSiteRenderer;
 import org.apache.maven.doxia.siterenderer.DocumentContent;
 import org.apache.maven.doxia.siterenderer.DocumentRenderingContext;
 
@@ -182,13 +183,14 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
         } else {
             write("\n<script src=\"");
             write(docRenderingContext.getRelativePath());
+
             if (mermaidConfig.isUseTiny()) {
                 // use integrated tiny version of mermaid, which is smaller and faster to load, but has some limitations
                 // (e.g. no sequence diagrams)
-                write("/js/mermaid.tiny.min.js");
+                write("/js/mermaid-" + DefaultSiteRenderer.MERMAID_VERSION + ".tiny.min.js");
             } else {
                 // use integrated full version of mermaid, which is larger and slower to load, but has all features
-                write("/js/mermaid.min.js");
+                write("/js/mermaid-" + DefaultSiteRenderer.MERMAID_VERSION + ".min.js");
             }
             write("\"></script>\n");
         }

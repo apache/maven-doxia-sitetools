@@ -146,6 +146,32 @@ public class DefaultSiteRenderer implements Renderer {
 
     private static final String DOXIA_SITE_RENDERER_VERSION = getSiteRendererVersion();
 
+    public static final String MERMAID_VERSION;
+
+    static {
+        try {
+            MERMAID_VERSION = getMavenProjectProperties().getProperty("mermaidVersion");
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load mermaid version from properties", e);
+        }
+    }
+
+    /**
+     * Properties contain some resolved properties from this project's Maven model
+     * @return some resolved Maven project properties
+     * @throws IOException in case the underlying file could not be accessed
+     */
+    static Properties getMavenProjectProperties() throws IOException {
+        final Properties properties = new Properties();
+        try (InputStream input = DefaultSiteRenderer.class.getResourceAsStream("/maven-project.properties")) {
+            if (input == null) {
+                throw new IOException("Could not find \"/maven-project.properties\" in classpath");
+            }
+            properties.load(input);
+        }
+        return properties;
+    }
+
     // ----------------------------------------------------------------------
     // SiteRenderer implementation
     // ----------------------------------------------------------------------
@@ -880,38 +906,26 @@ public class DefaultSiteRenderer implements Renderer {
 
         if (siteRenderingContext.getSiteModel().getMermaid() != null
                 && siteRenderingContext.getSiteModel().getMermaid().getExternalJsUrl() == null) {
+            final String name;
             if (siteRenderingContext.getSiteModel().getMermaid().isUseTiny()) {
                 // use integrated tiny version of mermaid, which is smaller and faster to load, but has some limitations
                 // (e.g. no sequence diagrams)
-                File mermaidTinyJsFile = new File(outputDirectory, "/js/mermaid-tiny.min.js");
-                if (!mermaidTinyJsFile.exists()) {
-                    mermaidTinyJsFile.getParentFile().mkdirs();
-                    try (InputStream in = DefaultSiteRenderer.class.getResourceAsStream("/js/mermaid-tiny.min.js")) {
-                        if (in == null) {
-                            LOGGER.warn(
-                                    "Could not find the integrated tiny version of Mermaid JS. Mermaid diagrams will not be rendered.");
-                        } else {
-                            try (OutputStream out = new FileOutputStream(mermaidTinyJsFile)) {
-                                IOUtil.copy(in, out);
-                            }
-                        }
-                    }
-                }
+                name = "/js/mermaid-" + MERMAID_VERSION + ".tiny.min.js";
             } else {
-                // use integrated full version of mermaid
-                File mermaidJsFile = new File(outputDirectory, "/js/mermaid.min.js");
-                if (!mermaidJsFile.exists()) {
-                    mermaidJsFile.getParentFile().mkdirs();
-                    try (InputStream in = DefaultSiteRenderer.class.getResourceAsStream("/js/mermaid.min.js")) {
-                        if (in == null) {
-                            LOGGER.warn(
-                                    "Could not find the integrated version of Mermaid JS. Mermaid diagrams will not be rendered.");
-                        } else {
-                            try (OutputStream out = new FileOutputStream(mermaidJsFile)) {
-                                IOUtil.copy(in, out);
-                            }
-                        }
-                    }
+                name = "/js/mermaid-" + MERMAID_VERSION + ".min.js";
+            }
+            copyFileFromResource(name, new File(outputDirectory, name));
+        }
+    }
+
+    private static void copyFileFromResource(String name, File destFile) throws IOException {
+        destFile.getParentFile().mkdirs();
+        try (InputStream in = DefaultSiteRenderer.class.getResourceAsStream(name)) {
+            if (in == null) {
+                throw new IllegalArgumentException("Could not find the resource with name " + name);
+            } else {
+                try (OutputStream out = new FileOutputStream(destFile)) {
+                    IOUtil.copy(in, out);
                 }
             }
         }

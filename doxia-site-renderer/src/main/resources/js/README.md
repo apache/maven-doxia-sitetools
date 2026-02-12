@@ -1,4 +1,6 @@
-The mermaid JS files have been downloaded from
+# Mermaid 
+
+The Mermaid JS files have been downloaded from
 
 - <https://www.jsdelivr.com/package/npm/mermaid>
 - <https://www.jsdelivr.com/package/npm/@mermaid-js/tiny>
