@@ -112,15 +112,15 @@ under the License.
       <version>2.1.0+</version>
       <description>Describes the condition for including a specific Skin resource. If multiple conditions are defined for a single resource only the first matching condition determines the outcome. Resources not matching a condition will always be included.</description>
       <fields>
-        <field xml.tagName="resource-names">
+        <field xml.tagName="resource-name">
           <name>resourceNames</name>
           <version>2.1.0+</version>
-          <association>
+          <association xml.itemsStyle="flat">
             <type>String</type>
             <multiplicity>*</multiplicity>
           </association>
           <description><![CDATA[
-            A list of names of resources to which this condition applies. Refers to the relative path within the JAR (i.e. must always use "/" as separator and must not start with a slash).
+            A resource name to which this condition applies. Refers to the relative path within the JAR (i.e. must always use "/" as separator and must not start with a slash). Multiple resource names can be specified sharing the same condition.
             ]]>
           </description>
           <required>true</required>
