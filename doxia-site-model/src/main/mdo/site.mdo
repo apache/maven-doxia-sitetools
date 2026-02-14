@@ -573,12 +573,12 @@ under the License.
 
     <class java.clone="deep">
       <name>Image</name>
-      <description>An image.</description>
+      <description>An image. Generates an "img" element (https://html.spec.whatwg.org/#the-img-element).</description>
       <version>2.0.0+</version>
       <fields>
         <field xml.attribute="true">
           <name>src</name>
-          <description>The source location.</description>
+          <description>The source location. Ends up in the "img src" attribute (https://html.spec.whatwg.org/#attr-img-src).</description>
           <version>2.0.0+</version>
           <type>String</type>
           <required>true</required>
@@ -594,28 +594,28 @@ under the License.
         </field>
         <field xml.attribute="true">
           <name>alt</name>
-          <description>The alternative text to use.</description>
+          <description>The alternative text to use. Ends up in the "img alt" attribute (https://html.spec.whatwg.org/#alt).(</description>
           <version>2.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field xml.attribute="true">
           <name>width</name>
-          <description>The width to use.</description>
+          <description>The width to use. Added to the generated "img style" attribute (https://html.spec.whatwg.org/#the-style-attribute) prefixed by "width: ".</description>
           <version>2.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field xml.attribute="true">
           <name>height</name>
-          <description>The height to use.</description>
+          <description>The height to use. Added to the generated "img style" attribute (https://html.spec.whatwg.org/#the-style-attribute) prefixed by "height: ".</description>
           <version>2.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field xml.attribute="true">
           <name>style</name>
-          <description>The style to use.</description>
+          <description>The style to use. Ends up in the "img style" attribute (https://html.spec.whatwg.org/#the-style-attribute) as is.</description>
           <version>2.0.0+</version>
           <type>String</type>
           <identifier>true</identifier>
