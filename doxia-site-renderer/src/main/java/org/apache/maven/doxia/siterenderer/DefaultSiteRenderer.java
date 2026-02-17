@@ -905,7 +905,7 @@ public class DefaultSiteRenderer implements Renderer {
         }
 
         if (siteRenderingContext.getSiteModel().getMermaid() != null
-                && siteRenderingContext.getSiteModel().getMermaid().getExternalJsUrl() == null) {
+                && siteRenderingContext.getSiteModel().getMermaid().getExternalJs() == null) {
             final String name;
             if (siteRenderingContext.getSiteModel().getMermaid().isUseTiny()) {
                 // use integrated tiny version of mermaid, which is smaller and faster to load, but has some limitations

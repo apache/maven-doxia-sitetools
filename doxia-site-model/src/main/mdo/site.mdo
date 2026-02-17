@@ -662,17 +662,19 @@ under the License.
         </field>
       </fields>
     </class>
-    
+
     <class java.clone="deep">
       <name>MermaidConfiguration</name>
       <description>The configuration used for rendering Mermaid diagrams (https://mermaid.js.org/) on client-side.</description>
       <version>2.1.0+</version>
       <fields>
-        <field xml.attribute="true">
-          <name>externalJsUrl</name>
+        <field xml.tagName="externalJsUrl">
+          <name>externalJs</name>
           <description>The URL from which to request the Mermaid.js used for rendering the diagrams. If not set an embedded version of Mermaid is used (which is automatically deployed to the site).</description>
           <version>2.1.0+</version>
-          <type>String</type>
+          <association>
+            <type>ExternalJs</type>
+          </association>
           <required>false</required>
           <identifier>true</identifier>
         </field>
@@ -693,6 +695,65 @@ under the License.
           <identifier>true</identifier>
         </field>
       </fields>
+    </class>
+
+    <class java.clone="deep">
+      <name>ExternalJs</name>
+      <description>The configuration of an external JS file to be embedded in the HTML. Leads to an inclusion via the "script" element.</description>
+      <version>2.1.0+</version>
+      <fields>
+        <field xml.content="true">
+          <name>URL</name>
+          <description>The URL to include via "script" element with its "src" attribute in the HTML.</description>
+          <type>String</type>
+          <required>true</required>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>integrity</name>
+          <description>The integrity hash to use for the external JS file emitted in the "script" element's "integrity" attribute. Its semantics are described in https://w3c.github.io/webappsec-subresource-integrity/</description>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>referrerpolicy</name>
+          <description>The crossorigin attribute to use for the external JS file. Its semantics are described in https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/crossorigin</description>
+          <type>String</type>
+          <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true">
+          <name>otherAttributes</name>
+          <description>Other attributes to include in the "script" element for this external JS file, in the form of a whitespace separated list of key=value pairs. The keys and values will be included as-is in the generated "script" element, without any validation.</description>
+          <type>String</type> 
+          <identifier>true</identifier>
+        </field>
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <version>2.1.0+</version>
+          <code><![CDATA[
+    /**
+     * @return the "script" element to include in the HTML for this external JS file.
+     */
+    public String asScriptTag() {
+        StringBuilder sb = new StringBuilder();
+        sb.append( "<script src=\"" ).append( URL ).append( "\"" );
+        if ( integrity != null ) {
+            sb.append( " integrity=\"" ).append( integrity ).append( "\"" );
+            sb.append( " crossorigin=\"anonymous\"" );
+        }
+        if ( referrerpolicy != null ) {
+            sb.append( " referrerpolicy=\"" ).append( referrerpolicy ).append( "\"" );
+        }
+        if ( otherAttributes != null ) {
+            sb.append( " " ).append( otherAttributes );
+        }
+        sb.append( "></script>" );
+        return sb.toString();
+     }
+]]></code>
+        </codeSegment>
+      </codeSegments>
     </class>
   </classes>
 </model>

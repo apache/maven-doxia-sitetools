@@ -195,7 +195,7 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
             String buffer = verbatimBuffer.toString();
             if (stripCodeElement) {
                 // remove code element and instead add attributes to the parent element <pre> to prevent the skin from
-                // adding code hightlighting/line numbers, which breaks Mermaid rendering
+                // adding code highlighting/line numbers, which breaks Mermaid rendering
                 buffer = buffer.replaceFirst("<pre><code([^>]*)>", "<pre$1>");
             }
             verbatimBuffer = null;
@@ -226,8 +226,8 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
      * @see <a href="https://mermaid.ai/open-source/intro/getting-started.html#_4-calling-the-mermaid-javascript-api">Calling the Mermaid JavaScript API</a>
      */
     private void writeMermaidScript() {
-        if (mermaidConfig.getExternalJsUrl() != null) {
-            write("\n<script src=\"" + mermaidConfig.getExternalJsUrl() + "\"></script>\n");
+        if (mermaidConfig.getExternalJs() != null) {
+            write(mermaidConfig.getExternalJs().asScriptTag());
         } else {
             write("\n<script src=\"");
             write(docRenderingContext.getRelativePath());
