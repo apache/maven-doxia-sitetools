@@ -27,6 +27,7 @@ import org.apache.maven.doxia.markup.HtmlMarkup;
 import org.apache.maven.doxia.module.xhtml5.Xhtml5Sink;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.sink.impl.SinkEventAttributeSet;
+import org.apache.maven.doxia.sink.impl.SinkUtils;
 import org.apache.maven.doxia.site.MermaidConfiguration;
 import org.apache.maven.doxia.siterenderer.DefaultSiteRenderer;
 import org.apache.maven.doxia.siterenderer.DocumentContent;
@@ -48,6 +49,9 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
     private List<String> authors = new ArrayList<>();
 
     private final StringWriter headWriter;
+
+    /** Buffer inside verbatim elements to potentially remove enclosed code elements for Mermaid diagrams */
+    private StringBuilder verbatimBuffer;
 
     private final Writer writer;
 
@@ -141,8 +145,23 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
     public void verbatim(SinkEventAttributes attributes) {
         if (mermaidConfig != null && normalizeClassAttributesForMermaid(attributes)) {
             containsMermaidDiagram = true;
+            // remove the decoration code for Mermaid diagrams (otherwise Skins may add line numbers to the code
+            // element, which breaks Mermaid rendering)
+            SinkEventAttributes filteredAttributes = (SinkEventAttributes)
+                    SinkUtils.filterAttributes(attributes, new String[] {SinkEventAttributes.DECORATION});
+            super.verbatim(filteredAttributes);
+        } else {
+            // write subsequent verbatim content to a buffer, to be able to detect Mermaid diagrams in it and remove
+            // code element if needed
+            verbatimBuffer = new StringBuilder();
+            super.verbatim(attributes);
         }
-        super.verbatim(attributes);
+    }
+
+    @Override
+    public void verbatim_() {
+        flushVerbatimBuffer(false);
+        super.verbatim_();
     }
 
     @Override
@@ -151,8 +170,37 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
                 && mermaidConfig != null
                 && normalizeClassAttributesForMermaid(attributes)) {
             containsMermaidDiagram = true;
+            // writes to buffer
+            super.inline(attributes);
+            // remove code element from inline stack to prevent closing it
+            inlineStack.pop();
+            flushVerbatimBuffer(true);
+        } else {
+            flushVerbatimBuffer(false);
+            super.inline(attributes);
         }
-        super.inline(attributes);
+    }
+
+    @Override
+    public void inline_() {
+        // prevent against EmptyStackException in case of unbalanced inline tags (when code element is removed for
+        // Mermaid diagrams)
+        if (!inlineStack.isEmpty()) {
+            super.inline_();
+        }
+    }
+
+    private void flushVerbatimBuffer(boolean stripCodeElement) {
+        if (verbatimBuffer != null) {
+            String buffer = verbatimBuffer.toString();
+            if (stripCodeElement) {
+                // remove code element and instead add attributes to the parent element <pre> to prevent the skin from
+                // adding code hightlighting/line numbers, which breaks Mermaid rendering
+                buffer = buffer.replaceFirst("<pre><code([^>]*)>", "<pre$1>");
+            }
+            verbatimBuffer = null;
+            write(buffer);
+        }
     }
 
     /**
@@ -264,6 +312,10 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
             }
         }
 
+        if (verbatimBuffer != null) {
+            verbatimBuffer.append(unifyEOLs(txt));
+            return;
+        }
         super.write(txt);
     }
 

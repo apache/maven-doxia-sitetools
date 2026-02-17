@@ -209,8 +209,9 @@ public class DefaultSiteRendererTest {
      */
     @Test
     void render() throws Exception {
+        File outputDirectory = getTestFile(OUTPUT);
         // Safety
-        org.apache.commons.io.FileUtils.deleteDirectory(getTestFile(OUTPUT));
+        org.apache.commons.io.FileUtils.deleteDirectory(outputDirectory);
 
         // ----------------------------------------------------------------------
         // Render the site from src/test/resources/site to OUTPUT
@@ -220,7 +221,6 @@ public class DefaultSiteRendererTest {
 
         SiteRenderingContext ctxt = getSiteRenderingContext(siteModel, "src/test/resources/site", false);
         ctxt.setRootDirectory(getTestFile(""));
-        File outputDirectory = getTestFile(OUTPUT);
         siteRenderer.render(siteRenderer.locateDocumentFiles(ctxt, true).values(), ctxt, outputDirectory);
 
         ctxt = getSiteRenderingContext(siteModel, "src/test/resources/site-validate", true);

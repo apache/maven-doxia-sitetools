@@ -103,6 +103,15 @@ public class MermaidVerifier extends AbstractVerifier {
 
             // second one is the inline script to call the Mermaid API
             scripts.get(1).asNormalizedText().trim().contains("mermaid.initialize");
+
+            // code element should have been removed
+            DomNodeList<DomElement> codes = page.getElementsByTagName("code");
+            assertEquals(0, codes.getLength(), "code element should have been removed");
+
+            // pre must carry the correct class attribute
+            DomNodeList<DomElement> pres = page.getElementsByTagName("pre");
+            assertEquals(1, pres.getLength(), "there should be exactly one pre element");
+            assertEquals("mermaid", pres.get(0).getAttribute("class"));
         }
     }
 }
