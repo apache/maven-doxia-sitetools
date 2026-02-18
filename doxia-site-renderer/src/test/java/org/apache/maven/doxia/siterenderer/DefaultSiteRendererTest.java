@@ -242,11 +242,38 @@ public class DefaultSiteRendererTest {
         verifyApt();
         verifyExtensionInFilename();
         verifyNewlines();
-        verifyMermaidPage();
+        verifyMermaidPage(null);
         // ----------------------------------------------------------------------
         // Validate the rendering pages
         // ----------------------------------------------------------------------
         validatePages();
+    }
+
+    void renderDocument(
+            SiteRenderingContext context, String baseDir, String document, String extension, String parserId)
+            throws Exception {
+        File outputDirectory = getTestFile(OUTPUT);
+        // Safety
+        org.apache.commons.io.FileUtils.deleteDirectory(outputDirectory);
+
+        DocumentRenderingContext docRenderingContext =
+                new DocumentRenderingContext(getTestFile(baseDir), baseDir, document, parserId, extension, false);
+        DocumentRenderer docRenderer = new DoxiaDocumentRenderer(docRenderingContext);
+
+        siteRenderer.render(Collections.singletonList(docRenderer), context, outputDirectory);
+        siteRenderer.copyResources(context, outputDirectory);
+    }
+
+    @Test
+    void mermaidWithExternalJs() throws Exception {
+        SiteModel siteModel = new SiteXpp3Reader()
+                .read(new FileInputStream(getTestFile("src/test/resources/site-mermaid-externaljs/site.xml")));
+        SiteRenderingContext context = getSiteRenderingContext(siteModel, "src/test/resources/site", false);
+
+        renderDocument(context, "src/test/resources/site/markdown", "mermaid.md", "md", "markdown");
+
+        verifyMermaidPage(
+                "<script src=\"https://cdn.jsdelivr.net/npm/mermaid@11.12.3/dist/mermaid.min.js\" integrity=\"sha512-/yppbXbmq0NnMz+OhfzrvQDSePwPAixE8Ywi8U7KayJPv5ZFVYo7bzBgkR5V6OQ/8YHEh/gPMarWD+6ZIuNj5A==\" crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\" fetchpriority=\"high\"></script>");
     }
 
     @Test
@@ -441,8 +468,8 @@ public class DefaultSiteRendererTest {
         verifier.verify("target/output/javascript.html");
     }
 
-    private void verifyMermaidPage() throws Exception {
-        MermaidVerifier verifier = new MermaidVerifier();
+    private void verifyMermaidPage(String externalJsScript) throws Exception {
+        MermaidVerifier verifier = new MermaidVerifier(externalJsScript);
         verifier.verify("target/output/mermaid.html");
     }
 

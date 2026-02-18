@@ -44,6 +44,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Verify client side rendering of Mermaid diagrams.
  */
 public class MermaidVerifier extends AbstractVerifier {
+
+    private final String externalJsScript;
+
+    public MermaidVerifier(String externalJsScript) {
+        this.externalJsScript = externalJsScript;
+    }
+
     /**
      * Verifies a HtmlPage.
      *
@@ -97,9 +104,14 @@ public class MermaidVerifier extends AbstractVerifier {
             // first one is the external Mermaid script,
             String scriptSrc = scripts.get(0).getAttribute("src");
             assertTrue(scriptSrc.contains("mermaid"));
-            // check if file exists in site
-            File scriptFile = new File(jsTest.getParentFile(), scriptSrc).getCanonicalFile();
-            assertTrue(scriptFile.exists(), "Couldn't find referenced Mermaid file: " + scriptFile);
+
+            if (externalJsScript != null) {
+                assertEquals(externalJsScript, scripts.get(0).asXml());
+            } else {
+                // check if file exists in site
+                File scriptFile = new File(jsTest.getParentFile(), scriptSrc).getCanonicalFile();
+                assertTrue(scriptFile.exists(), "Couldn't find referenced Mermaid file: " + scriptFile);
+            }
 
             // second one is the inline script to call the Mermaid API
             scripts.get(1).asNormalizedText().trim().contains("mermaid.initialize");

@@ -132,6 +132,15 @@ under the License.
           </association>
           <identifier>true</identifier>
         </field>
+        <field>
+          <name>mermaid</name>
+          <description>The configuration used for rendering Mermaid diagrams (https://mermaid.js.org/) on client-side. If the element does not exist, no Mermaid specific scripts will be included in the generated site. If it exists but the "config" field is not set, a default configuration will be used.</description>
+          <version>2.1.0+</version>
+          <association>
+            <type>MermaidConfiguration</type>
+          </association>
+          <identifier>true</identifier>
+        </field>
         <field xdoc.separator="blank">
           <name>skin</name>
           <description>The artifact containing the skin for the site.</description>
@@ -166,15 +175,6 @@ under the License.
           <description>Timestamp of the last modification of this site model.</description>
           <version>1.0.1+</version>
           <type>long</type>
-        </field>
-        <field xdoc.separator="blank">
-          <name>mermaid</name>
-          <description>The configuration used for rendering Mermaid diagrams (https://mermaid.js.org/) on client-side. If the element does not exist, no Mermaid specific scripts will be included in the generated site. If it exists but the "config" field is not set, a default configuration will be used.</description>
-          <version>2.1.0+</version>
-          <association>
-            <type>MermaidConfiguration</type>
-          </association>
-          <identifier>true</identifier>
         </field>
       </fields>
       <codeSegments>
@@ -711,19 +711,23 @@ under the License.
         </field>
         <field xml.attribute="true">
           <name>integrity</name>
-          <description>The integrity hash to use for the external JS file emitted in the "script" element's "integrity" attribute. Its semantics are described in https://w3c.github.io/webappsec-subresource-integrity/</description>
+          <description>The integrity hash to use for the external JS file emitted in the "script" element's "integrity" attribute. Its semantics are described in https://www.w3.org/TR/sri-2/ and its usage is strongly recommended. Some example tools for calculating the value are outlined in https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Subresource_Integrity#tools_for_generating_sri_hashes.</description>
+          <version>2.1.0+</version>
           <type>String</type>
           <identifier>true</identifier>
         </field>
         <field xml.attribute="true">
           <name>referrerpolicy</name>
-          <description>The crossorigin attribute to use for the external JS file. Its semantics are described in https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/crossorigin</description>
+          <description>The referrerpolicy attribute to use when requesting the external JS file. Its semantics are described in https://www.w3.org/TR/referrer-policy/ and setting it to "no-referrer" prevents sharing unnecessary information with 3rd parties.</description>
+          <version>2.1.0+</version>
           <type>String</type>
           <identifier>true</identifier>
+          <defaultValue>no-referrer</defaultValue>
         </field>
         <field xml.attribute="true">
           <name>otherAttributes</name>
           <description>Other attributes to include in the "script" element for this external JS file, in the form of a whitespace separated list of key=value pairs. The keys and values will be included as-is in the generated "script" element, without any validation.</description>
+          <version>2.1.0+</version>
           <type>String</type> 
           <identifier>true</identifier>
         </field>
