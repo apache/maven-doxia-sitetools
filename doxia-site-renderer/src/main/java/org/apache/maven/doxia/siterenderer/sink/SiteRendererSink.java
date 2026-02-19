@@ -61,6 +61,7 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
 
     private boolean containsMermaidDiagram = false;
 
+    private boolean insideMermaidCodeElement = false;
     /**
      * Construct a new SiteRendererSink for a document.
      *
@@ -174,6 +175,9 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
             super.inline(attributes);
             // remove code element from inline stack to prevent closing it
             inlineStack.pop();
+            insideMermaidCodeElement = true;
+            // remove the code element from the verbatim buffer, to prevent Skins from adding line numbers to it, which
+            // breaks Mermaid rendering
             flushVerbatimBuffer(true);
         } else {
             flushVerbatimBuffer(false);
@@ -183,9 +187,10 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
 
     @Override
     public void inline_() {
-        // prevent against EmptyStackException in case of unbalanced inline tags (when code element is removed for
-        // Mermaid diagrams)
-        if (!inlineStack.isEmpty()) {
+        if (insideMermaidCodeElement) {
+            // this is the end of the code tag (which has been removed), so no need to close it
+            insideMermaidCodeElement = false;
+        } else {
             super.inline_();
         }
     }
