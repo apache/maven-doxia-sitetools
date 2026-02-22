@@ -35,6 +35,7 @@ under the License.
   <properties>
     <velocityEngineVersion>2.4.1</velocityEngineVersion>
     <velocityToolsVersion>3.1</velocityToolsVersion>
+    <mermaidVersion>11.12.2</mermaidVersion>
   </properties>
 
   <dependencies>
@@ -91,6 +92,11 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-module-fml</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-module-markdown</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -194,6 +200,30 @@ under the License.
     </dependency>
   </dependencies>
 
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/resources-filtered</directory>
+      </resource>
+    </resources>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes combine.children="append">
+              <exclude>src/main/resources/js/*</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
   <profiles>
     <profile>
       <id>reporting</id>

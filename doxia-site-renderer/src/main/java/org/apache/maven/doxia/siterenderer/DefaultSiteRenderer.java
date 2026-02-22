@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -145,6 +146,32 @@ public class DefaultSiteRenderer implements Renderer {
 
     private static final String DOXIA_SITE_RENDERER_VERSION = getSiteRendererVersion();
 
+    public static final String MERMAID_VERSION;
+
+    static {
+        try {
+            MERMAID_VERSION = getMavenProjectProperties().getProperty("mermaidVersion");
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load mermaid version from properties", e);
+        }
+    }
+
+    /**
+     * Properties contain some resolved properties from this project's Maven model
+     * @return some resolved Maven project properties
+     * @throws IOException in case the underlying file could not be accessed
+     */
+    static Properties getMavenProjectProperties() throws IOException {
+        final Properties properties = new Properties();
+        try (InputStream input = DefaultSiteRenderer.class.getResourceAsStream("/maven-project.properties")) {
+            if (input == null) {
+                throw new IOException("Could not find \"/maven-project.properties\" in classpath");
+            }
+            properties.load(input);
+        }
+        return properties;
+    }
+
     // ----------------------------------------------------------------------
     // SiteRenderer implementation
     // ----------------------------------------------------------------------
@@ -194,6 +221,20 @@ public class DefaultSiteRenderer implements Renderer {
         return filtered;
     }
 
+    /**
+     * Populates the files map with {@link DocumentRenderer}s per output name in parameter {@code files} for all files in the moduleBasedir matching the module extensions,
+     * taking care of duplicates if needed.
+     *
+     * @param rootDir
+     * @param moduleBasedir
+     * @param module
+     * @param excludes
+     * @param files
+     * @param editable
+     * @param skipDuplicates
+     * @throws IOException
+     * @throws RendererException
+     */
     private void addModuleFiles(
             File rootDir,
             File moduleBasedir,
@@ -361,7 +402,9 @@ public class DefaultSiteRenderer implements Renderer {
     public void renderDocument(
             Writer writer, DocumentRenderingContext docRenderingContext, SiteRenderingContext siteContext)
             throws RendererException {
-        SiteRendererSink sink = new SiteRendererSink(docRenderingContext);
+        SiteRendererSink sink = new SiteRendererSink(
+                docRenderingContext,
+                siteContext.getSiteModel() != null ? siteContext.getSiteModel().getMermaid() : null);
 
         File doc = new File(docRenderingContext.getBasedir(), docRenderingContext.getInputName());
 
@@ -858,6 +901,32 @@ public class DefaultSiteRenderer implements Renderer {
                 writer.write("/* You can override this file with your own styles */");
             } finally {
                 IOUtil.close(writer);
+            }
+        }
+
+        if (siteRenderingContext.getSiteModel().getMermaid() != null
+                && siteRenderingContext.getSiteModel().getMermaid().getExternalJs() == null) {
+            final String name;
+            if (siteRenderingContext.getSiteModel().getMermaid().isUseTiny()) {
+                // use integrated tiny version of mermaid, which is smaller and faster to load, but has some limitations
+                // (e.g. no sequence diagrams)
+                name = "/js/mermaid-" + MERMAID_VERSION + ".tiny.min.js";
+            } else {
+                name = "/js/mermaid-" + MERMAID_VERSION + ".min.js";
+            }
+            copyFileFromResource(name, new File(outputDirectory, name));
+        }
+    }
+
+    private static void copyFileFromResource(String name, File destFile) throws IOException {
+        destFile.getParentFile().mkdirs();
+        try (InputStream in = DefaultSiteRenderer.class.getResourceAsStream(name)) {
+            if (in == null) {
+                throw new IllegalArgumentException("Could not find the resource with name " + name);
+            } else {
+                try (OutputStream out = new FileOutputStream(destFile)) {
+                    IOUtil.copy(in, out);
+                }
             }
         }
     }

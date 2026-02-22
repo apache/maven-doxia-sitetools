@@ -20,19 +20,19 @@ package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.htmlunit.BrowserVersion;
 import org.htmlunit.CollectingAlertHandler;
 import org.htmlunit.WebClient;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.DomNodeList;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlHeading1;
 import org.htmlunit.html.HtmlMain;
 import org.htmlunit.html.HtmlPage;
-import org.htmlunit.html.HtmlParagraph;
-import org.htmlunit.html.HtmlScript;
 import org.htmlunit.html.HtmlSection;
 
 import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
@@ -41,11 +41,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Verify javascript code.
- *
- * @author ltheussl
+ * Verify client side rendering of Mermaid diagrams.
  */
-public class JavascriptVerifier extends AbstractVerifier {
+public class MermaidVerifier extends AbstractVerifier {
+
+    private final String externalJsScript;
+
+    public MermaidVerifier(String externalJsScript) {
+        this.externalJsScript = externalJsScript;
+    }
+
     /**
      * Verifies a HtmlPage.
      *
@@ -59,8 +64,11 @@ public class JavascriptVerifier extends AbstractVerifier {
         assertTrue(jsTest.exists());
 
         // HtmlUnit
-        try (WebClient webClient = new WebClient()) {
+        try (WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
             webClient.getOptions().setCssEnabled(false);
+            // the JS for Mermaid is too complex for HtmlUnit, so disable it and just verify the presence of the script
+            // element
+            webClient.getOptions().setJavaScriptEnabled(false);
 
             final List<String> collectedAlerts = new ArrayList<>(4);
             webClient.setAlertHandler(new CollectingAlertHandler(collectedAlerts));
@@ -85,22 +93,37 @@ public class JavascriptVerifier extends AbstractVerifier {
 
             HtmlAnchor anchor = (HtmlAnchor) elementIterator.next();
             assertNotNull(anchor);
-            assertEquals("Test", anchor.getAttribute("id"));
+            assertEquals("Example_Mermaid_diagram", anchor.getAttribute("id"));
             HtmlHeading1 h1 = (HtmlHeading1) elementIterator.next();
             assertNotNull(h1);
-            assertEquals("Test", h1.asNormalizedText().trim());
+            assertEquals("Example Mermaid diagram", h1.asNormalizedText().trim());
 
-            HtmlParagraph p = (HtmlParagraph) elementIterator.next();
-            assertNotNull(p);
-            assertEquals(
-                    "You should see a JavaScript alert...", p.asNormalizedText().trim());
+            DomNodeList<DomElement> scripts = page.getElementsByTagName("script");
+            assertEquals(2, scripts.getLength());
 
-            HtmlScript script = (HtmlScript) elementIterator.next();
-            assertNotNull(script);
-            assertEquals("text/javascript", script.getAttribute("type"));
-            assertEquals("", script.asNormalizedText().trim());
-            List<String> expectedAlerts = Collections.singletonList("Hello!");
-            assertEquals(expectedAlerts, collectedAlerts);
+            // first one is the external Mermaid script,
+            String scriptSrc = scripts.get(0).getAttribute("src");
+            assertTrue(scriptSrc.contains("mermaid"));
+
+            if (externalJsScript != null) {
+                assertEquals(externalJsScript, scripts.get(0).asXml());
+            } else {
+                // check if file exists in site
+                File scriptFile = new File(jsTest.getParentFile(), scriptSrc).getCanonicalFile();
+                assertTrue(scriptFile.exists(), "Couldn't find referenced Mermaid file: " + scriptFile);
+            }
+
+            // second one is the inline script to call the Mermaid API
+            scripts.get(1).asNormalizedText().trim().contains("mermaid.initialize");
+
+            // code element should have been removed
+            DomNodeList<DomElement> codes = page.getElementsByTagName("code");
+            assertEquals(0, codes.getLength(), "code element should have been removed");
+
+            // pre must carry the correct class attribute
+            DomNodeList<DomElement> pres = page.getElementsByTagName("pre");
+            assertEquals(1, pres.getLength(), "there should be exactly one pre element");
+            assertEquals("mermaid", pres.get(0).getAttribute("class"));
         }
     }
 }
