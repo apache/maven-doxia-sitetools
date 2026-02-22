@@ -134,7 +134,7 @@ under the License.
         </field>
         <field>
           <name>mermaid</name>
-          <description>The configuration used for rendering Mermaid diagrams (https://mermaid.js.org/) on client-side. If the element does not exist, no Mermaid specific scripts will be included in the generated site. If it exists but the "config" field is not set, a default configuration will be used.</description>
+          <description>The configuration used for rendering Mermaid diagrams (https://mermaid.ai/open-source/) on client-side. If the element does not exist, no Mermaid specific scripts will be included in the generated site. If it exists but the "config" field is not set, a default configuration will be used.</description>
           <version>2.1.0+</version>
           <association>
             <type>MermaidConfiguration</type>
@@ -665,12 +665,12 @@ under the License.
 
     <class java.clone="deep">
       <name>MermaidConfiguration</name>
-      <description>The configuration used for rendering Mermaid diagrams (https://mermaid.js.org/) on client-side.</description>
+      <description>The configuration used for rendering Mermaid diagrams (https://mermaid.ai/open-source/) on client-side.</description>
       <version>2.1.0+</version>
       <fields>
         <field xml.tagName="externalJsUrl">
           <name>externalJs</name>
-          <description>The URL from which to request the Mermaid.js used for rendering the diagrams. If not set an embedded version of Mermaid is used (which is automatically deployed to the site).</description>
+          <description>The URL from which to request the javascript used for rendering the diagrams. If not set an embedded version of Mermaid is used (which is automatically deployed to the site).</description>
           <version>2.1.0+</version>
           <association>
             <type>ExternalJs</type>
