@@ -283,7 +283,10 @@ public class DefaultSiteRendererTest {
     void mermaidWithExternalJs() throws Exception {
         SiteModel siteModel = new SiteXpp3Reader()
                 .read(new FileInputStream(getTestFile("src/test/resources/site-mermaid-externaljs/site.xml")));
-        SiteRenderingContext context = getSiteRenderingContext(siteModel, "src/test/resources/site", false);
+        File minimalSkinJar = new File(getBasedir(), "target/test-classes/minimal-skin.jar");
+        createJarFromDirectory(getTestFile("src/test/resources/skin-minimal").toPath(), minimalSkinJar.toPath());
+        SiteRenderingContext context =
+                getSiteRenderingContext(siteModel, minimalSkinJar, "src/test/resources/site", false);
 
         renderDocument(context, "src/test/resources/site/markdown", "mermaid.md", "md", "markdown");
 

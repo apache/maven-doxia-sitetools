@@ -958,6 +958,10 @@ public class DefaultSiteRenderer implements Renderer {
     }
 
     private Map<String, String> createResourceConditionsMap(SkinModel skinModel) {
+        if (skinModel == null) {
+            LOGGER.debug("No skin model provided, so no resource conditions will be applied.");
+            return Collections.emptyMap();
+        }
         Map<String, String> resourceConditions = new HashMap<>();
         for (ResourceCondition resource : skinModel.getResourceConditions()) {
             if (resource.getVtlCondition() != null
