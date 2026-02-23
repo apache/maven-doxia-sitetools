@@ -66,6 +66,7 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -105,6 +106,17 @@ public class DefaultSiteRendererTest {
     @Inject
     private PlexusContainer container;
 
+    private static File minimalSkinJar;
+
+    @BeforeAll
+    static void beforeAll() throws IOException {
+        // only create once, as otherwise Windows might have issues overwriting/deleting it while MS Defender is
+        // scanning it
+        // as multiple test are using it
+        minimalSkinJar = new File(getBasedir(), "target/test-classes/minimal-skin.jar");
+        createJarFromDirectory(getTestFile("src/test/resources/skin-minimal").toPath(), minimalSkinJar.toPath());
+    }
+
     /**
      * @throws java.lang.Exception if something goes wrong.
      */
@@ -113,7 +125,7 @@ public class DefaultSiteRendererTest {
         siteRenderer = (SiteRenderer) container.lookup(SiteRenderer.class);
     }
 
-    private void createJarFromDirectory(Path srcDirectory, Path jarfile) throws IOException {
+    private static void createJarFromDirectory(Path srcDirectory, Path jarfile) throws IOException {
         Map<String, String> env = new HashMap<>();
         env.put("create", "true");
         try (FileSystem zipfs = FileSystems.newFileSystem(URI.create("jar:" + jarfile.toUri()), env)) {
@@ -121,7 +133,7 @@ public class DefaultSiteRendererTest {
         }
     }
 
-    private void deepCopy(Path src, FileSystem zipfs) throws IOException {
+    private static void deepCopy(Path src, FileSystem zipfs) throws IOException {
         try (Stream<Path> stream = Files.walk(src)) {
             stream.forEach(source -> {
                 try {
@@ -224,9 +236,6 @@ public class DefaultSiteRendererTest {
         // Safety
         org.apache.commons.io.FileUtils.deleteDirectory(outputDirectory);
 
-        File minimalSkinJar = new File(getBasedir(), "target/test-classes/minimal-skin.jar");
-        createJarFromDirectory(getTestFile("src/test/resources/skin-minimal").toPath(), minimalSkinJar.toPath());
-
         // ----------------------------------------------------------------------
         // Render the site from src/test/resources/site to OUTPUT
         // ----------------------------------------------------------------------
@@ -283,8 +292,6 @@ public class DefaultSiteRendererTest {
     void mermaidWithExternalJs() throws Exception {
         SiteModel siteModel = new SiteXpp3Reader()
                 .read(new FileInputStream(getTestFile("src/test/resources/site-mermaid-externaljs/site.xml")));
-        File minimalSkinJar = new File(getBasedir(), "target/test-classes/minimal-skin.jar");
-        createJarFromDirectory(getTestFile("src/test/resources/skin-minimal").toPath(), minimalSkinJar.toPath());
         SiteRenderingContext context =
                 getSiteRenderingContext(siteModel, minimalSkinJar, "src/test/resources/site", false);
 
