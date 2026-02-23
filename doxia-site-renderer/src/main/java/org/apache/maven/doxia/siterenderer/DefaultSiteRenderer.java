@@ -941,16 +941,19 @@ public class DefaultSiteRenderer implements Renderer {
 
     private boolean isResourceRelevant(String name, Context velocityContext, Map<String, String> resourceConditions) {
         if (resourceConditions == null || !resourceConditions.containsKey(name)) {
-            LOGGER.debug("No condition for resource: {}", name);
+            LOGGER.debug("No condition for resource: '{}'", name);
         } else {
             String condition = resourceConditions.get(name);
-            LOGGER.debug("Evaluating condition for resource: {} with condition: {}", name, condition);
+            LOGGER.debug(
+                    "Evaluating condition for resource: '{}' with condition: '{}'",
+                    name,
+                    escapeLineBreaksForLogging(condition));
             StringWriter writer = new StringWriter();
             Velocity.evaluate(velocityContext, writer, "conditional-resource-evaluation", condition);
             String result = writer.toString().trim();
             LOGGER.debug("Condition evaluation result: {}", result);
             if (!Boolean.parseBoolean(result)) {
-                LOGGER.debug("Excluding resource: {}", name);
+                LOGGER.debug("Excluding resource: '{}'", name);
                 return false;
             }
         }
@@ -974,14 +977,18 @@ public class DefaultSiteRenderer implements Renderer {
                         continue;
                     }
                     LOGGER.debug(
-                            "Adding condition for resource: {} with condition: {}",
+                            "Adding condition for resource: '{}' with condition: '{}'",
                             resourceName,
-                            resource.getVtlCondition());
+                            escapeLineBreaksForLogging(resource.getVtlCondition()));
                     resourceConditions.put(resourceName, resource.getVtlCondition());
                 }
             }
         }
         return resourceConditions;
+    }
+
+    private static String escapeLineBreaksForLogging(String input) {
+        return input.replaceAll("\\r?\\n", "\\\\n");
     }
 
     private static void copyFileFromZip(ZipFile file, ZipEntry entry, File destFile) throws IOException {
