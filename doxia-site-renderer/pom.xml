@@ -37,7 +37,6 @@ under the License.
     <velocityToolsVersion>3.1</velocityToolsVersion>
     <mermaidVersion>11.12.2</mermaidVersion>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -218,6 +217,8 @@ under the License.
           <configuration>
             <excludes combine.children="append">
               <exclude>src/main/resources/js/*</exclude>
+              <exclude>src/test/resources/**/*.vm</exclude>
+              <exclude>src/test/resources/**/*.js</exclude>
             </excludes>
           </configuration>
         </plugin>
