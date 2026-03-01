@@ -368,6 +368,30 @@ under the License.
           <identifier>true</identifier>
           <defaultValue>Etc/UTC</defaultValue>
         </field>
+        <field xml.attribute="true">
+          <name>value</name>
+          <description>
+            <![CDATA[
+              The velocity context key to use as source for the date published. 
+            ]]>
+          </description>
+          <version>2.1.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>publishDate</defaultValue>
+        </field>
+        <field xml.attribute="true">
+            <name>prefix</name>
+            <description>
+                <![CDATA[
+                The prefix to emit before the date. When starting with <code>template.</code> it is assumed to reference a key from the <code>site-renderer.properties</code>, otherwise it is a literal value.
+                ]]>
+            </description>
+            <version>2.1.0+</version>
+            <type>String</type>
+            <identifier>true</identifier>
+            <defaultValue>template.lastpublished</defaultValue>
+          </field>
       </fields>
     </class>
 

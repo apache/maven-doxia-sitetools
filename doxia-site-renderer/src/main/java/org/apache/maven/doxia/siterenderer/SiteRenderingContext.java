@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -110,6 +111,8 @@ public class SiteRenderingContext {
     private File processedContentOutput;
 
     private ParserConfigurator parserConfigurator;
+
+    private final Map<String, Object> attributes = new HashMap<>();
 
     /**
      * If input documents should be validated before parsing.
@@ -453,5 +456,24 @@ public class SiteRenderingContext {
      */
     public void setParserConfigurator(ParserConfigurator parserConfigurator) {
         this.parserConfigurator = parserConfigurator;
+    }
+
+    /**
+     * Get the map of attributes that can be used by renderers and templates to customize the output.
+     * This is a free-form map that can be used to pass any additional information that may be needed during rendering, without having to extend the API.
+     *
+     * @return a map of attributes that can be used by renderers and templates to customize the output, the returned map is immutable, use {@link #addAttribute(String, Object)} to add attributes to the context
+     * @since 2.1.0
+     */
+    public Map<String, Object> getAttributes() {
+        return Collections.unmodifiableMap(attributes);
+    }
+
+    public Object putAttribute(String key, Object value) {
+        return this.attributes.put(key, value);
+    }
+
+    public Object removeAttribute(String key) {
+        return this.attributes.remove(key);
     }
 }

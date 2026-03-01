@@ -75,6 +75,10 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 | <<<relativePath>>>              | <<<String>>>         | The path to the site root from the document being rendered. |
 *---------------------------------+----------------------+-------------------------------+
+| <<<scmModifiedDate>>>           | <<<Date>>>           | The last modified date as retrieved through {{{https://maven.apache.org/scm/}Maven SCM}} from the underlying Doxia source. Only available if artifact {{{../doxia-site-scm-context/}<<<doxia-site-scm-context>>>}} is on the classpath. |
+*---------------------------------+----------------------+-------------------------------+
+| <<<scmModifiedAuthor>>>         | <<<String>>>         | The author of the last commit on the file as retrieved through {{{https://maven.apache.org/scm/}Maven SCM}} from the underlying Doxia source. Only available if artifact {{{../doxia-site-scm-context/}<<<doxia-site-scm-context>>>}} is on the classpath. |
+*---------------------------------+----------------------+-------------------------------+
 | <<<site>>>                      | {{{../doxia-site-model/apidocs/org/apache/maven/doxia/site/SiteModel.html}<<<SiteModel>>>}} | This is a model that represents the data in your {{{../doxia-site-model/site.html}<<<site.xml>>>}}. |
 *---------------------------------+----------------------+-------------------------------+
 | <<<supportedLocales>>>          | <<<List\<Locale\>>>> | The list of locales that the site will contain. |
@@ -108,7 +112,7 @@ Doxia Sitetools - Site Renderer
 *------------------+---------------------------------------------------------------+-------------------------------+
 | <<<convert>>>    | {{{$generic${esc.hash}deprecated-tools}ConversionTool}}       | {{{$generic${esc.hash}deprecated-tools}<<Deprecated>>}}: use NumberTool for numbers formatting/parsing, DateTool for date/time formatting/parsing, or CollectionTool for toStrings(). For converting String values to richer object Types.
 *------------------+---------------------------------------------------------------+-------------------------------+
-| <<<date>>>       | {{{$generic${esc.hash}ComparisonDateTool}ComparisonDateTool}} | For manipulating, formatting, and comparing dates.
+| <<<date>>>       | {{{$generic${esc.hash}ComparisonDateTool}ComparisonDateTool}} | For manipulating, formatting, and comparing dates. The formatting pattern and timezone are taken from the site descriptors element "publishDate" "format and "timezone" attributes, respectively.
 *------------------+---------------------------------------------------------------+-------------------------------+
 | <<<display>>>    | {{{$generic${esc.hash}DisplayTool}DisplayTool}}               | For controlling display of references (e.g., truncating values, "pretty printing" lists, and displaying alternates when a reference is null).
 *------------------+---------------------------------------------------------------+-------------------------------+
@@ -166,11 +170,11 @@ Doxia Sitetools - Site Renderer
 *---------------------------------+----------------------+-------------------------------+
 || Variable                       || Type                || Description                 ||
 *---------------------------------+----------------------+-------------------------------+
-| <<<authors>>>                   | <<<List\<String\>>>> | A list of authors from the source document. |
+| <<<authors>>>                   | <<<List\<String\>>>> | A list of authors from the source document. If not set is equal to <<<scmModifiedAuthor>>> (only available if artifact {{{../doxia-site-scm-context/}<<<doxia-site-scm-context>>>}} is on the classpath). | |
 *---------------------------------+----------------------+-------------------------------+
 | <<<bodyContent>>>               | <<<String>>>         | HTML body content of the Doxia generated output. |
 *---------------------------------+----------------------+-------------------------------+
-| <<<documentDate>>>              | <<<String>>>         | The date specified in the source document: semantics has to be chosen by document writer (document creation date, or document last modification date, or ...), and format is not enforced. |
+| <<<documentDate>>>              | <<<String>>>         | The date specified in the source document: semantics has to be chosen by document writer (document creation date, or document last modification date, or ...), and format is not enforced. If not set is equal to <<<scmModifiedDate>>> (only available if artifact {{{../doxia-site-scm-context/}<<<doxia-site-scm-context>>>}} is on the classpath). |
 *---------------------------------+----------------------+-------------------------------+
 | <<<headContent>>>               | <<<String>>>         | HTML head content of the Doxia generated output. |
 *---------------------------------+----------------------+-------------------------------+
