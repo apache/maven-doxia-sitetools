@@ -43,7 +43,10 @@ public interface SiteTool {
      *
      * @see Locale#ROOT
      */
-    Locale DEFAULT_LOCALE = Locale.ROOT;
+    Locale DEFAULT_LOCALE = new Locale(
+            System.getProperty("maven.doxia.sitetools.user.language", ""),
+            System.getProperty("maven.doxia.sitetools.user.country", ""),
+            System.getProperty("maven.doxia.sitetools.user.variant", ""));
 
     /**
      * Get a skin artifact from one of the repositories.
