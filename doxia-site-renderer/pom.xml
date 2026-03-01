@@ -36,6 +36,7 @@ under the License.
     <velocityEngineVersion>2.4.1</velocityEngineVersion>
     <velocityToolsVersion>3.1</velocityToolsVersion>
     <mermaidVersion>11.12.2</mermaidVersion>
+    <scmVersion>2.2.1</scmVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -133,6 +134,26 @@ under the License.
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.20.0</version>
+    </dependency>
+
+    <!-- scm dependencies -->
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-api</artifactId>
+      <version>${scmVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-providers-standard</artifactId>
+      <version>${scmVersion}</version>
+      <type>pom</type>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-manager-plexus</artifactId>
+      <version>${scmVersion}</version>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- test -->

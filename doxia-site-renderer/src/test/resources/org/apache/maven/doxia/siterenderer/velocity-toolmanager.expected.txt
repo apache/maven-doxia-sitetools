@@ -32,10 +32,11 @@ We have the following keys in the context:
   28. publishDate
   29. relativePath
   30. render
-  31. shortTitle
-  32. site
-  33. sorter
-  34. supportedLocales
-  35. text
-  36. title
-  37. xml
+  31. scmModifiedDate
+  32. shortTitle
+  33. site
+  34. sorter
+  35. supportedLocales
+  36. text
+  37. title
+  38. xml

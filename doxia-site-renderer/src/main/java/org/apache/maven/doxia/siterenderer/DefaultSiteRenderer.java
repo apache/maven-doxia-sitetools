@@ -37,6 +37,7 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,9 +47,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -74,6 +77,12 @@ import org.apache.maven.doxia.site.skin.io.xpp3.SkinXpp3Reader;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext.SiteDirectory;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.util.XmlValidator;
+import org.apache.maven.scm.ScmException;
+import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.command.info.InfoItem;
+import org.apache.maven.scm.command.info.InfoScmResult;
+import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.context.Context;
@@ -143,6 +152,9 @@ public class DefaultSiteRenderer implements Renderer {
     @Inject
     private PlexusContainer plexus;
 
+    @Inject
+    private ScmManager scmManager;
+
     private static final String SKIN_TEMPLATE_LOCATION = "META-INF/maven/site.vm";
 
     private static final String TOOLS_LOCATION = "META-INF/maven/site-tools.xml";
@@ -179,12 +191,38 @@ public class DefaultSiteRenderer implements Renderer {
     // SiteRenderer implementation
     // ----------------------------------------------------------------------
 
+    private Optional<ScmRepository> getScmRepository(File directory) {
+        Optional<ScmRepository> scmRepository = scmManager.makeProviderScmRepository(directory);
+        if (scmRepository.isPresent()) {
+            LOGGER.debug("Found SCM repository for directory {}: {}", directory, scmRepository.get());
+        } else {
+            LOGGER.debug("No SCM repository found for directory {}", directory);
+            File parentDirectory = directory.getParentFile();
+            if (parentDirectory != null) {
+                return getScmRepository(parentDirectory);
+            }
+        }
+        return scmRepository;
+    }
+
     /** {@inheritDoc} */
     public Map<String, DocumentRenderer> locateDocumentFiles(SiteRenderingContext siteRenderingContext)
             throws IOException, RendererException {
         Map<String, DocumentRenderer> files = new LinkedHashMap<>();
         Map<String, String> moduleExcludes = siteRenderingContext.getModuleExcludes();
 
+        final Optional<ScmRepository> scmRepository;
+        if (siteRenderingContext.getSiteModel() != null
+                && !siteRenderingContext
+                        .getSiteModel()
+                        .getModificationDate()
+                        .getPosition()
+                        .equals("none")) {
+            scmRepository = getScmRepository(siteRenderingContext.getRootDirectory());
+        } else {
+            LOGGER.debug("SCM info won't be gathered since modificationDate position is 'none'");
+            scmRepository = Optional.empty();
+        }
         // look in every site directory (in general src/site or target/generated-site)
         for (SiteDirectory siteDirectory : siteRenderingContext.getSiteDirectories()) {
             File siteDirectoryPath = siteDirectory.getPath();
@@ -203,7 +241,8 @@ public class DefaultSiteRenderer implements Renderer {
                             excludes,
                             files,
                             siteDirectory.isEditable(),
-                            siteDirectory.isSkipDuplicates());
+                            siteDirectory.isSkipDuplicates(),
+                            scmRepository);
                 }
             }
         }
@@ -224,6 +263,20 @@ public class DefaultSiteRenderer implements Renderer {
         return filtered;
     }
 
+    private Map<String, InfoItem> getScmInfos(
+            ScmRepository scmRepository, File baseDirectory, String includes, String excludes) {
+        try {
+            ScmFileSet fileSet = new ScmFileSet(baseDirectory, includes, excludes);
+            InfoScmResult infos = scmManager
+                    .getProviderByRepository(scmRepository)
+                    .info(scmRepository.getProviderRepository(), fileSet, null);
+            return infos.getInfoItems().stream().collect(Collectors.toMap(InfoItem::getPath, Function.identity()));
+        } catch (ScmException | IOException e) {
+            LOGGER.warn("Failed to get SCM info for files in directory {}", baseDirectory, e);
+        }
+        return Collections.emptyMap();
+    }
+
     /**
      * Populates the files map with {@link DocumentRenderer}s per output name in parameter {@code files} for all files in the moduleBasedir matching the module extensions,
      * taking care of duplicates if needed.
@@ -238,6 +291,7 @@ public class DefaultSiteRenderer implements Renderer {
      * @throws IOException
      * @throws RendererException
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     private void addModuleFiles(
             File rootDir,
             File moduleBasedir,
@@ -245,7 +299,8 @@ public class DefaultSiteRenderer implements Renderer {
             String excludes,
             Map<String, DocumentRenderer> files,
             boolean editable,
-            boolean skipDuplicates)
+            boolean skipDuplicates,
+            Optional<ScmRepository> scmRepository)
             throws IOException, RendererException {
         if (!moduleBasedir.exists() || ArrayUtils.isEmpty(module.getExtensions())) {
             return;
@@ -254,6 +309,13 @@ public class DefaultSiteRenderer implements Renderer {
         String moduleRelativePath =
                 PathTool.getRelativeFilePath(rootDir.getAbsolutePath(), moduleBasedir.getAbsolutePath());
 
+        Map<String, InfoItem> scmInfos;
+        if (scmRepository.isPresent()) {
+            // TODO: does it have to be relative to scmRepository root dir?
+            scmInfos = getScmInfos(scmRepository.get(), moduleBasedir.getAbsoluteFile(), "**/*", excludes);
+        } else {
+            scmInfos = Collections.emptyMap();
+        }
         List<String> allFiles = FileUtils.getFileNames(moduleBasedir, "**/*", excludes, false);
 
         for (String extension : module.getExtensions()) {
@@ -267,8 +329,17 @@ public class DefaultSiteRenderer implements Renderer {
             docs.addAll(velocityFiles);
 
             for (String doc : docs) {
+
                 DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
-                        moduleBasedir, moduleRelativePath, doc, module.getParserId(), extension, editable);
+                        moduleBasedir,
+                        moduleRelativePath,
+                        doc,
+                        module.getParserId(),
+                        extension,
+                        editable,
+                        null,
+                        // key is relative to
+                        scmInfos.get(doc));
 
                 // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
                 if (endsWithIgnoreCase(doc, ".vm")) {
@@ -589,6 +660,23 @@ public class DefaultSiteRenderer implements Renderer {
             context.put("alignedFilePath", alignedFilePath);
             // TODO Deprecated -- will be removed!
             context.put("alignedFileName", alignedFilePath);
+
+            if (docRenderingContext.getScmInfo() != null) {
+                if (docRenderingContext.getScmInfo().getLastChangedDateTime() != null) {
+                    // Velocity can only deal with Date/Calendar
+                    Date scmModifiedDate = Date.from(docRenderingContext
+                            .getScmInfo()
+                            .getLastChangedDateTime()
+                            .toInstant());
+                    context.put("scmModifiedDate", scmModifiedDate);
+                } else {
+                    LOGGER.warn(
+                            "SCM info for file {} does not contain last modification date",
+                            docRenderingContext.getInputPath());
+                }
+            } else {
+                LOGGER.debug("No SCM info available for file {}", docRenderingContext.getInputPath());
+            }
         }
         context.put("site", siteRenderingContext.getSiteModel());
         // TODO Deprecated -- will be removed!
@@ -672,7 +760,11 @@ public class DefaultSiteRenderer implements Renderer {
         context.put("bodyContent", content.getBody());
 
         // document date (got from Doxia Sink date() API)
-        context.put("documentDate", content.getDate());
+        if (content.getDate() != null) {
+            context.put("documentDate", content.getDate());
+        } else {
+            context.put("documentDate", context.get("scmModifiedDate"));
+        }
 
         // document rendering context, to get eventual inputPath
         context.put("docRenderingContext", content.getRenderingContext());

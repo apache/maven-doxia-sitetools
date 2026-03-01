@@ -104,6 +104,15 @@ under the License.
           <identifier>true</identifier>
         </field>
         <field java.getter="false">
+          <name>modificationDate</name>
+          <description>Modify the date modified display properties. The date formatting is taken over from "publishDate".</description>
+          <version>2.1.0+</version>
+          <association>
+            <type>ModificationDate</type>
+          </association>
+          <identifier>true</identifier>
+        </field>
+        <field java.getter="false">
           <name>version</name>
           <description>Modify the version published display properties.</description>
           <version>1.0.0+</version>
@@ -202,6 +211,19 @@ under the License.
     public boolean isDefaultPublishDate()
     {
         return publishDate == null;
+    }
+
+    public ModificationDate getModificationDate()
+    {
+        if ( modificationDate == null )
+            return new ModificationDate();
+        else
+            return modificationDate;
+    }
+
+    public boolean isDefaultModificationDate()
+    {
+        return modificationDate == null;
     }
 
     public Version getVersion()
@@ -335,18 +357,9 @@ under the License.
     </class>
 
     <class java.clone="deep">
-      <name>PublishDate</name>
-      <description>Modify display properties for date published.</description>
-      <version>1.0.0+</version>
+      <name>SiteDateFormat</name>
+      <description>Modify formatting properties for a date field.</description>
       <fields>
-        <field xml.attribute="true">
-          <name>position</name>
-          <description>Where to place the date published ("left", "right", "navigation-top", "navigation-bottom", "bottom" or "none" to hide it).</description>
-          <version>1.0.0+</version>
-          <type>String</type>
-          <identifier>true</identifier>
-          <defaultValue>left</defaultValue>
-        </field>
         <field xml.attribute="true">
           <name>format</name>
           <description>Date format to use.</description>
@@ -371,6 +384,39 @@ under the License.
       </fields>
     </class>
 
+    <class java.clone="deep">
+      <name>PublishDate</name>
+      <description>Modify display properties for date published.</description>
+      <version>1.0.0+</version>
+      <superClass>SiteDateFormat</superClass>
+      <fields>
+        <field xml.attribute="true">
+          <name>position</name>
+          <description>Where to place the published date ("left", "right", "navigation-top", "navigation-bottom", "bottom" or "none" to hide it).</description>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>left</defaultValue>
+        </field>
+      </fields>
+    </class>
+
+    <class java.clone="deep">
+      <name>ModificationDate</name>
+      <description>Modify display properties for date modified. The date formatting options are taken over from "publishDate".</description>
+      <version>2.1.0+</version>
+      <fields>
+        <field xml.attribute="true">
+          <name>position</name>
+          <description>Where to place the last modified date ("left", "right", "navigation-top", "navigation-bottom", "bottom" or "none" to hide it).</description>
+          <version>2.1.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>none</defaultValue>
+        </field>
+      </fields>
+    </class>
+    
     <class java.clone="deep">
       <name>Version</name>
       <description>Modify display properties for version published.</description>

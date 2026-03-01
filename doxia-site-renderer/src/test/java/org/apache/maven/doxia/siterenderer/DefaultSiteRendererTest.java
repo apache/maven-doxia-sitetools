@@ -35,6 +35,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,6 +59,7 @@ import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext.SiteDirectory;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.xsd.AbstractXmlValidator;
+import org.apache.maven.scm.command.info.InfoItem;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.FileUtils;
@@ -302,6 +304,23 @@ public class DefaultSiteRendererTest {
     }
 
     @Test
+    void lastModifiedDate() throws Exception {
+        File outputDirectory = getTestFile(OUTPUT);
+        // Safety
+        org.apache.commons.io.FileUtils.deleteDirectory(outputDirectory);
+        SiteModel siteModel = new SiteXpp3Reader()
+                .read(new FileInputStream(getTestFile("src/test/resources/site-last-modified/site.xml")));
+        SiteRenderingContext context =
+                getSiteRenderingContext(siteModel, minimalSkinJar, "src/test/resources/site-last-modified", false);
+        context.setRootDirectory(new File(getBasedir()));
+        Map<String, DocumentRenderer> documents = siteRenderer.locateDocumentFiles(context);
+        siteRenderer.render(documents.values(), context, outputDirectory);
+        siteRenderer.copyResources(context, outputDirectory);
+
+        verifyLastModifiedPage();
+    }
+
+    @Test
     void externalReport() throws Exception {
         DocumentRenderer docRenderer = mock(DocumentRenderer.class);
         when(docRenderer.isExternalReport()).thenReturn(true);
@@ -334,8 +353,11 @@ public class DefaultSiteRendererTest {
         siteRenderingContext.setTemplateProperties(attributes);
 
         siteRenderingContext.setTemplateName("org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm");
-        DocumentRenderingContext docRenderingContext =
-                new DocumentRenderingContext(new File(""), "document.html", "generator");
+
+        InfoItem infoItem = Mockito.mock(InfoItem.class);
+        Mockito.when(infoItem.getLastChangedDateTime()).thenReturn(OffsetDateTime.parse("2024-06-01T12:00:00Z"));
+        DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
+                new File(""), null, "document.html", null, null, false, "generator", infoItem);
         SiteRendererSink sink = new SiteRendererSink(docRenderingContext);
         siteRenderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
 
@@ -371,7 +393,10 @@ public class DefaultSiteRendererTest {
         skin.setFile(skinFile);
         SiteRenderingContext siteRenderingContext =
                 siteRenderer.createContextForSkin(skin, attributes, new SiteModel(), "defaultitle", Locale.ROOT);
-        DocumentRenderingContext context = new DocumentRenderingContext(new File(""), "document.html", "generator");
+        InfoItem infoItem = Mockito.mock(InfoItem.class);
+        Mockito.when(infoItem.getLastChangedDateTime()).thenReturn(OffsetDateTime.parse("2024-06-01T12:00:00Z"));
+        DocumentRenderingContext context = new DocumentRenderingContext(
+                new File(""), null, "document.html", null, null, false, "generator", infoItem);
         SiteRendererSink sink = new SiteRendererSink(context);
         siteRenderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
         String renderResult = writer.toString();
@@ -523,6 +548,11 @@ public class DefaultSiteRendererTest {
     private void verifyMermaidPage(String externalJsScript) throws Exception {
         MermaidVerifier verifier = new MermaidVerifier(externalJsScript);
         verifier.verify("target/output/mermaid.html");
+    }
+
+    private void verifyLastModifiedPage() throws Exception {
+        LastModifiedVerifier verifier = new LastModifiedVerifier();
+        verifier.verify("target/output/lastmodified.html");
     }
 
     /**

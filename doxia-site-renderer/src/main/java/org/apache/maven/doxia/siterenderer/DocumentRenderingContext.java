@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.maven.scm.command.info.InfoItem;
 import org.codehaus.plexus.util.PathTool;
 
 /**
@@ -51,6 +52,8 @@ public class DocumentRenderingContext {
     private final boolean editable;
 
     private final String generator;
+
+    private final InfoItem scmInfo;
 
     /**
      * <p>
@@ -101,6 +104,36 @@ public class DocumentRenderingContext {
             String extension,
             boolean editable,
             String generator) {
+        this(basedir, basedirRelativePath, document, parserId, extension, editable, generator, null);
+    }
+
+    /**
+     * <p>
+     * Constructor for document rendering context.
+     * </p>
+     *
+     * @param basedir the source base directory (not null, pseudo value when not a Doxia source).
+     * @param basedirRelativePath the relative path from root (null if not Doxia source)
+     * @param document the source document path.
+     * @param parserId the Doxia module parser id associated to this document, may be null if document not rendered from
+     *            a Doxia source.
+     * @param extension the source document filename extension, may be null if document not rendered from
+     *            a Doxia source.
+     * @param editable is the document editable as source, i.e. not generated?
+     * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
+     * @param scmInfo the SCM info to use for this document, or <code>null</code> if no SCM info to use
+     * @since 2.1.0
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public DocumentRenderingContext(
+            File basedir,
+            String basedirRelativePath,
+            String document,
+            String parserId,
+            String extension,
+            boolean editable,
+            String generator,
+            InfoItem scmInfo) {
         this.basedir = basedir;
         this.parserId = parserId;
         this.extension = extension;
@@ -133,6 +166,7 @@ public class DocumentRenderingContext {
 
         this.relativePath = PathTool.getRelativePath(basedir.getPath(), new File(basedir, inputPath).getPath())
                 .replace('\\', '/');
+        this.scmInfo = scmInfo;
     }
 
     /**
@@ -285,5 +319,15 @@ public class DocumentRenderingContext {
      */
     public String getDoxiaSourcePath(String base) {
         return PathTool.calculateLink(getDoxiaSourcePath(), base);
+    }
+
+    /**
+     * Get the SCM info to use for this document.
+     *
+     * @return the SCM info to use for this document, or <code>null</code> if no SCM info to use
+     * @since 2.1.0
+     */
+    public InfoItem getScmInfo() {
+        return scmInfo;
     }
 }

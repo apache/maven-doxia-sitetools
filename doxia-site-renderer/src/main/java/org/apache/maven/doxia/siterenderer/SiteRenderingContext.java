@@ -30,6 +30,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.skin.SkinModel;
+import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
 
@@ -110,6 +111,8 @@ public class SiteRenderingContext {
     private File processedContentOutput;
 
     private ParserConfigurator parserConfigurator;
+
+    private ScmRepository scmRepository;
 
     /**
      * If input documents should be validated before parsing.

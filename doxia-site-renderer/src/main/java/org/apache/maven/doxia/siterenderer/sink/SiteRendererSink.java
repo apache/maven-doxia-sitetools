@@ -62,6 +62,7 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
     private boolean containsMermaidDiagram = false;
 
     private boolean insideMermaidCodeElement = false;
+
     /**
      * Construct a new SiteRendererSink for a document.
      *
