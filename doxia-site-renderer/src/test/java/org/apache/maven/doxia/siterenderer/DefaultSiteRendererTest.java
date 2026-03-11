@@ -181,8 +181,8 @@ public class DefaultSiteRendererTest {
         SiteRenderer siteRenderer = container.lookup(SiteRenderer.class);
         ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
 
-        DocumentRenderingContext docRenderingContext =
-                new DocumentRenderingContext(testBasedir, "", testDocument, "xdoc", "", false);
+        DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
+                testBasedir, "src/test/resources/site/xdoc", testDocument, "xdoc", "", false);
 
         try {
             siteRenderer.renderDocument(null, docRenderingContext, new SiteRenderingContext());
@@ -212,8 +212,8 @@ public class DefaultSiteRendererTest {
         SiteRenderer siteRenderer = container.lookup(SiteRenderer.class);
         ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
 
-        DocumentRenderingContext docRenderingContext =
-                new DocumentRenderingContext(testBasedir, "", testDocumentName, "xdoc", "", false);
+        DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
+                testBasedir, "src/test/resources/site/xdoc", testDocumentName, "xdoc", "", false);
 
         try {
             siteRenderer.renderDocument(null, docRenderingContext, new SiteRenderingContext());
@@ -335,7 +335,7 @@ public class DefaultSiteRendererTest {
 
         siteRenderingContext.setTemplateName("org/apache/maven/doxia/siterenderer/velocity-toolmanager.vm");
         DocumentRenderingContext docRenderingContext =
-                new DocumentRenderingContext(new File(""), "document.html", "generator");
+                new DocumentRenderingContext(new File("."), "document.html", "generator");
         SiteRendererSink sink = new SiteRendererSink(docRenderingContext);
         siteRenderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
 
