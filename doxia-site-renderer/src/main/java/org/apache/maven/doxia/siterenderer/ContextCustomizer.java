@@ -21,7 +21,7 @@ package org.apache.maven.doxia.siterenderer;
 import org.apache.velocity.context.Context;
 
 /**
- * A callback interface to customize the Velocity context before rendering a document.
+ * A callback interface to customize the Velocity {@link Context} before rendering a document.
  **/
 @FunctionalInterface
 public interface ContextCustomizer {
