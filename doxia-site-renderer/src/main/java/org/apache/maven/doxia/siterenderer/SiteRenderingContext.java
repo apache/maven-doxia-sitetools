@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class SiteRenderingContext {
         private File path;
         private boolean editable;
         private boolean skipDuplicates;
-        private final Collection<File> editableSourceDirectories = new HashSet<>();
+        private final Collection<File> editableSourceDirectories = new LinkedHashSet<>();
 
         public SiteDirectory(File path, boolean editable) {
             this(path, editable, false);
@@ -54,7 +54,7 @@ public class SiteRenderingContext {
 
         /**
          *
-         * @param path absolute path to the site directory containing doxia sources files, expected to have a Doxia Site layout, i.e. one directory per Doxia parser module
+         * @param path path to the site directory containing Doxia sources files, expected to have a Doxia Site layout, i.e. one directory per Doxia parser module
          * @param editable {@code true} if the site directory is expected to be editable
          * @param skipDuplicates flag indicating if duplicates in this directory should be skipped ({@code true}) or lead to an exception ({@code false})
          * @since 2.1
@@ -104,7 +104,7 @@ public class SiteRenderingContext {
             if (editableSourceDirectories.isEmpty()) {
                 return Collections.singleton(path);
             } else {
-                return editableSourceDirectories;
+                return Collections.unmodifiableCollection(editableSourceDirectories);
             }
         }
     }

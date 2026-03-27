@@ -62,7 +62,7 @@ public class DocumentRenderingContext {
     /** The project's build directory, may be {@code null} rendered from a Doxia source) */
     private final File rootDirectory;
 
-    /** The site's root directory (never null), must be within below {@link #rootDirectory}, may be {@code null} rendered from a Doxia source */
+    /** The site's root directory, must be below {@link #rootDirectory}, may be {@code null} if not rendered from a Doxia source */
     private final File siteRootDirectory;
 
     /** optional descriptive text of the plugin which generated the output (usually Maven coordinates). Only set when document is not based on a Doxia source. */
@@ -315,7 +315,7 @@ public class DocumentRenderingContext {
     }
 
     /**
-     * Get the relative path of the parent folder to site root.
+     * Get the relative path of the parent directory of this document to site root.
      *
      * @return the relative path to site root
      */
