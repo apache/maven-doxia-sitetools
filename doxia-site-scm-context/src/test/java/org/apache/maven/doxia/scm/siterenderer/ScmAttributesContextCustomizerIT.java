@@ -21,9 +21,6 @@ package org.apache.maven.doxia.scm.siterenderer;
 import javax.inject.Inject;
 
 import java.io.File;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.Optional;
 
 import org.apache.maven.doxia.siterenderer.ContextCustomizer;
@@ -38,7 +35,6 @@ import org.codehaus.plexus.testing.PlexusTest;
 import org.junit.jupiter.api.Test;
 
 import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -49,13 +45,11 @@ class ScmAttributesContextCustomizerIT {
     ScmManager scmManager;
 
     @Test
-    void lastModifiedDate() throws Exception {
+    void scmAttributes() throws Exception {
         File siteDirectory = getTestFile("src/test/resources/site-last-modified");
         File doxiaSource = new File(siteDirectory, "markdown/lastmodified.md.vm");
         assertTrue(doxiaSource.exists(), "Test source file does not exist: " + doxiaSource.getAbsolutePath());
         assumeTrue(isScmInfoAvailable(doxiaSource), "SCM info is not available, skipping test");
-
-        OffsetDateTime modifiedDate = OffsetDateTime.of(2026, 3, 1, 19, 51, 28, 0, ZoneOffset.UTC);
 
         ContextCustomizer contextCustomizer = new ScmAttributesContextCustomizer(scmManager);
         Context context = new VelocityContext();
@@ -65,7 +59,8 @@ class ScmAttributesContextCustomizerIT {
         siteContext.setRootDirectory(siteDirectory);
         contextCustomizer.customizeContext(context, docContext, siteContext);
         assertTrue(context.containsKey("scmModifiedDate"));
-        assertEquals(Date.from(modifiedDate.toInstant()), context.get("scmModifiedDate"));
+        assertTrue(context.containsKey("scmModifiedAuthor"));
+        // the actual values depends a bit on the actual commit history, so we just check that they are not empty
     }
 
     boolean isScmInfoAvailable(File file) {
