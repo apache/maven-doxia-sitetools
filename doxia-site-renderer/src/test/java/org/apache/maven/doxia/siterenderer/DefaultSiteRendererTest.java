@@ -605,7 +605,7 @@ public class DefaultSiteRendererTest {
         public void validateGeneratedPages() throws Exception {
             setValidate(false);
             try {
-                testValidateFiles();
+                validateFiles();
             } finally {
                 tearDown();
             }
