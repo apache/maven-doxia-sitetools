@@ -19,8 +19,11 @@
 package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.codehaus.plexus.util.PathTool;
 
@@ -32,25 +35,58 @@ import org.codehaus.plexus.util.PathTool;
  * @since 1.5 (was since 1.1 in o.a.m.d.sink.render)
  */
 public class DocumentRenderingContext {
+
+    /** absolute path to the source base directory (not null, pseudo value when not a Doxia source), this is parser format specific. Must start with {@link #siteRootDirectory}. */
     private final File basedir;
 
-    private final String basedirRelativePath;
-
+    /** {@link #basedir} relative path to the document's source including {@link #extension}. May be {@code null} if not rendered from a Doxia source */
     private final String inputPath;
 
+    /** same as {@link #inputPath} but with extension replaced with {@code .html}, this is parser format specific */
     private final String outputPath;
 
+    /** the Doxia module parser id associated to this document, may be null if document not rendered from a Doxia source. */
     private final String parserId;
 
-    private final String relativePath;
-
+    /** the source document filename extension, may be null if document not rendered from a Doxia source. */
     private final String extension;
 
     private Map<String, String> attributes;
 
-    private final boolean editable;
+    /**
+     * The absolute paths of directories which may contain the original editable source.
+     * If empty document is not editable.
+     */
+    private final Collection<File> sourceDirectories;
 
+    /** The project's build directory, may be {@code null} rendered from a Doxia source) */
+    private final File rootDirectory;
+
+    /** The site's root directory, must be below {@link #rootDirectory}, may be {@code null} if not rendered from a Doxia source */
+    private final File siteRootDirectory;
+
+    /** optional descriptive text of the plugin which generated the output (usually Maven coordinates). Only set when document is not based on a Doxia source. */
     private final String generator;
+
+    static File stripSuffixFromPath(File file, String suffix) {
+        File relevantFile = file;
+        if (suffix == null || suffix.isEmpty()) {
+            return relevantFile;
+        }
+        File currentSuffixPart = new File(suffix);
+        // compare elements from end, suffix should be a suffix of file
+        do {
+            if (currentSuffixPart.getName().equals(relevantFile.getName())) {
+                relevantFile = relevantFile.getParentFile();
+                if (relevantFile == null) {
+                    throw new IllegalArgumentException("Suffix " + suffix + " has more elements than file " + file);
+                }
+            } else {
+                throw new IllegalArgumentException("Suffix " + suffix + " is not a suffix of file " + file);
+            }
+        } while ((currentSuffixPart = currentSuffixPart.getParentFile()) != null);
+        return relevantFile;
+    }
 
     /**
      * <p>
@@ -64,9 +100,20 @@ public class DocumentRenderingContext {
      * @since 1.8
      */
     public DocumentRenderingContext(File basedir, String document, String generator) {
-        this(basedir, null, document, null, null, false, generator);
+        this(basedir, document, null, null, null, null, Collections.emptySet(), generator);
     }
 
+    /**
+     *
+     * @param basedir
+     * @param basedirRelativePath
+     * @param document
+     * @param parserId
+     * @param extension
+     * @param editable
+     * @deprecated Use {@link #DocumentRenderingContext(File, String, String, String, File, File, Collection, String)} instead.
+     */
+    @Deprecated
     public DocumentRenderingContext(
             File basedir,
             String basedirRelativePath,
@@ -79,20 +126,50 @@ public class DocumentRenderingContext {
 
     /**
      * <p>
-     * Constructor for document rendering context.
+     * Constructor for rendering context when document is a Doxia markup source.
      * </p>
+     * Same as {@link #DocumentRenderingContext(File, String, String, String, File, File, Collection, String)} with {@code generator} set to {@code null}.
      *
      * @param basedir the source base directory (not null, pseudo value when not a Doxia source).
-     * @param basedirRelativePath the relative path from root (null if not Doxia source)
      * @param document the source document path.
-     * @param parserId the Doxia module parser id associated to this document, may be null if document not rendered from
+     * @param parserId the Doxia module parser id associated with this document, may be null if document not rendered from
      *            a Doxia source.
      * @param extension the source document filename extension, may be null if document not rendered from
      *            a Doxia source.
-     * @param editable is the document editable as source, i.e. not generated?
-     * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
-     * @since 1.8
+     * @param rootDirectory the absolute project's root directory (not null), usually {@code project.basedir}, must be an ancestor of {@code siteRootDirectory}
+     * @param siteRootDirectory the absolute site's root directory (not null), must start with {@code rootDirectory}, often ends with {@code /src/site}
+     * @param sourceDirectories the absolute paths of directories which may contain the original editable source.
+     * @since 2.1
      */
+    public DocumentRenderingContext(
+            File basedir,
+            String document,
+            String parserId,
+            String extension,
+            File rootDirectory,
+            File siteRootDirectory,
+            Collection<File> sourceDirectories) {
+        this(basedir, document, parserId, extension, rootDirectory, siteRootDirectory, sourceDirectories, null);
+    }
+
+    /**
+     * <p>
+     * Constructor for document rendering context.
+     * </p>
+     *
+     * @param basedir the absolute source base directory (not null, pseudo value when not a Doxia source).
+     * @param basedirRelativePath the relative path of {@code #basedir} from project root (null if not Doxia source)
+     * @param document the source document path.
+     * @param parserId the Doxia module parser id associated with this document, may be null if document not rendered from
+     *            a Doxia source.
+     * @param extension the source document filename extension, may be null if document not rendered from
+     *            a Doxia source.
+     * @param editable {@code true} if the document is editable as source, i.e. not generated, {@code false} otherwise.
+     * @param generator the generator of this document (in general a reporting goal: <code>groupId:artifactId:version:goal</code>), not set when document is based on a Doxia source.
+     * @since 1.8
+     * @deprecated Use {@link #DocumentRenderingContext(File, String, String, String, File, File, Collection, String)} instead.
+     */
+    @Deprecated
     public DocumentRenderingContext(
             File basedir,
             String basedirRelativePath,
@@ -100,6 +177,46 @@ public class DocumentRenderingContext {
             String parserId,
             String extension,
             boolean editable,
+            String generator) {
+        this(
+                basedir,
+                document,
+                parserId,
+                extension,
+                stripSuffixFromPath(basedir, basedirRelativePath),
+                // assume that site root is the parent of basedir (i.e. module specific source directory is directly
+                // below site root)
+                basedir.getParentFile(),
+                editable ? Collections.singleton(basedir) : Collections.emptySet(),
+                generator);
+    }
+
+    /**
+     * <p>
+     * Constructor for document rendering context.
+     * </p>
+     *
+     * @param basedir the source base directory (not null, pseudo value when not a Doxia source).
+     * @param document the source document path.
+     * @param parserId the Doxia module parser id associated with this document, may be null if document not rendered from
+     *            a Doxia source.
+     * @param extension the source document filename extension, may be null if document not rendered from
+     *            a Doxia source.
+     * @param rootDirectory the absolute project's root directory (not null), usually {@code project.basedir}, must be an ancestor of {@code siteRootDirectory}
+     * @param siteRootDirectory the absolute site's root directory (not null), must start with {@code rootDirectory}, often ends with {@code /src/site}
+     * @param sourceDirectories the absolute paths of directories which may contain the original editable source.
+     * @param generator the generator (in general a reporting goal: <code>groupId:artifactId:version:goal</code>)
+     * @since 2.1
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public DocumentRenderingContext(
+            File basedir,
+            String document,
+            String parserId,
+            String extension,
+            File rootDirectory,
+            File siteRootDirectory,
+            Collection<File> sourceDirectories,
             String generator) {
         this.basedir = basedir;
         this.parserId = parserId;
@@ -110,10 +227,23 @@ public class DocumentRenderingContext {
         document = document.replace('\\', '/');
         this.inputPath = document;
 
+        if (rootDirectory == null) {
+            if (siteRootDirectory != null) {
+                throw new IllegalArgumentException("Root directory must not be null when site root directory is set");
+            }
+        } else {
+            Objects.requireNonNull(
+                    siteRootDirectory, "Site root directory must not be null when root directory is set");
+            if (!siteRootDirectory.getPath().startsWith(rootDirectory.getPath())) {
+                throw new IllegalArgumentException("Site root directory " + siteRootDirectory
+                        + " must start with root directory " + rootDirectory);
+            }
+        }
+        this.rootDirectory = rootDirectory;
+        this.siteRootDirectory = siteRootDirectory;
         if (extension != null && !extension.isEmpty()) {
-            this.basedirRelativePath = basedirRelativePath.replace('\\', '/');
             // document comes from a Doxia source: see DoxiaDocumentRenderer
-            this.editable = editable;
+            this.sourceDirectories = sourceDirectories;
 
             // here we know the parserId and extension, we can play with this to get output name from document:
             // - index.xml -> index.html
@@ -126,13 +256,9 @@ public class DocumentRenderingContext {
             this.outputPath = filePathWithoutExt + ".html";
         } else {
             // document does not come from a Doxia source but direct Sink API, so no file extension to strip
-            this.basedirRelativePath = null;
-            this.editable = false;
+            this.sourceDirectories = Collections.emptySet();
             this.outputPath = document + ".html";
         }
-
-        this.relativePath = PathTool.getRelativePath(basedir.getPath(), new File(basedir, inputPath).getPath())
-                .replace('\\', '/');
     }
 
     /**
@@ -189,12 +315,13 @@ public class DocumentRenderingContext {
     }
 
     /**
-     * Get the relative path to site root.
+     * Get the relative path of the parent directory of this document to site root.
      *
      * @return the relative path to site root
      */
     public String getRelativePath() {
-        return relativePath;
+        return PathTool.getRelativePath(basedir.getPath(), new File(basedir, inputPath).getPath())
+                .replace('\\', '/');
     }
 
     /**
@@ -233,7 +360,7 @@ public class DocumentRenderingContext {
      * @since 1.8
      */
     public boolean isEditable() {
-        return editable;
+        return getDoxiaSourcePath() != null;
     }
 
     /**
@@ -257,27 +384,54 @@ public class DocumentRenderingContext {
     }
 
     /**
-     * Get the relative path of basedir (when a Doxia source)
+     * Get the project root relative path of basedir (when a Doxia source). For example {@code src/site/markdown}.
      *
      * @return the relative path of basedir when a Doxia source, or <code>null</code> if not a Doxia source
      * @since 1.8
      */
     public String getBasedirRelativePath() {
-        return basedirRelativePath;
+        if (!isDoxiaSource()) {
+            return null;
+        }
+        return PathTool.getRelativeFilePath(rootDirectory.getPath(), basedir.getPath());
     }
 
     /**
-     * Get the relative path to Doxia source from build root.
+     * Get the site root relative path of basedir (when a Doxia source). For example {@code markdown}.
+     *
+     * @return the relative path of basedir when a Doxia source, or <code>null</code> if not a Doxia source
+     */
+    private String getBasedirRelativePathAgainstSiteRoot() {
+        if (!isDoxiaSource()) {
+            return null;
+        }
+        return PathTool.getRelativeFilePath(siteRootDirectory.getPath(), basedir.getPath());
+    }
+
+    /**
+     * Get the relative path to Doxia source from build root. The file separators in the returned path are {@code /} regardless of the platform..
      *
      * @return the relative path to Doxia source from build root, or <code>null</code> if not a Doxia source
      * @since 1.8
      */
     public String getDoxiaSourcePath() {
-        return isDoxiaSource() ? (basedirRelativePath + '/' + inputPath) : null;
+        if (!isDoxiaSource()) {
+            return null;
+        } else {
+            for (File sourceDirectory : sourceDirectories) {
+                File sourceFile = new File(sourceDirectory, getBasedirRelativePathAgainstSiteRoot() + '/' + inputPath);
+                if (sourceFile.exists()) {
+                    return PathTool.getRelativeFilePath(rootDirectory.getPath(), sourceFile.getPath())
+                            .replace('\\', '/');
+                }
+            }
+        }
+        return null;
     }
 
     /**
-     * Get url of the Doxia source calculate from given base url.
+     * Get absolute url of the Doxia source calculate from given base url.
+     * Used from Skins to render an edit button.
      *
      * @param base the base url to use
      * @return the resulting url
