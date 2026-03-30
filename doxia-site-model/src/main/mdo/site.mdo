@@ -499,7 +499,8 @@ under the License.
         <field xml.attribute="true">
           <name>inherit</name>
           <description><![CDATA[
-            The way in which the menu is inherited. Can be one of : <code>top</code>, <code>bottom</code>.
+            The way in which the menu is inherited. Can be one of : <code>top</code>, <code>bottom</code> or empty. If empty the menu is not inherited (i.e. won't be exposed in sub projects) which is the default behavior.
+            Value <code>bottom</code> means it appears below sub project's defined menus, <code>top</code> means it appears above sub project's defined menus.
           ]]></description>
           <version>1.0.0+</version>
           <type>String</type>
