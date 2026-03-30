@@ -20,9 +20,11 @@ package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -45,6 +47,7 @@ public class SiteRenderingContext {
         private File path;
         private boolean editable;
         private boolean skipDuplicates;
+        private final Collection<File> editableSourceDirectories = new LinkedHashSet<>();
 
         public SiteDirectory(File path, boolean editable) {
             this(path, editable, false);
@@ -52,8 +55,8 @@ public class SiteRenderingContext {
 
         /**
          *
-         * @param path
-         * @param editable
+         * @param path path to the site directory containing Doxia sources files, expected to have a Doxia Site layout, i.e. one directory per Doxia parser module
+         * @param editable {@code true} if the site directory is expected to be editable
          * @param skipDuplicates flag indicating if duplicates in this directory should be skipped ({@code true}) or lead to an exception ({@code false})
          * @since 2.1
          */
@@ -73,6 +76,37 @@ public class SiteRenderingContext {
 
         public boolean isSkipDuplicates() {
             return skipDuplicates;
+        }
+
+        /**
+         * Add an alternative source directory to this site directory.
+         * This will implicitly turn it into an editable site directory. Multiple source directories can be used, the first one containing a file with a given name will be used for that file,
+         * the others will be ignored. This allows to have a main source directory and an optional overlay directory with custom files.
+         * Only necessary to call if the source directory is different from the site directory, otherwise the site directory will be used as source directory.
+         * @param sourceDirectory
+         * @since 2.1
+         */
+        public void addAlternativeEditableSourceDirectory(File sourceDirectory) {
+            editableSourceDirectories.add(sourceDirectory);
+            editable = true;
+        }
+
+        /**
+         * Get the source directories for this site directory. If no alternative source directory has been added via {@link #addAlternativeEditableSourceDirectory(File)}
+         * the site directory itself ({@link #getPath()}) will be returned as the only source directory.
+         * If the site directory is not editable, an empty collection will be returned.
+         * @return the source directories for this site directory
+         * @since 2.1
+         */
+        public Collection<File> getEditableSourceDirectories() {
+            if (!editable) {
+                return Collections.emptyList();
+            }
+            if (editableSourceDirectories.isEmpty()) {
+                return Collections.singleton(path);
+            } else {
+                return Collections.unmodifiableCollection(editableSourceDirectories);
+            }
         }
     }
 

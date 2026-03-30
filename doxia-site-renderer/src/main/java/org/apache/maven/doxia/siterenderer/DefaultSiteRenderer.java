@@ -201,12 +201,11 @@ public class DefaultSiteRenderer implements Renderer {
 
                     addModuleFiles(
                             siteRenderingContext.getRootDirectory(),
+                            siteDirectory,
                             moduleBasedir,
                             module,
                             excludes,
-                            files,
-                            siteDirectory.isEditable(),
-                            siteDirectory.isSkipDuplicates());
+                            files);
                 }
             }
         }
@@ -231,31 +230,26 @@ public class DefaultSiteRenderer implements Renderer {
      * Populates the files map with {@link DocumentRenderer}s per output name in parameter {@code files} for all files in the moduleBasedir matching the module extensions,
      * taking care of duplicates if needed.
      *
-     * @param rootDir
+     * @param siteRootDirectory
+     * @param siteDirectory
      * @param moduleBasedir
      * @param module
      * @param excludes
      * @param files
-     * @param editable
-     * @param skipDuplicates
      * @throws IOException
      * @throws RendererException
      */
     private void addModuleFiles(
-            File rootDir,
+            File siteRootDirectory,
+            SiteDirectory siteDirectory,
             File moduleBasedir,
             ParserModule module,
             String excludes,
-            Map<String, DocumentRenderer> files,
-            boolean editable,
-            boolean skipDuplicates)
+            Map<String, DocumentRenderer> files)
             throws IOException, RendererException {
         if (!moduleBasedir.exists() || ArrayUtils.isEmpty(module.getExtensions())) {
             return;
         }
-
-        String moduleRelativePath =
-                PathTool.getRelativeFilePath(rootDir.getAbsolutePath(), moduleBasedir.getAbsolutePath());
 
         List<String> allFiles = FileUtils.getFileNames(moduleBasedir, "**/*", excludes, false);
 
@@ -271,14 +265,20 @@ public class DefaultSiteRenderer implements Renderer {
 
             for (String doc : docs) {
                 DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
-                        moduleBasedir, moduleRelativePath, doc, module.getParserId(), extension, editable);
+                        moduleBasedir,
+                        doc,
+                        module.getParserId(),
+                        extension,
+                        siteRootDirectory,
+                        siteDirectory.getPath(),
+                        siteDirectory.getEditableSourceDirectories());
 
                 // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
                 if (endsWithIgnoreCase(doc, ".vm")) {
                     docRenderingContext.setAttribute("velocity", "true");
                 }
 
-                if (!checkForDuplicate(docRenderingContext, files, skipDuplicates)) {
+                if (!checkForDuplicate(docRenderingContext, files, siteDirectory.isSkipDuplicates())) {
                     String key = docRenderingContext.getOutputName();
                     files.put(key, new DoxiaDocumentRenderer(docRenderingContext));
                 }
