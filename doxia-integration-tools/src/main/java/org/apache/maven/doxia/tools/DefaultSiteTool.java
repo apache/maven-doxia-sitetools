@@ -65,6 +65,7 @@ import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.site.inheritance.SiteModelInheritanceAssembler;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Plugin;
@@ -387,7 +388,13 @@ public class DefaultSiteTool implements SiteTool {
             List<RemoteRepository> remoteProjectRepositories)
             throws SiteToolException {
         return getSiteModel(
-                siteDirectory, locale, null, project, reactorProjects, repoSession, remoteProjectRepositories);
+                siteDirectory,
+                locale,
+                new DefaultMavenExecutionRequest(),
+                project,
+                reactorProjects,
+                repoSession,
+                remoteProjectRepositories);
     }
 
     @Override
@@ -401,6 +408,7 @@ public class DefaultSiteTool implements SiteTool {
             List<RemoteRepository> remoteProjectRepositories)
             throws SiteToolException {
         Objects.requireNonNull(locale, "locale cannot be null");
+        Objects.requireNonNull(locale, "request cannot be null");
         Objects.requireNonNull(project, "project cannot be null");
         Objects.requireNonNull(reactorProjects, "reactorProjects cannot be null");
         Objects.requireNonNull(repoSession, "repoSession cannot be null");
@@ -440,13 +448,15 @@ public class DefaultSiteTool implements SiteTool {
         return siteModel;
     }
 
-    /** {@inheritDoc} */
+    @Override
+    @Deprecated
     public String getInterpolatedSiteDescriptorContent(
             Map<String, String> props, MavenProject aProject, String siteDescriptorContent) throws SiteToolException {
         Objects.requireNonNull(props, "props cannot be null");
 
         // "classical" late interpolation
-        return getInterpolatedSiteDescriptorContent(null, aProject, siteDescriptorContent, false);
+        return getInterpolatedSiteDescriptorContent(
+                new DefaultMavenExecutionRequest(), aProject, siteDescriptorContent, false);
     }
 
     /**
@@ -462,6 +472,7 @@ public class DefaultSiteTool implements SiteTool {
     private String getInterpolatedSiteDescriptorContent(
             MavenExecutionRequest request, MavenProject aProject, String siteDescriptorContent, boolean isEarly)
             throws SiteToolException {
+        Objects.requireNonNull(request, "request cannot be null");
         Objects.requireNonNull(aProject, "aProject cannot be null");
         Objects.requireNonNull(siteDescriptorContent, "siteDescriptorContent cannot be null");
 
