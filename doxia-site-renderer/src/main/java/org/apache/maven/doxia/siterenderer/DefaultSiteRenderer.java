@@ -143,6 +143,9 @@ public class DefaultSiteRenderer implements Renderer {
     @Inject
     private PlexusContainer plexus;
 
+    @Inject
+    private Map<String, ContextCustomizer> contextCustomizers;
+
     private static final String SKIN_TEMPLATE_LOCATION = "META-INF/maven/site.vm";
 
     private static final String TOOLS_LOCATION = "META-INF/maven/site-tools.xml";
@@ -589,6 +592,18 @@ public class DefaultSiteRenderer implements Renderer {
             context.put("alignedFilePath", alignedFilePath);
             // TODO Deprecated -- will be removed!
             context.put("alignedFileName", alignedFilePath);
+
+            for (Map.Entry<String, ContextCustomizer> entry : contextCustomizers.entrySet()) {
+                try {
+                    LOGGER.debug("Applying Velocity context customizer '" + entry.getKey() + "'");
+                    entry.getValue().customizeContext(context, docRenderingContext, siteRenderingContext);
+                } catch (Exception e) {
+                    LOGGER.warn(
+                            "Velocity context customizer '" + entry.getKey()
+                                    + "' threw an exception and will be ignored",
+                            e);
+                }
+            }
         }
         context.put("site", siteRenderingContext.getSiteModel());
         // TODO Deprecated -- will be removed!
@@ -640,7 +655,13 @@ public class DefaultSiteRenderer implements Renderer {
         // then add data objects from rendered document
 
         // Add infos from document
-        context.put("authors", content.getAuthors());
+        Collection<String> authors = content.getAuthors();
+        if (authors != null && !authors.isEmpty()) {
+            context.put("authors", authors);
+        } else {
+            // use scmModifiedDate (if available) as fallback
+            context.put("authors", context.get("scmModifiedAuthor"));
+        }
 
         String shortTitle = content.getTitle();
         context.put("shortTitle", shortTitle);
@@ -672,7 +693,12 @@ public class DefaultSiteRenderer implements Renderer {
         context.put("bodyContent", content.getBody());
 
         // document date (got from Doxia Sink date() API)
-        context.put("documentDate", content.getDate());
+        if (content.getDate() != null) {
+            context.put("documentDate", content.getDate());
+        } else {
+            // use scmModifiedDate (if available) as fallback
+            context.put("documentDate", context.get("scmModifiedDate"));
+        }
 
         // document rendering context, to get eventual inputPath
         context.put("docRenderingContext", content.getRenderingContext());

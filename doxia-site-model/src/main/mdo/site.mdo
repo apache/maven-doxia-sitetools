@@ -336,7 +336,7 @@ under the License.
 
     <class java.clone="deep">
       <name>PublishDate</name>
-      <description>Modify display properties for date published.</description>
+      <description>Modify display properties for the date in the header/footer. By default is the publish date.</description>
       <version>1.0.0+</version>
       <fields>
         <field xml.attribute="true">
@@ -367,6 +367,54 @@ under the License.
           <type>String</type>
           <identifier>true</identifier>
           <defaultValue>Etc/UTC</defaultValue>
+        </field>
+        <field xml.attribute="true">
+          <name>value</name>
+          <description>
+            <![CDATA[
+              The Velocity context key to use as source for the date. Usually one of "publishDate" or "scmLastModified". Must have a value of type <code>java.util.Date</code>.
+            ]]>
+          </description>
+          <version>2.1.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>publishDate</defaultValue>
+        </field>
+        <field xml.attribute="true">
+          <name>prefix</name>
+          <description>
+                <![CDATA[
+                The prefix to emit in front of the date. When starting with <code>template.</code> it is assumed to reference a key from the <code>site-renderer.properties</code>, otherwise it is a literal value.
+                ]]>
+          </description>
+          <version>2.1.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>template.lastpublished</defaultValue>
+        </field>
+        <field xml.attribute="true">
+          <name>fallbackValue</name>
+          <description>
+            <![CDATA[
+              The Velocity context key to use as source for the date. Used as fallback when the context given in "value" is not available. Must have a value of type <code>java.util.Date</code>. This is useful when the context given in "value" is only available for Doxia source documents (but not for reports).
+            ]]>
+          </description>
+          <version>2.1.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>date</defaultValue>
+        </field>
+        <field xml.attribute="true">
+          <name>fallbackPrefix</name>
+          <description>
+                <![CDATA[
+                The prefix to emit in front of the fallback date. When starting with <code>template.</code> it is assumed to reference a key from the <code>site-renderer.properties</code>, otherwise it is a literal value.
+                ]]>
+          </description>
+          <version>2.1.0+</version>
+          <type>String</type>
+          <identifier>true</identifier>
+          <defaultValue>template.lastpublished</defaultValue>
         </field>
       </fields>
     </class>
