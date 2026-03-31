@@ -1,189 +1,129 @@
- -----
- Introduction
- -----
- Hervé Boutemy
- Dennis Lundberg
- ------
- 2015-12-20
- ------
+---
+title: Introduction
+author: 
+  - Hervé Boutemy
+  - Dennis Lundberg
+date: 2015-12-20
+---
 
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~   http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.
+<!-- Licensed to the Apache Software Foundation (ASF) under one-->
+<!-- or more contributor license agreements.  See the NOTICE file-->
+<!-- distributed with this work for additional information-->
+<!-- regarding copyright ownership.  The ASF licenses this file-->
+<!-- to you under the Apache License, Version 2.0 (the-->
+<!-- "License"); you may not use this file except in compliance-->
+<!-- with the License.  You may obtain a copy of the License at-->
+<!---->
+<!--   http://www.apache.org/licenses/LICENSE-2.0-->
+<!---->
+<!-- Unless required by applicable law or agreed to in writing,-->
+<!-- software distributed under the License is distributed on an-->
+<!-- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY-->
+<!-- KIND, either express or implied.  See the License for the-->
+<!-- specific language governing permissions and limitations-->
+<!-- under the License.-->
 
-~~ NOTE: For help with the syntax of this file, see:
-~~ http://maven.apache.org/doxia/references/apt-format.html
+# Doxia Sitetools - Site Renderer
 
-Doxia Sitetools - Site Renderer
+The Site Renderer handles the rendering of sites, assembling a common site template \(also called _a skin_\) with a collection of documents.
 
-  The Site Renderer handles the rendering of sites, assembling a common site template (also called <a skin>)
-  with a collection of documents.
+Documents can be dynamically generated with [Doxia Sink API](/doxia/doxia/doxia-sink-api/), like Maven reports, or simply read from static files written in [markup supported by Doxia Parsers](/doxia/references/index.html), optionally preprocessed by [Velocity](https://velocity.apache.org/engine/${velocityEngineVersion}) if their file names end with `.vm`.
 
-  Documents can be dynamically generated with {{{/doxia/doxia/doxia-sink-api/}Doxia Sink API}}, like Maven reports,
-  or simply read from static files written in {{{/doxia/references/index.html}markup supported by Doxia Parsers}},
-  optionally preprocessed by {{{https://velocity.apache.org/engine/${velocityEngineVersion}/}Velocity}}
-  if their file names end with <<<.vm>>>.
+![](doxia-site-renderer.png)
 
-[doxia-site-renderer.png]
+${esc.h}${esc.h} Doxia Site Skins
 
-* Doxia Site Skins
+A default site template is included \(see `default-site.vm`\), but other templates can be used at will, either as a standalone template or packaged in a [**skin** artifact](../doxia-skin-model/).
 
-  A default site template is included (see <<<default-site.vm>>>), but other templates can be used at will,
-  either as a standalone template or packaged in a {{{../doxia-skin-model/}<<skin>> artifact}}.
+Maven team provides [a collection of skins](/skins/) for projects use.
 
-  Maven team provides {{{/skins/}a collection of skins}} for projects use.
+Some documentation is available on [how to create a new skin](/plugins/maven-site-plugin/examples/creatingskins.html).
 
-  Some documentation is available on {{{/plugins/maven-site-plugin/examples/creatingskins.html}how to create a new skin}}.
+${esc.h}${esc.h} Velocity processing
 
-* Velocity processing
+Site and documents with file names ending in `.vm` are processed by Velocity.
 
-  Site and documents with file names ending in <<<.vm>>> are processed by Velocity.
+The Velocity context contains some variables related to rendering context that you can use:
 
-  The Velocity context contains some variables related to rendering context that you can use:
+|Variable|Type|Description|
+|:---|:---|:---|
+|`alignedFileName`|`String`|**Deprecated**: use `alignedFilePath`.|
+|`alignedFilePath`|`String`|The file path of the \(HTML\) document being rendered, relative to the document being rendered.|
+|`decoration`|[`SiteModel`](../doxia-site-model/apidocs/org/apache/maven/doxia/site/SiteModel.html)|**Deprecated**: use `site`.|
+|`currentFileName`|`String`|**Deprecated**: use `currentFilePath`.|
+|`currentFilePath`|`String`|The file path of the \(HTML\) document being rendered, relative to the site root.|
+|`doxiaSiteRendererVersion`|`String`|The version of the Doxia Site Renderer in use.|
+|`locale`|`Locale`|The locale for the document being rendered.|
+|`publishDate`|`Date`|An optional hardcoded publish date that has been set programmatically.|
+|`relativePath`|`String`|The path to the site root from the document being rendered.|
+|`scmModifiedDate`|`Date`|The last modified date as retrieved through [Maven SCM](https://maven.apache.org/scm/) from the underlying Doxia source. Only available if artifact [`doxia-site-scm-context`](../doxia-site-scm-context/) is on the classpath.|
+|`scmModifiedAuthor`|`String`|The author of the last commit on the file as retrieved through [Maven SCM](https://maven.apache.org/scm/) from the underlying Doxia source. Only available if artifact [`doxia-site-scm-context`](../doxia-site-scm-context/) is on the classpath.|
+|`site`|[`SiteModel`](../doxia-site-model/apidocs/org/apache/maven/doxia/site/SiteModel.html)|This is a model that represents the data in your [`site.xml`](../doxia-site-model/site.html).|
+|`supportedLocales`|`List<Locale>`|The list of locales that the site will contain.|
 
-*---------------------------------+----------------------+-------------------------------+
-|| Variable                       || Type                || Description                 ||
-*---------------------------------+----------------------+-------------------------------+
-| <<<alignedFileName>>>           | <<<String>>>         | <<Deprecated>>: use <<<alignedFilePath>>>. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<alignedFilePath>>>           | <<<String>>>         | The file path of the (HTML) document being rendered, relative to the document being rendered. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<decoration>>>                | {{{../doxia-site-model/apidocs/org/apache/maven/doxia/site/SiteModel.html}<<<SiteModel>>>}} | <<Deprecated>>: use <<<site>>>. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<currentFileName>>>           | <<<String>>>         |  <<Deprecated>>: use <<<currentFilePath>>>. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<currentFilePath>>>           | <<<String>>>         | The file path of the (HTML) document being rendered, relative to the site root. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<doxiaSiteRendererVersion>>>  | <<<String>>>         | The version of the Doxia Site Renderer in use. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<locale>>>                    | <<<Locale>>>         | The locale for the document being rendered. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<publishDate>>>               | <<<Date>>>           | An optional hardcoded publish date that has been set programmatically. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<relativePath>>>              | <<<String>>>         | The path to the site root from the document being rendered. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<scmModifiedDate>>>           | <<<Date>>>           | The last modified date as retrieved through {{{https://maven.apache.org/scm/}Maven SCM}} from the underlying Doxia source. Only available if artifact {{{../doxia-site-scm-context/}<<<doxia-site-scm-context>>>}} is on the classpath. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<scmModifiedAuthor>>>         | <<<String>>>         | The author of the last commit on the file as retrieved through {{{https://maven.apache.org/scm/}Maven SCM}} from the underlying Doxia source. Only available if artifact {{{../doxia-site-scm-context/}<<<doxia-site-scm-context>>>}} is on the classpath. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<site>>>                      | {{{../doxia-site-model/apidocs/org/apache/maven/doxia/site/SiteModel.html}<<<SiteModel>>>}} | This is a model that represents the data in your {{{../doxia-site-model/site.html}<<<site.xml>>>}}. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<supportedLocales>>>          | <<<List\<Locale\>>>> | The list of locales that the site will contain. |
-*---------------------------------+----------------------+-------------------------------+
-
-  There are also some tools for general use:
+There are also some tools for general use:
 
 #set( $plexus = "https://codehaus-plexus.github.io/plexus-utils/apidocs/org/codehaus/plexus/util" )
-*---------------------------------+------------------------------------------------------+-------------------------------+
-|| Variable                       || Type                                                || Description                 ||
-*---------------------------------+------------------------------------------------------+-------------------------------+
-| <<<PathTool>>>                  | {{{$plexus/PathTool.html}<<<PathTool>>>}}            |                               |
-*---------------------------------+------------------------------------------------------+-------------------------------+
-| <<<StringUtils>>>               | {{{$plexus/StringUtils.html}<<<StringUtils>>>}}      |                               |
-*---------------------------------+------------------------------------------------------+-------------------------------+
-| <<<plexus>>>                    | {{{https://github.com/eclipse/sisu.plexus/blob/master/org.eclipse.sisu.plexus/src/main/java/org/codehaus/plexus/PlexusContainer.java}<<<PlexusContainer>>>}} |  |
-*---------------------------------+------------------------------------------------------+-------------------------------+
 
-  Additionally, there are {{{https://velocity.apache.org/tools/${velocityToolsVersion}/tools-summary.html} Velocity Generic Tools}} populated
-  with the site locale, the site model's date format, and site renderer's resource bundle:
+|Variable|Type|Description|
+|:---|:---|:---|
+|`PathTool`|[`PathTool`]($plexus/PathTool.html)||
+|`StringUtils`|[`StringUtils`]($plexus/StringUtils.html)||
+|`plexus`|[`PlexusContainer`](https://github.com/eclipse/sisu.plexus/blob/master/org.eclipse.sisu.plexus/src/main/java/org/codehaus/plexus/PlexusContainer.java)||
+
+Additionally, there are [Velocity Generic Tools](https://velocity.apache.org/tools/${velocityToolsVersion}/tools-summary.html) populated with the site locale, the site model&apos;s date format, and site renderer&apos;s resource bundle:
 
 #set( $generic = "https://velocity.apache.org/tools/${velocityToolsVersion}/tools-summary.html" )
-*------------------+---------------------------------------------------------------+-------------------------------+
-|| Variable        || Type                                                         || Description                 ||
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<alternator>>> | {{{$generic${esc.hash}deprecated-tools}AlternatorTool}}       | {{{$generic${esc.hash}deprecated-tools}<<Deprecated>>}}: use CSS3 nth-child(even/odd) selectors or ${esc.hash}if($foreach.index % 2). For creating alternators to easily alternate over a set of values.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<class>>>      | {{{$generic${esc.hash}ClassTool}ClassTool}}                   | For simplifying reflective lookup of information about classes and their fields, methods and constructors.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<context>>>    | {{{$generic${esc.hash}ContextTool}ContextTool}}               | For convenient access to context data and metadata.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<convert>>>    | {{{$generic${esc.hash}deprecated-tools}ConversionTool}}       | {{{$generic${esc.hash}deprecated-tools}<<Deprecated>>}}: use NumberTool for numbers formatting/parsing, DateTool for date/time formatting/parsing, or CollectionTool for toStrings(). For converting String values to richer object Types.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<date>>>       | {{{$generic${esc.hash}ComparisonDateTool}ComparisonDateTool}} | For manipulating, formatting, and comparing dates. The formatting pattern and timezone are taken from the site descriptors element "publishDate" "format and "timezone" attributes, respectively.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<display>>>    | {{{$generic${esc.hash}DisplayTool}DisplayTool}}               | For controlling display of references (e.g., truncating values, "pretty printing" lists, and displaying alternates when a reference is null).
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<esc>>>        | {{{$generic${esc.hash}EscapeTool}EscapeTool}}                 | For common escaping needs in Velocity templates (e.g. escaping html, xml, javascript etc.).
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<field>>>      | {{{$generic${esc.hash}FieldTool}FieldTool}}                   | For (easy) access to static fields in a class, such as string constants.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<link>>>       | {{{$generic${esc.hash}LinkTool}LinkTool}}                     | For creating and manipulating URIs and URLs. The API for this tool is designed to closely resemble that of the VelocityView tool of the same name.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<loop>>>       | {{{$generic${esc.hash}LoopTool}LoopTool}}                     | A convenience tool to use with <<<${esc.hash}foreach>>> loops. It wraps a list with a custom iterator to provide greater control, allowing loops to end early, skip ahead and more.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<math>>>       | {{{$generic${esc.hash}MathTool}MathTool}}                     | For performing math functions.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<number>>>     | {{{$generic${esc.hash}NumberTool}NumberTool}}                 | For formatting and converting numbers.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<render>>>     | {{{$generic${esc.hash}RenderTool}RenderTool}}                 | To evaluate and render arbitrary strings of VTL, including recursive rendering.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<text>>>       | {{{$generic${esc.hash}ResourceTool}ResourceTool}}             | For simplified access to resource bundles for internationalization or other dynamic content needs.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<sorter>>>     | {{{$generic${esc.hash}deprecated-tools}SortTool}}             | {{{$generic${esc.hash}deprecated-tools}<<Deprecated>>}}: use CollectionTool sort methods. Used to sort collections (or arrays, iterators, etc) on any arbitary set of properties exposed by the objects contained within the collection.
-*------------------+---------------------------------------------------------------+-------------------------------+
-| <<<xml>>>        | {{{$generic${esc.hash}XmlTool}XmlTool}}                       | For reading/navigating XML files. This uses dom4j under the covers and provides complete XPath support.
-*------------------+---------------------------------------------------------------+-------------------------------+
 
-  If you intend to use custom Velocity tools, add them to the Maven Site Plugin's dependency list and make sure
-  that they have a bundled configuration file in <<</META-INF/maven/site-tools.xml>>>.
+|Variable|Type|Description|
+|:---|:---|:---|
+|`alternator`|[AlternatorTool]($generic${esc.hash}deprecated-tools)|[**Deprecated**]($generic${esc.hash}deprecated-tools): use CSS3 nth-child\(even/odd\) selectors or $<a id="esc.hash"></a>esc.hashif\($foreach.index % 2\). For creating alternators to easily alternate over a set of values.|
+|`class`|[ClassTool]($generic${esc.hash}ClassTool)|For simplifying reflective lookup of information about classes and their fields, methods and constructors.|
+|`context`|[ContextTool]($generic${esc.hash}ContextTool)|For convenient access to context data and metadata.|
+|`convert`|[ConversionTool]($generic${esc.hash}deprecated-tools)|[**Deprecated**]($generic${esc.hash}deprecated-tools): use NumberTool for numbers formatting/parsing, DateTool for date/time formatting/parsing, or CollectionTool for toStrings\(\). For converting String values to richer object Types.|
+|`date`|[ComparisonDateTool]($generic${esc.hash}ComparisonDateTool)|For manipulating, formatting, and comparing dates. The formatting pattern and timezone are taken from the site descriptors element &quot;publishDate&quot; &quot;format and &quot;timezone&quot; attributes, respectively.|
+|`display`|[DisplayTool]($generic${esc.hash}DisplayTool)|For controlling display of references \(e.g., truncating values, &quot;pretty printing&quot; lists, and displaying alternates when a reference is null\).|
+|`esc`|[EscapeTool]($generic${esc.hash}EscapeTool)|For common escaping needs in Velocity templates \(e.g. escaping html, xml, javascript etc.\).|
+|`field`|[FieldTool]($generic${esc.hash}FieldTool)|For \(easy\) access to static fields in a class, such as string constants.|
+|`link`|[LinkTool]($generic${esc.hash}LinkTool)|For creating and manipulating URIs and URLs. The API for this tool is designed to closely resemble that of the VelocityView tool of the same name.|
+|`loop`|[LoopTool]($generic${esc.hash}LoopTool)|A convenience tool to use with `$<a id="esc.hash"></a>esc.hashforeach` loops. It wraps a list with a custom iterator to provide greater control, allowing loops to end early, skip ahead and more.|
+|`math`|[MathTool]($generic${esc.hash}MathTool)|For performing math functions.|
+|`number`|[NumberTool]($generic${esc.hash}NumberTool)|For formatting and converting numbers.|
+|`render`|[RenderTool]($generic${esc.hash}RenderTool)|To evaluate and render arbitrary strings of VTL, including recursive rendering.|
+|`text`|[ResourceTool]($generic${esc.hash}ResourceTool)|For simplified access to resource bundles for internationalization or other dynamic content needs.|
+|`sorter`|[SortTool]($generic${esc.hash}deprecated-tools)|[**Deprecated**]($generic${esc.hash}deprecated-tools): use CollectionTool sort methods. Used to sort collections \(or arrays, iterators, etc\) on any arbitary set of properties exposed by the objects contained within the collection.|
+|`xml`|[XmlTool]($generic${esc.hash}XmlTool)|For reading/navigating XML files. This uses dom4j under the covers and provides complete XPath support.|
 
-  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html${esc.hash}L483}DefaultSiteRenderer.createToolManagedVelocityContext(...)}}>>>
-  source for more details and the {{{https://velocity.apache.org/tools/devel/tools-summary.html}tools usage summary}}.
+If you intend to use custom Velocity tools, add them to the Maven Site Plugin&apos;s dependency list and make sure that they have a bundled configuration file in `/META-INF/maven/site-tools.xml`.
 
-** Maven Site Plugin
+See [`DefaultSiteRenderer.createToolManagedVelocityContext(...)`](./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#L483) source for more details and the [tools usage summary](https://velocity.apache.org/tools/devel/tools-summary.html).
 
-  When <<<doxia-site-renderer>>> is used by <<<maven-site-plugin>>>, the following template properties are defined:
+${esc.h}${esc.h}# Maven Site Plugin
 
-*---------------------------------+----------------------+-------------------------------+
-|| Variable                       || Type                || Description                 ||
-*---------------------------------+----------------------+-------------------------------+
-| <<<inputEncoding>>>             | <<<String>>>         |                               |
-*---------------------------------+----------------------+-------------------------------+
-| <<<outputEncoding>>>            | <<<String>>>         |                               |
-*---------------------------------+----------------------+-------------------------------+
-| <<<project>>>                   | {{{/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html}<<<MavenProject>>>}} | The current project. |
-*---------------------------------+----------------------+-------------------------------+
-| <project properties>            | <<<String>>>         | Properties defined in POM are directly available. |
-*---------------------------------+----------------------+-------------------------------+
+When `doxia-site-renderer` is used by `maven-site-plugin`, the following template properties are defined:
 
-  See <<<{{{/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/render/AbstractSiteRenderingMojo.html${esc.hash}createSiteRenderingContext-java.util.Locale-}AbstractSiteRenderingMojo.createSiteRenderingContext(...)}}>>>
-  source for more details.
+|Variable|Type|Description|
+|:---|:---|:---|
+|`inputEncoding`|`String`||
+|`outputEncoding`|`String`||
+|`project`|[`MavenProject`](/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html)|The current project.|
+|_project properties_|`String`|Properties defined in POM are directly available.|
 
-** Site Template
+See [`AbstractSiteRenderingMojo.createSiteRenderingContext(...)`](/plugins/maven-site-plugin/apidocs/org/apache/maven/plugins/site/render/AbstractSiteRenderingMojo.html${esc.hash}createSiteRenderingContext-java.util.Locale-) source for more details.
 
-  When Velocity is processing the site template (be it from skin or local template), there are a few complementary variables
-  available that give access to information taken from document being merged into the template:
+${esc.h}${esc.h}# Site Template
 
-*---------------------------------+----------------------+-------------------------------+
-|| Variable                       || Type                || Description                 ||
-*---------------------------------+----------------------+-------------------------------+
-| <<<authors>>>                   | <<<List\<String\>>>> | A list of authors from the source document. If not set is equal to <<<scmModifiedAuthor>>> (only available if artifact {{{../doxia-site-scm-context/}<<<doxia-site-scm-context>>>}} is on the classpath). | |
-*---------------------------------+----------------------+-------------------------------+
-| <<<bodyContent>>>               | <<<String>>>         | HTML body content of the Doxia generated output. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<documentDate>>>              | <<<String>>>         | The date specified in the source document: semantics has to be chosen by document writer (document creation date, or document last modification date, or ...), and format is not enforced. If not set is equal to <<<scmModifiedDate>>> (only available if artifact {{{../doxia-site-scm-context/}<<<doxia-site-scm-context>>>}} is on the classpath). |
-*---------------------------------+----------------------+-------------------------------+
-| <<<headContent>>>               | <<<String>>>         | HTML head content of the Doxia generated output. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<shortTitle>>>                | <<<String>>>         | The title of the document, excluding the project or site name. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<title>>>                     | <<<String>>>         | The title of the document, including the project or site name. |
-*---------------------------------+----------------------+-------------------------------+
-| <<<docRenderingContext>>>       | {{{./apidocs/org/apache/maven/doxia/siterenderer/DocumentRenderingContext.html}<<<DocumentRenderingContext>>>}} | (since 1.8) The document rendering context. |
-*---------------------------------+----------------------+-------------------------------+
+When Velocity is processing the site template \(be it from skin or local template\), there are a few complementary variables available that give access to information taken from document being merged into the template:
 
-  See <<<{{{./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html${esc.hash}L616}DefaultSiteRenderer.createSiteTemplateVelocityContext(...)}}>>>
-  source for more details.
+|Variable|Type|Description|
+|:---|:---|:---|
+|`authors`|`List<String>`|A list of authors from the source document. If not set is equal to `scmModifiedAuthor` \(only available if artifact [`doxia-site-scm-context`](../doxia-site-scm-context/) is on the classpath\).|
+|`bodyContent`|`String`|HTML body content of the Doxia generated output.|
+|`documentDate`|`String`|The date specified in the source document: semantics has to be chosen by document writer \(document creation date, or document last modification date, or ...\), and format is not enforced. If not set is equal to `scmModifiedDate` \(only available if artifact [`doxia-site-scm-context`](../doxia-site-scm-context/) is on the classpath\).|
+|`headContent`|`String`|HTML head content of the Doxia generated output.|
+|`shortTitle`|`String`|The title of the document, excluding the project or site name.|
+|`title`|`String`|The title of the document, including the project or site name.|
+|`docRenderingContext`|[`DocumentRenderingContext`](./apidocs/org/apache/maven/doxia/siterenderer/DocumentRenderingContext.html)|\(since 1\.8\) The document rendering context.|
+
+See [`DefaultSiteRenderer.createSiteTemplateVelocityContext(...)`](./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html${esc.hash}L616) source for more details.
+
