@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * <ul>
  * <li>{@value #ATTRIBUTE_NAME_SCM_MODIFIED_DATE}: the last modification date of the file being rendered according to SCM, as a {@link java.util.Date} (if available)</li>
  * <li>{@value #ATTRIBUTE_NAME_SCM_MODIFIED_AUTHOR}: the author of the last modification of the file being rendered according to SCM, as a {@link String} (if available)</li>
- * <ul>
+ * </ul>
  *
  * @since 2.1.0
  */

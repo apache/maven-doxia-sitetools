@@ -497,7 +497,7 @@ public class SiteRenderingContext {
      * This is a free-form map that can be used for example
      * from the {@link ContextCustomizer} to cache items that can be reused among different documents of the same site.
      *
-     * @return a map of attributes that can be used by renderers and templates to customize the output, the returned map is immutable, use {@link #addAttribute(String, Object)} to add attributes to the context
+     * @return a map of attributes, the returned map is immutable.
      * @see #putAttribute(String, Object)
      * @see #removeAttribute(String)
      * @since 2.1.0
@@ -511,6 +511,8 @@ public class SiteRenderingContext {
      * It overrides any existing value for the same key and returns the previous value associated with the key, or {@code null}
      * if there was no mapping for the key or if the map previously associated {@code null} with the key.
      *
+     * @param key the key with which the specified value is to be associated
+     * @param value the value to be associated with the specified key
      * @return the previous value associated with the key, or {@code null}
      * @see #getAttributes()
      * @see #removeAttribute(String)
