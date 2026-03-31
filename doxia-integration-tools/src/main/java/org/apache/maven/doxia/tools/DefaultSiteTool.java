@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.apache.commons.io.FilenameUtils;
@@ -64,6 +65,8 @@ import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.site.inheritance.SiteModelInheritanceAssembler;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
@@ -374,7 +377,8 @@ public class DefaultSiteTool implements SiteTool {
         }
     }
 
-    /** {@inheritDoc} */
+    @Override
+    @Deprecated
     public SiteModel getSiteModel(
             File siteDirectory,
             Locale locale,
@@ -383,7 +387,28 @@ public class DefaultSiteTool implements SiteTool {
             RepositorySystemSession repoSession,
             List<RemoteRepository> remoteProjectRepositories)
             throws SiteToolException {
+        return getSiteModel(
+                siteDirectory,
+                locale,
+                new DefaultMavenExecutionRequest(),
+                project,
+                reactorProjects,
+                repoSession,
+                remoteProjectRepositories);
+    }
+
+    @Override
+    public SiteModel getSiteModel(
+            File siteDirectory,
+            Locale locale,
+            MavenExecutionRequest request,
+            MavenProject project,
+            List<MavenProject> reactorProjects,
+            RepositorySystemSession repoSession,
+            List<RemoteRepository> remoteProjectRepositories)
+            throws SiteToolException {
         Objects.requireNonNull(locale, "locale cannot be null");
+        Objects.requireNonNull(locale, "request cannot be null");
         Objects.requireNonNull(project, "project cannot be null");
         Objects.requireNonNull(reactorProjects, "reactorProjects cannot be null");
         Objects.requireNonNull(repoSession, "repoSession cannot be null");
@@ -393,7 +418,7 @@ public class DefaultSiteTool implements SiteTool {
                 + (locale.equals(SiteTool.DEFAULT_LOCALE) ? "default locale" : "locale '" + locale + "'"));
 
         Map.Entry<SiteModel, MavenProject> result =
-                getSiteModel(0, siteDirectory, locale, project, repoSession, remoteProjectRepositories);
+                getSiteModel(0, siteDirectory, locale, request, project, repoSession, remoteProjectRepositories);
         SiteModel siteModel = result.getKey();
         MavenProject parentProject = result.getValue();
 
@@ -406,7 +431,7 @@ public class DefaultSiteTool implements SiteTool {
         String siteDescriptorContent = siteModelToString(siteModel);
 
         // "classical" late interpolation, after full inheritance
-        siteDescriptorContent = getInterpolatedSiteDescriptorContent(project, siteDescriptorContent, false);
+        siteDescriptorContent = getInterpolatedSiteDescriptorContent(request, project, siteDescriptorContent, false);
 
         siteModel = readSiteModel(siteDescriptorContent, project, locale);
 
@@ -423,17 +448,31 @@ public class DefaultSiteTool implements SiteTool {
         return siteModel;
     }
 
-    /** {@inheritDoc} */
+    @Override
+    @Deprecated
     public String getInterpolatedSiteDescriptorContent(
             Map<String, String> props, MavenProject aProject, String siteDescriptorContent) throws SiteToolException {
         Objects.requireNonNull(props, "props cannot be null");
 
         // "classical" late interpolation
-        return getInterpolatedSiteDescriptorContent(aProject, siteDescriptorContent, false);
+        return getInterpolatedSiteDescriptorContent(
+                new DefaultMavenExecutionRequest(), aProject, siteDescriptorContent, false);
     }
 
+    /**
+     * Interpolation similar to what <a href="https://github.com/apache/maven/blob/add3c9d4578ec56bfe7377cd26a486039c5b4af7/compat/maven-model-builder/src/main/java/org/apache/maven/model/interpolation/AbstractStringBasedModelInterpolator.java#L52">AbstractStringBasedModelInterpolator.java</a>
+     * is doing.
+     * @param request
+     * @param aProject
+     * @param siteDescriptorContent
+     * @param isEarly
+     * @return the interpolated site descriptor content
+     * @throws SiteToolException
+     */
     private String getInterpolatedSiteDescriptorContent(
-            MavenProject aProject, String siteDescriptorContent, boolean isEarly) throws SiteToolException {
+            MavenExecutionRequest request, MavenProject aProject, String siteDescriptorContent, boolean isEarly)
+            throws SiteToolException {
+        Objects.requireNonNull(request, "request cannot be null");
         Objects.requireNonNull(aProject, "aProject cannot be null");
         Objects.requireNonNull(siteDescriptorContent, "siteDescriptorContent cannot be null");
 
@@ -442,9 +481,10 @@ public class DefaultSiteTool implements SiteTool {
         if (isEarly) {
             interpolator.addValueSource(new PrefixedObjectValueSource("this.", aProject));
             interpolator.addValueSource(new PrefixedPropertiesValueSource("this.", aProject.getProperties()));
+
         } else {
             interpolator.addValueSource(new PrefixedObjectValueSource("project.", aProject));
-            interpolator.addValueSource(new MapBasedValueSource(aProject.getProperties()));
+            interpolator.addValueSource(new MapBasedValueSource(mergeProperties(request, aProject)));
 
             try {
                 interpolator.addValueSource(new EnvarBasedValueSource());
@@ -475,6 +515,25 @@ public class DefaultSiteTool implements SiteTool {
         } catch (InterpolationException e) {
             throw new SiteToolException("Cannot interpolate site descriptor", e);
         }
+    }
+
+    /**
+     * Merge properties from different sources in the following order (with later sources overriding earlier ones):
+     * <ol>
+     *    <li>System properties from the Maven execution request</li>
+     *    <li>Project properties from the Maven project</li>
+     *    <li>User properties from the Maven execution request</li>
+     * </ol>
+     * @param request
+     * @param aProject
+     * @return
+     */
+    private static Properties mergeProperties(MavenExecutionRequest request, MavenProject aProject) {
+        Properties merged = new Properties();
+        merged.putAll(request.getSystemProperties());
+        merged.putAll(aProject.getProperties());
+        merged.putAll(request.getUserProperties());
+        return merged;
     }
 
     /**
@@ -968,6 +1027,7 @@ public class DefaultSiteTool implements SiteTool {
             int depth,
             File siteDirectory,
             Locale locale,
+            MavenExecutionRequest request,
             MavenProject project,
             RepositorySystemSession repoSession,
             List<RemoteRepository> remoteProjectRepositories)
@@ -1000,7 +1060,8 @@ public class DefaultSiteTool implements SiteTool {
                 String siteDescriptorContent = IOUtil.toString(siteDescriptorReader);
 
                 // interpolate ${this.*} = early interpolation
-                siteDescriptorContent = getInterpolatedSiteDescriptorContent(project, siteDescriptorContent, true);
+                siteDescriptorContent =
+                        getInterpolatedSiteDescriptorContent(request, project, siteDescriptorContent, true);
 
                 siteModel = readSiteModel(siteDescriptorContent, project, locale);
                 siteModel.setLastModified(siteDescriptor.lastModified());
@@ -1035,7 +1096,13 @@ public class DefaultSiteTool implements SiteTool {
             }
 
             SiteModel parentSiteModel = getSiteModel(
-                            depth, parentSiteDirectory, locale, parentProject, repoSession, remoteProjectRepositories)
+                            depth,
+                            parentSiteDirectory,
+                            locale,
+                            request,
+                            parentProject,
+                            repoSession,
+                            remoteProjectRepositories)
                     .getKey();
 
             if (siteModel != null) {

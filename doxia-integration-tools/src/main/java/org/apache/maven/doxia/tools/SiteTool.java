@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.Skin;
+import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.eclipse.aether.RepositorySystemSession;
@@ -100,7 +101,9 @@ public interface SiteTool {
      * @param siteDescriptorContent the site descriptor file, not null.
      * @return the interpolated site descriptor content.
      * @throws SiteToolException if errors happened during the interpolation.
+     * @deprecated since 2.1.0, use {@link #getSiteModel(File, Locale, MavenExecutionRequest, MavenProject, List, RepositorySystemSession, List)} instead
      */
+    @Deprecated
     // used by maven-pdf-plugin (should not?)
     String getInterpolatedSiteDescriptorContent(
             Map<String, String> props, MavenProject aProject, String siteDescriptorContent) throws SiteToolException;
@@ -119,10 +122,38 @@ public interface SiteTool {
      * interpolations.
      * @throws SiteToolException if any
      * @since 1.7, was previously with other parameter types and order
+     * @deprecated since 2.1.0, use {@link #getSiteModel(File, Locale, MavenExecutionRequest, MavenProject, List, RepositorySystemSession, List)} instead
+     */
+    @Deprecated
+    SiteModel getSiteModel(
+            File siteDirectory,
+            Locale locale,
+            MavenProject project,
+            List<MavenProject> reactorProjects,
+            RepositorySystemSession repoSession,
+            List<RemoteRepository> remoteProjectRepositories)
+            throws SiteToolException;
+
+    /**
+     * Get a site model for a project.
+     *
+     * @param siteDirectory the site directory, may be null if project from repository
+     * @param locale the locale used for the i18n in SiteModel, not null.
+     * See {@link #getSiteDescriptor(File, Locale)} for details.
+     * @param project the Maven project, not null.
+     * @param request the Maven execution request, not null. This is needed to get the user properties and the system properties for interpolation.
+     * @param reactorProjects the Maven reactor projects, not null.
+     * @param repoSession the repository system session, not null.
+     * @param remoteProjectRepositories the Maven remote project repositories, not null.
+     * @return the <code>SiteModel</code> object corresponding to the <code>site.xml</code> file with some
+     * interpolations.
+     * @throws SiteToolException if any
+     * @since 2.1.0, was previously with other parameter types and order
      */
     SiteModel getSiteModel(
             File siteDirectory,
             Locale locale,
+            MavenExecutionRequest request,
             MavenProject project,
             List<MavenProject> reactorProjects,
             RepositorySystemSession repoSession,

@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 import org.apache.maven.doxia.site.LinkItem;
 import org.apache.maven.doxia.site.SiteModel;
@@ -38,6 +39,8 @@ import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
 import org.apache.maven.doxia.tools.stubs.MavenProjectStub;
 import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.codehaus.plexus.testing.PlexusTest;
@@ -329,6 +332,7 @@ class SiteToolTest {
         SiteModel model = tool.getSiteModel(
                 new File(project.getBasedir(), "src/site"),
                 SiteTool.DEFAULT_LOCALE,
+                new DefaultMavenExecutionRequest(),
                 project,
                 reactorProjects,
                 newRepoSession(),
@@ -355,6 +359,7 @@ class SiteToolTest {
         SiteModel modelFromRepo = tool.getSiteModel(
                 null,
                 SiteTool.DEFAULT_LOCALE,
+                new DefaultMavenExecutionRequest(),
                 project,
                 reactorProjects,
                 newRepoSession(),
@@ -383,6 +388,7 @@ class SiteToolTest {
         SiteModel model = tool.getSiteModel(
                 new File(project.getBasedir(), siteDirectory),
                 SiteTool.DEFAULT_LOCALE,
+                new DefaultMavenExecutionRequest(),
                 project,
                 reactorProjects,
                 newRepoSession(),
@@ -455,12 +461,26 @@ class SiteToolTest {
         SiteToolMavenProjectStub childProject = new SiteToolMavenProjectStub("interpolation-child-test");
         childProject.setParent(parentProject);
         childProject.setDistgributionManagementSiteUrl("dav+https://davs.codehaus.org/site/child");
+        Properties effectiveProperties = new Properties();
+        effectiveProperties.putAll(parentProject.getProperties());
+        effectiveProperties.putAll(childProject.getProperties());
+        childProject.setProperties(effectiveProperties);
 
         List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList(parentProject);
+        MavenExecutionRequest request = new DefaultMavenExecutionRequest();
+        Properties userProperties = new Properties();
+        userProperties.setProperty("userProp1", "from user properties");
+        userProperties.setProperty("my_property2", "from user properties");
+        request.setUserProperties(userProperties);
+        Properties systemProperties = new Properties();
+        systemProperties.setProperty("systemProp1", "from system properties");
+        systemProperties.setProperty("my_property3", "from system properties");
+        request.setSystemProperties(systemProperties);
 
         SiteModel model = tool.getSiteModel(
                 new File(childProject.getBasedir(), "src/site"),
                 SiteTool.DEFAULT_LOCALE,
+                request,
                 childProject,
                 reactorProjects,
                 newRepoSession(),
@@ -489,6 +509,10 @@ class SiteToolTest {
 
         // late interpolation of project properties
         assertEquals("my_property = from child pom.xml", links.next().getName());
+        // must be overridden by user property
+        assertEquals("my_property2 = from user properties", links.next().getName());
+        // must not be overridden by system property
+        assertEquals("my_property3 = from parent pom.xml", links.next().getName());
         // early interpolation of project properties: DOXIASITETOOLS-158
         assertEquals("this.my_property = from parent pom.xml", links.next().getName());
 
@@ -500,6 +524,12 @@ class SiteToolTest {
 
         // property overrides env
         assertEquals("PATH = PATH property from pom", links.next().getName());
+
+        // user properties
+        assertEquals("userProp1 = from user properties", links.next().getName());
+
+        // system properties
+        assertEquals("systemProp1 = from system properties", links.next().getName());
     }
 
     /**
@@ -516,6 +546,7 @@ class SiteToolTest {
         SiteModel model = tool.getSiteModel(
                 new File(project.getBasedir(), "src/site"),
                 SiteTool.DEFAULT_LOCALE,
+                new DefaultMavenExecutionRequest(),
                 project,
                 reactorProjects,
                 newRepoSession(),
@@ -565,6 +596,7 @@ class SiteToolTest {
                 () -> tool.getSiteModel(
                         new File(project.getBasedir(), "src/site"),
                         SiteTool.DEFAULT_LOCALE,
+                        new DefaultMavenExecutionRequest(),
                         project,
                         reactorProjects,
                         repoSession,
@@ -577,6 +609,7 @@ class SiteToolTest {
             tool.getSiteModel(
                     new File(project.getBasedir(), "src/site"),
                     SiteTool.DEFAULT_LOCALE,
+                    new DefaultMavenExecutionRequest(),
                     project,
                     reactorProjects,
                     repoSession,
