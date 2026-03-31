@@ -530,13 +530,9 @@ public class DefaultSiteTool implements SiteTool {
      */
     private static Properties mergeProperties(MavenExecutionRequest request, MavenProject aProject) {
         Properties merged = new Properties();
-        if (request != null) {
-            merged.putAll(request.getSystemProperties());
-        }
+        merged.putAll(request.getSystemProperties());
         merged.putAll(aProject.getProperties());
-        if (request != null) {
-            merged.putAll(request.getUserProperties());
-        }
+        merged.putAll(request.getUserProperties());
         return merged;
     }
 

@@ -141,7 +141,7 @@ public interface SiteTool {
      * @param locale the locale used for the i18n in SiteModel, not null.
      * See {@link #getSiteDescriptor(File, Locale)} for details.
      * @param project the Maven project, not null.
-     * @param request the Maven execution request (not null). This is needed to get the user properties and the system properties for interpolation.
+     * @param request the Maven execution request, not null. This is needed to get the user properties and the system properties for interpolation.
      * @param reactorProjects the Maven reactor projects, not null.
      * @param repoSession the repository system session, not null.
      * @param remoteProjectRepositories the Maven remote project repositories, not null.
