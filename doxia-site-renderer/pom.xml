@@ -35,7 +35,7 @@ under the License.
   <properties>
     <velocityEngineVersion>2.4.1</velocityEngineVersion>
     <velocityToolsVersion>3.1</velocityToolsVersion>
-    <mermaidVersion>11.12.2</mermaidVersion>
+    <mermaidVersion>11.13.0</mermaidVersion>
   </properties>
   <dependencies>
     <dependency>
