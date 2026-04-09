@@ -113,4 +113,16 @@ class DocumentRenderingContextTest {
         assertEquals("path/file.html", docRenderingContext.getOutputPath());
         assertEquals("..", docRenderingContext.getRelativePath());
     }
+
+    @Test
+    void testConstructorWithNullBasedirRelativePath() {
+        File basedir = new File(".");
+        DocumentRenderingContext context =
+                new DocumentRenderingContext(basedir, null, "document", "markdown", null, false);
+        assertNull(context.getBasedirRelativePath());
+        assertNull(context.getDoxiaSourcePath());
+        context = new DocumentRenderingContext(basedir, null, "document", "markdown", null, false, "generator");
+        assertNull(context.getBasedirRelativePath());
+        assertNull(context.getDoxiaSourcePath());
+    }
 }
