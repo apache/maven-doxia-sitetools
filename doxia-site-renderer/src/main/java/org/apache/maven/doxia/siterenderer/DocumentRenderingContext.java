@@ -59,7 +59,7 @@ public class DocumentRenderingContext {
      */
     private final Collection<File> sourceDirectories;
 
-    /** The project's build directory, may be {@code null} rendered from a Doxia source) */
+    /** The project's build directory, may be {@code null} if not rendered from a Doxia source */
     private final File rootDirectory;
 
     /** The site's root directory, must be below {@link #rootDirectory}, may be {@code null} if not rendered from a Doxia source */
@@ -106,7 +106,7 @@ public class DocumentRenderingContext {
     /**
      *
      * @param basedir
-     * @param basedirRelativePath
+     * @param basedirRelativePath (may be null if not a Doxia source)
      * @param document
      * @param parserId
      * @param extension
@@ -183,10 +183,11 @@ public class DocumentRenderingContext {
                 document,
                 parserId,
                 extension,
-                stripSuffixFromPath(basedir, basedirRelativePath),
+                // only generate root directory when basedirRelativePath is provided (for a doxia source)
+                basedirRelativePath == null ? null : stripSuffixFromPath(basedir, basedirRelativePath),
                 // assume that site root is the parent of basedir (i.e. module specific source directory is directly
-                // below site root)
-                basedir.getParentFile(),
+                // below site root), only when basedirRelativePath is provided (for a doxia source)
+                basedirRelativePath == null ? null : basedir.getParentFile(),
                 editable ? Collections.singleton(basedir) : Collections.emptySet(),
                 generator);
     }
