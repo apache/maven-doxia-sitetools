@@ -183,10 +183,14 @@ public class DocumentRenderingContext {
                 document,
                 parserId,
                 extension,
-                stripSuffixFromPath(basedir, basedirRelativePath),
-                // assume that site root is the parent of basedir (i.e. module specific source directory is directly
-                // below site root)
-                basedir.getParentFile(),
+                (basedirRelativePath != null && !basedirRelativePath.isEmpty())
+                        ? stripSuffixFromPath(basedir, basedirRelativePath)
+                        : null,
+                (basedirRelativePath != null && !basedirRelativePath.isEmpty())
+                        // assume that site root is the parent of basedir (i.e. module specific source directory is
+                        // directly below site root)
+                        ? basedir.getParentFile()
+                        : null,
                 editable ? Collections.singleton(basedir) : Collections.emptySet(),
                 generator);
     }

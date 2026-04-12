@@ -73,6 +73,21 @@ class DocumentRenderingContextTest {
     }
 
     /**
+     * Test deprecated 7-arg constructor with null basedirRelativePath (non-Doxia source).
+     * This is the code path used by maven-site-plugin's MultiPageSinkFactory when creating
+     * sub-page contexts for generated reports (e.g. maven-plugin-report-plugin's per-mojo pages).
+     */
+    @Test
+    void deprecatedConstructorWithNullBasedirRelativePath() {
+        File basedir = new File("test" + File.separatorChar + "site");
+        // Must not throw IllegalArgumentException about site root directory
+        DocumentRenderingContext context =
+                new DocumentRenderingContext(basedir, null, "plugin-info", null, null, false, "generator:1.0:report");
+        assertEquals("plugin-info.html", context.getOutputPath());
+        assertEquals("generator:1.0:report", context.getGenerator());
+    }
+
+    /**
      * Test getRelativePath() with various file paths.
      *
      * @throws java.lang.Exception if any.
