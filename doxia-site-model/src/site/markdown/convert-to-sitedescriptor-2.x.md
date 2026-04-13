@@ -19,7 +19,7 @@
 
 # Site (Decoration) Descriptor 1.x
 
-[Site Descriptor 1.x][site-descriptor-1.x] also referred to as *Site Decoration descriptor* was the format used with Doxia Sitetools 1.x for `site.xml`. Its most recent version was 1.8.1 but in general it was evolved in a backwards compatible way (i.e. elements/attributes/semantics introduced in earlier version have not changed in later 1.x versions).
+[Site Descriptor 1.x][site-descriptor-1.x] also referred to as *Site Decoration descriptor* was the format used with Doxia Sitetools 1.x for `site.xml`. Its most recent version was 1.8.1 but all 1.x versions evolved in a backwards compatible way (i.e. elements/attributes/semantics introduced in earlier version have not changed in later 1.x versions).
 
 # Site Descriptor 2.x
 
@@ -29,7 +29,7 @@ With Doxia Sitetools 2.0 a new [Site Descriptor 2.0][site-descriptor-2.x] was in
 2. Use of XML attributes instead of XML element content for most elements
 3. Consolidation of image elements
 
-Not all elements/attributesfrom Site Descriptor 1.x do still exist in 2.x.
+Not all elements/attributes from Site Descriptor 1.x do still exist in 2.x.
 Further details in [GH issue 263](https://github.com/apache/maven-doxia-sitetools/issues/263).
 
 Although Site Descriptor 1.x is still supported, it will lead to a deprecation warning during build and doesn't allow to use newer features introduced with Doxia Sitetools 2.x, therefore migration to 2.x is strongly recommended.
