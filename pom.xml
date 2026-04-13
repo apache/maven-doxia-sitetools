@@ -76,6 +76,7 @@ under the License.
     <l10nPluginVersion>1.2.0</l10nPluginVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
     <project.build.outputTimestamp>2026-03-31T15:50:32Z</project.build.outputTimestamp>
+    <version.maven-site-plugin>3.22.0</version.maven-site-plugin>
   </properties>
 
   <dependencyManagement>
