@@ -77,7 +77,7 @@ Additionally, there are [Velocity Generic Tools](https://velocity.apache.org/too
 
 |Variable|Type|Description|
 |:---|:---|:---|
-|`alternator`|[AlternatorTool]($generic${esc.hash}deprecated-tools)|[**Deprecated**]($generic${esc.hash}deprecated-tools): use CSS3 nth-child\(even/odd\) selectors or $<a id="esc.hash"></a>esc.hashif\($foreach.index % 2\). For creating alternators to easily alternate over a set of values.|
+|`alternator`|[AlternatorTool]($generic${esc.hash}deprecated-tools)|[**Deprecated**]($generic${esc.hash}deprecated-tools): use CSS3 nth-child\(even/odd\) selectors or ${esc.hash}if\($foreach.index % 2\). For creating alternators to easily alternate over a set of values.|
 |`class`|[ClassTool]($generic${esc.hash}ClassTool)|For simplifying reflective lookup of information about classes and their fields, methods and constructors.|
 |`context`|[ContextTool]($generic${esc.hash}ContextTool)|For convenient access to context data and metadata.|
 |`convert`|[ConversionTool]($generic${esc.hash}deprecated-tools)|[**Deprecated**]($generic${esc.hash}deprecated-tools): use NumberTool for numbers formatting/parsing, DateTool for date/time formatting/parsing, or CollectionTool for toStrings\(\). For converting String values to richer object Types.|
@@ -86,7 +86,7 @@ Additionally, there are [Velocity Generic Tools](https://velocity.apache.org/too
 |`esc`|[EscapeTool]($generic${esc.hash}EscapeTool)|For common escaping needs in Velocity templates \(e.g. escaping html, xml, javascript etc.\).|
 |`field`|[FieldTool]($generic${esc.hash}FieldTool)|For \(easy\) access to static fields in a class, such as string constants.|
 |`link`|[LinkTool]($generic${esc.hash}LinkTool)|For creating and manipulating URIs and URLs. The API for this tool is designed to closely resemble that of the VelocityView tool of the same name.|
-|`loop`|[LoopTool]($generic${esc.hash}LoopTool)|A convenience tool to use with `$<a id="esc.hash"></a>esc.hashforeach` loops. It wraps a list with a custom iterator to provide greater control, allowing loops to end early, skip ahead and more.|
+|`loop`|[LoopTool]($generic${esc.hash}LoopTool)|A convenience tool to use with `${esc.hash}foreach` loops. It wraps a list with a custom iterator to provide greater control, allowing loops to end early, skip ahead and more.|
 |`math`|[MathTool]($generic${esc.hash}MathTool)|For performing math functions.|
 |`number`|[NumberTool]($generic${esc.hash}NumberTool)|For formatting and converting numbers.|
 |`render`|[RenderTool]($generic${esc.hash}RenderTool)|To evaluate and render arbitrary strings of VTL, including recursive rendering.|
