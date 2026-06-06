@@ -1045,6 +1045,21 @@ public class DefaultSiteTool implements SiteTool {
         } else {
             // POM is in build directory: look for site descriptor as local file
             siteDescriptor = getSiteDescriptor(siteDirectory, locale);
+            if ((siteDescriptor == null || !siteDescriptor.exists())
+                    && !new File(project.getBasedir(), "pom.xml").exists()) {
+                // Maven 4: non-reactor parent POMs may have a non-null basedir pointing to the
+                // project-local-repo rather than a real source tree; fall back to repository lookup.
+                // Real source directories always contain a pom.xml; repository directories do not.
+                try {
+                    File repoDescriptor =
+                            getSiteDescriptorFromRepository(project, repoSession, remoteProjectRepositories, locale);
+                    if (repoDescriptor != null) {
+                        siteDescriptor = repoDescriptor;
+                    }
+                } catch (SiteToolException e) {
+                    throw new SiteToolException("The site descriptor cannot be resolved from the repository", e);
+                }
+            }
         }
 
         // 2. read SiteModel from site descriptor File and do early interpolation (${this.*})
