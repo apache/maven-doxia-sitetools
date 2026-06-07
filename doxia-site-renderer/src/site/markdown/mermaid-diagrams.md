@@ -22,7 +22,7 @@ title: Mermaid Diagrams
 
 # Mermaid Diagrams
 
-Doxia Sitetools can optionally embed the necessary Javascript to render [Mermaid](https://mermaid.ai/open-source/) diagrams client-side (supported since [2.1.0](https://github.com/apache/maven-doxia-sitetools/issues/611)).
+Doxia Sitetools can optionally embed the necessary JavaScript to render [Mermaid](https://mermaid.ai/open-source/) diagrams client-side (supported since [2.1.0](https://github.com/apache/maven-doxia-sitetools/issues/611)).
 
 <!-- MACRO{toc|fromDepth=2} -->
 
