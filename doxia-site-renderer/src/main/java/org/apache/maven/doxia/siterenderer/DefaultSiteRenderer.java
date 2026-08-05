@@ -146,6 +146,11 @@ public class DefaultSiteRenderer implements Renderer {
     @Inject
     private Map<String, ContextCustomizer> contextCustomizers;
 
+    /** Opens a block Velocity passes through without interpreting it. */
+    private static final String VELOCITY_UNPARSED_START = "#[[";
+
+    private static final String VELOCITY_UNPARSED_END = "]]#";
+
     private static final String SKIN_TEMPLATE_LOCATION = "META-INF/maven/site.vm";
 
     private static final String TOOLS_LOCATION = "META-INF/maven/site-tools.xml";
@@ -404,6 +409,59 @@ public class DefaultSiteRenderer implements Renderer {
         }
     }
 
+    /**
+     * A Markdown ATX heading below level one starts with {@code ##}, which is also how a Velocity
+     * line comment starts. In a {@code *.md.vm} document Velocity therefore strips the heading
+     * before Doxia ever sees it and the page silently loses the whole line.
+     *
+     * <p>Wrapping such a line in Velocity's unparsed block {@code #[[ ... ]]#} passes it through
+     * untouched. Only documents actually holding such a heading are rewritten, so a document that
+     * renders correctly today is handed to Velocity exactly as before.</p>
+     *
+     * @param doc the Velocity template about to be rendered
+     * @param docRenderingContext the context of the document
+     * @param encoding the encoding to read the template with
+     * @return the template with its hidden headings shielded, or {@code null} if it has none and
+     * should be rendered the usual way
+     */
+    private String shieldHeadingsHiddenFromMarkdown(
+            File doc, DocumentRenderingContext docRenderingContext, String encoding) {
+        if (!"markdown".equals(docRenderingContext.getParserId())) {
+            return null;
+        }
+        StringBuilder shielded = new StringBuilder();
+        int count = 0;
+        try (BufferedReader reader = new BufferedReader(ReaderFactory.newReader(doc, encoding))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // up to three leading spaces still make an ATX heading, four or more make indented code
+                int indent = 0;
+                while (indent < line.length() && indent < 4 && line.charAt(indent) == ' ') {
+                    indent++;
+                }
+                // every level below one starts with ##, so ### and deeper are hidden just the same
+                if (indent < 4 && line.startsWith("##", indent)) {
+                    shielded.append(VELOCITY_UNPARSED_START).append(line).append(VELOCITY_UNPARSED_END);
+                    count++;
+                } else {
+                    shielded.append(line);
+                }
+                shielded.append(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            LOGGER.debug("Could not read " + doc + " to shield its Markdown headings from Velocity", e);
+            return null;
+        }
+        if (count == 0) {
+            return null;
+        }
+        LOGGER.debug(
+                "Shielded {} Markdown heading(s) in {} which Velocity would otherwise have read as comments",
+                count,
+                docRenderingContext.getDoxiaSourcePath());
+        return shielded.toString();
+    }
+
     /** {@inheritDoc} */
     public void renderDocument(
             Writer writer, DocumentRenderingContext docRenderingContext, SiteRenderingContext siteContext)
@@ -438,7 +496,13 @@ public class DefaultSiteRenderer implements Renderer {
 
                     StringWriter sw = new StringWriter();
 
-                    velocity.getEngine().mergeTemplate(resource, siteContext.getInputEncoding(), vc, sw);
+                    String shielded =
+                            shieldHeadingsHiddenFromMarkdown(doc, docRenderingContext, siteContext.getInputEncoding());
+                    if (shielded != null) {
+                        velocity.getEngine().evaluate(vc, sw, resource, shielded);
+                    } else {
+                        velocity.getEngine().mergeTemplate(resource, siteContext.getInputEncoding(), vc, sw);
+                    }
 
                     String doxiaContent = sw.toString();
 
