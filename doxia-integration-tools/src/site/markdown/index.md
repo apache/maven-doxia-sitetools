@@ -40,13 +40,13 @@ Interpolation of [`site.xml` model](../doxia-site-model/site.html) injects Maven
 Interpolation can be **late** or **early**:
 
 - with **late** interpolation, replacement happens **after** inheritance. This is the classical behaviour in Maven pom,
-- with **early** interpolation, replacement happens **before** inheritance: this was the default behaviour for `project.*` values until Doxia Sitetools 1\.7 \(used in [ Maven Site Plugin 3\.5](/plugins/maven-site-plugin/history.html)\), when these early and late interpolation definitions didn&apos;t exist. Since Doxia Sitetools 1\.7\.1 \(used in [ Maven Site Plugin 3\.5\.1](/plugins/maven-site-plugin/history.html)\), early interpolation happens for `this.*` values. Early interpolation doesn&apos;t support user and system properties.
+- with **early** interpolation, replacement happens **before** inheritance: this was the default behaviour for `project.*` values until Doxia Sitetools 1\.7 (used in [ Maven Site Plugin 3\.5](/plugins/maven-site-plugin/history.html)), when these early and late interpolation definitions didn&apos;t exist. Since Doxia Sitetools 1\.7\.1 (used in [ Maven Site Plugin 3\.5\.1](/plugins/maven-site-plugin/history.html)), early interpolation happens for `this.*` values. Early interpolation doesn&apos;t support user and system properties.
 
 Values are evaluated in sequence from different syntaxes:
 
 |late value|early value|evaluation result|common examples|
 |:---|:---|:---|:---|
-|`project.*`|`this.*`|POM content \(see [POM reference](/ref/current/maven-model/maven.html)\)|`${project.version}` <br />`${this.url}`|
+|`project.*`|`this.*`|POM content (see [POM reference](/ref/current/maven-model/maven.html))|`${project.version}` <br />`${this.url}`|
 |`*`|`this.*`|model properties, such as project properties set in the pom|`${any.key}` <br />`${this.any.key}`|
 |`env.*` <br />`*`||environment variables|`${env.PATH}`|
 
