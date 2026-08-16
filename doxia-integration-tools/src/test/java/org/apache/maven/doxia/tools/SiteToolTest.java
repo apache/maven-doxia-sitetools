@@ -51,6 +51,7 @@ import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
@@ -61,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -71,6 +73,18 @@ class SiteToolTest {
 
     @Inject
     private DefaultSiteTool tool;
+
+    /**
+     * These tests resolve the skin and parent site descriptors from Central. The session below is
+     * built by hand, so it never sees Maven's own offline setting; the build passes it in as a system
+     * property and the tests stand aside when it is set.
+     */
+    @BeforeEach
+    void requireNetwork() {
+        assumeFalse(
+                Boolean.getBoolean("doxia.test.offline"),
+                "resolves the skin and site descriptors from a remote repository");
+    }
 
     /**
      * @return the local repo directory.

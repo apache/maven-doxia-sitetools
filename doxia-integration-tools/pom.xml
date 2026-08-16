@@ -167,6 +167,21 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- SiteToolTest builds its own repository session, which never sees this otherwise.
+               Passed on the command line because systemPropertyVariables takes Strings only, and
+               settings.offline interpolates as a Boolean. -->
+          <argLine>-Ddoxia.test.offline=${settings.offline}</argLine>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <reporting>
     <plugins>
       <plugin>
