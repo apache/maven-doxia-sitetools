@@ -196,16 +196,35 @@ under the License.
     </resources>
     <pluginManagement>
       <plugins>
-        <!-- TODO need to upgrade to last version or Maven parent version -->
-        <!--
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>clirr-maven-plugin</artifactId>
+          <groupId>com.github.siom79.japicmp</groupId>
+          <artifactId>japicmp-maven-plugin</artifactId>
+          <version>0.26.1</version>
           <configuration>
-            <comparisonVersion>1.9</comparisonVersion>
+            <parameter>
+              <ignoreNonResolvableArtifacts>false</ignoreNonResolvableArtifacts>
+              <ignoreMissingOldVersion>false</ignoreMissingOldVersion>
+              <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
+              <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
+            </parameter>
+            <oldVersion>
+              <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>${project.artifactId}</artifactId>
+                <!-- keep binary compatibility among the major version 2.x-->
+                <version>2.0.0</version>
+              </dependency>
+            </oldVersion>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>cmp</goal>
+              </goals>
+              <phase>verify</phase>
+            </execution>
+          </executions>
         </plugin>
-         -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
@@ -241,23 +260,6 @@ under the License.
         <groupId>org.eclipse.sisu</groupId>
         <artifactId>sisu-maven-plugin</artifactId>
       </plugin>
-      <!--
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>clirr-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <configuration>
-              <excludes>
-              </excludes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin> -->
     </plugins>
   </build>
 
