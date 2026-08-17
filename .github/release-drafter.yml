@@ -16,4 +16,4 @@
 # under the License.
 
 _extends: maven-gh-actions-shared
-tag-template: doxia-sitetools-$NEXT_MINOR_VERSION
+tag-template: doxia-sitetools-$RESOLVED_VERSION
