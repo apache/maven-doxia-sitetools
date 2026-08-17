@@ -80,8 +80,8 @@ import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.MXParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParser;
@@ -1055,7 +1055,7 @@ public class DefaultSiteTool implements SiteTool {
                 LOGGER.debug("Reading" + (depth == 0 ? "" : (" parent level " + depth)) + " site descriptor from "
                         + siteDescriptor);
 
-                siteDescriptorReader = ReaderFactory.newXmlReader(siteDescriptor);
+                siteDescriptorReader = new XmlStreamReader(siteDescriptor);
 
                 String siteDescriptorContent = IOUtil.toString(siteDescriptorReader);
 
@@ -1355,7 +1355,7 @@ public class DefaultSiteTool implements SiteTool {
 
         Reader reader = null;
         try {
-            reader = ReaderFactory.newXmlReader(getClass().getResourceAsStream("/default-site.xml"));
+            reader = new XmlStreamReader(getClass().getResourceAsStream("/default-site.xml"));
             siteDescriptorContent = IOUtil.toString(reader);
         } catch (IOException e) {
             throw new SiteToolException("Error reading default site descriptor", e);

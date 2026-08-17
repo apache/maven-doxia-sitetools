@@ -46,7 +46,7 @@ import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.xml.XmlStreamWriter;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
@@ -634,7 +634,7 @@ class SiteToolTest {
     }
 
     private void writeModel(SiteModel model, String to) throws Exception {
-        Writer writer = WriterFactory.newXmlWriter(getTestFile("target/test-classes/" + to));
+        Writer writer = new XmlStreamWriter(getTestFile("target/test-classes/" + to));
         try {
             new SiteXpp3Writer().write(writer, model);
         } finally {

@@ -31,7 +31,7 @@ import org.apache.maven.doxia.site.Menu;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.jupiter.api.Test;
 
@@ -932,7 +932,7 @@ class SiteModelInheritanceAssemblerTest {
     private SiteModel readModel(String name) throws IOException, XmlPullParserException {
         Reader reader = null;
         try {
-            reader = ReaderFactory.newXmlReader(getClass().getResourceAsStream("/" + name));
+            reader = new XmlStreamReader(getClass().getResourceAsStream("/" + name));
             return new SiteXpp3Reader().read(reader);
         } finally {
             IOUtil.close(reader);

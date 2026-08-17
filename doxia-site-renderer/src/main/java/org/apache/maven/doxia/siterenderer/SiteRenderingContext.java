@@ -19,6 +19,7 @@
 package org.apache.maven.doxia.siterenderer;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,8 +34,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.skin.SkinModel;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * Context for a site rendering.
@@ -110,9 +109,9 @@ public class SiteRenderingContext {
         }
     }
 
-    private String inputEncoding = ReaderFactory.FILE_ENCODING;
+    private String inputEncoding = System.getProperty("file.encoding");
 
-    private String outputEncoding = WriterFactory.UTF_8;
+    private String outputEncoding = StandardCharsets.UTF_8.name();
 
     private String templateName;
 

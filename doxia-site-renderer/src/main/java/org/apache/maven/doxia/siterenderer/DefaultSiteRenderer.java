@@ -27,13 +27,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -107,9 +110,8 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.PathTool;
-import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.VelocityComponent;
 import org.slf4j.Logger;
@@ -390,7 +392,8 @@ public class DefaultSiteRenderer implements Renderer {
                 Writer writer = null;
                 try {
                     if (!docRenderer.isExternalReport()) {
-                        writer = WriterFactory.newWriter(outputFile, siteRenderingContext.getOutputEncoding());
+                        writer = new OutputStreamWriter(
+                                Files.newOutputStream(outputFile.toPath()), siteRenderingContext.getOutputEncoding());
                     }
                     docRenderer.renderDocument(writer, this, siteRenderingContext);
                 } finally {
@@ -459,7 +462,7 @@ public class DefaultSiteRenderer implements Renderer {
             } else {
                 switch (parser.getType()) {
                     case Parser.XML_TYPE:
-                        reader = ReaderFactory.newXmlReader(doc);
+                        reader = new XmlStreamReader(doc);
                         if (siteContext.isValidate()) {
                             reader = validate(reader, resource);
                         }
@@ -468,7 +471,8 @@ public class DefaultSiteRenderer implements Renderer {
                     case Parser.TXT_TYPE:
                     case Parser.UNKNOWN_TYPE:
                     default:
-                        reader = ReaderFactory.newReader(doc, siteContext.getInputEncoding());
+                        reader = new InputStreamReader(
+                                Files.newInputStream(doc.toPath()), siteContext.getInputEncoding());
                 }
             }
 
@@ -930,7 +934,8 @@ public class DefaultSiteRenderer implements Renderer {
             }
             Writer writer = null;
             try {
-                writer = WriterFactory.newWriter(siteCssFile, siteRenderingContext.getOutputEncoding());
+                writer = new OutputStreamWriter(
+                        Files.newOutputStream(siteCssFile.toPath()), siteRenderingContext.getOutputEncoding());
                 // DOXIA-290...the file should not be 0 bytes.
                 writer.write("/* You can override this file with your own styles */");
             } finally {

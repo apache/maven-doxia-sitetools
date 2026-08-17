@@ -62,9 +62,9 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -496,7 +496,7 @@ public class DefaultSiteRendererTest {
 
         Reader reader = null;
         try {
-            reader = ReaderFactory.newXmlReader(macro);
+            reader = new XmlStreamReader(macro);
             String content = IOUtil.toString(reader);
             assertEquals(-1, content.indexOf("</macro>"));
         } finally {
@@ -638,7 +638,7 @@ public class DefaultSiteRendererTest {
             for (String file : l) {
                 file = file == null || file.isEmpty() ? file : file.replace("\\", "/");
 
-                Reader reader = ReaderFactory.newXmlReader(new File(file));
+                Reader reader = new XmlStreamReader(new File(file));
                 try {
                     testDocs.put(file, IOUtil.toString(reader));
                 } finally {
