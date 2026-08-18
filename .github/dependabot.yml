@@ -20,6 +20,10 @@ updates:
   directory: "/"
   schedule:
     interval: "daily"
+  ignore:
+    # resolverVersion is paired with mavenVersion: Maven 3.6.3 ships resolver 1.4.1.
+    # Raising one without the other builds against API the minimum Maven does not have.
+    - dependency-name: "org.apache.maven.resolver:*"
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
