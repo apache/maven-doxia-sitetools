@@ -288,6 +288,40 @@ public class DefaultSiteRendererTest {
         siteRenderer.copyResources(context, outputDirectory);
     }
 
+    /**
+     * A Markdown ATX heading below level one starts with {@code ##}, which Velocity reads as a line
+     * comment. Without shielding, every such heading disappears from a {@code *.md.vm} page.
+     */
+    @Test
+    void markdownHeadingsSurviveVelocity() throws Exception {
+        SiteModel siteModel =
+                new SiteXpp3Reader().read(new FileInputStream(getTestFile("src/test/resources/site/site.xml")));
+        SiteRenderingContext context =
+                getSiteRenderingContext(siteModel, minimalSkinJar, "src/test/resources/site", false);
+
+        File outputDirectory = getTestFile(OUTPUT);
+        org.apache.commons.io.FileUtils.deleteDirectory(outputDirectory);
+        DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
+                getTestFile("src/test/resources/site/markdown"),
+                "src/test/resources/site/markdown",
+                "velocity-headings.md.vm",
+                "markdown",
+                "md",
+                false);
+        // this is what the directory scan does for a *.vm source, and what makes Velocity run
+        docRenderingContext.setAttribute("velocity", "true");
+        siteRenderer.render(
+                Collections.singletonList(new DoxiaDocumentRenderer(docRenderingContext)), context, outputDirectory);
+
+        String rendered = new String(
+                Files.readAllBytes(
+                        getTestFile("target/output/velocity-headings.html").toPath()),
+                StandardCharsets.UTF_8);
+        assertTrue(rendered.contains("<h1>Top Heading</h1>"), rendered);
+        assertTrue(rendered.contains("<h2>Second Level</h2>"), rendered);
+        assertTrue(rendered.contains("<h3>Third Level</h3>"), rendered);
+    }
+
     @Test
     void mermaidWithExternalJs() throws Exception {
         SiteModel siteModel = new SiteXpp3Reader()
