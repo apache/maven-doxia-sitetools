@@ -46,9 +46,17 @@ public class DoxiaDocumentRenderer implements DocumentRenderer {
         siteRenderer.renderDocument(writer, docRenderingContext, siteRenderingContext);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * @deprecated use {@link #getOutputPath()} instead
+     */
+    @Deprecated
     public String getOutputName() {
-        return docRenderingContext.getOutputName();
+        return getOutputPath();
+    }
+
+    /** {@inheritDoc} */
+    public String getOutputPath() {
+        return docRenderingContext.getOutputPath();
     }
 
     /** {@inheritDoc} */
