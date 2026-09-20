@@ -36,7 +36,7 @@ The following are generated from this model:
 
 ## Inheritance
 
-Site model can be merged from a parent `site.xml` into a child `site.xml` using `SiteModelInheritanceAssembler` ([javadoc](./apidocs/org/apache/maven/doxia/site/inheritance/SiteModelInheritanceAssembler.html)) with its `DefaultSiteModelInheritanceAssembler` implementation ([source](./xref/org/apache/maven/doxia/site/inheritance/DefaultSiteModelInheritanceAssembler.html)).
+Site model can be merged from a parent `site.xml` into a child `site.xml` using `SiteModelInheritanceAssembler` ([javadoc](./apidocs/org/apache/maven/doxia/site/inheritance/SiteModelInheritanceAssembler.html)) with its `DefaultSiteModelInheritanceAssembler` implementation ([source](https://github.com/apache/maven-doxia-sitetools/blob/master/doxia-site-model/src/main/java/org/apache/maven/doxia/site/inheritance/DefaultSiteModelInheritanceAssembler.java)).
 
 ## Interpolation
 

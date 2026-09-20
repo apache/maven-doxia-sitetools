@@ -98,7 +98,7 @@ Additionally, there are [Velocity Generic Tools](https://velocity.apache.org/too
 
 If you intend to use custom Velocity tools, add them to the Maven Site Plugin&apos;s dependency list and make sure that they have a bundled configuration file in `/META-INF/maven/site-tools.xml`.
 
-See [`DefaultSiteRenderer.createToolManagedVelocityContext(...)`](./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html#L483) source for more details and the [tools usage summary](https://velocity.apache.org/tools/devel/tools-summary.html).
+See [`DefaultSiteRenderer.createToolManagedVelocityContext(...)`](https://github.com/apache/maven-doxia-sitetools/blob/master/doxia-site-renderer/src/main/java/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.java#L528) source for more details and the [tools usage summary](https://velocity.apache.org/tools/devel/tools-summary.html).
 
 ${esc.h}${esc.h}# Maven Site Plugin
 
@@ -127,5 +127,5 @@ When Velocity is processing the site template (be it from skin or local template
 |`title`|`String`|The title of the document, including the project or site name.|
 |`docRenderingContext`|[`DocumentRenderingContext`](./apidocs/org/apache/maven/doxia/siterenderer/DocumentRenderingContext.html)|(since 1\.8) The document rendering context.|
 
-See [`DefaultSiteRenderer.createSiteTemplateVelocityContext(...)`](./xref/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.html${esc.hash}L616) source for more details.
+See [`DefaultSiteRenderer.createSiteTemplateVelocityContext(...)`](https://github.com/apache/maven-doxia-sitetools/blob/master/doxia-site-renderer/src/main/java/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.java${esc.hash}L654) source for more details.
 
