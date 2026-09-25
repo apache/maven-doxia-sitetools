@@ -215,17 +215,20 @@ under the License.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
-            <excludes combine.children="append">
+            <inputExcludes combine.children="append">
+
               <exclude>src/main/resources/js/*</exclude>
               <exclude>src/test/resources/**/*.vm</exclude>
               <exclude>src/test/resources/**/*.js</exclude>
-            </excludes>
+
+            </inputExcludes>
           </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
   </build>
   <profiles>
+
     <profile>
       <id>reporting</id>
       <reporting>
