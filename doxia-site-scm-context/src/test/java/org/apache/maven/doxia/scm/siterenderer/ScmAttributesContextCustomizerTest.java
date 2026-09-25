@@ -20,6 +20,8 @@ package org.apache.maven.doxia.scm.siterenderer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -40,6 +42,7 @@ import org.apache.velocity.context.Context;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -50,6 +53,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class ScmAttributesContextCustomizerTest {
+
+    @TempDir
+    Path tempDirectory;
 
     @Mock
     ScmManager scmManager;
@@ -131,5 +137,15 @@ class ScmAttributesContextCustomizerTest {
 
         contextCustomizer.customizeContext(context, docContext, siteContext);
         assertFalse(context.containsKey("scmModifiedDate"));
+    }
+
+    @Test
+    void detectsShallowGitRepository() throws IOException {
+        Path gitDirectory = Files.createDirectories(tempDirectory.resolve(".git"));
+        assertFalse(ScmAttributesContextCustomizer.isShallowRepository(tempDirectory.toFile()));
+
+        Files.createFile(gitDirectory.resolve("shallow"));
+
+        assertTrue(ScmAttributesContextCustomizer.isShallowRepository(tempDirectory.toFile()));
     }
 }
