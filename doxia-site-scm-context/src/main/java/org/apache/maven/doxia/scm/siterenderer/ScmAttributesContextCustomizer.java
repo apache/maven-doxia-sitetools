@@ -96,6 +96,11 @@ public class ScmAttributesContextCustomizer implements ContextCustomizer {
         Optional<ScmRepository> scmRepository = scmManager.makeProviderScmRepository(directory);
         if (scmRepository.isPresent()) {
             LOGGER.debug("Found SCM repository for directory \"{}\"", directory);
+            if (isShallowRepository(directory)) {
+                LOGGER.warn(
+                        "SCM repository at \"{}\" is a shallow clone; modification dates may be inaccurate",
+                        directory);
+            }
         } else {
             LOGGER.debug("No SCM repository found for directory {}", directory);
             File parentDirectory = directory.getParentFile();
@@ -104,6 +109,10 @@ public class ScmAttributesContextCustomizer implements ContextCustomizer {
             }
         }
         return scmRepository;
+    }
+
+    static boolean isShallowRepository(File directory) {
+        return new File(new File(directory, ".git"), "shallow").isFile();
     }
 
     static InfoItem getScmInfo(ScmManager scmManager, ScmRepository scmRepository, File file) {
