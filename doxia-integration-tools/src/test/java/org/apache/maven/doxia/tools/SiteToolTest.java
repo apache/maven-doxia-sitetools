@@ -386,6 +386,39 @@ class SiteToolTest {
                 modelFromRepo.getBannerLeft().getImage().getSrc());
         assertEquals("https://maven.apache.org/", modelFromRepo.getBannerLeft().getHref());
         assertNull(modelFromRepo.getBannerRight());
+
+        // Maven 4 builds a repository project from its repository copy, so basedir is set and the POM is the .pom
+        project.setBasedir(new File(getLocalRepoDir(), "org/apache/maven/maven/3.8.6"));
+        project.setFile(new File(project.getBasedir(), "maven-3.8.6.pom"));
+        SiteModel modelFromRepoWithBasedir = tool.getSiteModel(
+                null,
+                SiteTool.DEFAULT_LOCALE,
+                new DefaultMavenExecutionRequest(),
+                project,
+                reactorProjects,
+                newRepoSession(),
+                project.getRemoteProjectRepositories());
+        assertEquals("dummy", modelFromRepoWithBasedir.getBannerLeft().getName());
+    }
+
+    @Test
+    void isFromRepository() {
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
+        project.setArtifactId("maven");
+        assertFalse(DefaultSiteTool.isFromRepository(project), "a checkout has a basedir and a pom.xml");
+
+        project.setFile(new File(project.getBasedir(), "build.pom"));
+        assertFalse(DefaultSiteTool.isFromRepository(project), "a build file named .pom is still a checkout");
+
+        project.setFile(new File(project.getBasedir(), "maven-3.8.6.pom"));
+        assertTrue(DefaultSiteTool.isFromRepository(project), "a repository copy");
+
+        project.setFile(new File(project.getBasedir(), "maven-3.9.0-20240101.010101-1.pom"));
+        assertTrue(DefaultSiteTool.isFromRepository(project), "a timestamped snapshot copy");
+
+        project.setFile(new File(project.getBasedir(), "pom.xml"));
+        project.setBasedir(null);
+        assertTrue(DefaultSiteTool.isFromRepository(project), "Maven 3: no basedir");
     }
 
     /**

@@ -580,8 +580,8 @@ public class DefaultSiteTool implements SiteTool {
         } else {
             // parent has no url, assume relative path is given by site structure
             File parentBasedir = parentProject.getBasedir();
-            // First make sure that the parent is available on the file system
-            if (parentBasedir != null) {
+            // First make sure that the parent is a checkout on the file system, not a repository copy
+            if (parentBasedir != null && !isFromRepository(parentProject)) {
                 // Try to find the relative path to the parent via the file system
                 String parentPath = parentBasedir.getAbsolutePath();
                 String projectPath = project.getBasedir().getAbsolutePath();
@@ -875,6 +875,21 @@ public class DefaultSiteTool implements SiteTool {
     }
 
     /**
+     * Tells whether a project was built from a POM taken out of a repository rather than from a checkout. Maven 3
+     * leaves {@code basedir} unset for such projects; Maven 4 builds them from the repository copy of the POM (local
+     * or project-local repository), whose file is always named {@code <artifactId>-<version>.pom}, so the basedir
+     * alone no longer says where the POM came from. The version is not compared: a snapshot's file carries the
+     * timestamped version while the model carries {@code -SNAPSHOT}.
+     */
+    static boolean isFromRepository(MavenProject project) {
+        if (project.getBasedir() == null) {
+            return true;
+        }
+        File pom = project.getFile();
+        return pom != null && pom.getName().endsWith(".pom") && pom.getName().startsWith(project.getArtifactId() + "-");
+    }
+
+    /**
      * @param project not null
      * @param repoSession the repository system session not null
      * @param remoteProjectRepositories not null
@@ -1034,7 +1049,7 @@ public class DefaultSiteTool implements SiteTool {
             throws SiteToolException {
         // 1. get site descriptor File
         File siteDescriptor;
-        if (project.getBasedir() == null) {
+        if (isFromRepository(project)) {
             // POM is in the repository: look into the repository for site descriptor
             try {
                 siteDescriptor =
@@ -1084,7 +1099,7 @@ public class DefaultSiteTool implements SiteTool {
             LOGGER.debug("Looking for site descriptor of level " + depth + " parent project: " + parentProject.getId());
 
             File parentSiteDirectory = null;
-            if (parentProject.getBasedir() != null) {
+            if (!isFromRepository(parentProject)) {
                 // extrapolate parent project site directory
                 String siteRelativePath = getRelativeFilePath(
                         project.getBasedir().getAbsolutePath(),
