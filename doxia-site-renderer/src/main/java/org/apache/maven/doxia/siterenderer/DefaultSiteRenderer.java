@@ -70,6 +70,7 @@ import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.parser.module.ParserModule;
 import org.apache.maven.doxia.parser.module.ParserModuleManager;
+import org.apache.maven.doxia.site.LinkItem;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.skin.ResourceCondition;
 import org.apache.maven.doxia.site.skin.SkinModel;
@@ -609,9 +610,24 @@ public class DefaultSiteRenderer implements Renderer {
                 }
             }
         }
-        context.put("site", siteRenderingContext.getSiteModel());
+        SiteModel siteModel = siteRenderingContext.getSiteModel();
+        if (docRenderingContext != null
+                && siteRenderingContext.isDeriveBreadcrumbsFromMenu()
+                && siteModel != null
+                && siteModel.getBody() != null
+                && siteModel.getBody().getBreadcrumbs().isEmpty()) {
+            List<LinkItem> derivedBreadcrumbs =
+                    MenuBreadcrumbs.derive(siteModel.getMenus(), docRenderingContext.getOutputPath());
+            if (!derivedBreadcrumbs.isEmpty()) {
+                // clone: the site model is shared across all documents of this site rendering,
+                // and the derived trail is specific to this one document
+                siteModel = siteModel.clone();
+                siteModel.getBody().setBreadcrumbs(derivedBreadcrumbs);
+            }
+        }
+        context.put("site", siteModel);
         // TODO Deprecated -- will be removed!
-        context.put("decoration", siteRenderingContext.getSiteModel());
+        context.put("decoration", siteModel);
 
         context.put("locale", siteRenderingContext.getLocale());
         context.put("supportedLocales", Collections.unmodifiableList(siteRenderingContext.getSiteLocales()));

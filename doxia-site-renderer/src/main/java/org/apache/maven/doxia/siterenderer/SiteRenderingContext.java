@@ -139,6 +139,8 @@ public class SiteRenderingContext {
 
     private boolean validate;
 
+    private boolean deriveBreadcrumbsFromMenu;
+
     private Date publishDate;
 
     private File processedContentOutput;
@@ -166,6 +168,29 @@ public class SiteRenderingContext {
      */
     public void setValidate(boolean validate) {
         this.validate = validate;
+    }
+
+    /**
+     * If breadcrumbs should be derived from the site descriptor's menu hierarchy for documents which
+     * declare no explicit <code>&lt;breadcrumbs&gt;</code> element.
+     * By default this is switched off: a document without an explicit <code>&lt;breadcrumbs&gt;</code>
+     * element then renders with an empty breadcrumb trail, as it always has.
+     *
+     * @return true if breadcrumbs should be derived from the menu hierarchy.
+     * @since 2.1.1
+     */
+    public boolean isDeriveBreadcrumbsFromMenu() {
+        return deriveBreadcrumbsFromMenu;
+    }
+
+    /**
+     * Switch on/off deriving breadcrumbs from the site descriptor's menu hierarchy.
+     *
+     * @param deriveBreadcrumbsFromMenu true to switch on breadcrumb derivation.
+     * @since 2.1.1
+     */
+    public void setDeriveBreadcrumbsFromMenu(boolean deriveBreadcrumbsFromMenu) {
+        this.deriveBreadcrumbsFromMenu = deriveBreadcrumbsFromMenu;
     }
 
     /**
