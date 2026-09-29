@@ -24,6 +24,12 @@ updates:
     # resolverVersion is paired with mavenVersion: Maven 3.6.3 ships resolver 1.4.1.
     # Raising one without the other builds against API the minimum Maven does not have.
     - dependency-name: "org.apache.maven.resolver:*"
+    # Mockito 5 requires Java 11; the build still runs on JDK 8
+    - dependency-name: "org.mockito:*"
+      versions: [">= 5.0.0"]
+    # JUnit 6 requires Java 17; the build still runs on JDK 8
+    - dependency-name: "org.junit*"
+      versions: [">= 6.0.0"]
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
