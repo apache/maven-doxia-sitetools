@@ -125,6 +125,6 @@ class DefaultSiteToolTest {
 
         MenuItem item = siteModel.getMenuRef("parent").getItems().get(0);
         assertEquals("unnamed-parent", item.getName());
-        assertEquals("../index.html", item.getHref());
+        assertEquals(".." + File.separator + "index.html", item.getHref());
     }
 }
