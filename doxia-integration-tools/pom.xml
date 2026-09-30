@@ -85,6 +85,12 @@
       <version>${resolverVersion}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-util</artifactId>
+      <version>${resolverVersion}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- doxia-sitetools -->
     <dependency>

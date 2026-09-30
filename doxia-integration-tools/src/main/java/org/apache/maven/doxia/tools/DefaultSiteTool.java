@@ -44,11 +44,6 @@ import java.util.StringTokenizer;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.site.Banner;
 import org.apache.maven.doxia.site.Body;
 import org.apache.maven.doxia.site.Image;
@@ -88,6 +83,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.repository.LocalArtifactRequest;
 import org.eclipse.aether.repository.LocalArtifactResult;
 import org.eclipse.aether.repository.LocalRepositoryManager;
@@ -96,6 +92,9 @@ import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.transfer.ArtifactNotFoundException;
+import org.eclipse.aether.util.version.GenericVersionScheme;
+import org.eclipse.aether.version.InvalidVersionSpecificationException;
+import org.eclipse.aether.version.VersionScheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +108,9 @@ import org.slf4j.LoggerFactory;
 public class DefaultSiteTool implements SiteTool {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSiteTool.class);
 
+    /** The version scheme Maven Resolver resolves the skin version with. */
+    private static final VersionScheme VERSION_SCHEME = new GenericVersionScheme();
+
     // ----------------------------------------------------------------------
     // Components
     // ----------------------------------------------------------------------
@@ -118,12 +120,6 @@ public class DefaultSiteTool implements SiteTool {
      */
     @Inject
     protected RepositorySystem repositorySystem;
-
-    /**
-     * The component used for getting artifact handlers.
-     */
-    @Inject
-    private ArtifactHandlerManager artifactHandlerManager;
 
     /**
      * Internationalization.
@@ -154,18 +150,11 @@ public class DefaultSiteTool implements SiteTool {
             if (version == null) {
                 version = Artifact.RELEASE_VERSION;
             }
-            VersionRange versionSpec = VersionRange.createFromVersionSpec(version);
-            String type = "jar";
-            Artifact artifact = new DefaultArtifact(
-                    skin.getGroupId(),
-                    skin.getArtifactId(),
-                    versionSpec,
-                    Artifact.SCOPE_RUNTIME,
-                    type,
-                    null,
-                    artifactHandlerManager.getArtifactHandler(type));
-            ArtifactRequest request =
-                    new ArtifactRequest(RepositoryUtils.toArtifact(artifact), remoteProjectRepositories, "remote-skin");
+            VERSION_SCHEME.parseVersionConstraint(version);
+            ArtifactRequest request = new ArtifactRequest(
+                    new DefaultArtifact(skin.getGroupId(), skin.getArtifactId(), null, "jar", version),
+                    remoteProjectRepositories,
+                    "remote-skin");
             ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
 
             return RepositoryUtils.toArtifact(result.getArtifact());
@@ -860,18 +849,13 @@ public class DefaultSiteTool implements SiteTool {
      */
     private ArtifactRequest createSiteDescriptorArtifactRequest(
             MavenProject project, String localeStr, List<RemoteRepository> remoteProjectRepositories) {
-        String type = "xml";
-        ArtifactHandler artifactHandler = artifactHandlerManager.getArtifactHandler(type);
-        Artifact artifact = new DefaultArtifact(
+        DefaultArtifact artifact = new DefaultArtifact(
                 project.getGroupId(),
                 project.getArtifactId(),
-                project.getVersion(),
-                Artifact.SCOPE_RUNTIME,
-                type,
                 "site" + (localeStr.isEmpty() ? "" : "_" + localeStr),
-                artifactHandler);
-        return new ArtifactRequest(
-                RepositoryUtils.toArtifact(artifact), remoteProjectRepositories, "remote-site-descriptor");
+                "xml",
+                project.getVersion());
+        return new ArtifactRequest(artifact, remoteProjectRepositories, "remote-site-descriptor");
     }
 
     /**
