@@ -44,6 +44,12 @@ under the License.
       <version>${mavenVersion}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-util</artifactId>
+      <version>${resolverVersion}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>

@@ -387,6 +387,42 @@ public class DefaultSiteRendererTest {
         assertFalse(r.matchVersion("1.7", "1.8"));
     }
 
+    /**
+     * Skin prerequisites as skins declare them, against released and development sitetools versions. A single
+     * version is a minimum.
+     */
+    @Test
+    void matchVersionForSkinPrerequisites() throws Exception {
+        DefaultSiteRenderer r = (DefaultSiteRenderer) siteRenderer;
+        String[][] matching = {
+            {"2.0.0", "2.0.0-M1"},
+            {"2.1.0", "2.0.0"},
+            {"2.1.1-SNAPSHOT", "2.1.0"},
+            {"2.0.0-M16", "2.0.0-M1"},
+            {"2.1.0", "[2.0.0,)"},
+            {"2.1.0", "[2.0.0,3.0.0)"},
+            {"2.0.0", "[2.0.0-M1,)"},
+            {"1.11.1", "[1.8,2.0)"},
+            {"2.1.0", "(,1.0],[2.0,)"},
+        };
+        for (String[] c : matching) {
+            assertTrue(r.matchVersion(c[0], c[1]), c[0] + " should match " + c[1]);
+        }
+        String[][] notMatching = {
+            {"2.0.0-M1", "2.0.0"},
+            {"2.1.0-SNAPSHOT", "2.1.0"},
+            {"1.11.1", "2.0.0-M1"},
+            {"2.1.0", "[1.8,2.0)"},
+            {"3.0.0", "[2.0.0,3.0.0)"},
+            {"2.0.0-M16", "[2.0.0,)"},
+            {"1.5", "(,1.0],[2.0,)"},
+        };
+        for (String[] c : notMatching) {
+            assertFalse(r.matchVersion(c[0], c[1]), c[0] + " should not match " + c[1]);
+        }
+        assertThrows(RendererException.class, () -> r.matchVersion("2.1.0", "[2.0"));
+    }
+
     @Test
     void locateDocumentFiles() throws Exception {
         SiteRenderingContext context = new SiteRenderingContext();
