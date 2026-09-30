@@ -23,6 +23,8 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.StringReader;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,13 +33,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
+import java.util.stream.Stream;
 
 import org.apache.maven.doxia.site.LinkItem;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.Skin;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
-import org.apache.maven.doxia.tools.stubs.MavenProjectStub;
 import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequest;
@@ -62,7 +66,6 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -75,15 +78,30 @@ class SiteToolTest {
     private DefaultSiteTool tool;
 
     /**
-     * These tests resolve the skin and parent site descriptors from Central. The session below is
-     * built by hand, so it never sees Maven's own offline setting; the build passes it in as a system
-     * property and the tests stand aside when it is set.
+     * The tests resolve the skin and the site descriptors from a local repository seeded from
+     * <code>src/test/resources/local-repo</code>, with the session offline, so nothing is downloaded.
      */
     @BeforeEach
-    void requireNetwork() {
-        assumeFalse(
-                Boolean.getBoolean("doxia.test.offline"),
-                "resolves the skin and site descriptors from a remote repository");
+    void seedLocalRepository() throws Exception {
+        File localRepo = getLocalRepoDir();
+        FileUtils.deleteDirectory(localRepo);
+        Path source = getTestFile("src/test/resources/local-repo").toPath();
+        try (Stream<Path> files = Files.walk(source)) {
+            for (Path file : (Iterable<Path>) files.filter(Files::isRegularFile)::iterator) {
+                Path target = localRepo.toPath().resolve(source.relativize(file));
+                Files.createDirectories(target.getParent());
+                Files.copy(file, target);
+            }
+        }
+        // the skin is only looked at as a file: any jar will do
+        Path skinJar = localRepo
+                .toPath()
+                .resolve("org/apache/maven/skins/maven-fluido-skin/2.1.0/maven-fluido-skin-2.1.0.jar");
+        Files.createDirectories(skinJar.getParent());
+        try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(skinJar))) {
+            out.putNextEntry(new JarEntry("META-INF/maven/site.vm"));
+            out.closeEntry();
+        }
     }
 
     /**
@@ -99,6 +117,7 @@ class SiteToolTest {
         DefaultRepositorySystemSession repoSession = MavenRepositorySystemUtils.newSession();
         repoSession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
                 .newInstance(repoSession, new LocalRepository(getLocalRepoDir())));
+        repoSession.setOffline(true);
         return repoSession;
     }
 
@@ -478,7 +497,7 @@ class SiteToolTest {
         Properties effectiveProperties = new Properties();
         effectiveProperties.putAll(parentProject.getProperties());
         effectiveProperties.putAll(childProject.getProperties());
-        childProject.setProperties(effectiveProperties);
+        childProject.getModel().setProperties(effectiveProperties);
 
         List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList(parentProject);
         MavenExecutionRequest request = new DefaultMavenExecutionRequest();
@@ -583,15 +602,8 @@ class SiteToolTest {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("require-parent-test");
-        MavenProjectStub parentProject = new MavenProjectStub() {
-            @Override
-            public File getBasedir() {
-                return null; // this should be a non reactor/local project
-            }
-        };
-        parentProject.setGroupId("org.apache.maven.shared.its");
-        parentProject.setArtifactId("mshared-217-parent");
-        parentProject.setVersion("1.0-SNAPSHOT");
+        MavenProject parentProject =
+                new SiteToolMavenProjectStub("org.apache.maven.shared.its", "mshared-217-parent", "1.0-SNAPSHOT");
         project.setParent(parentProject);
         List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
 
