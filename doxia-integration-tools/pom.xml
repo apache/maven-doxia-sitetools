@@ -149,38 +149,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.resolver</groupId>
-      <artifactId>maven-resolver-connector-basic</artifactId>
-      <version>${resolverVersion}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.resolver</groupId>
-      <artifactId>maven-resolver-transport-http</artifactId>
-      <version>${resolverVersion}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-testing</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <!-- SiteToolTest builds its own repository session, which never sees this otherwise.
-               Passed on the command line because systemPropertyVariables takes Strings only, and
-               settings.offline interpolates as a Boolean. -->
-          <argLine>-Ddoxia.test.offline=${settings.offline}</argLine>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <reporting>
     <plugins>

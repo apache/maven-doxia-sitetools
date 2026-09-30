@@ -19,138 +19,86 @@
 package org.apache.maven.doxia.tools.stubs;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
-import org.apache.maven.RepositoryUtils;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
-import org.apache.maven.artifact.repository.MavenArtifactRepository;
-import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Site;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.repository.RemoteRepository;
 
 /**
+ * A {@link MavenProject} read from one of the test projects under <code>src/test/resources/unit</code>. Everything
+ * the site tool reads lives in the {@link Model}, as it does in a real build.
+ *
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-public class SiteToolMavenProjectStub extends MavenProjectStub {
-    private Build build;
-
+public class SiteToolMavenProjectStub extends MavenProject {
     private File basedir;
 
-    private DistributionManagement distributionManagement;
-
-    private Properties properties;
-
     public SiteToolMavenProjectStub(String projectName) {
-        basedir = new File(super.getBasedir() + "/src/test/resources/unit/" + projectName);
+        super(readModel(projectName));
+        basedir = unitDir(projectName);
+        setFile(new File(basedir, "pom.xml"));
 
-        Model model = null;
-
-        try {
-            model = new MavenXpp3Reader().read(new FileInputStream(new File(getBasedir(), "pom.xml")));
-            setModel(model);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        setGroupId(model.getGroupId());
-        setArtifactId(model.getArtifactId());
-        setVersion(model.getVersion());
-        setName(model.getName());
-        setUrl(model.getUrl());
-        setPackaging(model.getPackaging());
-        setProperties(model.getProperties());
-
-        build = new Build();
-        build.setFinalName(model.getArtifactId());
-        build.setDirectory(super.getBasedir() + "/target/test/unit/" + projectName + "/target");
-        build.setSourceDirectory(getBasedir() + "/src/main/java");
+        Build build = new Build();
+        build.setFinalName(getArtifactId());
+        build.setDirectory(System.getProperty("basedir", ".") + "/target/test/unit/" + projectName + "/target");
+        build.setSourceDirectory(basedir + "/src/main/java");
         build.setOutputDirectory(build.getDirectory() + "/classes");
-        build.setTestSourceDirectory(getBasedir() + "/src/test/java");
+        build.setTestSourceDirectory(basedir + "/src/test/java");
         build.setTestOutputDirectory(build.getDirectory() + "/test-classes");
-
-        List<String> compileSourceRoots = new ArrayList<>();
-        compileSourceRoots.add(getBasedir() + "/src/main/java");
-        setCompileSourceRoots(compileSourceRoots);
-
-        List<String> testCompileSourceRoots = new ArrayList<>();
-        testCompileSourceRoots.add(getBasedir() + "/src/test/java");
-        setTestCompileSourceRoots(testCompileSourceRoots);
+        getModel().setBuild(build);
     }
 
-    /** {@inheritDoc} */
-    public Build getBuild() {
-        return build;
+    /**
+     * A project with coordinates only and no base directory, as Maven builds a parent it reads from a repository.
+     */
+    public SiteToolMavenProjectStub(String groupId, String artifactId, String version) {
+        super(new Model());
+        getModel().setModelVersion("4.0.0");
+        setGroupId(groupId);
+        setArtifactId(artifactId);
+        setVersion(version);
     }
 
-    /** {@inheritDoc} */
-    public void setBuild(Build build) {
-        this.build = build;
+    private static File unitDir(String projectName) {
+        return new File(System.getProperty("basedir", "."), "src/test/resources/unit/" + projectName);
     }
 
-    /** {@inheritDoc} */
+    private static Model readModel(String projectName) {
+        try (InputStream in = Files.newInputStream(new File(unitDir(projectName), "pom.xml").toPath())) {
+            return new MavenXpp3Reader().read(in);
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot read the test project " + projectName, e);
+        }
+    }
+
+    @Override
     public File getBasedir() {
         return basedir;
     }
 
-    /** {@inheritDoc} */
     public void setBasedir(File basedir) {
         this.basedir = basedir;
     }
 
-    /** {@inheritDoc} */
-    public List<ArtifactRepository> getRemoteArtifactRepositories() {
-        // MavenArtifactRepository stores the policies verbatim, where the DefaultArtifactRepository this
-        // replaces substituted these same defaults for nulls. Passing null here compiles but leaves the
-        // repository unusable to anything that validates its policies.
-        ArtifactRepository repository = new MavenArtifactRepository(
-                "central",
-                "https://repo1.maven.org/maven2",
-                new DefaultRepositoryLayout(),
-                new ArtifactRepositoryPolicy(
-                        true,
-                        ArtifactRepositoryPolicy.UPDATE_POLICY_ALWAYS,
-                        ArtifactRepositoryPolicy.CHECKSUM_POLICY_IGNORE),
-                new ArtifactRepositoryPolicy(
-                        true,
-                        ArtifactRepositoryPolicy.UPDATE_POLICY_ALWAYS,
-                        ArtifactRepositoryPolicy.CHECKSUM_POLICY_IGNORE));
-
-        return Collections.singletonList(repository);
-    }
-
-    /** {@inheritDoc} */
+    @Override
     public List<RemoteRepository> getRemoteProjectRepositories() {
-        return RepositoryUtils.toRepos(getRemoteArtifactRepositories());
-    }
-
-    /** {@inheritDoc} */
-    public Properties getProperties() {
-        return properties;
-    }
-
-    /** {@inheritDoc} */
-    public void setProperties(Properties properties) {
-        this.properties = properties;
+        return Collections.singletonList(
+                new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2").build());
     }
 
     public void setDistgributionManagementSiteUrl(String url) {
         Site site = new Site();
         site.setUrl(url);
-        distributionManagement = new DistributionManagement();
+        DistributionManagement distributionManagement = new DistributionManagement();
         distributionManagement.setSite(site);
-    }
-
-    /** {@inheritDoc} */
-    public DistributionManagement getDistributionManagement() {
-        return distributionManagement;
+        getModel().setDistributionManagement(distributionManagement);
     }
 }
