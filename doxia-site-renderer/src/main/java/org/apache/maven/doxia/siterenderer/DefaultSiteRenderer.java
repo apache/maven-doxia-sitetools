@@ -59,11 +59,6 @@ import java.util.zip.ZipFile;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.Restriction;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
@@ -114,6 +109,11 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.VelocityComponent;
+import org.eclipse.aether.util.version.GenericVersionScheme;
+import org.eclipse.aether.version.InvalidVersionSpecificationException;
+import org.eclipse.aether.version.Version;
+import org.eclipse.aether.version.VersionConstraint;
+import org.eclipse.aether.version.VersionScheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,6 +128,9 @@ import org.slf4j.LoggerFactory;
 @Named
 public class DefaultSiteRenderer implements Renderer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSiteRenderer.class);
+
+    /** The version scheme Maven Resolver compares versions with. */
+    private static final VersionScheme VERSION_SCHEME = new GenericVersionScheme();
 
     // ----------------------------------------------------------------------
     // Requirements
@@ -844,24 +847,15 @@ public class DefaultSiteRenderer implements Renderer {
 
     boolean matchVersion(String current, String prerequisite) throws RendererException {
         try {
-            ArtifactVersion v = new DefaultArtifactVersion(current);
-            VersionRange vr = VersionRange.createFromVersionSpec(prerequisite);
+            Version v = VERSION_SCHEME.parseVersion(current);
+            VersionConstraint constraint = VERSION_SCHEME.parseVersionConstraint(prerequisite);
 
-            boolean matched = false;
-            ArtifactVersion recommendedVersion = vr.getRecommendedVersion();
-            if (recommendedVersion == null) {
-                List<Restriction> restrictions = vr.getRestrictions();
-                for (Restriction restriction : restrictions) {
-                    if (restriction.containsVersion(v)) {
-                        matched = true;
-                        break;
-                    }
-                }
+            boolean matched;
+            if (constraint.getRange() == null) {
+                // a singular version is a minimum
+                matched = constraint.getVersion().compareTo(v) <= 0;
             } else {
-                // only singular versions ever have a recommendedVersion
-                @SuppressWarnings("unchecked")
-                int compareTo = recommendedVersion.compareTo(v);
-                matched = (compareTo <= 0);
+                matched = constraint.getRange().containsVersion(v);
             }
 
             if (LOGGER.isDebugEnabled()) {
