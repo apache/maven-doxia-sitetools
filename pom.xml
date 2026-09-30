@@ -68,10 +68,10 @@ under the License.
 
   <properties>
     <javaVersion>8</javaVersion>
-    <mavenVersion>3.6.3</mavenVersion>
+    <mavenVersion>3.9.16</mavenVersion>
     <doxiaVersion>2.1.0</doxiaVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
-    <resolverVersion>1.4.1</resolverVersion>
+    <resolverVersion>1.9.27</resolverVersion>
     <l10nPluginVersion>1.2.1</l10nPluginVersion>
     <maven.site.path>doxia-sitetools-archives/doxia-sitetools-LATEST</maven.site.path>
     <project.build.outputTimestamp>2026-03-31T15:50:32Z</project.build.outputTimestamp>
