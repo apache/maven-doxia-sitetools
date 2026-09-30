@@ -136,6 +136,21 @@ class SiteToolTest {
                 tool.getSkinArtifactFromRepository(newRepoSession(), project.getRemoteProjectRepositories(), skin));
     }
 
+    @Test
+    void getSkinArtifactFromRepositoryRejectsInvalidVersion() throws Exception {
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
+        Skin skin = new Skin();
+        skin.setGroupId("org.apache.maven.skins");
+        skin.setArtifactId("maven-fluido-skin");
+        skin.setVersion("[2.0");
+
+        SiteToolException e = assertThrows(
+                SiteToolException.class,
+                () -> tool.getSkinArtifactFromRepository(
+                        newRepoSession(), project.getRemoteProjectRepositories(), skin));
+        assertEquals("The skin version '[2.0' is not valid", e.getMessage());
+    }
+
     private void checkGetRelativePathDirectory(SiteTool tool, String relative, String to, String from) {
         assertEquals(relative, tool.getRelativePath(to, from));
         assertEquals(relative, tool.getRelativePath(to + '/', from));
