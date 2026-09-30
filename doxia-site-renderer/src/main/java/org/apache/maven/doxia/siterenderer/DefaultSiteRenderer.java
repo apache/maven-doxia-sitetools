@@ -58,7 +58,11 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.api.DownloadedArtifact;
+import org.apache.maven.api.Session;
+import org.apache.maven.api.Version;
+import org.apache.maven.api.VersionConstraint;
+import org.apache.maven.api.services.VersionParserException;
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
@@ -109,11 +113,6 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.VelocityComponent;
-import org.eclipse.aether.util.version.GenericVersionScheme;
-import org.eclipse.aether.version.InvalidVersionSpecificationException;
-import org.eclipse.aether.version.Version;
-import org.eclipse.aether.version.VersionConstraint;
-import org.eclipse.aether.version.VersionScheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,9 +127,6 @@ import org.slf4j.LoggerFactory;
 @Named
 public class DefaultSiteRenderer implements Renderer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSiteRenderer.class);
-
-    /** The version scheme Maven Resolver compares versions with. */
-    private static final VersionScheme VERSION_SCHEME = new GenericVersionScheme();
 
     // ----------------------------------------------------------------------
     // Requirements
@@ -742,7 +738,7 @@ public class DefaultSiteRenderer implements Renderer {
 
         try {
             Template template;
-            Artifact skin = siteRenderingContext.getSkin();
+            DownloadedArtifact skin = siteRenderingContext.getSkin();
 
             try {
                 SkinModel skinModel = siteRenderingContext.getSkinModel();
@@ -753,11 +749,10 @@ public class DefaultSiteRenderer implements Renderer {
                         : velocity.getEngine().getTemplate(templateName, encoding);
             } catch (ParseErrorException pee) {
                 throw new RendererException(
-                        "Velocity parsing error while reading the site template " + "from " + skin.getId() + " skin",
+                        "Velocity parsing error while reading the site template " + "from " + skin.key() + " skin",
                         pee);
             } catch (ResourceNotFoundException rnfe) {
-                throw new RendererException(
-                        "Could not find the site template " + "from " + skin.getId() + " skin", rnfe);
+                throw new RendererException("Could not find the site template " + "from " + skin.key() + " skin", rnfe);
             }
 
             try {
@@ -792,13 +787,18 @@ public class DefaultSiteRenderer implements Renderer {
 
     /** {@inheritDoc} */
     public SiteRenderingContext createContextForSkin(
-            Artifact skin, Map<String, ?> attributes, SiteModel siteModel, String defaultTitle, Locale locale)
+            Session session,
+            DownloadedArtifact skin,
+            Map<String, ?> attributes,
+            SiteModel siteModel,
+            String defaultTitle,
+            Locale locale)
             throws IOException, RendererException {
         SiteRenderingContext context = createSiteRenderingContext(attributes, siteModel, defaultTitle, locale);
 
         context.setSkin(skin);
 
-        ZipFile zipFile = getZipFile(skin.getFile());
+        ZipFile zipFile = getZipFile(skin.getPath().toFile());
         InputStream in = null;
 
         try {
@@ -807,7 +807,7 @@ public class DefaultSiteRenderer implements Renderer {
             }
             context.setTemplateName(SKIN_TEMPLATE_LOCATION);
             context.setTemplateClassLoader(
-                    new URLClassLoader(new URL[] {skin.getFile().toURI().toURL()}));
+                    new URLClassLoader(new URL[] {skin.getPath().toUri().toURL()}));
 
             ZipEntry skinDescriptorEntry = zipFile.getEntry(SkinModel.SKIN_DESCRIPTOR_LOCATION);
             if (skinDescriptorEntry != null) {
@@ -825,7 +825,7 @@ public class DefaultSiteRenderer implements Renderer {
 
                 if (StringUtils.isNotBlank(toolsPrerequisite)
                         && (current != null)
-                        && !matchVersion(current, toolsPrerequisite)) {
+                        && !matchVersion(session, current, toolsPrerequisite)) {
                     throw new RendererException("Your current Doxia Sitetools version " + current
                             + " does not match the requirements of the skin (" + toolsPrerequisite
                             + "). In order to fix this choose a skin version that is "
@@ -834,7 +834,7 @@ public class DefaultSiteRenderer implements Renderer {
             }
         } catch (XmlPullParserException e) {
             throw new RendererException(
-                    "Failed to parse " + SkinModel.SKIN_DESCRIPTOR_LOCATION + " skin descriptor from " + skin.getId()
+                    "Failed to parse " + SkinModel.SKIN_DESCRIPTOR_LOCATION + " skin descriptor from " + skin.key()
                             + " skin",
                     e);
         } finally {
@@ -845,17 +845,18 @@ public class DefaultSiteRenderer implements Renderer {
         return context;
     }
 
-    boolean matchVersion(String current, String prerequisite) throws RendererException {
+    boolean matchVersion(Session session, String current, String prerequisite) throws RendererException {
         try {
-            Version v = VERSION_SCHEME.parseVersion(current);
-            VersionConstraint constraint = VERSION_SCHEME.parseVersionConstraint(prerequisite);
+            Version v = session.parseVersion(current);
+            VersionConstraint constraint = session.parseVersionConstraint(prerequisite);
 
             boolean matched;
-            if (constraint.getRange() == null) {
-                // a singular version is a minimum
-                matched = constraint.getVersion().compareTo(v) <= 0;
+            Version recommendedVersion = constraint.getRecommendedVersion();
+            if (recommendedVersion == null) {
+                matched = constraint.getVersionRange().contains(v);
             } else {
-                matched = constraint.getRange().containsVersion(v);
+                // only singular versions ever have a recommendedVersion
+                matched = recommendedVersion.compareTo(v) <= 0;
             }
 
             if (LOGGER.isDebugEnabled()) {
@@ -864,14 +865,14 @@ public class DefaultSiteRenderer implements Renderer {
             }
 
             return matched;
-        } catch (InvalidVersionSpecificationException e) {
+        } catch (VersionParserException e) {
             throw new RendererException("Invalid skin doxia-sitetools prerequisite: " + prerequisite, e);
         }
     }
 
     /** {@inheritDoc} */
     public void copyResources(SiteRenderingContext siteRenderingContext, File outputDirectory) throws IOException {
-        ZipFile file = getZipFile(siteRenderingContext.getSkin().getFile());
+        ZipFile file = getZipFile(siteRenderingContext.getSkin().getPath().toFile());
 
         Context velocityContext = createDocumentVelocityContext(null, siteRenderingContext);
         Map<String, String> resourceConditions = createResourceConditionsMap(siteRenderingContext.getSkinModel());

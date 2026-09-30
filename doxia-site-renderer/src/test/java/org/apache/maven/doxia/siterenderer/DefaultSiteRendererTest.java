@@ -47,9 +47,8 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.api.DownloadedArtifact;
+import org.apache.maven.api.Session;
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.sink.Sink;
@@ -58,6 +57,7 @@ import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext.SiteDirectory;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.xsd.AbstractXmlValidator;
+import org.apache.maven.impl.standalone.ApiRunner;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.FileUtils;
@@ -108,8 +108,19 @@ public class DefaultSiteRendererTest {
 
     private static File minimalSkinJar;
 
+    /** The Maven 4 session of the standalone runner, needed to parse skin version constraints. */
+    private static Session session;
+
+    private static DownloadedArtifact skinArtifact(File skinFile) {
+        DownloadedArtifact skin = Mockito.mock(DownloadedArtifact.class);
+        Mockito.when(skin.getPath()).thenReturn(skinFile.toPath());
+        Mockito.when(skin.key()).thenReturn("org.group:artifact:jar:1.1");
+        return skin;
+    }
+
     @BeforeAll
     static void beforeAll() throws IOException {
+        session = ApiRunner.createSession();
         // only create once, as otherwise Windows might have issues overwriting/deleting it while MS Defender is
         // scanning it
         // as multiple test are using it
@@ -366,11 +377,9 @@ public class DefaultSiteRendererTest {
          */
         attributes.put("doxiaSiteRendererVersion", "1.7-bogus");
 
-        Artifact skin = new DefaultArtifact(
-                "org.group", "artifact", VersionRange.createFromVersion("1.1"), null, "jar", "", null);
-        skin.setFile(skinFile);
-        SiteRenderingContext siteRenderingContext =
-                siteRenderer.createContextForSkin(skin, attributes, new SiteModel(), "defaultitle", Locale.ROOT);
+        DownloadedArtifact skin = skinArtifact(skinFile);
+        SiteRenderingContext siteRenderingContext = siteRenderer.createContextForSkin(
+                session, skin, attributes, new SiteModel(), "defaultitle", Locale.ROOT);
         DocumentRenderingContext context = new DocumentRenderingContext(new File(""), "document.html", "generator");
         SiteRendererSink sink = new SiteRendererSink(context);
         siteRenderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
@@ -383,8 +392,8 @@ public class DefaultSiteRendererTest {
     @Test
     void matchVersion() throws Exception {
         DefaultSiteRenderer r = (DefaultSiteRenderer) siteRenderer;
-        assertTrue(r.matchVersion("1.7", "1.7"));
-        assertFalse(r.matchVersion("1.7", "1.8"));
+        assertTrue(r.matchVersion(session, "1.7", "1.7"));
+        assertFalse(r.matchVersion(session, "1.7", "1.8"));
     }
 
     /**
@@ -406,7 +415,7 @@ public class DefaultSiteRendererTest {
             {"2.1.0", "(,1.0],[2.0,)"},
         };
         for (String[] c : matching) {
-            assertTrue(r.matchVersion(c[0], c[1]), c[0] + " should match " + c[1]);
+            assertTrue(r.matchVersion(session, c[0], c[1]), c[0] + " should match " + c[1]);
         }
         String[][] notMatching = {
             {"2.0.0-M1", "2.0.0"},
@@ -418,9 +427,9 @@ public class DefaultSiteRendererTest {
             {"1.5", "(,1.0],[2.0,)"},
         };
         for (String[] c : notMatching) {
-            assertFalse(r.matchVersion(c[0], c[1]), c[0] + " should not match " + c[1]);
+            assertFalse(r.matchVersion(session, c[0], c[1]), c[0] + " should not match " + c[1]);
         }
-        assertThrows(RendererException.class, () -> r.matchVersion("2.1.0", "[2.0"));
+        assertThrows(RendererException.class, () -> r.matchVersion(session, "2.1.0", "[2.0"));
     }
 
     @Test
@@ -486,11 +495,9 @@ public class DefaultSiteRendererTest {
         final Map<String, String> attributes = new HashMap<>();
         attributes.put("outputEncoding", "UTF-8");
 
-        Artifact skin = new DefaultArtifact(
-                "org.group", "artifact", VersionRange.createFromVersion("1.1"), null, "jar", "", null);
-        skin.setFile(skinFile);
+        DownloadedArtifact skin = skinArtifact(skinFile);
         SiteRenderingContext siteRenderingContext =
-                siteRenderer.createContextForSkin(skin, attributes, siteModel, "defaultTitle", Locale.ROOT);
+                siteRenderer.createContextForSkin(session, skin, attributes, siteModel, "defaultTitle", Locale.ROOT);
         siteRenderingContext.addSiteDirectory(new SiteDirectory(getTestFile(siteDir), true));
         siteRenderingContext.setValidate(validate);
 

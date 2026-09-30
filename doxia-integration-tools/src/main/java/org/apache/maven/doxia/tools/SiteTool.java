@@ -23,14 +23,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.api.DownloadedArtifact;
+import org.apache.maven.api.Project;
+import org.apache.maven.api.RemoteRepository;
+import org.apache.maven.api.Session;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.Skin;
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
-import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.repository.RemoteRepository;
 
 /**
  * Tool to play with <a href="http://maven.apache.org/doxia/">Doxia</a> objects
@@ -49,15 +48,14 @@ public interface SiteTool {
     /**
      * Get a skin artifact from one of the repositories.
      *
-     * @param repoSession the repository system session, not null.
+     * @param session the Maven session, not null.
      * @param remoteProjectRepositories the Maven remote project repositories, not null.
      * @param skin the Skin model, not null.
      * @return the <code>Skin</code> artifact defined in a <code>SiteModel</code> from a given project
      * @throws SiteToolException if any
      */
-    Artifact getSkinArtifactFromRepository(
-            RepositorySystemSession repoSession, List<RemoteRepository> remoteProjectRepositories, Skin skin)
-            throws SiteToolException;
+    DownloadedArtifact getSkinArtifactFromRepository(
+            Session session, List<RemoteRepository> remoteProjectRepositories, Skin skin) throws SiteToolException;
 
     /**
      * Get a site descriptor from the project's site directory.
@@ -73,42 +71,6 @@ public interface SiteTool {
     File getSiteDescriptor(File siteDirectory, Locale locale);
 
     /**
-     * Interpolating several expressions in the site descriptor content. Actually, the expressions can be in
-     * the project, the environment variables and the specific properties like <code>encoding</code>.
-     * <p>
-     * For instance:
-     * <dl>
-     * <dt>${project.name}</dt>
-     * <dd>The value from the POM of:
-     * <p>
-     * &lt;project&gt;<br>
-     * &nbsp;&nbsp;&lt;name&gt;myProjectName&lt;/name&gt;<br>
-     * &lt;/project&gt;
-     * </p></dd>
-     * <dt>${my.value}</dt>
-     * <dd>The value from the POM of:
-     * <p>
-     * &lt;properties&gt;<br>
-     * &nbsp;&nbsp;&lt;my.value&gt;hello&lt;/my.value&gt;<br>
-     * &lt;/properties&gt;
-     * </p></dd>
-     * <dt>${JAVA_HOME}</dt>
-     * <dd>The value of JAVA_HOME in the environment variables</dd>
-     * </dl>
-     *
-     * @param props a map used for interpolation, not null.
-     * @param aProject a Maven project, not null.
-     * @param siteDescriptorContent the site descriptor file, not null.
-     * @return the interpolated site descriptor content.
-     * @throws SiteToolException if errors happened during the interpolation.
-     * @deprecated since 2.1.0, use {@link #getSiteModel(File, Locale, MavenExecutionRequest, MavenProject, List, RepositorySystemSession, List)} instead
-     */
-    @Deprecated
-    // used by maven-pdf-plugin (should not?)
-    String getInterpolatedSiteDescriptorContent(
-            Map<String, String> props, MavenProject aProject, String siteDescriptorContent) throws SiteToolException;
-
-    /**
      * Get a site model for a project.
      *
      * @param siteDirectory the site directory, may be null if project from repository
@@ -116,47 +78,20 @@ public interface SiteTool {
      * See {@link #getSiteDescriptor(File, Locale)} for details.
      * @param project the Maven project, not null.
      * @param reactorProjects the Maven reactor projects, not null.
-     * @param repoSession the repository system session, not null.
+     * @param session the Maven session, not null. This is needed to resolve the site descriptors and to get the
+     * user properties and the system properties for interpolation.
      * @param remoteProjectRepositories the Maven remote project repositories, not null.
      * @return the <code>SiteModel</code> object corresponding to the <code>site.xml</code> file with some
      * interpolations.
      * @throws SiteToolException if any
-     * @since 1.7, was previously with other parameter types and order
-     * @deprecated since 2.1.0, use {@link #getSiteModel(File, Locale, MavenExecutionRequest, MavenProject, List, RepositorySystemSession, List)} instead
-     */
-    @Deprecated
-    SiteModel getSiteModel(
-            File siteDirectory,
-            Locale locale,
-            MavenProject project,
-            List<MavenProject> reactorProjects,
-            RepositorySystemSession repoSession,
-            List<RemoteRepository> remoteProjectRepositories)
-            throws SiteToolException;
-
-    /**
-     * Get a site model for a project.
-     *
-     * @param siteDirectory the site directory, may be null if project from repository
-     * @param locale the locale used for the i18n in SiteModel, not null.
-     * See {@link #getSiteDescriptor(File, Locale)} for details.
-     * @param project the Maven project, not null.
-     * @param request the Maven execution request, not null. This is needed to get the user properties and the system properties for interpolation.
-     * @param reactorProjects the Maven reactor projects, not null.
-     * @param repoSession the repository system session, not null.
-     * @param remoteProjectRepositories the Maven remote project repositories, not null.
-     * @return the <code>SiteModel</code> object corresponding to the <code>site.xml</code> file with some
-     * interpolations.
-     * @throws SiteToolException if any
-     * @since 2.1.0, was previously with other parameter types and order
+     * @since 3.0.0, was previously with other parameter types and order
      */
     SiteModel getSiteModel(
             File siteDirectory,
             Locale locale,
-            MavenExecutionRequest request,
-            MavenProject project,
-            List<MavenProject> reactorProjects,
-            RepositorySystemSession repoSession,
+            Project project,
+            List<Project> reactorProjects,
+            Session session,
             List<RemoteRepository> remoteProjectRepositories)
             throws SiteToolException;
 

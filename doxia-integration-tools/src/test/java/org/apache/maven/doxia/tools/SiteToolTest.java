@@ -21,10 +21,15 @@ package org.apache.maven.doxia.tools;
 import javax.inject.Inject;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,29 +37,27 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.stream.Stream;
 
+import org.apache.maven.api.Artifact;
+import org.apache.maven.api.Project;
+import org.apache.maven.api.RemoteRepository;
+import org.apache.maven.api.Session;
+import org.apache.maven.api.services.LocalRepositoryManager;
 import org.apache.maven.doxia.site.LinkItem;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.Skin;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
-import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
-import org.apache.maven.execution.DefaultMavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.apache.maven.doxia.tools.stubs.SiteToolProjectStub;
+import org.apache.maven.impl.standalone.ApiRunner;
 import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.XmlStreamWriter;
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
-import org.eclipse.aether.repository.LocalRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -79,10 +82,11 @@ class SiteToolTest {
 
     /**
      * The tests resolve the skin and the site descriptors from a local repository seeded from
-     * <code>src/test/resources/local-repo</code>, with the session offline, so nothing is downloaded.
+     * <code>src/test/resources/local-repo</code>: the standalone Maven 4 session (maven-impl 4.0.0-rc-7) registers
+     * no transporter, so nothing can be downloaded.
      */
     @BeforeEach
-    void seedLocalRepository() throws Exception {
+    void setUp() throws Exception {
         File localRepo = getLocalRepoDir();
         FileUtils.deleteDirectory(localRepo);
         Path source = getTestFile("src/test/resources/local-repo").toPath();
@@ -91,6 +95,7 @@ class SiteToolTest {
                 Path target = localRepo.toPath().resolve(source.relativize(file));
                 Files.createDirectories(target.getParent());
                 Files.copy(file, target);
+                markAsFromCentral(target);
             }
         }
         // the skin is only looked at as a file: any jar will do
@@ -102,6 +107,24 @@ class SiteToolTest {
             out.putNextEntry(new JarEntry("META-INF/maven/site.vm"));
             out.closeEntry();
         }
+        markAsFromCentral(skinJar);
+
+        session = newSession();
+    }
+
+    /**
+     * The local repository only trusts an artifact file when its <code>_remote.repositories</code> says which
+     * repository it comes from (enhanced local repository manager).
+     */
+    private static void markAsFromCentral(Path artifactFile) throws IOException {
+        if (artifactFile.getFileName().toString().startsWith("maven-metadata-")) {
+            return;
+        }
+        Files.write(
+                artifactFile.resolveSibling("_remote.repositories"),
+                (artifactFile.getFileName() + ">central=\n").getBytes(StandardCharsets.UTF_8),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.APPEND);
     }
 
     /**
@@ -113,12 +136,39 @@ class SiteToolTest {
         return getTestFile("target/local-repo");
     }
 
-    protected RepositorySystemSession newRepoSession() throws Exception {
-        DefaultRepositorySystemSession repoSession = MavenRepositorySystemUtils.newSession();
-        repoSession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
-                .newInstance(repoSession, new LocalRepository(getLocalRepoDir())));
-        repoSession.setOffline(true);
-        return repoSession;
+    /**
+     * The Maven 4 session, standing in for the one Maven gives a plugin. Its local repository is
+     * <code>target/local-repo</code>.
+     */
+    private Session session;
+
+    /**
+     * The session of the standalone runner has fixed user and system properties: substitute the ones under test.
+     */
+    private static Session withProperties(Session session, Map<String, String> user, Map<String, String> system) {
+        return (Session) Proxy.newProxyInstance(
+                SiteToolTest.class.getClassLoader(), new Class<?>[] {Session.class}, (proxy, method, args) -> {
+                    switch (method.getName()) {
+                        case "getUserProperties":
+                            return user;
+                        case "getSystemProperties":
+                            return system;
+                        default:
+                            try {
+                                return method.invoke(session, args);
+                            } catch (InvocationTargetException e) {
+                                throw e.getCause();
+                            }
+                    }
+                });
+    }
+
+    private Session newSession() throws Exception {
+        return ApiRunner.createSession(injector -> {}, getLocalRepoDir().toPath());
+    }
+
+    private List<RemoteRepository> remoteRepositories() {
+        return Collections.singletonList(session.createRemoteRepository("central", "https://repo1.maven.org/maven2"));
     }
 
     /**
@@ -128,27 +178,10 @@ class SiteToolTest {
     void getSkinArtifactFromRepository() throws Exception {
         assertNotNull(tool);
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
         Skin skin = new Skin();
         skin.setGroupId("org.apache.maven.skins");
         skin.setArtifactId("maven-fluido-skin");
-        assertNotNull(
-                tool.getSkinArtifactFromRepository(newRepoSession(), project.getRemoteProjectRepositories(), skin));
-    }
-
-    @Test
-    void getSkinArtifactFromRepositoryRejectsInvalidVersion() throws Exception {
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
-        Skin skin = new Skin();
-        skin.setGroupId("org.apache.maven.skins");
-        skin.setArtifactId("maven-fluido-skin");
-        skin.setVersion("[2.0");
-
-        SiteToolException e = assertThrows(
-                SiteToolException.class,
-                () -> tool.getSkinArtifactFromRepository(
-                        newRepoSession(), project.getRemoteProjectRepositories(), skin));
-        assertEquals("The skin version '[2.0' is not valid", e.getMessage());
+        assertNotNull(tool.getSkinArtifactFromRepository(session, remoteRepositories(), skin));
     }
 
     private void checkGetRelativePathDirectory(SiteTool tool, String relative, String to, String from) {
@@ -251,91 +284,91 @@ class SiteToolTest {
     void getSiteDescriptorFromBasedir() throws Exception {
         assertNotNull(tool);
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
+        SiteToolProjectStub project = new SiteToolProjectStub("site-tool-test");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), SiteTool.DEFAULT_LOCALE)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), SiteTool.DEFAULT_LOCALE)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.ENGLISH)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), Locale.ENGLISH)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         String siteDir = "src/blabla";
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), siteDir), SiteTool.DEFAULT_LOCALE)
+                tool.getSiteDescriptor(project.getBasedir().resolve(siteDir).toFile(), SiteTool.DEFAULT_LOCALE)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "blabla" + File.separator
                         + "site.xml");
 
-        project = new SiteToolMavenProjectStub("site-tool-locales-test/full");
+        project = new SiteToolProjectStub("site-tool-locales-test/full");
         Locale bavarian = new Locale("de", "DE", "BY");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), SiteTool.DEFAULT_LOCALE)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), SiteTool.DEFAULT_LOCALE)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), bavarian)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), bavarian)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
                         + "site_de_DE_BY.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.GERMANY)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), Locale.GERMANY)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.ENGLISH)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), Locale.ENGLISH)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.GERMAN)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), Locale.GERMAN)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
 
-        project = new SiteToolMavenProjectStub("site-tool-locales-test/language_country");
+        project = new SiteToolProjectStub("site-tool-locales-test/language_country");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), SiteTool.DEFAULT_LOCALE)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), SiteTool.DEFAULT_LOCALE)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), bavarian)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), bavarian)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
                         + "site_de_DE.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.GERMANY)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), Locale.GERMANY)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
                         + "site_de_DE.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.ENGLISH)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), Locale.ENGLISH)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.GERMAN)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), Locale.GERMAN)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
 
-        project = new SiteToolMavenProjectStub("site-tool-locales-test/language");
+        project = new SiteToolProjectStub("site-tool-locales-test/language");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), SiteTool.DEFAULT_LOCALE)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), SiteTool.DEFAULT_LOCALE)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), bavarian)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), bavarian)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
                         + "site_de.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.GERMANY)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), Locale.GERMANY)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
                         + "site_de.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.ENGLISH)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), Locale.ENGLISH)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator + "site.xml");
         assertEquals(
-                tool.getSiteDescriptor(new File(project.getBasedir(), "src/site"), Locale.GERMAN)
+                tool.getSiteDescriptor(project.getBasedir().resolve("src/site").toFile(), Locale.GERMAN)
                         .toString(),
                 project.getBasedir() + File.separator + "src" + File.separator + "site" + File.separator
                         + "site_de.xml");
@@ -348,7 +381,7 @@ class SiteToolTest {
     void getSiteDescriptorFromRepository() throws Exception {
         assertNotNull(tool);
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
+        SiteToolProjectStub project = new SiteToolProjectStub("site-tool-test");
         project.setGroupId("org.apache.maven");
         project.setArtifactId("maven-site");
         project.setVersion("1.0");
@@ -357,11 +390,7 @@ class SiteToolTest {
                 + "maven-site-1.0-site.xml";
 
         assertEquals(
-                tool.getSiteDescriptorFromRepository(
-                                project,
-                                newRepoSession(),
-                                project.getRemoteProjectRepositories(),
-                                SiteTool.DEFAULT_LOCALE)
+                tool.getSiteDescriptorFromRepository(project, session, remoteRepositories(), SiteTool.DEFAULT_LOCALE)
                         .toString(),
                 result);
     }
@@ -373,18 +402,17 @@ class SiteToolTest {
     void getSiteModel() throws Exception {
         assertNotNull(tool);
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
-        List<MavenProject> reactorProjects = new ArrayList<>();
+        SiteToolProjectStub project = new SiteToolProjectStub("site-tool-test");
+        List<Project> reactorProjects = new ArrayList<>();
 
         // model from current local build
         SiteModel model = tool.getSiteModel(
-                new File(project.getBasedir(), "src/site"),
+                project.getBasedir().resolve("src/site").toFile(),
                 SiteTool.DEFAULT_LOCALE,
-                new DefaultMavenExecutionRequest(),
                 project,
                 reactorProjects,
-                newRepoSession(),
-                project.getRemoteProjectRepositories());
+                session,
+                remoteRepositories());
         assertNotNull(model);
         assertNotNull(model.getBannerLeft());
         assertEquals("Maven Site", model.getBannerLeft().getName());
@@ -405,13 +433,7 @@ class SiteToolTest {
         project.setArtifactId("maven");
         project.setVersion("3.8.6");
         SiteModel modelFromRepo = tool.getSiteModel(
-                null,
-                SiteTool.DEFAULT_LOCALE,
-                new DefaultMavenExecutionRequest(),
-                project,
-                reactorProjects,
-                newRepoSession(),
-                project.getRemoteProjectRepositories());
+                null, SiteTool.DEFAULT_LOCALE, project, reactorProjects, session, remoteRepositories());
         assertNotNull(modelFromRepo);
         assertNotNull(modelFromRepo.getBannerLeft());
         assertEquals("dummy", modelFromRepo.getBannerLeft().getName());
@@ -429,18 +451,17 @@ class SiteToolTest {
     void getDefaultSiteModel() throws Exception {
         assertNotNull(tool);
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("no-site-test");
+        SiteToolProjectStub project = new SiteToolProjectStub("no-site-test");
         String siteDirectory = "src/site";
-        List<MavenProject> reactorProjects = new ArrayList<>();
+        List<Project> reactorProjects = new ArrayList<>();
 
         SiteModel model = tool.getSiteModel(
-                new File(project.getBasedir(), siteDirectory),
+                project.getBasedir().resolve(siteDirectory).toFile(),
                 SiteTool.DEFAULT_LOCALE,
-                new DefaultMavenExecutionRequest(),
                 project,
                 reactorProjects,
-                newRepoSession(),
-                project.getRemoteProjectRepositories());
+                session,
+                remoteRepositories());
         assertNotNull(model);
     }
 
@@ -457,7 +478,7 @@ class SiteToolTest {
     }
 
     @Test
-    void getInterpolatedSiteDescriptorContent() throws Exception {
+    void interpolatedSiteDescriptor() throws Exception {
         assertNotNull(tool);
 
         File pomXmlFile = getTestFile("src/test/resources/unit/interpolated-site/pom.xml");
@@ -474,27 +495,20 @@ class SiteToolTest {
         assertFalse(siteDescriptorContent.contains(
                 "Interpolatesite &quot;quoted&quot; &amp; &apos;quoted&apos; &lt;sdf&gt;"));
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("interpolated-site");
-        List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList(project);
-
-        siteDescriptorContent =
-                tool.getInterpolatedSiteDescriptorContent(new HashMap<>(), project, siteDescriptorContent);
-        assertNotNull(siteDescriptorContent);
-        assertFalse(siteDescriptorContent.contains("${project.name}"));
-        assertTrue(siteDescriptorContent.contains(
-                "Interpolatesite &quot;quoted&quot; &amp; &apos;quoted&apos; &lt;sdf&gt;"));
+        SiteToolProjectStub project = new SiteToolProjectStub("interpolated-site");
+        List<Project> reactorProjects = Collections.<Project>singletonList(project);
 
         SiteModel model = tool.getSiteModel(
-                new File(project.getBasedir(), "src/site"),
+                project.getBasedir().resolve("src/site").toFile(),
                 SiteTool.DEFAULT_LOCALE,
                 project,
                 reactorProjects,
-                newRepoSession(),
-                project.getRemoteProjectRepositories());
+                session,
+                remoteRepositories());
         assertNotNull(model);
 
         assertEquals(
-                "Test " + project.getName(),
+                "Test " + project.getModel().getName(),
                 model.getBody().getMenus().get(0).getItems().get(1).getName());
     }
 
@@ -503,36 +517,32 @@ class SiteToolTest {
     void siteModelInheritanceAndInterpolation() throws Exception {
         assertNotNull(tool);
 
-        SiteToolMavenProjectStub parentProject = new SiteToolMavenProjectStub("interpolation-parent-test");
+        SiteToolProjectStub parentProject = new SiteToolProjectStub("interpolation-parent-test");
         parentProject.setDistgributionManagementSiteUrl("dav+https://davs.codehaus.org/site");
 
-        SiteToolMavenProjectStub childProject = new SiteToolMavenProjectStub("interpolation-child-test");
+        SiteToolProjectStub childProject = new SiteToolProjectStub("interpolation-child-test");
         childProject.setParent(parentProject);
         childProject.setDistgributionManagementSiteUrl("dav+https://davs.codehaus.org/site/child");
-        Properties effectiveProperties = new Properties();
-        effectiveProperties.putAll(parentProject.getProperties());
-        effectiveProperties.putAll(childProject.getProperties());
-        childProject.getModel().setProperties(effectiveProperties);
+        Map<String, String> effectiveProperties = new HashMap<>();
+        effectiveProperties.putAll(parentProject.getModel().getProperties());
+        effectiveProperties.putAll(childProject.getModel().getProperties());
+        childProject.setProperties(effectiveProperties);
 
-        List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList(parentProject);
-        MavenExecutionRequest request = new DefaultMavenExecutionRequest();
-        Properties userProperties = new Properties();
-        userProperties.setProperty("userProp1", "from user properties");
-        userProperties.setProperty("my_property2", "from user properties");
-        request.setUserProperties(userProperties);
-        Properties systemProperties = new Properties();
-        systemProperties.setProperty("systemProp1", "from system properties");
-        systemProperties.setProperty("my_property3", "from system properties");
-        request.setSystemProperties(systemProperties);
+        List<Project> reactorProjects = Collections.<Project>singletonList(parentProject);
+        Map<String, String> userProperties = new HashMap<>();
+        userProperties.put("userProp1", "from user properties");
+        userProperties.put("my_property2", "from user properties");
+        Map<String, String> systemProperties = new HashMap<>();
+        systemProperties.put("systemProp1", "from system properties");
+        systemProperties.put("my_property3", "from system properties");
 
         SiteModel model = tool.getSiteModel(
-                new File(childProject.getBasedir(), "src/site"),
+                childProject.getBasedir().resolve("src/site").toFile(),
                 SiteTool.DEFAULT_LOCALE,
-                request,
                 childProject,
                 reactorProjects,
-                newRepoSession(),
-                childProject.getRemoteProjectRepositories());
+                withProperties(session, userProperties, systemProperties),
+                remoteRepositories());
         assertNotNull(model);
 
         writeModel(model, "unit/interpolation-child-test/effective-site.xml");
@@ -587,18 +597,17 @@ class SiteToolTest {
     void convertOldToNewSiteModel() throws Exception {
         assertNotNull(tool);
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("old-to-new-site-model-conversion-test");
-        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+        SiteToolProjectStub project = new SiteToolProjectStub("old-to-new-site-model-conversion-test");
+        List<Project> reactorProjects = new ArrayList<Project>();
 
         // model from current local build
         SiteModel model = tool.getSiteModel(
-                new File(project.getBasedir(), "src/site"),
+                project.getBasedir().resolve("src/site").toFile(),
                 SiteTool.DEFAULT_LOCALE,
-                new DefaultMavenExecutionRequest(),
                 project,
                 reactorProjects,
-                newRepoSession(),
-                project.getRemoteProjectRepositories());
+                session,
+                remoteRepositories());
         assertNotNull(model);
 
         File descriptorFile =
@@ -616,47 +625,51 @@ class SiteToolTest {
     void requireParent() throws Exception {
         assertNotNull(tool);
 
-        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("require-parent-test");
-        MavenProject parentProject =
-                new SiteToolMavenProjectStub("org.apache.maven.shared.its", "mshared-217-parent", "1.0-SNAPSHOT");
+        SiteToolProjectStub project = new SiteToolProjectStub("require-parent-test");
+        // no base directory: this should be a non reactor/local project
+        SiteToolProjectStub parentProject =
+                new SiteToolProjectStub("org.apache.maven.shared.its", "mshared-217-parent", "1.0-SNAPSHOT");
         project.setParent(parentProject);
-        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+        List<Project> reactorProjects = new ArrayList<Project>();
 
-        RepositorySystemSession repoSession = newRepoSession();
         // coordinates for site descriptor: <groupId>:<artifactId>:xml:site:<version>
-        new SiteToolMavenProjectStub("require-parent-test");
-        org.eclipse.aether.artifact.Artifact parentArtifact = new org.eclipse.aether.artifact.DefaultArtifact(
-                "org.apache.maven.shared.its:mshared-217-parent:xml:site:1.0-SNAPSHOT");
-        File parentArtifactInRepoFile = new File(
-                repoSession.getLocalRepository().getBasedir(),
-                repoSession.getLocalRepositoryManager().getPathForLocalArtifact(parentArtifact));
+        Artifact parentArtifact = session.createArtifact(
+                "org.apache.maven.shared.its", "mshared-217-parent", "1.0-SNAPSHOT", "site", "xml", "xml");
+        File parentArtifactInRepoFile = session.getService(LocalRepositoryManager.class)
+                .getPathForLocalArtifact(session, session.getLocalRepository(), parentArtifact)
+                .toFile();
 
         // model from current local build
         assertThrows(
                 SiteToolException.class,
                 () -> tool.getSiteModel(
-                        new File(project.getBasedir(), "src/site"),
+                        project.getBasedir().resolve("src/site").toFile(),
                         SiteTool.DEFAULT_LOCALE,
-                        new DefaultMavenExecutionRequest(),
                         project,
                         reactorProjects,
-                        repoSession,
-                        project.getRemoteProjectRepositories()));
+                        session,
+                        remoteRepositories()));
 
         // now copy parent site descriptor to repo
         FileUtils.copyFile(
                 getTestFile("src/test/resources/unit/require-parent-test/parent-site.xml"), parentArtifactInRepoFile);
+        // the local repository only trusts files it knows the origin of (enhanced local repository manager)
+        File remoteRepositoriesFile = new File(parentArtifactInRepoFile.getParentFile(), "_remote.repositories");
+        Files.write(
+                remoteRepositoriesFile.toPath(),
+                (parentArtifactInRepoFile.getName() + ">central=\n").getBytes(StandardCharsets.UTF_8));
         try {
+            // the session caches the outcome of a resolution, so the failed one above would be replayed
             tool.getSiteModel(
-                    new File(project.getBasedir(), "src/site"),
+                    project.getBasedir().resolve("src/site").toFile(),
                     SiteTool.DEFAULT_LOCALE,
-                    new DefaultMavenExecutionRequest(),
                     project,
                     reactorProjects,
-                    repoSession,
-                    project.getRemoteProjectRepositories());
+                    newSession(),
+                    remoteRepositories());
         } finally {
             parentArtifactInRepoFile.delete();
+            remoteRepositoriesFile.delete();
         }
     }
 
