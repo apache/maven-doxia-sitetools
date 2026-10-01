@@ -72,9 +72,35 @@ public interface SiteRenderer {
      * @throws RendererException if it bombs.
      * @throws java.io.IOException if it bombs.
      * @since 1.7.3 was previously with skin as File instead of Artifact
+     * @deprecated Use {@link #createContextForSkin(File, String, Map, SiteModel, String, Locale)}; removed in the
+     *             Maven 4 API line.
      */
+    @Deprecated
     SiteRenderingContext createContextForSkin(
             Artifact skin, Map<String, ?> attributes, SiteModel siteModel, String defaultTitle, Locale locale)
+            throws RendererException, IOException;
+
+    /**
+     * Create a Site Rendering Context for a site using a skin.
+     *
+     * @param skinFile the skin JAR file
+     * @param skinId the skin identifier, used in messages
+     * @param attributes attributes to use
+     * @param siteModel a site model
+     * @param defaultTitle default title
+     * @param locale locale to use
+     * @return a SiteRenderingContext.
+     * @throws RendererException if it bombs.
+     * @throws java.io.IOException if it bombs.
+     * @since 2.2.0
+     */
+    SiteRenderingContext createContextForSkin(
+            File skinFile,
+            String skinId,
+            Map<String, ?> attributes,
+            SiteModel siteModel,
+            String defaultTitle,
+            Locale locale)
             throws RendererException, IOException;
 
     /**
