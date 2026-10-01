@@ -742,7 +742,7 @@ public class DefaultSiteRenderer implements Renderer {
 
         try {
             Template template;
-            Artifact skin = siteRenderingContext.getSkin();
+            String skinId = siteRenderingContext.getSkinId();
 
             try {
                 SkinModel skinModel = siteRenderingContext.getSkinModel();
@@ -753,11 +753,9 @@ public class DefaultSiteRenderer implements Renderer {
                         : velocity.getEngine().getTemplate(templateName, encoding);
             } catch (ParseErrorException pee) {
                 throw new RendererException(
-                        "Velocity parsing error while reading the site template " + "from " + skin.getId() + " skin",
-                        pee);
+                        "Velocity parsing error while reading the site template " + "from " + skinId + " skin", pee);
             } catch (ResourceNotFoundException rnfe) {
-                throw new RendererException(
-                        "Could not find the site template " + "from " + skin.getId() + " skin", rnfe);
+                throw new RendererException("Could not find the site template " + "from " + skinId + " skin", rnfe);
             }
 
             try {
@@ -791,14 +789,30 @@ public class DefaultSiteRenderer implements Renderer {
     }
 
     /** {@inheritDoc} */
+    @Deprecated
     public SiteRenderingContext createContextForSkin(
             Artifact skin, Map<String, ?> attributes, SiteModel siteModel, String defaultTitle, Locale locale)
             throws IOException, RendererException {
+        SiteRenderingContext context =
+                createContextForSkin(skin.getFile(), skin.getId(), attributes, siteModel, defaultTitle, locale);
+        context.setSkin(skin);
+        return context;
+    }
+
+    /** {@inheritDoc} */
+    public SiteRenderingContext createContextForSkin(
+            File skinFile,
+            String skinId,
+            Map<String, ?> attributes,
+            SiteModel siteModel,
+            String defaultTitle,
+            Locale locale)
+            throws IOException, RendererException {
         SiteRenderingContext context = createSiteRenderingContext(attributes, siteModel, defaultTitle, locale);
 
-        context.setSkin(skin);
+        context.setSkin(skinFile, skinId);
 
-        ZipFile zipFile = getZipFile(skin.getFile());
+        ZipFile zipFile = getZipFile(skinFile);
         InputStream in = null;
 
         try {
@@ -807,7 +821,7 @@ public class DefaultSiteRenderer implements Renderer {
             }
             context.setTemplateName(SKIN_TEMPLATE_LOCATION);
             context.setTemplateClassLoader(
-                    new URLClassLoader(new URL[] {skin.getFile().toURI().toURL()}));
+                    new URLClassLoader(new URL[] {skinFile.toURI().toURL()}));
 
             ZipEntry skinDescriptorEntry = zipFile.getEntry(SkinModel.SKIN_DESCRIPTOR_LOCATION);
             if (skinDescriptorEntry != null) {
@@ -834,7 +848,7 @@ public class DefaultSiteRenderer implements Renderer {
             }
         } catch (XmlPullParserException e) {
             throw new RendererException(
-                    "Failed to parse " + SkinModel.SKIN_DESCRIPTOR_LOCATION + " skin descriptor from " + skin.getId()
+                    "Failed to parse " + SkinModel.SKIN_DESCRIPTOR_LOCATION + " skin descriptor from " + skinId
                             + " skin",
                     e);
         } finally {
@@ -871,7 +885,7 @@ public class DefaultSiteRenderer implements Renderer {
 
     /** {@inheritDoc} */
     public void copyResources(SiteRenderingContext siteRenderingContext, File outputDirectory) throws IOException {
-        ZipFile file = getZipFile(siteRenderingContext.getSkin().getFile());
+        ZipFile file = getZipFile(siteRenderingContext.getSkinFile());
 
         Context velocityContext = createDocumentVelocityContext(null, siteRenderingContext);
         Map<String, String> resourceConditions = createResourceConditionsMap(siteRenderingContext.getSkinModel());
