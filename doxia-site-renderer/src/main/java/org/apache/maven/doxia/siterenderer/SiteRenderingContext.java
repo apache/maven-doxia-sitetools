@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.api.DownloadedArtifact;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.skin.SkinModel;
@@ -127,7 +127,7 @@ public class SiteRenderingContext {
 
     private String defaultTitle;
 
-    private Artifact skin;
+    private DownloadedArtifact skin;
 
     private SkinModel skinModel;
 
@@ -289,18 +289,18 @@ public class SiteRenderingContext {
     /**
      * <p>Getter for the field <code>skin</code>.</p>
      *
-     * @return a {@link Artifact} object.
+     * @return a {@link DownloadedArtifact} object.
      */
-    public Artifact getSkin() {
+    public DownloadedArtifact getSkin() {
         return skin;
     }
 
     /**
      * <p>Setter for the field <code>skinJarFile</code>.</p>
      *
-     * @param skin an {@link Artifact} object.
+     * @param skin a {@link DownloadedArtifact} object.
      */
-    public void setSkin(Artifact skin) {
+    public void setSkin(DownloadedArtifact skin) {
         this.skin = skin;
     }
 

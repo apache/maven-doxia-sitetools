@@ -25,7 +25,8 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.api.DownloadedArtifact;
+import org.apache.maven.api.Session;
 import org.apache.maven.doxia.site.SiteModel;
 
 /**
@@ -63,6 +64,7 @@ public interface SiteRenderer {
     /**
      * Create a Site Rendering Context for a site using a skin.
      *
+     * @param session the Maven session, used to parse the version constraint of the skin prerequisites
      * @param skin a skin
      * @param attributes attributes to use
      * @param siteModel a site model
@@ -71,10 +73,15 @@ public interface SiteRenderer {
      * @return a SiteRenderingContext.
      * @throws RendererException if it bombs.
      * @throws java.io.IOException if it bombs.
-     * @since 1.7.3 was previously with skin as File instead of Artifact
+     * @since 3.0.0 was previously with a Maven 3 <code>Artifact</code> as skin and without session
      */
     SiteRenderingContext createContextForSkin(
-            Artifact skin, Map<String, ?> attributes, SiteModel siteModel, String defaultTitle, Locale locale)
+            Session session,
+            DownloadedArtifact skin,
+            Map<String, ?> attributes,
+            SiteModel siteModel,
+            String defaultTitle,
+            Locale locale)
             throws RendererException, IOException;
 
     /**

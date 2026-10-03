@@ -30,6 +30,7 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,8 +43,21 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.maven.RepositoryUtils;
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.api.Artifact;
+import org.apache.maven.api.ArtifactCoordinates;
+import org.apache.maven.api.DownloadedArtifact;
+import org.apache.maven.api.Project;
+import org.apache.maven.api.RemoteRepository;
+import org.apache.maven.api.Session;
+import org.apache.maven.api.model.Build;
+import org.apache.maven.api.model.DistributionManagement;
+import org.apache.maven.api.model.Model;
+import org.apache.maven.api.model.Plugin;
+import org.apache.maven.api.services.ArtifactResolverException;
+import org.apache.maven.api.services.ArtifactResolverResult;
+import org.apache.maven.api.services.LocalRepositoryManager;
+import org.apache.maven.api.services.VersionParserException;
+import org.apache.maven.api.xml.XmlNode;
 import org.apache.maven.doxia.site.Banner;
 import org.apache.maven.doxia.site.Body;
 import org.apache.maven.doxia.site.Image;
@@ -60,11 +74,6 @@ import org.apache.maven.doxia.site.decoration.io.xpp3.DecorationXpp3Reader;
 import org.apache.maven.doxia.site.inheritance.SiteModelInheritanceAssembler;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
-import org.apache.maven.execution.DefaultMavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
@@ -74,27 +83,13 @@ import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
+import org.codehaus.plexus.interpolation.SingleResponseValueSource;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.MXParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParser;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.repository.LocalArtifactRequest;
-import org.eclipse.aether.repository.LocalArtifactResult;
-import org.eclipse.aether.repository.LocalRepositoryManager;
-import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.resolution.ArtifactRequest;
-import org.eclipse.aether.resolution.ArtifactResolutionException;
-import org.eclipse.aether.resolution.ArtifactResult;
-import org.eclipse.aether.transfer.ArtifactNotFoundException;
-import org.eclipse.aether.util.version.GenericVersionScheme;
-import org.eclipse.aether.version.InvalidVersionSpecificationException;
-import org.eclipse.aether.version.VersionScheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,18 +103,12 @@ import org.slf4j.LoggerFactory;
 public class DefaultSiteTool implements SiteTool {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSiteTool.class);
 
-    /** The version scheme Maven Resolver resolves the skin version with. */
-    private static final VersionScheme VERSION_SCHEME = new GenericVersionScheme();
+    /** The symbolic version resolved by the repository system to the latest release. */
+    private static final String RELEASE_VERSION = "RELEASE";
 
     // ----------------------------------------------------------------------
     // Components
     // ----------------------------------------------------------------------
-
-    /**
-     * The component that is used to resolve additional required artifacts.
-     */
-    @Inject
-    protected RepositorySystem repositorySystem;
 
     /**
      * Internationalization.
@@ -138,31 +127,27 @@ public class DefaultSiteTool implements SiteTool {
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
-    public Artifact getSkinArtifactFromRepository(
-            RepositorySystemSession repoSession, List<RemoteRepository> remoteProjectRepositories, Skin skin)
-            throws SiteToolException {
-        Objects.requireNonNull(repoSession, "repoSession cannot be null");
+    public DownloadedArtifact getSkinArtifactFromRepository(
+            Session session, List<RemoteRepository> remoteProjectRepositories, Skin skin) throws SiteToolException {
+        Objects.requireNonNull(session, "session cannot be null");
         Objects.requireNonNull(remoteProjectRepositories, "remoteProjectRepositories cannot be null");
         Objects.requireNonNull(skin, "skin cannot be null");
 
         String version = skin.getVersion();
+        if (version == null) {
+            version = RELEASE_VERSION;
+        }
         try {
-            if (version == null) {
-                version = Artifact.RELEASE_VERSION;
-            }
-            VERSION_SCHEME.parseVersionConstraint(version);
-            ArtifactRequest request = new ArtifactRequest(
-                    new DefaultArtifact(skin.getGroupId(), skin.getArtifactId(), null, "jar", version),
-                    remoteProjectRepositories,
-                    "remote-skin");
-            ArtifactResult result = repositorySystem.resolveArtifact(repoSession, request);
-
-            return RepositoryUtils.toArtifact(result.getArtifact());
-        } catch (InvalidVersionSpecificationException e) {
+            // validates the version constraint the way the Maven 3 VersionRange.createFromVersionSpec() did
+            session.parseVersionConstraint(version);
+            ArtifactCoordinates coordinates =
+                    session.createArtifactCoordinates(skin.getGroupId(), skin.getArtifactId(), version, "jar");
+            return session.resolveArtifact(coordinates, remoteProjectRepositories);
+        } catch (VersionParserException e) {
             throw new SiteToolException("The skin version '" + version + "' is not valid", e);
-        } catch (ArtifactResolutionException e) {
-            if (e.getCause() instanceof ArtifactNotFoundException) {
-                throw new SiteToolException("The skin does not exist", e.getCause());
+        } catch (ArtifactResolverException e) {
+            if (isMissing(e)) {
+                throw new SiteToolException("The skin does not exist", e);
             }
 
             throw new SiteToolException("Unable to find skin", e);
@@ -334,7 +319,7 @@ public class DefaultSiteTool implements SiteTool {
      * Get a site descriptor from one of the repositories.
      *
      * @param project the Maven project, not null.
-     * @param repoSession the repository system session, not null.
+     * @param session the Maven session, not null.
      * @param remoteProjectRepositories the Maven remote project repositories, not null.
      * @param locale the locale wanted for the site descriptor, not null.
      * See {@link #getSiteDescriptor(File, Locale)} for details.
@@ -343,73 +328,48 @@ public class DefaultSiteTool implements SiteTool {
      * @throws SiteToolException if any
      */
     File getSiteDescriptorFromRepository(
-            MavenProject project,
-            RepositorySystemSession repoSession,
-            List<RemoteRepository> remoteProjectRepositories,
-            Locale locale)
+            Project project, Session session, List<RemoteRepository> remoteProjectRepositories, Locale locale)
             throws SiteToolException {
         Objects.requireNonNull(project, "project cannot be null");
-        Objects.requireNonNull(repoSession, "repoSession cannot be null");
+        Objects.requireNonNull(session, "session cannot be null");
         Objects.requireNonNull(remoteProjectRepositories, "remoteProjectRepositories cannot be null");
         Objects.requireNonNull(locale, "locale cannot be null");
 
         try {
-            File siteDescriptor = resolveSiteDescriptor(project, repoSession, remoteProjectRepositories, locale);
+            File siteDescriptor = resolveSiteDescriptor(project, session, remoteProjectRepositories, locale);
             if (siteDescriptor == null) {
                 LOGGER.debug("Site descriptor not found");
                 return null;
             } else {
                 return siteDescriptor;
             }
-        } catch (ArtifactResolutionException e) {
+        } catch (ArtifactResolverException e) {
             throw new SiteToolException("Unable to locate site descriptor", e);
         }
     }
 
     @Override
-    @Deprecated
     public SiteModel getSiteModel(
             File siteDirectory,
             Locale locale,
-            MavenProject project,
-            List<MavenProject> reactorProjects,
-            RepositorySystemSession repoSession,
-            List<RemoteRepository> remoteProjectRepositories)
-            throws SiteToolException {
-        return getSiteModel(
-                siteDirectory,
-                locale,
-                new DefaultMavenExecutionRequest(),
-                project,
-                reactorProjects,
-                repoSession,
-                remoteProjectRepositories);
-    }
-
-    @Override
-    public SiteModel getSiteModel(
-            File siteDirectory,
-            Locale locale,
-            MavenExecutionRequest request,
-            MavenProject project,
-            List<MavenProject> reactorProjects,
-            RepositorySystemSession repoSession,
+            Project project,
+            List<Project> reactorProjects,
+            Session session,
             List<RemoteRepository> remoteProjectRepositories)
             throws SiteToolException {
         Objects.requireNonNull(locale, "locale cannot be null");
-        Objects.requireNonNull(locale, "request cannot be null");
         Objects.requireNonNull(project, "project cannot be null");
         Objects.requireNonNull(reactorProjects, "reactorProjects cannot be null");
-        Objects.requireNonNull(repoSession, "repoSession cannot be null");
+        Objects.requireNonNull(session, "session cannot be null");
         Objects.requireNonNull(remoteProjectRepositories, "remoteProjectRepositories cannot be null");
 
         LOGGER.debug("Computing site model of '" + project.getId() + "' for "
                 + (locale.equals(SiteTool.DEFAULT_LOCALE) ? "default locale" : "locale '" + locale + "'"));
 
-        Map.Entry<SiteModel, MavenProject> result =
-                getSiteModel(0, siteDirectory, locale, request, project, repoSession, remoteProjectRepositories);
+        Map.Entry<SiteModel, Project> result =
+                getSiteModel(0, siteDirectory, locale, session, project, remoteProjectRepositories);
         SiteModel siteModel = result.getKey();
-        MavenProject parentProject = result.getValue();
+        Project parentProject = result.getValue();
 
         if (siteModel == null) {
             LOGGER.debug("Using default site descriptor");
@@ -420,7 +380,7 @@ public class DefaultSiteTool implements SiteTool {
         String siteDescriptorContent = siteModelToString(siteModel);
 
         // "classical" late interpolation, after full inheritance
-        siteDescriptorContent = getInterpolatedSiteDescriptorContent(request, project, siteDescriptorContent, false);
+        siteDescriptorContent = getInterpolatedSiteDescriptorContent(session, project, siteDescriptorContent, false);
 
         siteModel = readSiteModel(siteDescriptorContent, project, locale);
 
@@ -437,21 +397,10 @@ public class DefaultSiteTool implements SiteTool {
         return siteModel;
     }
 
-    @Override
-    @Deprecated
-    public String getInterpolatedSiteDescriptorContent(
-            Map<String, String> props, MavenProject aProject, String siteDescriptorContent) throws SiteToolException {
-        Objects.requireNonNull(props, "props cannot be null");
-
-        // "classical" late interpolation
-        return getInterpolatedSiteDescriptorContent(
-                new DefaultMavenExecutionRequest(), aProject, siteDescriptorContent, false);
-    }
-
     /**
      * Interpolation similar to what <a href="https://github.com/apache/maven/blob/add3c9d4578ec56bfe7377cd26a486039c5b4af7/compat/maven-model-builder/src/main/java/org/apache/maven/model/interpolation/AbstractStringBasedModelInterpolator.java#L52">AbstractStringBasedModelInterpolator.java</a>
      * is doing.
-     * @param request
+     * @param session
      * @param aProject
      * @param siteDescriptorContent
      * @param isEarly
@@ -459,21 +408,26 @@ public class DefaultSiteTool implements SiteTool {
      * @throws SiteToolException
      */
     private String getInterpolatedSiteDescriptorContent(
-            MavenExecutionRequest request, MavenProject aProject, String siteDescriptorContent, boolean isEarly)
-            throws SiteToolException {
-        Objects.requireNonNull(request, "request cannot be null");
+            Session session, Project aProject, String siteDescriptorContent, boolean isEarly) throws SiteToolException {
+        Objects.requireNonNull(session, "session cannot be null");
         Objects.requireNonNull(aProject, "aProject cannot be null");
         Objects.requireNonNull(siteDescriptorContent, "siteDescriptorContent cannot be null");
 
         RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
 
         if (isEarly) {
-            interpolator.addValueSource(new PrefixedObjectValueSource("this.", aProject));
-            interpolator.addValueSource(new PrefixedPropertiesValueSource("this.", aProject.getProperties()));
+            // the Maven 4 Project has no getName() etc. accessors: the effective model is the object to reflect on
+            interpolator.addValueSource(new PrefixedObjectValueSource("this.", aProject.getModel()));
+            interpolator.addValueSource(new PrefixedPropertiesValueSource(
+                    "this.", toProperties(aProject.getModel().getProperties())));
 
         } else {
-            interpolator.addValueSource(new PrefixedObjectValueSource("project.", aProject));
-            interpolator.addValueSource(new MapBasedValueSource(mergeProperties(request, aProject)));
+            // MavenProject exposed basedir as a getter, the Maven 4 model has none
+            if (aProject.getBasedir() != null) {
+                interpolator.addValueSource(new SingleResponseValueSource("project.basedir", aProject.getBasedir()));
+            }
+            interpolator.addValueSource(new PrefixedObjectValueSource("project.", aProject.getModel()));
+            interpolator.addValueSource(new MapBasedValueSource(mergeProperties(session, aProject)));
 
             try {
                 interpolator.addValueSource(new EnvarBasedValueSource());
@@ -509,20 +463,26 @@ public class DefaultSiteTool implements SiteTool {
     /**
      * Merge properties from different sources in the following order (with later sources overriding earlier ones):
      * <ol>
-     *    <li>System properties from the Maven execution request</li>
-     *    <li>Project properties from the Maven project</li>
-     *    <li>User properties from the Maven execution request</li>
+     *    <li>System properties from the Maven session</li>
+     *    <li>Project properties from the effective model</li>
+     *    <li>User properties from the Maven session</li>
      * </ol>
-     * @param request
+     * @param session
      * @param aProject
      * @return
      */
-    private static Properties mergeProperties(MavenExecutionRequest request, MavenProject aProject) {
+    private static Properties mergeProperties(Session session, Project aProject) {
         Properties merged = new Properties();
-        merged.putAll(request.getSystemProperties());
-        merged.putAll(aProject.getProperties());
-        merged.putAll(request.getUserProperties());
+        merged.putAll(session.getSystemProperties());
+        merged.putAll(aProject.getModel().getProperties());
+        merged.putAll(session.getUserProperties());
         return merged;
+    }
+
+    private static Properties toProperties(Map<String, String> map) {
+        Properties properties = new Properties();
+        properties.putAll(map);
+        return properties;
     }
 
     /**
@@ -536,11 +496,7 @@ public class DefaultSiteTool implements SiteTool {
      * @param keepInheritedRefs used for inherited references.
      */
     private void populateParentMenu(
-            SiteModel siteModel,
-            Locale locale,
-            MavenProject project,
-            MavenProject parentProject,
-            boolean keepInheritedRefs) {
+            SiteModel siteModel, Locale locale, Project project, Project parentProject, boolean keepInheritedRefs) {
         Objects.requireNonNull(siteModel, "siteModel cannot be null");
         Objects.requireNonNull(locale, "locale cannot be null");
         Objects.requireNonNull(project, "project cannot be null");
@@ -568,12 +524,12 @@ public class DefaultSiteTool implements SiteTool {
             parentUrl = getRelativePath(parentUrl, getDistMgmntSiteUrl(project));
         } else {
             // parent has no url, assume relative path is given by site structure
-            File parentBasedir = parentProject.getBasedir();
+            Path parentBasedir = parentProject.getBasedir();
             // First make sure that the parent is available on the file system
             if (parentBasedir != null) {
                 // Try to find the relative path to the parent via the file system
-                String parentPath = parentBasedir.getAbsolutePath();
-                String projectPath = project.getBasedir().getAbsolutePath();
+                String parentPath = parentBasedir.toAbsolutePath().toString();
+                String projectPath = project.getBasedir().toAbsolutePath().toString();
                 parentUrl = getRelativePath(parentPath, projectPath) + "/index.html";
             }
         }
@@ -587,7 +543,7 @@ public class DefaultSiteTool implements SiteTool {
             }
 
             MenuItem item = new MenuItem();
-            item.setName(parentProject.getName());
+            item.setName(parentProject.getModel().getName());
             item.setHref(parentUrl);
             menu.addItem(item);
         }
@@ -608,8 +564,8 @@ public class DefaultSiteTool implements SiteTool {
     private void populateModulesMenu(
             SiteModel siteModel,
             Locale locale,
-            MavenProject project,
-            List<MavenProject> reactorProjects,
+            Project project,
+            List<Project> reactorProjects,
             boolean keepInheritedRefs)
             throws SiteToolException, IOException {
         Objects.requireNonNull(siteModel, "siteModel cannot be null");
@@ -628,13 +584,14 @@ public class DefaultSiteTool implements SiteTool {
         }
 
         // we require child modules and reactors to process module menu
-        if (!project.getModules().isEmpty()) {
+        List<String> modules = getModules(project);
+        if (!modules.isEmpty()) {
             if (menu.getName() == null) {
                 menu.setName(i18n.getString("site-tool", locale, "siteModel.menu.projectmodules"));
             }
 
-            for (String module : project.getModules()) {
-                MavenProject moduleProject = getModuleFromReactor(project, reactorProjects, module);
+            for (String module : modules) {
+                Project moduleProject = getModuleFromReactor(project, reactorProjects, module);
 
                 if (moduleProject == null) {
                     LOGGER.debug("Module " + module + " not found in reactor");
@@ -644,12 +601,13 @@ public class DefaultSiteTool implements SiteTool {
                 final String pluginId = "org.apache.maven.plugins:maven-site-plugin";
                 String skipFlag = getPluginParameter(moduleProject, pluginId, "skip");
                 if (skipFlag == null) {
-                    skipFlag = moduleProject.getProperties().getProperty("maven.site.skip");
+                    skipFlag = moduleProject.getModel().getProperties().get("maven.site.skip");
                 }
 
                 String siteUrl = "true".equalsIgnoreCase(skipFlag) ? null : getDistMgmntSiteUrl(moduleProject);
-                String itemName =
-                        (moduleProject.getName() == null) ? moduleProject.getArtifactId() : moduleProject.getName();
+                String itemName = (moduleProject.getModel().getName() == null)
+                        ? moduleProject.getArtifactId()
+                        : moduleProject.getModel().getName();
                 String defaultSiteUrl = "true".equalsIgnoreCase(skipFlag) ? null : moduleProject.getArtifactId();
 
                 appendMenuItem(project, menu, itemName, siteUrl, defaultSiteUrl);
@@ -660,11 +618,21 @@ public class DefaultSiteTool implements SiteTool {
         }
     }
 
-    private MavenProject getModuleFromReactor(MavenProject project, List<MavenProject> reactorProjects, String module)
-            throws IOException {
-        File moduleBasedir = new File(project.getBasedir(), module).getCanonicalFile();
+    /**
+     * The modules of a project, whether declared with <code>&lt;modules&gt;</code> or, in a 4.1.0 POM, with
+     * <code>&lt;subprojects&gt;</code>.
+     */
+    private static List<String> getModules(Project project) {
+        Model model = project.getModel();
+        return model.getModules().isEmpty() ? model.getSubprojects() : model.getModules();
+    }
 
-        for (MavenProject reactorProject : reactorProjects) {
+    private Project getModuleFromReactor(Project project, List<Project> reactorProjects, String module)
+            throws IOException {
+        Path moduleBasedir =
+                project.getBasedir().resolve(module).toFile().getCanonicalFile().toPath();
+
+        for (Project reactorProject : reactorProjects) {
             if (moduleBasedir.equals(reactorProject.getBasedir())) {
                 return reactorProject;
             }
@@ -842,36 +810,54 @@ public class DefaultSiteTool implements SiteTool {
     // ----------------------------------------------------------------------
 
     /**
+     * @param session not null
      * @param project not null
      * @param localeStr not null
-     * @param remoteProjectRepositories not null
-     * @return the site descriptor artifact request
+     * @return the site descriptor artifact: <code>groupId:artifactId:xml:site[_locale]:version</code>
      */
-    private ArtifactRequest createSiteDescriptorArtifactRequest(
-            MavenProject project, String localeStr, List<RemoteRepository> remoteProjectRepositories) {
-        DefaultArtifact artifact = new DefaultArtifact(
+    private Artifact createSiteDescriptorArtifact(Session session, Project project, String localeStr) {
+        return session.createArtifact(
                 project.getGroupId(),
                 project.getArtifactId(),
+                project.getVersion(),
                 "site" + (localeStr.isEmpty() ? "" : "_" + localeStr),
                 "xml",
-                project.getVersion());
-        return new ArtifactRequest(artifact, remoteProjectRepositories, "remote-site-descriptor");
+                "xml");
+    }
+
+    /**
+     * Resolves the site descriptor of one locale level.
+     *
+     * @return the file, or null if the artifact does not exist in the repositories
+     * @throws ArtifactResolverException for any other failure
+     */
+    private File resolveSiteDescriptor(
+            Session session, Project project, List<RemoteRepository> remoteProjectRepositories, String localeStr) {
+        Artifact artifact = createSiteDescriptorArtifact(session, project, localeStr);
+
+        deletePseudoSiteDescriptorMarkerFile(session, artifact);
+
+        try {
+            DownloadedArtifact result = session.resolveArtifact(artifact, remoteProjectRepositories);
+            return result.getPath().toFile();
+        } catch (ArtifactResolverException e) {
+            if (isMissing(e)) {
+                return null;
+            }
+            throw e;
+        }
     }
 
     /**
      * @param project not null
-     * @param repoSession the repository system session not null
+     * @param session the Maven session not null
      * @param remoteProjectRepositories not null
      * @param locale not null
      * @return the resolved site descriptor or null if not found in repositories.
-     * @throws ArtifactResolutionException if any
+     * @throws ArtifactResolverException if any
      */
     private File resolveSiteDescriptor(
-            MavenProject project,
-            RepositorySystemSession repoSession,
-            List<RemoteRepository> remoteProjectRepositories,
-            Locale locale)
-            throws ArtifactResolutionException {
+            Project project, Session session, List<RemoteRepository> remoteProjectRepositories, Locale locale) {
         String variant = locale.getVariant();
         String country = locale.getCountry();
         String language = locale.getLanguage();
@@ -880,7 +866,7 @@ public class DefaultSiteTool implements SiteTool {
 
         if (!variant.isEmpty()) {
             String localeStr = language + "_" + country + "_" + variant;
-            siteDescriptor = resolveSiteDescriptor(project, repoSession, remoteProjectRepositories, localeStr);
+            siteDescriptor = resolveSiteDescriptor(session, project, remoteProjectRepositories, localeStr);
             if (siteDescriptor != null) {
                 return siteDescriptor;
             }
@@ -890,7 +876,7 @@ public class DefaultSiteTool implements SiteTool {
 
         if (!country.isEmpty()) {
             String localeStr = language + "_" + country;
-            siteDescriptor = resolveSiteDescriptor(project, repoSession, remoteProjectRepositories, localeStr);
+            siteDescriptor = resolveSiteDescriptor(session, project, remoteProjectRepositories, localeStr);
             if (siteDescriptor != null) {
                 return siteDescriptor;
             }
@@ -899,7 +885,7 @@ public class DefaultSiteTool implements SiteTool {
         }
 
         if (!language.isEmpty()) {
-            siteDescriptor = resolveSiteDescriptor(project, repoSession, remoteProjectRepositories, language);
+            siteDescriptor = resolveSiteDescriptor(session, project, remoteProjectRepositories, language);
             if (siteDescriptor != null) {
                 return siteDescriptor;
             }
@@ -907,8 +893,8 @@ public class DefaultSiteTool implements SiteTool {
                     + "', trying without language (default locale)...");
         }
 
-        siteDescriptor = resolveSiteDescriptor(
-                project, repoSession, remoteProjectRepositories, SiteTool.DEFAULT_LOCALE.toString());
+        siteDescriptor =
+                resolveSiteDescriptor(session, project, remoteProjectRepositories, SiteTool.DEFAULT_LOCALE.toString());
         if (siteDescriptor == null) {
             LOGGER.debug("No site descriptor found for '" + project.getId() + "' with default locale");
         }
@@ -916,67 +902,29 @@ public class DefaultSiteTool implements SiteTool {
     }
 
     /**
-     * Resolves the site descriptor of one locale.
-     *
-     * @param project not null
-     * @param repoSession the repository system session not null
-     * @param remoteProjectRepositories not null
-     * @param localeStr the locale suffix of the site descriptor classifier, not null
-     * @return the resolved site descriptor or null if it is not found in the repositories.
-     * @throws ArtifactResolutionException if the resolution fails for another reason
+     * Whether the resolution failed because the artifact does not exist, as opposed to a transfer or
+     * configuration problem.
      */
-    private File resolveSiteDescriptor(
-            MavenProject project,
-            RepositorySystemSession repoSession,
-            List<RemoteRepository> remoteProjectRepositories,
-            String localeStr)
-            throws ArtifactResolutionException {
-        ArtifactRequest request = createSiteDescriptorArtifactRequest(project, localeStr, remoteProjectRepositories);
-
-        deletePseudoSiteDescriptorMarkerFile(repoSession, request);
-
-        try {
-            return repositorySystem
-                    .resolveArtifact(repoSession, request)
-                    .getArtifact()
-                    .getFile();
-        } catch (ArtifactResolutionException e) {
-            if (isMissing(e)) {
-                return null;
-            }
-            throw e;
-        }
-    }
-
-    /**
-     * This is a workaround for MNG-7758/MRESOLVER-335.
-     *
-     * @return whether the resolution failed because the artifact is not in any repository
-     */
-    private static boolean isMissing(ArtifactResolutionException e) {
-        return e.getResult().getExceptions().stream().anyMatch(re -> re instanceof ArtifactNotFoundException);
+    private static boolean isMissing(ArtifactResolverException e) {
+        ArtifactResolverResult result = e.getResult();
+        return result != null
+                && !result.getResults().isEmpty()
+                && result.getResults().values().stream().allMatch(ArtifactResolverResult.ResultItem::isMissing);
     }
 
     // TODO Remove this transient method when everyone has migrated to Maven Site Plugin 4.0.0+
-    private void deletePseudoSiteDescriptorMarkerFile(RepositorySystemSession repoSession, ArtifactRequest request) {
-        LocalRepositoryManager lrm = repoSession.getLocalRepositoryManager();
-
-        LocalArtifactRequest localRequest =
-                new LocalArtifactRequest(request.getArtifact(), request.getRepositories(), request.getRequestContext());
-
-        LocalArtifactResult localResult = lrm.find(repoSession, localRequest);
-        File localArtifactFile = localResult.getFile();
+    private void deletePseudoSiteDescriptorMarkerFile(Session session, Artifact artifact) {
+        Path localArtifactFile = session.getService(LocalRepositoryManager.class)
+                .getPathForLocalArtifact(session, session.getLocalRepository(), artifact);
 
         try {
-            if (localResult.isAvailable() && Files.size(localArtifactFile.toPath()) == 0L) {
+            if (Files.isRegularFile(localArtifactFile) && Files.size(localArtifactFile) == 0L) {
                 LOGGER.debug(
-                        "Deleting 0-byte pseudo marker file for artifact '{}' at '{}'",
-                        localRequest.getArtifact(),
-                        localArtifactFile);
-                Files.delete(localArtifactFile.toPath());
+                        "Deleting 0-byte pseudo marker file for artifact '{}' at '{}'", artifact, localArtifactFile);
+                Files.delete(localArtifactFile);
             }
         } catch (IOException e) {
-            LOGGER.debug("Failed to delete 0-byte pseudo marker file for artifact '{}'", localRequest.getArtifact(), e);
+            LOGGER.debug("Failed to delete 0-byte pseudo marker file for artifact '{}'", artifact, e);
         }
     }
 
@@ -984,19 +932,18 @@ public class DefaultSiteTool implements SiteTool {
      * @param depth depth of project
      * @param siteDirectory, can be null if project.basedir is null, ie POM from repository
      * @param locale not null
+     * @param session not null
      * @param project not null
-     * @param repoSession not null
      * @param remoteProjectRepositories not null
      * @return the site model depending the locale and the parent project
      * @throws SiteToolException if any
      */
-    private Map.Entry<SiteModel, MavenProject> getSiteModel(
+    private Map.Entry<SiteModel, Project> getSiteModel(
             int depth,
             File siteDirectory,
             Locale locale,
-            MavenExecutionRequest request,
-            MavenProject project,
-            RepositorySystemSession repoSession,
+            Session session,
+            Project project,
             List<RemoteRepository> remoteProjectRepositories)
             throws SiteToolException {
         // 1. get site descriptor File
@@ -1004,8 +951,7 @@ public class DefaultSiteTool implements SiteTool {
         if (project.getBasedir() == null) {
             // POM is in the repository: look into the repository for site descriptor
             try {
-                siteDescriptor =
-                        getSiteDescriptorFromRepository(project, repoSession, remoteProjectRepositories, locale);
+                siteDescriptor = getSiteDescriptorFromRepository(project, session, remoteProjectRepositories, locale);
             } catch (SiteToolException e) {
                 throw new SiteToolException("The site descriptor cannot be resolved from the repository", e);
             }
@@ -1028,7 +974,7 @@ public class DefaultSiteTool implements SiteTool {
 
                 // interpolate ${this.*} = early interpolation
                 siteDescriptorContent =
-                        getInterpolatedSiteDescriptorContent(request, project, siteDescriptorContent, true);
+                        getInterpolatedSiteDescriptorContent(session, project, siteDescriptorContent, true);
 
                 siteModel = readSiteModel(siteDescriptorContent, project, locale);
                 siteModel.setLastModified(siteDescriptor.lastModified());
@@ -1043,7 +989,7 @@ public class DefaultSiteTool implements SiteTool {
         }
 
         // 3. look for parent project
-        MavenProject parentProject = project.getParent();
+        Project parentProject = project.getParent().orElse(null);
 
         // 4. merge with parent project SiteModel
         if (parentProject != null && (siteModel == null || siteModel.isMergeParent() || siteModel.isRequireParent())) {
@@ -1054,22 +1000,17 @@ public class DefaultSiteTool implements SiteTool {
             if (parentProject.getBasedir() != null) {
                 // extrapolate parent project site directory
                 String siteRelativePath = getRelativeFilePath(
-                        project.getBasedir().getAbsolutePath(),
+                        project.getBasedir().toAbsolutePath().toString(),
                         siteDescriptor.getParentFile().getAbsolutePath());
 
-                parentSiteDirectory = new File(parentProject.getBasedir(), siteRelativePath);
+                parentSiteDirectory =
+                        parentProject.getBasedir().resolve(siteRelativePath).toFile();
                 // notice: using same siteRelativePath for parent as current project; may be wrong if site plugin
                 // has different configuration. But this is a rare case (this only has impact if parent is from reactor)
             }
 
             SiteModel parentSiteModel = getSiteModel(
-                            depth,
-                            parentSiteDirectory,
-                            locale,
-                            request,
-                            parentProject,
-                            repoSession,
-                            remoteProjectRepositories)
+                            depth, parentSiteDirectory, locale, session, parentProject, remoteProjectRepositories)
                     .getKey();
 
             if (siteModel != null) {
@@ -1087,7 +1028,7 @@ public class DefaultSiteTool implements SiteTool {
                 siteModel = new SiteModel();
             }
 
-            String name = project.getName();
+            String name = project.getModel().getName();
             if (siteModel != null && StringUtils.isNotEmpty(siteModel.getName())) {
                 name = siteModel.getName();
             }
@@ -1119,7 +1060,7 @@ public class DefaultSiteTool implements SiteTool {
      * @return the site model object
      * @throws SiteToolException if any
      */
-    private SiteModel readSiteModel(String siteDescriptorContent, MavenProject project, Locale locale)
+    private SiteModel readSiteModel(String siteDescriptorContent, Project project, Locale locale)
             throws SiteToolException {
         try {
             if (project != null && isOldSiteModel(siteDescriptorContent)) {
@@ -1414,7 +1355,7 @@ public class DefaultSiteTool implements SiteTool {
      * @param href could be null
      * @param defaultHref could be null
      */
-    private void appendMenuItem(MavenProject project, Menu menu, String name, String href, String defaultHref) {
+    private void appendMenuItem(Project project, Menu menu, String name, String href, String defaultHref) {
         String selectedHref = href;
 
         if (selectedHref == null) {
@@ -1485,8 +1426,8 @@ public class DefaultSiteTool implements SiteTool {
      * @param project not null
      * @return could be null
      */
-    private static String getDistMgmntSiteUrl(MavenProject project) {
-        return getDistMgmntSiteUrl(project.getDistributionManagement());
+    private static String getDistMgmntSiteUrl(Project project) {
+        return getDistMgmntSiteUrl(project.getModel().getDistributionManagement());
     }
 
     private static String getDistMgmntSiteUrl(DistributionManagement distMgmnt) {
@@ -1505,17 +1446,16 @@ public class DefaultSiteTool implements SiteTool {
      * @param pluginId The id of the plugin
      * @return The information about the plugin.
      */
-    private static Plugin getPlugin(MavenProject project, String pluginId) {
-        if ((project.getBuild() == null) || (project.getBuild().getPluginsAsMap() == null)) {
+    private static Plugin getPlugin(Project project, String pluginId) {
+        Build build = project.getModel().getBuild();
+        if (build == null) {
             return null;
         }
 
-        Plugin plugin = project.getBuild().getPluginsAsMap().get(pluginId);
+        Plugin plugin = build.getPluginsAsMap().get(pluginId);
 
-        if ((plugin == null)
-                && (project.getBuild().getPluginManagement() != null)
-                && (project.getBuild().getPluginManagement().getPluginsAsMap() != null)) {
-            plugin = project.getBuild().getPluginManagement().getPluginsAsMap().get(pluginId);
+        if (plugin == null && build.getPluginManagement() != null) {
+            plugin = build.getPluginManagement().getPluginsAsMap().get(pluginId);
         }
 
         return plugin;
@@ -1527,14 +1467,14 @@ public class DefaultSiteTool implements SiteTool {
      * @param param The child which should be checked.
      * @return The value of the dom tree.
      */
-    private static String getPluginParameter(MavenProject project, String pluginId, String param) {
+    private static String getPluginParameter(Project project, String pluginId, String param) {
         Plugin plugin = getPlugin(project, pluginId);
         if (plugin != null) {
-            Xpp3Dom xpp3Dom = (Xpp3Dom) plugin.getConfiguration();
-            if (xpp3Dom != null
-                    && xpp3Dom.getChild(param) != null
-                    && StringUtils.isNotEmpty(xpp3Dom.getChild(param).getValue())) {
-                return xpp3Dom.getChild(param).getValue();
+            XmlNode dom = plugin.getConfiguration();
+            if (dom != null
+                    && dom.getChild(param) != null
+                    && StringUtils.isNotEmpty(dom.getChild(param).getValue())) {
+                return dom.getChild(param).getValue();
             }
         }
 
