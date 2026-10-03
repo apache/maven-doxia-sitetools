@@ -19,7 +19,13 @@
 package org.apache.maven.doxia.tools;
 
 import java.io.File;
+import java.util.Locale;
 
+import org.apache.maven.doxia.site.Body;
+import org.apache.maven.doxia.site.Menu;
+import org.apache.maven.doxia.site.MenuItem;
+import org.apache.maven.doxia.site.SiteModel;
+import org.apache.maven.doxia.tools.stubs.SiteToolMavenProjectStub;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -95,5 +101,30 @@ class DefaultSiteToolTest {
                 tool.getRelativePath(
                         "dav:https://nexus2.mysite.net:123/nexus/content/sites/site/mysite-child/2.0.0/",
                         "dav:https://nexus1.mysite.net:123/nexus/content/sites/site/mysite-parent/1.0.0/"));
+    }
+
+    /**
+     * A parent POM without a name is listed under its artifactId, as <code>MavenProject.getName()</code> does.
+     */
+    @Test
+    void parentMenuItemFallsBackToArtifactId() {
+        SiteToolMavenProjectStub parent = new SiteToolMavenProjectStub("org.example", "unnamed-parent", "1.0");
+        parent.setDistgributionManagementSiteUrl("https://example.org/site");
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("org.example", "child", "1.0");
+        project.setDistgributionManagementSiteUrl("https://example.org/site/child");
+
+        SiteModel siteModel = new SiteModel();
+        Menu menu = new Menu();
+        menu.setRef("parent");
+        menu.setName("Parent");
+        Body body = new Body();
+        body.addMenu(menu);
+        siteModel.setBody(body);
+
+        tool.populateParentMenu(siteModel, Locale.ENGLISH, project, parent, false);
+
+        MenuItem item = siteModel.getMenuRef("parent").getItems().get(0);
+        assertEquals("unnamed-parent", item.getName());
+        assertEquals(".." + File.separator + "index.html", item.getHref());
     }
 }

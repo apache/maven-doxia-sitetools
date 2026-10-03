@@ -62,6 +62,7 @@ import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Writer;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.model.Build;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
@@ -469,7 +470,8 @@ public class DefaultSiteTool implements SiteTool {
 
         if (isEarly) {
             interpolator.addValueSource(new PrefixedObjectValueSource("this.", aProject));
-            interpolator.addValueSource(new PrefixedPropertiesValueSource("this.", aProject.getProperties()));
+            interpolator.addValueSource(new PrefixedPropertiesValueSource(
+                    "this.", aProject.getModel().getProperties()));
 
         } else {
             interpolator.addValueSource(new PrefixedObjectValueSource("project.", aProject));
@@ -520,7 +522,7 @@ public class DefaultSiteTool implements SiteTool {
     private static Properties mergeProperties(MavenExecutionRequest request, MavenProject aProject) {
         Properties merged = new Properties();
         merged.putAll(request.getSystemProperties());
-        merged.putAll(aProject.getProperties());
+        merged.putAll(aProject.getModel().getProperties());
         merged.putAll(request.getUserProperties());
         return merged;
     }
@@ -535,7 +537,7 @@ public class DefaultSiteTool implements SiteTool {
      * @param parentProject a Maven parent project, not null.
      * @param keepInheritedRefs used for inherited references.
      */
-    private void populateParentMenu(
+    void populateParentMenu(
             SiteModel siteModel,
             Locale locale,
             MavenProject project,
@@ -587,7 +589,7 @@ public class DefaultSiteTool implements SiteTool {
             }
 
             MenuItem item = new MenuItem();
-            item.setName(parentProject.getName());
+            item.setName(getName(parentProject));
             item.setHref(parentUrl);
             menu.addItem(item);
         }
@@ -628,12 +630,12 @@ public class DefaultSiteTool implements SiteTool {
         }
 
         // we require child modules and reactors to process module menu
-        if (!project.getModules().isEmpty()) {
+        if (!project.getModel().getModules().isEmpty()) {
             if (menu.getName() == null) {
                 menu.setName(i18n.getString("site-tool", locale, "siteModel.menu.projectmodules"));
             }
 
-            for (String module : project.getModules()) {
+            for (String module : project.getModel().getModules()) {
                 MavenProject moduleProject = getModuleFromReactor(project, reactorProjects, module);
 
                 if (moduleProject == null) {
@@ -644,12 +646,11 @@ public class DefaultSiteTool implements SiteTool {
                 final String pluginId = "org.apache.maven.plugins:maven-site-plugin";
                 String skipFlag = getPluginParameter(moduleProject, pluginId, "skip");
                 if (skipFlag == null) {
-                    skipFlag = moduleProject.getProperties().getProperty("maven.site.skip");
+                    skipFlag = moduleProject.getModel().getProperties().getProperty("maven.site.skip");
                 }
 
                 String siteUrl = "true".equalsIgnoreCase(skipFlag) ? null : getDistMgmntSiteUrl(moduleProject);
-                String itemName =
-                        (moduleProject.getName() == null) ? moduleProject.getArtifactId() : moduleProject.getName();
+                String itemName = getName(moduleProject);
                 String defaultSiteUrl = "true".equalsIgnoreCase(skipFlag) ? null : moduleProject.getArtifactId();
 
                 appendMenuItem(project, menu, itemName, siteUrl, defaultSiteUrl);
@@ -1087,7 +1088,7 @@ public class DefaultSiteTool implements SiteTool {
                 siteModel = new SiteModel();
             }
 
-            String name = project.getName();
+            String name = getName(project);
             if (siteModel != null && StringUtils.isNotEmpty(siteModel.getName())) {
                 name = siteModel.getName();
             }
@@ -1486,7 +1487,7 @@ public class DefaultSiteTool implements SiteTool {
      * @return could be null
      */
     private static String getDistMgmntSiteUrl(MavenProject project) {
-        return getDistMgmntSiteUrl(project.getDistributionManagement());
+        return getDistMgmntSiteUrl(project.getModel().getDistributionManagement());
     }
 
     private static String getDistMgmntSiteUrl(DistributionManagement distMgmnt) {
@@ -1502,20 +1503,28 @@ public class DefaultSiteTool implements SiteTool {
 
     /**
      * @param project the project
+     * @return the name of the project, or its artifactId if the POM declares no name
+     */
+    private static String getName(MavenProject project) {
+        String name = project.getModel().getName();
+        return name == null ? project.getArtifactId() : name;
+    }
+
+    /**
+     * @param project the project
      * @param pluginId The id of the plugin
      * @return The information about the plugin.
      */
     private static Plugin getPlugin(MavenProject project, String pluginId) {
-        if ((project.getBuild() == null) || (project.getBuild().getPluginsAsMap() == null)) {
+        Build build = project.getModel().getBuild();
+        if (build == null) {
             return null;
         }
 
-        Plugin plugin = project.getBuild().getPluginsAsMap().get(pluginId);
+        Plugin plugin = build.getPluginsAsMap().get(pluginId);
 
-        if ((plugin == null)
-                && (project.getBuild().getPluginManagement() != null)
-                && (project.getBuild().getPluginManagement().getPluginsAsMap() != null)) {
-            plugin = project.getBuild().getPluginManagement().getPluginsAsMap().get(pluginId);
+        if (plugin == null && build.getPluginManagement() != null) {
+            plugin = build.getPluginManagement().getPluginsAsMap().get(pluginId);
         }
 
         return plugin;
