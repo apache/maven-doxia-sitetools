@@ -129,6 +129,10 @@ public class SiteRenderingContext {
 
     private Artifact skin;
 
+    private File skinFile;
+
+    private String skinId;
+
     private SkinModel skinModel;
 
     private File rootDirectory;
@@ -289,8 +293,10 @@ public class SiteRenderingContext {
     /**
      * <p>Getter for the field <code>skin</code>.</p>
      *
-     * @return a {@link Artifact} object.
+     * @return a {@link Artifact} object, or {@code null} if the skin was set with {@link #setSkin(File, String)}.
+     * @deprecated Use {@link #getSkinFile()} and {@link #getSkinId()}; removed in the Maven 4 API line.
      */
+    @Deprecated
     public Artifact getSkin() {
         return skin;
     }
@@ -299,9 +305,46 @@ public class SiteRenderingContext {
      * <p>Setter for the field <code>skinJarFile</code>.</p>
      *
      * @param skin an {@link Artifact} object.
+     * @deprecated Use {@link #setSkin(File, String)}; removed in the Maven 4 API line.
      */
+    @Deprecated
     public void setSkin(Artifact skin) {
         this.skin = skin;
+        this.skinFile = (skin == null) ? null : skin.getFile();
+        this.skinId = (skin == null) ? null : skin.getId();
+    }
+
+    /**
+     * Sets the skin from its JAR file and an identifier used in messages.
+     *
+     * @param skinFile the skin JAR file
+     * @param skinId the skin identifier, for example the artifact id {@code groupId:artifactId:type:version}
+     * @since 2.2.0
+     */
+    public void setSkin(File skinFile, String skinId) {
+        this.skin = null;
+        this.skinFile = skinFile;
+        this.skinId = skinId;
+    }
+
+    /**
+     * Returns the skin JAR file.
+     *
+     * @return the skin JAR file, or {@code null} if no skin is set
+     * @since 2.2.0
+     */
+    public File getSkinFile() {
+        return skinFile;
+    }
+
+    /**
+     * Returns the skin identifier.
+     *
+     * @return the skin identifier, or {@code null} if no skin is set
+     * @since 2.2.0
+     */
+    public String getSkinId() {
+        return skinId;
     }
 
     /**

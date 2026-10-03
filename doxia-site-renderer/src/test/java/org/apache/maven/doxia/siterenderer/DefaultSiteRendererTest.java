@@ -77,6 +77,7 @@ import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -347,6 +348,7 @@ public class DefaultSiteRendererTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     void velocityToolManagerForSkin() throws Exception {
         StringWriter writer = new StringWriter();
 
@@ -371,6 +373,9 @@ public class DefaultSiteRendererTest {
         skin.setFile(skinFile);
         SiteRenderingContext siteRenderingContext =
                 siteRenderer.createContextForSkin(skin, attributes, new SiteModel(), "defaultitle", Locale.ROOT);
+        assertSame(skin, siteRenderingContext.getSkin());
+        assertEquals(skinFile, siteRenderingContext.getSkinFile());
+        assertEquals(skin.getId(), siteRenderingContext.getSkinId());
         DocumentRenderingContext context = new DocumentRenderingContext(new File(""), "document.html", "generator");
         SiteRendererSink sink = new SiteRendererSink(context);
         siteRenderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
@@ -486,11 +491,10 @@ public class DefaultSiteRendererTest {
         final Map<String, String> attributes = new HashMap<>();
         attributes.put("outputEncoding", "UTF-8");
 
-        Artifact skin = new DefaultArtifact(
-                "org.group", "artifact", VersionRange.createFromVersion("1.1"), null, "jar", "", null);
-        skin.setFile(skinFile);
-        SiteRenderingContext siteRenderingContext =
-                siteRenderer.createContextForSkin(skin, attributes, siteModel, "defaultTitle", Locale.ROOT);
+        SiteRenderingContext siteRenderingContext = siteRenderer.createContextForSkin(
+                skinFile, "org.group:artifact:jar:1.1", attributes, siteModel, "defaultTitle", Locale.ROOT);
+        assertEquals(skinFile, siteRenderingContext.getSkinFile());
+        assertEquals("org.group:artifact:jar:1.1", siteRenderingContext.getSkinId());
         siteRenderingContext.addSiteDirectory(new SiteDirectory(getTestFile(siteDir), true));
         siteRenderingContext.setValidate(validate);
 
