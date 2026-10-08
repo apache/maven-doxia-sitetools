@@ -236,8 +236,17 @@ under the License.
             <checkoutDirectory>${maven.site.cache}/doxia/${maven.site.path}</checkoutDirectory>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.tooling</groupId>
+          <artifactId>atr-maven-plugin</artifactId>
+          <configuration>
+            <!-- override - the default is project.artifactId -->
+            <project>maven-doxia-site-tools</project>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.eclipse.sisu</groupId>
