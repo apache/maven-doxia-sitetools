@@ -77,13 +77,15 @@ public class MultiPageSinkFactory implements SinkFactory {
     @Override
     public Sink createSink(File outputDirectory, String outputName) {
         // Create a new document rendering context, similar to the main one, but with a different output name
-        String document = PathTool.getRelativeFilePath(
-                reportOutputDirectory.getPath(), new File(outputDirectory, outputName).getPath());
-        // Remove the .html suffix since we know that we are in Site Renderer context
-        int extensionStart = document.lastIndexOf('.');
+        // Remove the .html suffix since we know that we are in Site Renderer context; strip it from the file name
+        // only, so that a dot in a directory name is not mistaken for one
+        String documentName = outputName;
+        int extensionStart = documentName.lastIndexOf('.');
         if (extensionStart >= 0) {
-            document = document.substring(0, extensionStart);
+            documentName = documentName.substring(0, extensionStart);
         }
+        String document = PathTool.getRelativeFilePath(
+                reportOutputDirectory.getPath(), new File(outputDirectory, documentName).getPath());
 
         DocumentRenderingContext subSinkContext = new DocumentRenderingContext(
                 docRenderingContext.getBasedir(), document, docRenderingContext.getGenerator());
