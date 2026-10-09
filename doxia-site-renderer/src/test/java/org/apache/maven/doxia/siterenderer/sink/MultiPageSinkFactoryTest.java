@@ -78,6 +78,17 @@ class MultiPageSinkFactoryTest {
     }
 
     @Test
+    void subpageInADirectoryWithADotKeepsTheDirectory() {
+        MultiPageSinkFactory sinkFactory = newSinkFactory();
+
+        sinkFactory.createSink(new File(REPORT_OUTPUT_DIRECTORY, "api.v2"), "subpage");
+
+        assertEquals(
+                "api.v2/subpage.html",
+                sinkFactory.getSinks().get(0).getRenderingContext().getOutputPath());
+    }
+
+    @Test
     void onlyTheFileBasedFactoryMethodIsSupported() {
         MultiPageSinkFactory sinkFactory = newSinkFactory();
 
