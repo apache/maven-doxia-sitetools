@@ -19,6 +19,7 @@
 package org.apache.maven.doxia.siterenderer.sink;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.apache.maven.doxia.siterenderer.DocumentRenderingContext;
 
@@ -30,11 +31,11 @@ import org.apache.maven.doxia.siterenderer.DocumentRenderingContext;
  * @since 2.2.0
  */
 public class MultiPageSubSink extends SiteRendererSink {
-    private final File outputDirectory;
+    private final Path outputDirectory;
 
     private final String outputName;
 
-    MultiPageSubSink(File outputDirectory, String outputName, DocumentRenderingContext docRenderingContext) {
+    MultiPageSubSink(Path outputDirectory, String outputName, DocumentRenderingContext docRenderingContext) {
         super(docRenderingContext);
         this.outputDirectory = outputDirectory;
         this.outputName = outputName;
@@ -54,7 +55,7 @@ public class MultiPageSubSink extends SiteRendererSink {
      *
      * @return the directory, as the report passed it to {@link MultiPageSinkFactory#createSink(File, String)}
      */
-    public File getOutputDirectory() {
+    public Path getOutputDirectory() {
         return outputDirectory;
     }
 }
