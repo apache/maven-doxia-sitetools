@@ -35,7 +35,7 @@ class MultiPageSinkFactoryTest {
 
     private MultiPageSinkFactory newSinkFactory() {
         DocumentRenderingContext mainContext = new DocumentRenderingContext(BASEDIR, "main-page", "generator");
-        return new MultiPageSinkFactory(REPORT_OUTPUT_DIRECTORY, mainContext);
+        return new MultiPageSinkFactory(REPORT_OUTPUT_DIRECTORY.toPath(), mainContext);
     }
 
     @Test
@@ -51,7 +51,7 @@ class MultiPageSinkFactoryTest {
 
         assertEquals(1, sinkFactory.getSinks().size());
         MultiPageSubSink subSink = sinkFactory.getSinks().get(0);
-        assertEquals(REPORT_OUTPUT_DIRECTORY, subSink.getOutputDirectory());
+        assertEquals(REPORT_OUTPUT_DIRECTORY.toPath(), subSink.getOutputDirectory());
         assertEquals("subpage.html", subSink.getOutputName());
     }
 

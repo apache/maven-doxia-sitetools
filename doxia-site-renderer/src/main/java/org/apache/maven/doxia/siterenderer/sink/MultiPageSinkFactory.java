@@ -20,6 +20,7 @@ package org.apache.maven.doxia.siterenderer.sink;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +28,6 @@ import java.util.List;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkFactory;
 import org.apache.maven.doxia.siterenderer.DocumentRenderingContext;
-import org.codehaus.plexus.util.PathTool;
 
 /**
  * The sink factory to hand to a report that generates more than one page, so that each page it asks for is
@@ -52,7 +52,7 @@ public class MultiPageSinkFactory implements SinkFactory {
     /**
      * The directory the report writes its pages to, which subpage paths are relative to
      */
-    private final File reportOutputDirectory;
+    private final Path reportOutputDirectory;
 
     /**
      * The main DocumentRenderingContext, which is the base for the DocumentRenderingContext of subpages
@@ -69,8 +69,8 @@ public class MultiPageSinkFactory implements SinkFactory {
      *            <code>MavenReport.getReportOutputDirectory()</code>
      * @param docRenderingContext the rendering context of the report's main page
      */
-    public MultiPageSinkFactory(File reportOutputDirectory, DocumentRenderingContext docRenderingContext) {
-        this.reportOutputDirectory = reportOutputDirectory;
+    public MultiPageSinkFactory(Path reportOutputDirectory, DocumentRenderingContext docRenderingContext) {
+        this.reportOutputDirectory = reportOutputDirectory.toAbsolutePath().normalize();
         this.docRenderingContext = docRenderingContext;
     }
 
@@ -84,14 +84,15 @@ public class MultiPageSinkFactory implements SinkFactory {
         if (extensionStart >= 0) {
             documentName = documentName.substring(0, extensionStart);
         }
-        String document = PathTool.getRelativeFilePath(
-                reportOutputDirectory.getPath(), new File(outputDirectory, documentName).getPath());
+        Path subpage =
+                outputDirectory.toPath().resolve(documentName).toAbsolutePath().normalize();
+        String document = toDocumentName(reportOutputDirectory.relativize(subpage));
 
         DocumentRenderingContext subSinkContext = new DocumentRenderingContext(
                 docRenderingContext.getBasedir(), document, docRenderingContext.getGenerator());
 
         // Create a sink for this subpage, based on this new document rendering context
-        MultiPageSubSink sink = new MultiPageSubSink(outputDirectory, outputName, subSinkContext);
+        MultiPageSubSink sink = new MultiPageSubSink(outputDirectory.toPath(), outputName, subSinkContext);
 
         // Add it to the list of sinks associated to this report
         sinks.add(sink);
@@ -113,6 +114,18 @@ public class MultiPageSinkFactory implements SinkFactory {
     @Override
     public Sink createSink(OutputStream out, String encoding) {
         throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE + " OutputStream based sinks are not supported.");
+    }
+
+    private static String toDocumentName(Path relativePath) {
+        // Document names use '/' whatever the platform's separator is
+        StringBuilder document = new StringBuilder();
+        for (Path element : relativePath) {
+            if (document.length() > 0) {
+                document.append('/');
+            }
+            document.append(element);
+        }
+        return document.toString();
     }
 
     /**
