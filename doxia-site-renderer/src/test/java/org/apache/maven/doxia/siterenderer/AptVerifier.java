@@ -33,6 +33,7 @@ import org.htmlunit.html.HtmlParagraph;
 import org.htmlunit.html.HtmlSection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -87,10 +88,10 @@ public class AptVerifier extends AbstractVerifier {
 
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("http://maven.apache.org/", a.getAttribute("href"));
-        assertEquals("externalLink", a.getAttribute("class"));
+        assertFalse(a.hasAttribute("class"));
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("http://maven.apache.org/", a.getAttribute("href"));
-        assertEquals("externalLink", a.getAttribute("class"));
+        assertFalse(a.hasAttribute("class"));
 
         // Expected log: [APT Parser] Ambiguous link: 'cdc.html'. If this is a local link, prepend "./"!
         a = (HtmlAnchor) elementIterator.next();
