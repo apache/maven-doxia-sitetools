@@ -164,7 +164,7 @@ public class AttributesVerifier extends AbstractVerifier {
         assertEquals("#Anchor", a.getAttribute("href"));
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("http://maven.apache.org/", a.getAttribute("href"));
-        assertEquals("externalLink", a.getAttribute("class"));
+        assertFalse(a.hasAttribute("class"));
         a = (HtmlAnchor) elementIterator.next();
         assertEquals("./cdc.html", a.getAttribute("href"));
         a = (HtmlAnchor) elementIterator.next();
