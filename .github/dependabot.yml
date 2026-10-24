@@ -30,6 +30,9 @@ updates:
     # JUnit 6 requires Java 17; the build still runs on JDK 8
     - dependency-name: "org.junit*"
       versions: [">= 6.0.0"]
+    # Maven 3 so use SLF4J 1.7.x
+    - dependency-name: "org.slf4j:*"
+      versions: [">= 2.0.0"]
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
