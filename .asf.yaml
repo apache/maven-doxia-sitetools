@@ -25,10 +25,10 @@ notifications:
   issues: issues@maven.apache.org
   pullrequests: issues@maven.apache.org
 
-# https://releases.apache.org/projects/maven-doxia-site-tools
+# https://releases.apache.org/projects/maven-doxia-sitetools
 project:
   metadata:
-    key: maven-doxia-site-tools
+    key: maven-doxia-sitetools
     committee: maven
     name: Apache Maven Doxia Site Tools
     description: Doxia Sitetools generates sites, consisting of static and dynamic
