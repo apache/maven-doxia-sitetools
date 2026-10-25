@@ -241,7 +241,7 @@ under the License.
           <artifactId>atr-maven-plugin</artifactId>
           <configuration>
             <!-- override - the default is project.artifactId -->
-            <project>maven-doxia-site-tools</project>
+            <project>maven-doxia-sitetools</project>
           </configuration>
         </plugin>
       </plugins>
