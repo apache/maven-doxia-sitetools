@@ -79,10 +79,6 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.exception.VelocityException;
 import org.apache.velocity.tools.Scope;
-import org.apache.velocity.tools.ToolManager;
-import org.apache.velocity.tools.config.ConfigurationUtils;
-import org.apache.velocity.tools.config.EasyFactoryConfiguration;
-import org.apache.velocity.tools.config.FactoryConfiguration;
 import org.apache.velocity.tools.generic.AlternatorTool;
 import org.apache.velocity.tools.generic.ClassTool;
 import org.apache.velocity.tools.generic.ComparisonDateTool;
@@ -535,42 +531,29 @@ public class DefaultSiteRenderer implements Renderer {
         TimeZone timeZone =
                 "system".equalsIgnoreCase(timeZoneId) ? TimeZone.getDefault() : TimeZone.getTimeZone(timeZoneId);
 
-        EasyFactoryConfiguration config = new EasyFactoryConfiguration(false);
-        config.property("safeMode", Boolean.FALSE);
-        config.toolbox(Scope.REQUEST)
-                .tool(ContextTool.class)
-                .tool(LinkTool.class)
-                .tool(LoopTool.class)
-                .tool(RenderTool.class);
-        config.toolbox(Scope.APPLICATION)
-                .property("locale", locale)
-                .tool(AlternatorTool.class)
-                .tool(ClassTool.class)
-                .tool(ComparisonDateTool.class)
-                .property("format", dateFormat)
-                .property("timezone", timeZone)
-                .tool(ConversionTool.class)
-                .property("dateFormat", dateFormat)
-                .tool(DisplayTool.class)
-                .tool(EscapeTool.class)
-                .tool(FieldTool.class)
-                .tool(MathTool.class)
-                .tool(NumberTool.class)
-                .tool(ResourceTool.class)
-                .property("bundles", new String[] {"site-renderer"})
-                .tool(SortTool.class)
-                .tool(XmlTool.class);
-
-        FactoryConfiguration customConfig = ConfigurationUtils.findInClasspath(TOOLS_LOCATION);
-
-        if (customConfig != null) {
-            config.addConfiguration(customConfig);
-        }
-
-        ToolManager manager = new ToolManager(false, false);
-        manager.configure(config);
-
-        return manager.createContext();
+        return new SiteVelocityTools()
+                .globalProperty("safeMode", Boolean.FALSE)
+                .toolboxProperty(Scope.APPLICATION, "locale", locale)
+                .toolboxProperty(Scope.APPLICATION, "scope", Scope.APPLICATION)
+                .toolboxProperty(Scope.REQUEST, "scope", Scope.REQUEST)
+                .tool(Scope.REQUEST, ContextTool.class)
+                .tool(Scope.REQUEST, LinkTool.class)
+                .tool(Scope.REQUEST, LoopTool.class)
+                .tool(Scope.REQUEST, RenderTool.class)
+                .tool(Scope.APPLICATION, AlternatorTool.class)
+                .tool(Scope.APPLICATION, ClassTool.class)
+                .tool(Scope.APPLICATION, ComparisonDateTool.class, "format", dateFormat, "timezone", timeZone)
+                .tool(Scope.APPLICATION, ConversionTool.class, "dateFormat", dateFormat)
+                .tool(Scope.APPLICATION, DisplayTool.class)
+                .tool(Scope.APPLICATION, EscapeTool.class)
+                .tool(Scope.APPLICATION, FieldTool.class)
+                .tool(Scope.APPLICATION, MathTool.class)
+                .tool(Scope.APPLICATION, NumberTool.class)
+                .tool(Scope.APPLICATION, ResourceTool.class, "bundles", new String[] {"site-renderer"})
+                .tool(Scope.APPLICATION, SortTool.class)
+                .tool(Scope.APPLICATION, XmlTool.class)
+                .readAll(TOOLS_LOCATION)
+                .createContext();
     }
 
     /**
