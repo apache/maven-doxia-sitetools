@@ -134,6 +134,22 @@ under the License.
       <groupId>org.apache.velocity.tools</groupId>
       <artifactId>velocity-tools-generic</artifactId>
       <version>${velocityToolsVersion}</version>
+      <exclusions>
+        <!-- only needed by ToolManager and its configuration classes, see SiteVelocityTools -->
+        <exclusion>
+          <groupId>commons-beanutils</groupId>
+          <artifactId>commons-beanutils</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-digester3</artifactId>
+        </exclusion>
+        <!-- only needed by JsonTool, which is not registered -->
+        <exclusion>
+          <groupId>com.github.cliftonlabs</groupId>
+          <artifactId>json-simple</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -232,6 +248,33 @@ under the License.
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>ban-velocity-tools-configuration-dependencies</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <message>SiteVelocityTools replaces the Velocity Tools classes which need these</message>
+                  <excludes>
+                    <exclude>commons-beanutils:commons-beanutils</exclude>
+                    <exclude>org.apache.commons:commons-digester3</exclude>
+                    <exclude>commons-collections:commons-collections</exclude>
+                    <exclude>com.github.cliftonlabs:json-simple</exclude>
+                  </excludes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
   <profiles>
 

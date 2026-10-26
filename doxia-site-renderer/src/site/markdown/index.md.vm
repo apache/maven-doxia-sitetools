@@ -79,26 +79,33 @@ Additionally, there are [Velocity Generic Tools](https://velocity.apache.org/too
 
 |Variable|Type|Description|
 |:---|:---|:---|
-|`alternator`|[AlternatorTool]($generic${esc.hash}deprecated-tools)|[**Deprecated**]($generic${esc.hash}deprecated-tools): use CSS3 nth-child(even/odd) selectors or ${esc.hash}if($foreach.index % 2). For creating alternators to easily alternate over a set of values.|
-|`class`|[ClassTool]($generic${esc.hash}ClassTool)|For simplifying reflective lookup of information about classes and their fields, methods and constructors.|
+|`alternator`|[AlternatorTool]($generic${esc.hash}deprecated-tools)|**Deprecated**, to be removed in Doxia Sitetools 3.0: use CSS3 nth-child(even/odd) selectors or ${esc.hash}if($foreach.index % 2). For creating alternators to easily alternate over a set of values.|
+|`class`|[ClassTool]($generic${esc.hash}ClassTool)|**Deprecated**, to be removed in Doxia Sitetools 3.0. For simplifying reflective lookup of information about classes and their fields, methods and constructors.|
 |`context`|[ContextTool]($generic${esc.hash}ContextTool)|For convenient access to context data and metadata.|
 |`convert`|[ConversionTool]($generic${esc.hash}deprecated-tools)|[**Deprecated**]($generic${esc.hash}deprecated-tools): use NumberTool for numbers formatting/parsing, DateTool for date/time formatting/parsing, or CollectionTool for toStrings(). For converting String values to richer object Types.|
 |`date`|[ComparisonDateTool]($generic${esc.hash}ComparisonDateTool)|For manipulating, formatting, and comparing dates. The formatting pattern and timezone are taken from the site descriptors element &quot;publishDate&quot; &quot;format and &quot;timezone&quot; attributes, respectively.|
-|`display`|[DisplayTool]($generic${esc.hash}DisplayTool)|For controlling display of references (e.g., truncating values, &quot;pretty printing&quot; lists, and displaying alternates when a reference is null).|
+|`display`|[DisplayTool]($generic${esc.hash}DisplayTool)|For controlling display of references (e.g., truncating values, &quot;pretty printing&quot; lists, and displaying alternates when a reference is null). Methods taking a property name need Commons BeanUtils, see below.|
 |`esc`|[EscapeTool]($generic${esc.hash}EscapeTool)|For common escaping needs in Velocity templates (e.g. escaping html, xml, javascript etc.).|
-|`field`|[FieldTool]($generic${esc.hash}FieldTool)|For (easy) access to static fields in a class, such as string constants.|
-|`link`|[LinkTool]($generic${esc.hash}LinkTool)|For creating and manipulating URIs and URLs. The API for this tool is designed to closely resemble that of the VelocityView tool of the same name.|
-|`loop`|[LoopTool]($generic${esc.hash}LoopTool)|A convenience tool to use with `${esc.hash}foreach` loops. It wraps a list with a custom iterator to provide greater control, allowing loops to end early, skip ahead and more.|
-|`math`|[MathTool]($generic${esc.hash}MathTool)|For performing math functions.|
+|`field`|[FieldTool]($generic${esc.hash}FieldTool)|**Deprecated**, to be removed in Doxia Sitetools 3.0. For (easy) access to static fields in a class, such as string constants.|
+|`link`|[LinkTool]($generic${esc.hash}LinkTool)|**Deprecated**, to be removed in Doxia Sitetools 3.0: use the `relativePath` variable and plain strings. For creating and manipulating URIs and URLs. The API for this tool is designed to closely resemble that of the VelocityView tool of the same name.|
+|`loop`|[LoopTool]($generic${esc.hash}LoopTool)|**Deprecated**, to be removed in Doxia Sitetools 3.0: use `${esc.d}foreach.index`, `${esc.d}foreach.hasNext` and `${esc.hash}break`. A convenience tool to use with `${esc.hash}foreach` loops. It wraps a list with a custom iterator to provide greater control, allowing loops to end early, skip ahead and more.|
+|`math`|[MathTool]($generic${esc.hash}MathTool)|For performing math functions. Methods taking a property name need Commons BeanUtils, see below.|
 |`number`|[NumberTool]($generic${esc.hash}NumberTool)|For formatting and converting numbers.|
 |`render`|[RenderTool]($generic${esc.hash}RenderTool)|To evaluate and render arbitrary strings of VTL, including recursive rendering.|
 |`text`|[ResourceTool]($generic${esc.hash}ResourceTool)|For simplified access to resource bundles for internationalization or other dynamic content needs.|
-|`sorter`|[SortTool]($generic${esc.hash}deprecated-tools)|[**Deprecated**]($generic${esc.hash}deprecated-tools): use CollectionTool sort methods. Used to sort collections (or arrays, iterators, etc) on any arbitary set of properties exposed by the objects contained within the collection.|
-|`xml`|[XmlTool]($generic${esc.hash}XmlTool)|For reading/navigating XML files. This uses dom4j under the covers and provides complete XPath support.|
+|`sorter`|[SortTool]($generic${esc.hash}deprecated-tools)|[**Deprecated**]($generic${esc.hash}deprecated-tools): use CollectionTool sort methods. Used to sort collections (or arrays, iterators, etc) on any arbitary set of properties exposed by the objects contained within the collection. Sorting by properties needs Commons BeanUtils, see below.|
+|`xml`|[XmlTool]($generic${esc.hash}XmlTool)|For reading/navigating XML files. External entities and external DTDs are not loaded. Provides complete XPath support.|
 
-If you intend to use custom Velocity tools, add them to the Maven Site Plugin&apos;s dependency list and make sure that they have a bundled configuration file in `/META-INF/maven/site-tools.xml`.
+The site renderer creates these tools itself instead of using Velocity Tools&apos; `ToolManager`, so Commons BeanUtils and Commons Digester are not on the classpath. The methods of `display`, `math` and `sorter` which take a property name fail without Commons BeanUtils; add `commons-beanutils:commons-beanutils` to the Maven Site Plugin&apos;s dependency list if a template needs them.
 
-See [`DefaultSiteRenderer.createToolManagedVelocityContext(...)`](https://github.com/apache/maven-doxia-sitetools/blob/master/doxia-site-renderer/src/main/java/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.java#L528) source for more details and the [tools usage summary](https://velocity.apache.org/tools/devel/tools-summary.html).
+If you intend to use custom Velocity tools, add them to the Maven Site Plugin&apos;s dependency list and make sure that they have a bundled configuration file in `/META-INF/maven/site-tools.xml`. It uses the [Velocity Tools configuration format](https://velocity.apache.org/tools/${velocityToolsVersion}/configuration.html) with these differences:
+
+* A `<tool>` element without a `class` attribute sets properties of an existing tool, for example `<tool key="date" format="MM/dd/yy"/>`.
+* Tools of all scopes are created once per rendered document. The `restrictTo` attribute is ignored.
+* Values of type `field` or a custom type are kept as strings.
+* Properties are passed to the tool&apos;s `configure(Map)` method, if any, and to setters whose parameter type matches the value, without conversion.
+
+See [`DefaultSiteRenderer.createToolManagedVelocityContext(...)`](https://github.com/apache/maven-doxia-sitetools/blob/master/doxia-site-renderer/src/main/java/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.java) source for more details and the [tools usage summary](https://velocity.apache.org/tools/devel/tools-summary.html).
 
 ${esc.h}${esc.h}# Maven Site Plugin
 
