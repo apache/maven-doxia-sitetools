@@ -105,7 +105,7 @@ If you intend to use custom Velocity tools, add them to the Maven Site Plugin&ap
 * Values of type `field` or a custom type are kept as strings.
 * Properties are passed to the tool&apos;s `configure(Map)` method, if any, and to setters whose parameter type matches the value, without conversion.
 
-See [`DefaultSiteRenderer.createToolManagedVelocityContext(...)`](https://github.com/apache/maven-doxia-sitetools/blob/master/doxia-site-renderer/src/main/java/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.java) source for more details and the [tools usage summary](https://velocity.apache.org/tools/devel/tools-summary.html).
+See [`DefaultSiteRenderer.createToolManagedVelocityContext(...)`](https://github.com/apache/maven-doxia-sitetools/blob/master/doxia-site-renderer/src/main/java/org/apache/maven/doxia/siterenderer/DefaultSiteRenderer.java) source for more details and the [tools usage summary](https://velocity.apache.org/tools/${velocityToolsVersion}/tools-summary.html).
 
 ${esc.h}${esc.h}# Maven Site Plugin
 
