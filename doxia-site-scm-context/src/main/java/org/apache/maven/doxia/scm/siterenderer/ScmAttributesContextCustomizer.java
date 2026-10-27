@@ -98,8 +98,7 @@ public class ScmAttributesContextCustomizer implements ContextCustomizer {
             LOGGER.debug("Found SCM repository for directory \"{}\"", directory);
             if (isShallowRepository(directory)) {
                 LOGGER.warn(
-                        "SCM repository at \"{}\" is a shallow clone; modification dates may be inaccurate",
-                        directory);
+                        "SCM repository at \"{}\" is a shallow clone; modification dates may be inaccurate", directory);
             }
         } else {
             LOGGER.debug("No SCM repository found for directory {}", directory);
