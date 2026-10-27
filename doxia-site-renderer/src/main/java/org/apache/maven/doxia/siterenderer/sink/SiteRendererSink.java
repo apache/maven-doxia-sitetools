@@ -25,8 +25,8 @@ import java.util.List;
 
 import org.apache.maven.doxia.markup.HtmlMarkup;
 import org.apache.maven.doxia.module.xhtml5.Xhtml5Sink;
+import org.apache.maven.doxia.sink.SinkEventAttributeSet;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
-import org.apache.maven.doxia.sink.impl.SinkEventAttributeSet;
 import org.apache.maven.doxia.sink.impl.SinkUtils;
 import org.apache.maven.doxia.site.MermaidConfiguration;
 import org.apache.maven.doxia.siterenderer.DefaultSiteRenderer;
