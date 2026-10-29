@@ -67,7 +67,6 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <javaVersion>8</javaVersion>
     <mavenVersion>3.9.16</mavenVersion>
     <doxiaVersion>2.2.0</doxiaVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
