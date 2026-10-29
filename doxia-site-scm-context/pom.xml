@@ -34,6 +34,7 @@ under the License.
 
   <properties>
     <scmVersion>2.2.1</scmVersion>
+    <minaSshdVersion>2.20.0</minaSshdVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -75,6 +76,19 @@ under the License.
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-manager-plexus</artifactId>
       <version>${scmVersion}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- JGit 5.13 (via the maven-scm JGit provider) pulls in Apache MINA SSHD 2.7.0, which has known vulnerabilities -->
+    <dependency>
+      <groupId>org.apache.sshd</groupId>
+      <artifactId>sshd-sftp</artifactId>
+      <version>${minaSshdVersion}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.sshd</groupId>
+      <artifactId>sshd-osgi</artifactId>
+      <version>${minaSshdVersion}</version>
       <scope>runtime</scope>
     </dependency>
 
