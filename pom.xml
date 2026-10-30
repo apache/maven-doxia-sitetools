@@ -67,7 +67,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenVersion>3.9.16</mavenVersion>
+    <mavenVersion>3.10.0</mavenVersion>
     <doxiaVersion>2.2.0</doxiaVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
     <resolverVersion>1.9.27</resolverVersion>
