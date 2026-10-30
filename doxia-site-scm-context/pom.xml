@@ -34,7 +34,7 @@ under the License.
 
   <properties>
     <scmVersion>2.2.1</scmVersion>
-    <minaSshdVersion>2.20.0</minaSshdVersion>
+    <minaSshdVersion>2.20.1</minaSshdVersion>
   </properties>
   <dependencies>
     <dependency>
