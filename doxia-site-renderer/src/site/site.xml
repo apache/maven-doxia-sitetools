@@ -26,7 +26,6 @@
       xsi:schemaLocation="http://maven.apache.org/SITE/2.1.0 https://maven.apache.org/xsd/site-2.1.0.xsd"
       name="Site Renderer">
 
-  <mermaid></mermaid>
   <body>
 
     <menu ref="parent"/>
