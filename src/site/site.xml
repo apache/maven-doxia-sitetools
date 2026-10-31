@@ -49,7 +49,7 @@
       <item name="Deprecated Site Descriptor 1.x" href="doxia-site-model/decoration.html"/>
       <item name="Convert to Site Descriptor 2.x" href="doxia-site-model/convert-to-sitedescriptor-2.x.html"/>
       <item name="Skin Descriptor" href="doxia-skin-model/skin.html"/>
-      <item name="Mermaid Diagrams" href="doxia-site-renderer/mermaid-diagrams.html"/>
+      <item name="Mermaid Diagrams" href="https://maven.apache.org/doxia/mermaid-diagrams.html"/>
     </menu>
 
     <menu ref="modules"/>
