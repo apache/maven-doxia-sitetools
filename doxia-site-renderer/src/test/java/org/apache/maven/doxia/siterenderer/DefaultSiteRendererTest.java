@@ -695,4 +695,73 @@ public class DefaultSiteRendererTest {
             return true;
         }
     }
+
+    private DocumentRenderer pageRenderer(File basedir, String inputName) {
+        DocumentRenderer docRenderer = Mockito.mock(DocumentRenderer.class);
+        Mockito.when(docRenderer.getRenderingContext())
+                .thenReturn(new DocumentRenderingContext(basedir, inputName, "markdown"));
+        Mockito.when(docRenderer.getOutputName()).thenReturn("page.html");
+        return docRenderer;
+    }
+
+    @Test
+    void newerSkinRendersUnchangedPageAgain() throws Exception {
+        File basedir = getTestFile("target/rerender/skin");
+        org.apache.commons.io.FileUtils.deleteDirectory(basedir);
+        File input = new File(basedir, "src/page.md");
+        File output = new File(basedir, "site/page.html");
+        File skin = new File(basedir, "skin.jar");
+        for (File f : new File[] {input, output, skin}) {
+            f.getParentFile().mkdirs();
+            Files.write(f.toPath(), "x".getBytes(StandardCharsets.UTF_8));
+        }
+        long now = System.currentTimeMillis();
+        assertTrue(input.setLastModified(now - 30_000));
+        assertTrue(output.setLastModified(now - 20_000));
+
+        SiteRenderingContext context = new SiteRenderingContext();
+        context.setSiteModel(new SiteModel());
+        context.setSkin(skin, "org.example:skin:1");
+
+        // skin older than the page: unchanged, not rendered
+        assertTrue(skin.setLastModified(now - 25_000));
+        DocumentRenderer unchanged = pageRenderer(basedir, "src/page.md");
+        siteRenderer.render(Collections.singletonList(unchanged), context, new File(basedir, "site"));
+        Mockito.verify(unchanged, Mockito.never()).renderDocument(Mockito.any(), Mockito.any(), Mockito.any());
+
+        // skin newer than the page, for example a rebuilt or switched skin: rendered again
+        assertTrue(skin.setLastModified(now - 10_000));
+        DocumentRenderer changed = pageRenderer(basedir, "src/page.md");
+        siteRenderer.render(Collections.singletonList(changed), context, new File(basedir, "site"));
+        Mockito.verify(changed).renderDocument(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    void failedRenderLeavesNoPartialPage() throws Exception {
+        File basedir = getTestFile("target/rerender/failure");
+        org.apache.commons.io.FileUtils.deleteDirectory(basedir);
+        File input = new File(basedir, "src/page.md");
+        input.getParentFile().mkdirs();
+        Files.write(input.toPath(), "x".getBytes(StandardCharsets.UTF_8));
+
+        DocumentRenderer failing = pageRenderer(basedir, "src/page.md");
+        Mockito.doAnswer(invocation -> {
+                    java.io.Writer writer = invocation.getArgument(0);
+                    writer.write("<html><body>half");
+                    writer.flush();
+                    throw new RendererException("template error");
+                })
+                .when(failing)
+                .renderDocument(Mockito.any(), Mockito.any(), Mockito.any());
+
+        SiteRenderingContext context = new SiteRenderingContext();
+        context.setSiteModel(new SiteModel());
+        File outputDirectory = new File(basedir, "site");
+        assertThrows(
+                RendererException.class,
+                () -> siteRenderer.render(Collections.singletonList(failing), context, outputDirectory));
+
+        // a partly written page would be newer than its source and skipped as unchanged by the next run
+        assertFalse(new File(outputDirectory, "page.html").exists());
+    }
 }
