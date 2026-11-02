@@ -376,9 +376,12 @@ public class DefaultSiteRenderer implements Renderer {
 
             File inputFile = new File(docRenderingContext.getBasedir(), docRenderingContext.getInputName());
 
+            // a newer source, site descriptor (own or inherited) or skin all change the page
+            File skinFile = siteRenderingContext.getSkinFile();
             boolean modified = !outputFile.exists()
                     || (inputFile.lastModified() > outputFile.lastModified())
-                    || (siteRenderingContext.getSiteModel().getLastModified() > outputFile.lastModified());
+                    || (siteRenderingContext.getSiteModel().getLastModified() > outputFile.lastModified())
+                    || (skinFile != null && skinFile.lastModified() > outputFile.lastModified());
 
             if (modified || docRenderer.isOverwrite()) {
                 if (!outputFile.getParentFile().exists()) {
@@ -390,14 +393,20 @@ public class DefaultSiteRenderer implements Renderer {
                 }
 
                 Writer writer = null;
+                boolean rendered = false;
                 try {
                     if (!docRenderer.isExternalReport()) {
                         writer = new OutputStreamWriter(
                                 Files.newOutputStream(outputFile.toPath()), siteRenderingContext.getOutputEncoding());
                     }
                     docRenderer.renderDocument(writer, this, siteRenderingContext);
+                    rendered = true;
                 } finally {
                     IOUtil.close(writer);
+                    // a partly written page is newer than its source and would be skipped as unchanged next time
+                    if (!rendered && writer != null) {
+                        Files.deleteIfExists(outputFile.toPath());
+                    }
                 }
             } else {
                 if (LOGGER.isDebugEnabled()) {
