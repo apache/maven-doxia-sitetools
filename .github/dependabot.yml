@@ -21,6 +21,17 @@ updates:
   schedule:
     interval: "daily"
   ignore:
+    # Built against the Maven 3.9.x line; Maven 3.10 and later raise the baseline for every consumer.
+    - dependency-name: "org.apache.maven:maven-artifact"
+      versions: [">= 3.10.0"]
+    - dependency-name: "org.apache.maven:maven-core"
+      versions: [">= 3.10.0"]
+    - dependency-name: "org.apache.maven:maven-model"
+      versions: [">= 3.10.0"]
+    - dependency-name: "org.apache.maven:maven-model-builder"
+      versions: [">= 3.10.0"]
+    - dependency-name: "org.apache.maven:maven-resolver-provider"
+      versions: [">= 3.10.0"]
     # Maven Resolver 2.x pairs with Maven 4; this line builds against Maven 3.9 and resolver 1.9.
     - dependency-name: "org.apache.maven.resolver:*"
       versions: [">= 2.0"]
