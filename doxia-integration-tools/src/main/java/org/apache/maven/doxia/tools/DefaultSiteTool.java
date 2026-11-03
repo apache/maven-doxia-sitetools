@@ -51,6 +51,7 @@ import org.apache.maven.doxia.site.LinkItem;
 import org.apache.maven.doxia.site.Logo;
 import org.apache.maven.doxia.site.Menu;
 import org.apache.maven.doxia.site.MenuItem;
+import org.apache.maven.doxia.site.ModelNamespace;
 import org.apache.maven.doxia.site.PublishDate;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.Skin;
@@ -1148,6 +1149,16 @@ public class DefaultSiteTool implements SiteTool {
                 return convertOldToNewSiteModel(
                         new DecorationXpp3Reader().read(new StringReader(siteDescriptorContent)));
             } else {
+                if (ModelNamespace.isNewerThan(siteDescriptorContent, "SITE", ModelNamespace.SITE_MODEL_VERSION)) {
+                    LOGGER.warn("Site descriptor" + (project == null ? "" : " of '" + project.getId() + "'")
+                            + " declares the site model "
+                            + ModelNamespace.declaredVersion(siteDescriptorContent, "SITE")
+                            + ", but this Doxia Sitetools reads the site model up to "
+                            + ModelNamespace.SITE_MODEL_VERSION
+                            + ": elements of the newer model are reported as unknown. Use a maven-site-plugin "
+                            + "with a newer Doxia Sitetools, or declare the "
+                            + ModelNamespace.SITE_MODEL_VERSION + " namespace.");
+                }
                 return new SiteXpp3Reader().read(new StringReader(siteDescriptorContent));
             }
         } catch (XmlPullParserException e) {

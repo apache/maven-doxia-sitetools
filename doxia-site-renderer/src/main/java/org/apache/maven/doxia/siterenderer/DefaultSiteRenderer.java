@@ -23,6 +23,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -66,6 +67,7 @@ import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.parser.module.ParserModule;
 import org.apache.maven.doxia.parser.module.ParserModuleManager;
 import org.apache.maven.doxia.site.LinkItem;
+import org.apache.maven.doxia.site.ModelNamespace;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.skin.ResourceCondition;
 import org.apache.maven.doxia.site.skin.SkinModel;
@@ -834,8 +836,19 @@ public class DefaultSiteRenderer implements Renderer {
             ZipEntry skinDescriptorEntry = zipFile.getEntry(SkinModel.SKIN_DESCRIPTOR_LOCATION);
             if (skinDescriptorEntry != null) {
                 in = zipFile.getInputStream(skinDescriptorEntry);
+                byte[] skinDescriptor = IOUtil.toByteArray(in);
+                String skinDescriptorContent =
+                        IOUtil.toString(new XmlStreamReader(new ByteArrayInputStream(skinDescriptor)));
+                if (ModelNamespace.isNewerThan(skinDescriptorContent, "SKIN", ModelNamespace.SKIN_MODEL_VERSION)) {
+                    LOGGER.warn("Skin " + skinId + " declares the skin model "
+                            + ModelNamespace.declaredVersion(skinDescriptorContent, "SKIN")
+                            + ", but this Doxia Sitetools reads the skin model up to "
+                            + ModelNamespace.SKIN_MODEL_VERSION
+                            + ": elements of the newer model are reported as unknown. Use a maven-site-plugin "
+                            + "with a newer Doxia Sitetools, or a skin version made for this one.");
+                }
 
-                SkinModel skinModel = new SkinXpp3Reader().read(in);
+                SkinModel skinModel = new SkinXpp3Reader().read(new ByteArrayInputStream(skinDescriptor));
                 context.setSkinModel(skinModel);
 
                 String toolsPrerequisite = skinModel.getPrerequisites() == null
