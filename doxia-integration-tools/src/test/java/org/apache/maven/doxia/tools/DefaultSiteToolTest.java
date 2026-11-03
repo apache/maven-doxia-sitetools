@@ -76,6 +76,18 @@ class DefaultSiteToolTest {
 
     @SuppressWarnings("deprecation")
     @Test
+    void getRelativePathTreatsFromAsDirectory() {
+        // a page name in from is a directory name: callers pass site and distribution URLs
+        assertEquals(
+                ".." + File.separator + "download.html",
+                tool.getRelativePath("http://maven.apache.org/download.html", "http://maven.apache.org/index.html"));
+        assertEquals(
+                "download.html",
+                tool.getRelativePath("http://maven.apache.org/download.html", "http://maven.apache.org/"));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
     void getRelativePathSame() {
         assertTrue(tool.getRelativePath("http://example.com/foo/bar.html", "http://example.com/foo/bar.html")
                 .isEmpty());

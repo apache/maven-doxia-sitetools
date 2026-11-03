@@ -186,7 +186,13 @@ public interface SiteTool {
 
     /**
      * Calculate the relative path between two URLs or between two files.
-     *
+     * <p>
+     * <code>from</code> is always treated as a directory, with or without a trailing slash, since callers pass
+     * site and distribution URLs. To link from a page, pass the page's directory: from
+     * <code>http://maven.apache.org/index.html</code> to <code>http://maven.apache.org/download.html</code> the
+     * result is <code>../download.html</code>, from <code>http://maven.apache.org/</code> it is
+     * <code>download.html</code>.
+     * </p>
      * For example:
      * <dl>
      * <dt>to = "http://maven.apache.org" and from = "http://maven.apache.org"</dt>
@@ -203,7 +209,7 @@ public interface SiteTool {
      * <code>scm:svn:https://svn.apache.org/repos/asf</code>.
      *
      * @param to the <code>to</code> url of file as string
-     * @param from the <code>from</code> url of file as string
+     * @param from the <code>from</code> url of the base directory as string
      * @return a relative path from <code>from</code> to <code>to</code>.
      */
     String getRelativePath(String to, String from);
