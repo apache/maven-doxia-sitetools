@@ -211,6 +211,17 @@ public class DefaultSiteRenderer implements Renderer {
                             module,
                             excludes,
                             files);
+
+                    // the shared directory: every module reads the files with its extensions
+                    if (siteRenderingContext.isSharedSourceDirectory()) {
+                        addModuleFiles(
+                                siteRenderingContext.getRootDirectory(),
+                                siteDirectory,
+                                new File(siteDirectoryPath, SiteRenderingContext.SHARED_SOURCE_DIRECTORY),
+                                module,
+                                excludes,
+                                files);
+                    }
                 }
             }
         }
