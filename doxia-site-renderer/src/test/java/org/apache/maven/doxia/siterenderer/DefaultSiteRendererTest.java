@@ -35,6 +35,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -438,6 +439,46 @@ public class DefaultSiteRendererTest {
         Set<String> expectedOutputFiles = new HashSet<>();
         expectedOutputFiles.add("entityTest.html");
         assertEquals(expectedOutputFiles, outputFiles);
+    }
+
+    @Test
+    void velocityExtensionBeforeOrAfterTheMarkupOne() throws Exception {
+        File siteDir = getTestFile("target/velocity-extension");
+        org.apache.commons.io.FileUtils.deleteDirectory(siteDir);
+        File markdown = new File(siteDir, "markdown");
+        markdown.mkdirs();
+        Files.write(
+                new File(markdown, "after.md.vm").toPath(),
+                "# After\n\n#set( $word = 'rendered' )Velocity $word.\n".getBytes(StandardCharsets.UTF_8));
+        Files.write(
+                new File(markdown, "before.vm.md").toPath(),
+                "# Before\n\n#set( $word = 'rendered' )Velocity $word.\n".getBytes(StandardCharsets.UTF_8));
+        Files.write(new File(markdown, "plain.md").toPath(), "# Plain\n".getBytes(StandardCharsets.UTF_8));
+
+        SiteRenderingContext ctxt =
+                getSiteRenderingContext(new SiteModel(), minimalSkinJar, "target/velocity-extension", false);
+        ctxt.setRootDirectory(getTestFile(""));
+        ctxt.setProcessedContentOutput(new File(siteDir, "processed"));
+        Map<String, DocumentRenderer> documents = siteRenderer.locateDocumentFiles(ctxt);
+        assertEquals(new HashSet<>(Arrays.asList("after.html", "before.html", "plain.html")), documents.keySet());
+
+        File output = new File(siteDir, "output");
+        siteRenderer.render(documents.values(), ctxt, output);
+        for (String page : new String[] {"after", "before"}) {
+            String html =
+                    new String(Files.readAllBytes(new File(output, page + ".html").toPath()), StandardCharsets.UTF_8);
+            assertTrue(html.contains("Velocity rendered."), page);
+            assertTrue(new File(siteDir, "processed/" + page + ".md").isFile(), page);
+        }
+    }
+
+    @Test
+    void withoutVelocityExtension() {
+        assertEquals("index.md", DefaultSiteRenderer.withoutVelocityExtension("index.md.vm", "md"));
+        assertEquals("index.md", DefaultSiteRenderer.withoutVelocityExtension("index.vm.md", "md"));
+        assertEquals("dir/index.MD", DefaultSiteRenderer.withoutVelocityExtension("dir/index.VM.MD", "md"));
+        assertEquals("index.md", DefaultSiteRenderer.withoutVelocityExtension("index.md", "md"));
+        assertFalse(DefaultSiteRenderer.isVelocityDocument("index.md", "md"));
     }
 
     @Test

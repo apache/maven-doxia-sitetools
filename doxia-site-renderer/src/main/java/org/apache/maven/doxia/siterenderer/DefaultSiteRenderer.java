@@ -261,6 +261,7 @@ public class DefaultSiteRenderer implements Renderer {
         for (String extension : module.getExtensions()) {
             String fullExtension = "." + extension;
 
+            // *.<extension>, including the Velocity templates *.vm.<extension>
             List<String> docs = filterExtensionIgnoreCase(allFiles, fullExtension);
 
             // *.<extension>.vm
@@ -279,7 +280,7 @@ public class DefaultSiteRenderer implements Renderer {
                         siteDirectory.getEditableSourceDirectories());
 
                 // TODO: DOXIA-111: we need a general filter here that knows how to alter the context
-                if (endsWithIgnoreCase(doc, ".vm")) {
+                if (isVelocityDocument(doc, extension)) {
                     docRenderingContext.setAttribute("velocity", "true");
                 }
 
@@ -527,10 +528,10 @@ public class DefaultSiteRenderer implements Renderer {
             siteContext.getProcessedContentOutput().mkdirs();
         }
 
-        String inputPath = docRenderingContext.getInputName();
-        // Remove .vm suffix
-        File outputFile =
-                new File(siteContext.getProcessedContentOutput(), inputPath.substring(0, inputPath.length() - 3));
+        // the content as the parser reads it: index.md.vm and index.vm.md -> index.md
+        File outputFile = new File(
+                siteContext.getProcessedContentOutput(),
+                withoutVelocityExtension(docRenderingContext.getInputName(), docRenderingContext.getExtension()));
 
         File outputParent = outputFile.getParentFile();
         if (!outputParent.exists()) {
@@ -1123,6 +1124,29 @@ public class DefaultSiteRenderer implements Renderer {
         } finally {
             IOUtil.close(source);
         }
+    }
+
+    /**
+     * Whether a document is a Velocity template: {@code index.md.vm}, or {@code index.vm.md}, which editors open as
+     * Markdown.
+     */
+    static boolean isVelocityDocument(String document, String extension) {
+        return endsWithIgnoreCase(document, ".vm") || endsWithIgnoreCase(document, ".vm." + extension);
+    }
+
+    /**
+     * Removes the Velocity extension: {@code index.md.vm} and {@code index.vm.md} give {@code index.md}.
+     */
+    static String withoutVelocityExtension(String document, String extension) {
+        if (endsWithIgnoreCase(document, ".vm")) {
+            return document.substring(0, document.length() - ".vm".length());
+        }
+        if (endsWithIgnoreCase(document, ".vm." + extension)) {
+            return document.substring(0, document.length() - (".vm." + extension).length())
+                    + '.'
+                    + document.substring(document.length() - extension.length());
+        }
+        return document;
     }
 
     // TODO replace with StringUtils.endsWithIgnoreCase() from maven-shared-utils 0.7
