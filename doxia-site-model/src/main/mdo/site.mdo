@@ -30,7 +30,7 @@ under the License.
     <p>An XSD is available at:</p>
     <ul>
       <!-- There is no property filtering in Modello, this has to be updated manually. See DOXIASITETOOLS-98. -->
-      <li><a href="https://maven.apache.org/xsd/site-2.1.0.xsd">https://maven.apache.org/xsd/site-2.1.0.xsd</a></li>
+      <li><a href="https://maven.apache.org/xsd/site-2.2.0.xsd">https://maven.apache.org/xsd/site-2.2.0.xsd</a></li>
     </ul>
     ]]></description>
 
@@ -453,6 +453,26 @@ under the License.
           <version>1.7.0+</version>
           <type>String</type>
           <identifier>true</identifier>
+        </field>
+        <field xml.attribute="true" xml.tagName="combine.links">
+          <description><![CDATA[
+            Whether to add the links of a parent project site descriptor to these (<code>merge</code>)
+            or to use only these (<code>override</code>).
+            ]]></description>
+          <name>combineLinks</name>
+          <version>2.2.0+</version>
+          <type>String</type>
+          <defaultValue>merge</defaultValue>
+        </field>
+        <field xml.attribute="true" xml.tagName="combine.breadcrumbs">
+          <description><![CDATA[
+            Whether to add the breadcrumbs of a parent project site descriptor to these (<code>merge</code>)
+            or to use only these (<code>override</code>).
+            ]]></description>
+          <name>combineBreadcrumbs</name>
+          <version>2.2.0+</version>
+          <type>String</type>
+          <defaultValue>merge</defaultValue>
         </field>
         <field>
           <name>links</name>

@@ -38,11 +38,11 @@ Although Site Descriptor 1.x is still supported, it will lead to a deprecation w
 
 # How to migrate 
 
-One should migrate to the most recent 2.x version, which for Doxia Sitetools 2.1.0 is Site Descriptor 2.1.0.
+One should migrate to the most recent 2.x version, which for Doxia Sitetools 2.2.0 is Site Descriptor 2.2.0.
 
 1. Convert root element from `<project ...>` to `<site ...>`
-2. Convert default namespace to `xmlns="http://maven.apache.org/SITE/2.1.0"`
-3. Optionally convert schema location to `xsi:schemaLocation="http://maven.apache.org/SITE/2.1.0 https://maven.apache.org/xsd/site-2.1.0.xsd"`
+2. Convert default namespace to `xmlns="http://maven.apache.org/SITE/2.2.0"`
+3. Optionally convert schema location to `xsi:schemaLocation="http://maven.apache.org/SITE/2.2.0 https://maven.apache.org/xsd/site-2.2.0.xsd"`
 4. Convert XML values to attributes where appropriate. For details refer to [Site Descriptor 1.x][site-descriptor-1.x] and [Site Descriptor 2.x][site-descriptor-2.x].
 5. Reference a [Skin compatible with descriptor 2.0](https://maven.apache.org/skins/index.html) (e.g. [`maven-fluido-skin 2.x`][maven-fluido-skin]).
 

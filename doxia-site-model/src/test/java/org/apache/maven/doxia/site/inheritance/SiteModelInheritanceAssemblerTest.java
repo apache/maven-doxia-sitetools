@@ -20,6 +20,7 @@ package org.apache.maven.doxia.site.inheritance;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.doxia.site.Banner;
@@ -841,6 +842,32 @@ class SiteModelInheritanceAssemblerTest {
         assertEquals(2, breadcrumbs.size(), "Check size");
         assertEquals(createLinkItem("Parent", parentHref), breadcrumbs.get(0), "Check parent item");
         assertEquals(createLinkItem(childName, "index.html"), breadcrumbs.get(1), "Check child item");
+    }
+
+    @Test
+    void overriddenLinksAndBreadcrumbsIgnoreParent() throws Exception {
+        SiteModel parent = new SiteModel();
+        parent.setBody(new Body());
+        parent.getBody().addLink(createLinkItem("Parent link", "http://parent.com/link.html"));
+        parent.getBody().addBreadcrumb(createLinkItem("Parent", "http://parent.com/index.html"));
+
+        SiteModel child = readModel("inheritance-child-override-lists.xml");
+        assertEquals(SiteModel.OVERRIDE, child.getBody().getCombineLinks());
+        assertEquals(SiteModel.OVERRIDE, child.getBody().getCombineBreadcrumbs());
+
+        assembler.assembleModelInheritance(NAME, child, parent, "http://parent.com/child", "http://parent.com");
+
+        assertEquals(
+                Collections.singletonList(createLinkItem("Child link", "https://example.com/child-link")),
+                child.getBody().getLinks());
+        // no breadcrumb for the child project is added either
+        assertTrue(child.getBody().getBreadcrumbs().isEmpty());
+    }
+
+    @Test
+    void mergedByDefault() throws Exception {
+        assertEquals(SiteModel.MERGE, new Body().getCombineLinks());
+        assertEquals(SiteModel.MERGE, new Body().getCombineBreadcrumbs());
     }
 
     /**
