@@ -21,6 +21,7 @@ package org.apache.maven.doxia.siterenderer;
 import javax.inject.Inject;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -114,12 +115,20 @@ class DeriveBreadcrumbsFromMenuTest {
         assertTrue(siteModel.getBody().getBreadcrumbs().isEmpty());
     }
 
+    private static LinkItem link(String name, String href) {
+        LinkItem link = new LinkItem();
+        link.setName(name);
+        link.setHref(href);
+        return link;
+    }
+
     @Test
-    void explicitBreadcrumbsWinOverDerivation() {
+    void derivedTrailFollowsDeclaredBreadcrumbs() {
         SiteModel siteModel = siteModelWithMenu();
-        LinkItem explicit = new LinkItem();
-        explicit.setName("Explicit crumb");
-        siteModel.getBody().setBreadcrumbs(Collections.singletonList(explicit));
+        siteModel
+                .getBody()
+                .setBreadcrumbs(Arrays.asList(
+                        link("Apache", "https://www.apache.org/"), link("Maven", "https://maven.apache.org/")));
 
         SiteRenderingContext siteRenderingContext = new SiteRenderingContext();
         siteRenderingContext.setSiteModel(siteModel);
@@ -128,11 +137,40 @@ class DeriveBreadcrumbsFromMenuTest {
         Context context =
                 siteRenderer.createDocumentVelocityContext(documentAt("guides/user/index"), siteRenderingContext);
 
-        // the declared breadcrumbs are used as-is, no derivation is attempted, no clone is made
-        assertSame(siteModel, context.get("site"));
+        // the inherited crumbs first, then the menu that contains the document
         List<LinkItem> breadcrumbs = ((SiteModel) context.get("site")).getBody().getBreadcrumbs();
-        assertEquals(1, breadcrumbs.size());
-        assertEquals("Explicit crumb", breadcrumbs.get(0).getName());
+        assertEquals(3, breadcrumbs.size());
+        assertEquals("Apache", breadcrumbs.get(0).getName());
+        assertEquals("Maven", breadcrumbs.get(1).getName());
+        assertEquals("Documentation", breadcrumbs.get(2).getName());
+        // the shared site model keeps its two declared crumbs
+        assertEquals(2, siteModel.getBody().getBreadcrumbs().size());
+    }
+
+    @Test
+    void derivedLinkAlreadyDeclaredIsNotRepeated() {
+        MenuItem chapter = new MenuItem();
+        chapter.setName("Guides");
+        chapter.setHref("guides/index.html");
+        MenuItem userGuide = new MenuItem();
+        userGuide.setName("User Guide");
+        userGuide.setHref("guides/user/index.html");
+        chapter.setItems(Collections.singletonList(userGuide));
+        SiteModel siteModel = siteModelWithMenu();
+        siteModel.getBody().getMenus().get(0).setItems(Collections.singletonList(chapter));
+        siteModel.getBody().setBreadcrumbs(Collections.singletonList(link("Guides", "guides/index.html")));
+
+        SiteRenderingContext siteRenderingContext = new SiteRenderingContext();
+        siteRenderingContext.setSiteModel(siteModel);
+        siteRenderingContext.setDeriveBreadcrumbsFromMenu(true);
+
+        Context context =
+                siteRenderer.createDocumentVelocityContext(documentAt("guides/user/index"), siteRenderingContext);
+
+        List<LinkItem> breadcrumbs = ((SiteModel) context.get("site")).getBody().getBreadcrumbs();
+        assertEquals(2, breadcrumbs.size());
+        assertEquals("Guides", breadcrumbs.get(0).getName());
+        assertEquals("Documentation", breadcrumbs.get(1).getName());
     }
 
     @Test
