@@ -511,6 +511,10 @@ class SiteToolTest {
 
         // by default, only DEFAULT_LOCALE
         assertEquals(Collections.singletonList(SiteTool.DEFAULT_LOCALE), tool.getSiteLocales(""));
+
+        // parsed like the default locale property: a language tag, and more than three parts ignored
+        assertEquals(Arrays.asList(SiteTool.DEFAULT_LOCALE, Locale.US), tool.getSiteLocales("default,en-US"));
+        assertEquals(Collections.singletonList(SiteTool.DEFAULT_LOCALE), tool.getSiteLocales("default,en_US_POSIX_x"));
     }
 
     @Test
