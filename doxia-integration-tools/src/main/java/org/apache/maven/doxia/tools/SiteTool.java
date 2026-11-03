@@ -45,7 +45,7 @@ public interface SiteTool {
      *
      * @since 2.2.0
      */
-    String DEFAULT_LOCALE_PROPERTY = "maven.doxia.sitetools.default.locale";
+    String DEFAULT_LOCALE_PROPERTY = "maven.doxiaSitetools.defaultLocale";
 
     /**
      * The locale by default for a Maven Site: the root locale, unless the system property
@@ -59,7 +59,8 @@ public interface SiteTool {
     /**
      * Parses a locale such as {@code en}, {@code en_US} or {@code en_US_POSIX}, the reverse of
      * {@link Locale#toString()}, or a language tag such as {@code en-US}. Never throws: a code it cannot read gives
-     * as much of the locale as it could read.
+     * as much of the locale as it could read. The {@code locales} parameter of the Maven Site Plugin is parsed the
+     * same way.
      *
      * @param code the locale code, may be {@code null}
      * @return the locale, or {@link Locale#ROOT} when {@code code} is {@code null} or blank
@@ -70,7 +71,7 @@ public interface SiteTool {
             return Locale.ROOT;
         }
         String trimmed = code.trim();
-        if (trimmed.indexOf('-') >= 0) {
+        if (trimmed.contains("-")) {
             return Locale.forLanguageTag(trimmed);
         }
         String[] parts = trimmed.split("_", 3);
