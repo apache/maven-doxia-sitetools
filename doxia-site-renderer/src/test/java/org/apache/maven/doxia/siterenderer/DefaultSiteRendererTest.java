@@ -482,6 +482,42 @@ public class DefaultSiteRendererTest {
     }
 
     @Test
+    void sharedSourceDirectoryPicksTheParserByExtension() throws Exception {
+        File siteDir = getTestFile("target/shared-source");
+        org.apache.commons.io.FileUtils.deleteDirectory(siteDir);
+        write(new File(siteDir, "source/index.md"), "# Markdown\n");
+        write(new File(siteDir, "source/guide/usage.apt"), "Usage\n\n* APT\n\n  Text.\n");
+        write(new File(siteDir, "source/faq.fml"), "<faqs title=\"FAQ\"/>\n");
+        write(new File(siteDir, "markdown/other.md"), "# Other\n");
+
+        SiteRenderingContext context = new SiteRenderingContext();
+        context.setRootDirectory(siteDir);
+        context.addSiteDirectory(new SiteDirectory(siteDir, true));
+        assertEquals(
+                Collections.singleton("other.html"),
+                siteRenderer.locateDocumentFiles(context).keySet());
+
+        context.setSharedSourceDirectory(true);
+        Map<String, DocumentRenderer> documents = siteRenderer.locateDocumentFiles(context);
+        assertEquals(
+                new HashSet<>(Arrays.asList("index.html", "guide/usage.html", "faq.html", "other.html")),
+                documents.keySet());
+        assertEquals(
+                "apt", documents.get("guide/usage.html").getRenderingContext().getParserId());
+        assertEquals(
+                "markdown", documents.get("index.html").getRenderingContext().getParserId());
+
+        // the same page in a format directory and the shared one is a duplicate
+        write(new File(siteDir, "markdown/index.md"), "# Again\n");
+        assertThrows(RendererException.class, () -> siteRenderer.locateDocumentFiles(context));
+    }
+
+    private static void write(File file, String content) throws IOException {
+        file.getParentFile().mkdirs();
+        Files.write(file.toPath(), content.getBytes(StandardCharsets.UTF_8));
+    }
+
+    @Test
     void locateDocumentFilesWithNameClashes() throws Exception {
         SiteRenderingContext context = new SiteRenderingContext();
         File sourceDirectory = getTestFile("src/test/resources/site-validate");

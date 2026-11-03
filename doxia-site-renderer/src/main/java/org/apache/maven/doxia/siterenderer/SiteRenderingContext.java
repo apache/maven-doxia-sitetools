@@ -145,6 +145,8 @@ public class SiteRenderingContext {
 
     private boolean deriveBreadcrumbsFromMenu;
 
+    private boolean sharedSourceDirectory;
+
     private Date publishDate;
 
     private File processedContentOutput;
@@ -172,6 +174,38 @@ public class SiteRenderingContext {
      */
     public void setValidate(boolean validate) {
         this.validate = validate;
+    }
+
+    /**
+     * The directory, under each site directory, that holds documents of any markup format when
+     * {@link #isSharedSourceDirectory()} is switched on.
+     *
+     * @since 2.2.0
+     */
+    public static final String SHARED_SOURCE_DIRECTORY = "source";
+
+    /**
+     * If documents are also read from the {@value #SHARED_SOURCE_DIRECTORY} directory of each site directory, such as
+     * <code>src/site/source</code>, where the file extension rather than the directory picks the parser:
+     * <code>index.md</code> is Markdown and <code>usage.apt</code> is APT. The format directories, such as
+     * <code>src/site/markdown</code>, are read as well; a page found in both fails as a duplicate.
+     * By default this is switched off.
+     *
+     * @return true if the shared source directory is read.
+     * @since 2.2.0
+     */
+    public boolean isSharedSourceDirectory() {
+        return sharedSourceDirectory;
+    }
+
+    /**
+     * Switch on/off reading documents from the shared {@value #SHARED_SOURCE_DIRECTORY} directory.
+     *
+     * @param sharedSourceDirectory true to read the shared source directory.
+     * @since 2.2.0
+     */
+    public void setSharedSourceDirectory(boolean sharedSourceDirectory) {
+        this.sharedSourceDirectory = sharedSourceDirectory;
     }
 
     /**
