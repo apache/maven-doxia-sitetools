@@ -37,6 +37,7 @@ import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -365,6 +366,15 @@ public class DefaultSiteRenderer implements Renderer {
         return false;
     }
 
+    private static boolean containsHref(List<LinkItem> links, String href) {
+        for (LinkItem link : links) {
+            if (href.equals(link.getHref())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** {@inheritDoc} */
     public void render(
             Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext, File outputDirectory)
@@ -609,15 +619,22 @@ public class DefaultSiteRenderer implements Renderer {
         if (docRenderingContext != null
                 && siteRenderingContext.isDeriveBreadcrumbsFromMenu()
                 && siteModel != null
-                && siteModel.getBody() != null
-                && siteModel.getBody().getBreadcrumbs().isEmpty()) {
+                && siteModel.getBody() != null) {
             List<LinkItem> derivedBreadcrumbs =
                     MenuBreadcrumbs.derive(siteModel.getMenus(), docRenderingContext.getOutputPath());
             if (!derivedBreadcrumbs.isEmpty()) {
+                // the menu trail follows the declared (usually inherited) breadcrumbs, without repeating a link
+                List<LinkItem> declared = siteModel.getBody().getBreadcrumbs();
+                List<LinkItem> trail = new ArrayList<>(declared);
+                for (LinkItem derived : derivedBreadcrumbs) {
+                    if (derived.getHref() == null || !containsHref(declared, derived.getHref())) {
+                        trail.add(derived);
+                    }
+                }
                 // clone: the site model is shared across all documents of this site rendering,
                 // and the derived trail is specific to this one document
                 siteModel = siteModel.clone();
-                siteModel.getBody().setBreadcrumbs(derivedBreadcrumbs);
+                siteModel.getBody().setBreadcrumbs(trail);
             }
         }
         context.put("site", siteModel);
