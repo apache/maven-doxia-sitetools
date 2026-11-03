@@ -366,6 +366,30 @@ class SiteToolTest {
                 result);
     }
 
+    @Test
+    void siteDescriptorFromRepositoryFallsBackToPlainClassifier() throws Exception {
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
+        project.setGroupId("org.apache.maven");
+        project.setArtifactId("maven-site");
+        project.setVersion("1.0");
+
+        File descriptor = tool.getSiteDescriptorFromRepository(
+                project, newRepoSession(), project.getRemoteProjectRepositories(), Locale.US);
+
+        assertEquals("maven-site-1.0-site.xml", descriptor.getName());
+    }
+
+    @Test
+    void toLocale() {
+        assertEquals(Locale.ROOT, SiteTool.toLocale(null));
+        assertEquals(Locale.ROOT, SiteTool.toLocale(" "));
+        assertEquals(Locale.ENGLISH, SiteTool.toLocale("en"));
+        assertEquals(Locale.US, SiteTool.toLocale("en_US"));
+        assertEquals(Locale.US, SiteTool.toLocale("en-US"));
+        assertEquals(new Locale("en", "US", "POSIX"), SiteTool.toLocale("en_US_POSIX"));
+        assertEquals(Locale.ROOT, SiteTool.toLocale("not a language tag-"));
+    }
+
     /**
      * @throws Exception
      */
