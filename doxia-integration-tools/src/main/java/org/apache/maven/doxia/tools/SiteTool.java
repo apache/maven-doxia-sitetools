@@ -40,14 +40,42 @@ import org.eclipse.aether.repository.RemoteRepository;
  */
 public interface SiteTool {
     /**
-     * The locale by default for a Maven Site.
+     * The system property that sets {@link #DEFAULT_LOCALE}, in the form of the {@code locales} parameter of the
+     * Maven Site Plugin, such as {@code en} or {@code en_US}, or as a language tag, such as {@code en-US}.
+     *
+     * @since 2.2.0
+     */
+    String DEFAULT_LOCALE_PROPERTY = "maven.doxia.sitetools.default.locale";
+
+    /**
+     * The locale by default for a Maven Site: the root locale, unless the system property
+     * {@value #DEFAULT_LOCALE_PROPERTY} names another one. The property is read once, when this class is loaded.
      *
      * @see Locale#ROOT
+     * @see #toLocale(String)
      */
-    Locale DEFAULT_LOCALE = new Locale(
-            System.getProperty("maven.doxia.sitetools.user.language", ""),
-            System.getProperty("maven.doxia.sitetools.user.country", ""),
-            System.getProperty("maven.doxia.sitetools.user.variant", ""));
+    Locale DEFAULT_LOCALE = toLocale(System.getProperty(DEFAULT_LOCALE_PROPERTY));
+
+    /**
+     * Parses a locale such as {@code en}, {@code en_US} or {@code en_US_POSIX}, the reverse of
+     * {@link Locale#toString()}, or a language tag such as {@code en-US}. Never throws: a code it cannot read gives
+     * as much of the locale as it could read.
+     *
+     * @param code the locale code, may be {@code null}
+     * @return the locale, or {@link Locale#ROOT} when {@code code} is {@code null} or blank
+     * @since 2.2.0
+     */
+    static Locale toLocale(String code) {
+        if (code == null || code.trim().isEmpty()) {
+            return Locale.ROOT;
+        }
+        String trimmed = code.trim();
+        if (trimmed.indexOf('-') >= 0) {
+            return Locale.forLanguageTag(trimmed);
+        }
+        String[] parts = trimmed.split("_", 3);
+        return new Locale(parts[0], parts.length > 1 ? parts[1] : "", parts.length > 2 ? parts[2] : "");
+    }
 
     /**
      * Get a skin artifact from one of the repositories.
