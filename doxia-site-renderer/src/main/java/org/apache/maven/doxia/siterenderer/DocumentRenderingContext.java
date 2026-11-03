@@ -250,9 +250,8 @@ public class DocumentRenderingContext {
             // - index.xml -> index.html
             // - index.xml.vm -> index.html
             // - download.apt.vm --> download.html
-            if (DefaultSiteRenderer.endsWithIgnoreCase(document, ".vm")) {
-                document = document.substring(0, document.length() - 3);
-            }
+            // - download.vm.apt --> download.html
+            document = DefaultSiteRenderer.withoutVelocityExtension(document, extension);
             String filePathWithoutExt = document.substring(0, document.length() - extension.length() - 1);
             this.outputPath = filePathWithoutExt + ".html";
         } else {
