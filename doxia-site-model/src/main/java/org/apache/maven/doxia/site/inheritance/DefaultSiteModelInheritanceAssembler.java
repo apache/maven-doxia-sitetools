@@ -152,16 +152,20 @@ public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanc
                 cBody.setHead(pBody.getHead());
             }
 
-            cBody.setLinks(mergeLinkItemLists(cBody.getLinks(), pBody.getLinks(), urlContainer, false));
-
-            if (cBody.getBreadcrumbs().isEmpty() && !pBody.getBreadcrumbs().isEmpty()) {
-                LinkItem breadcrumb = new LinkItem();
-                breadcrumb.setName(name);
-                breadcrumb.setHref("index.html");
-                cBody.getBreadcrumbs().add(breadcrumb);
+            if (!SiteModel.OVERRIDE.equals(cBody.getCombineLinks())) {
+                cBody.setLinks(mergeLinkItemLists(cBody.getLinks(), pBody.getLinks(), urlContainer, false));
             }
-            cBody.setBreadcrumbs(
-                    mergeLinkItemLists(cBody.getBreadcrumbs(), pBody.getBreadcrumbs(), urlContainer, true));
+
+            if (!SiteModel.OVERRIDE.equals(cBody.getCombineBreadcrumbs())) {
+                if (cBody.getBreadcrumbs().isEmpty() && !pBody.getBreadcrumbs().isEmpty()) {
+                    LinkItem breadcrumb = new LinkItem();
+                    breadcrumb.setName(name);
+                    breadcrumb.setHref("index.html");
+                    cBody.getBreadcrumbs().add(breadcrumb);
+                }
+                cBody.setBreadcrumbs(
+                        mergeLinkItemLists(cBody.getBreadcrumbs(), pBody.getBreadcrumbs(), urlContainer, true));
+            }
 
             cBody.setMenus(mergeMenus(cBody.getMenus(), pBody.getMenus(), urlContainer));
 

@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
  * @since 2.2.0
  */
 public final class ModelNamespace {
-    /** The newest site descriptor model this version reads, as in {@code http://maven.apache.org/SITE/2.1.0}. */
-    public static final String SITE_MODEL_VERSION = "2.1.0";
+    /** The newest site descriptor model this version reads, as in {@code http://maven.apache.org/SITE/2.2.0}. */
+    public static final String SITE_MODEL_VERSION = "2.2.0";
 
     /** The newest skin descriptor model this version reads, as in {@code http://maven.apache.org/SKIN/2.1.0}. */
     public static final String SKIN_MODEL_VERSION = "2.1.0";
