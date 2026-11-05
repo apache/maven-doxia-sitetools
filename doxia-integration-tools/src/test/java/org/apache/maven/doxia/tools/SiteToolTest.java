@@ -61,11 +61,13 @@ import org.junit.jupiter.api.Test;
 import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -366,6 +368,43 @@ class SiteToolTest {
                 result);
     }
 
+    @Test
+    void siteDescriptorFromRepositoryFallsBackToPlainClassifier() throws Exception {
+        SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("site-tool-test");
+        project.setGroupId("org.apache.maven");
+        project.setArtifactId("maven-site");
+        project.setVersion("1.0");
+
+        File descriptor = tool.getSiteDescriptorFromRepository(
+                project, newRepoSession(), project.getRemoteProjectRepositories(), Locale.US);
+
+        assertEquals("maven-site-1.0-site.xml", descriptor.getName());
+    }
+
+    /**
+     * Checks that the second surefire execution of this module, which sets the system property, reached the tool.
+     * It is skipped in the default execution.
+     */
+    @Test
+    void defaultLocaleComesFromSystemProperty() {
+        String property = System.getProperty(SiteTool.DEFAULT_LOCALE_PROPERTY);
+        assumeTrue(property != null);
+
+        assertEquals(SiteTool.toLocale(property), SiteTool.DEFAULT_LOCALE);
+        assertNotEquals(Locale.ROOT, SiteTool.DEFAULT_LOCALE);
+    }
+
+    @Test
+    void toLocale() {
+        assertEquals(Locale.ROOT, SiteTool.toLocale(null));
+        assertEquals(Locale.ROOT, SiteTool.toLocale(" "));
+        assertEquals(Locale.ENGLISH, SiteTool.toLocale("en"));
+        assertEquals(Locale.US, SiteTool.toLocale("en_US"));
+        assertEquals(Locale.US, SiteTool.toLocale("en-US"));
+        assertEquals(new Locale("en", "US", "POSIX"), SiteTool.toLocale("en_US_POSIX"));
+        assertEquals(Locale.ROOT, SiteTool.toLocale("not a language tag-"));
+    }
+
     /**
      * @throws Exception
      */
@@ -487,6 +526,10 @@ class SiteToolTest {
 
         // by default, only DEFAULT_LOCALE
         assertEquals(Collections.singletonList(SiteTool.DEFAULT_LOCALE), tool.getSiteLocales(""));
+
+        // parsed like the default locale property: a language tag, and more than three parts ignored
+        assertEquals(Arrays.asList(SiteTool.DEFAULT_LOCALE, Locale.US), tool.getSiteLocales("default,en-US"));
+        assertEquals(Collections.singletonList(SiteTool.DEFAULT_LOCALE), tool.getSiteLocales("default,en_US_POSIX_x"));
     }
 
     @Test

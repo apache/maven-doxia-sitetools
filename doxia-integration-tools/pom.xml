@@ -167,6 +167,30 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <!-- the default locale is read once per JVM, so the tests that depend on the property need their own fork -->
+          <execution>
+            <id>default-locale-property</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <test>SiteToolTest#siteDescriptorFromRepositoryFallsBackToPlainClassifier+defaultLocaleComesFromSystemProperty</test>
+              <systemPropertyVariables>
+                <maven.doxiaSitetools.defaultLocale>en</maven.doxiaSitetools.defaultLocale>
+              </systemPropertyVariables>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
   <reporting>
     <plugins>
       <plugin>
