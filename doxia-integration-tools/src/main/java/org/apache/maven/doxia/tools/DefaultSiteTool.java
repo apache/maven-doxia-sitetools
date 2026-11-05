@@ -135,6 +135,15 @@ public class DefaultSiteTool implements SiteTool {
     @Inject
     protected SiteModelInheritanceAssembler assembler;
 
+    /** Creates the tool and logs the default locale it works with. */
+    public DefaultSiteTool() {
+        LOGGER.debug(
+                "Default locale: {} (system property {}={})",
+                SiteTool.DEFAULT_LOCALE.toString().isEmpty() ? "root" : SiteTool.DEFAULT_LOCALE,
+                SiteTool.DEFAULT_LOCALE_PROPERTY,
+                System.getProperty(SiteTool.DEFAULT_LOCALE_PROPERTY));
+    }
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------

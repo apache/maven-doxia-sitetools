@@ -61,11 +61,13 @@ import org.junit.jupiter.api.Test;
 import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -377,6 +379,19 @@ class SiteToolTest {
                 project, newRepoSession(), project.getRemoteProjectRepositories(), Locale.US);
 
         assertEquals("maven-site-1.0-site.xml", descriptor.getName());
+    }
+
+    /**
+     * Checks that the second surefire execution of this module, which sets the system property, reached the tool.
+     * It is skipped in the default execution.
+     */
+    @Test
+    void defaultLocaleComesFromSystemProperty() {
+        String property = System.getProperty(SiteTool.DEFAULT_LOCALE_PROPERTY);
+        assumeTrue(property != null);
+
+        assertEquals(SiteTool.toLocale(property), SiteTool.DEFAULT_LOCALE);
+        assertNotEquals(Locale.ROOT, SiteTool.DEFAULT_LOCALE);
     }
 
     @Test
