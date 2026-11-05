@@ -60,7 +60,8 @@ public interface SiteTool {
      * Parses a locale such as {@code en}, {@code en_US} or {@code en_US_POSIX}, the reverse of
      * {@link Locale#toString()}, or a language tag such as {@code en-US}. Never throws: a code it cannot read gives
      * as much of the locale as it could read. The {@code locales} parameter of the Maven Site Plugin is parsed the
-     * same way.
+     * same way, except that it rejects a code with more than three parts separated by {@code _}, where this method
+     * folds the rest into the variant.
      *
      * @param code the locale code, may be {@code null}
      * @return the locale, or {@link Locale#ROOT} when {@code code} is {@code null} or blank
