@@ -139,7 +139,7 @@ public class DefaultSiteTool implements SiteTool {
     public DefaultSiteTool() {
         LOGGER.debug(
                 "Default locale: {} (system property {}={})",
-                SiteTool.DEFAULT_LOCALE.toString().isEmpty() ? "root" : SiteTool.DEFAULT_LOCALE,
+                SiteTool.DEFAULT_LOCALE.toString().isEmpty() ? "ROOT" : SiteTool.DEFAULT_LOCALE,
                 SiteTool.DEFAULT_LOCALE_PROPERTY,
                 System.getProperty(SiteTool.DEFAULT_LOCALE_PROPERTY));
     }
@@ -918,13 +918,13 @@ public class DefaultSiteTool implements SiteTool {
                 return siteDescriptor;
             }
             LOGGER.debug("No site descriptor found for '" + project.getId() + "' for locale '" + language
-                    + "', trying without locale...");
+                    + "', trying without explicit locale...");
         }
 
         // parents attach site.xml with the plain "site" classifier, whatever the default locale is
         siteDescriptor = resolveSiteDescriptor(project, repoSession, remoteProjectRepositories, "");
         if (siteDescriptor == null) {
-            LOGGER.debug("No site descriptor found for '" + project.getId() + "' without locale");
+            LOGGER.debug("No site descriptor found for '" + project.getId() + "' without explicit locale");
         }
         return siteDescriptor;
     }
