@@ -29,9 +29,19 @@ under the License.
 
 The Site Renderer handles the rendering of sites, assembling a common site template (also called _a skin_) with a collection of documents.
 
-Documents can be dynamically generated with [Doxia Sink API](/doxia/doxia/doxia-sink-api/), like Maven reports, or simply read from static files written in [markup supported by Doxia Parsers](/doxia/references/index.html), optionally preprocessed by [Velocity](https://velocity.apache.org/engine/${velocityEngineVersion}) if their file names end with `.vm`.
+Documents can be dynamically generated with [Doxia Sink API](/doxia/doxia/doxia-sink-api/), like Maven reports, or simply read from static files written in [markup supported by Doxia Parsers](/doxia/references/index.html), optionally preprocessed by [Velocity](https://velocity.apache.org/engine/${velocityEngineVersion}) if their file names end with `.vm` (see below).
 
 ![](doxia-site-renderer.png)
+
+${esc.h}${esc.h} Document sources
+
+Documents are read from one directory per markup format under each site directory, for example `src/site/markdown` for Markdown and `src/site/apt` for APT.
+
+Since 2.2.0, a caller can also switch on a shared `source` directory with [`SiteRenderingContext.setSharedSourceDirectory(true)`](./apidocs/org/apache/maven/doxia/siterenderer/SiteRenderingContext.html). Pages of any format can then live together in `src/site/source`, and the file extension picks the parser: `index.md` is Markdown, `guide/usage.apt` is APT. The format directories are still read, and a page found in both places fails the build as a duplicate. The site descriptor stays in `src/site`, and images and other static files stay in `src/site/resources`. The switch is off by default.
+
+${esc.h}${esc.h} Breadcrumbs from menus
+
+Since 2.2.0, a caller can switch on [`SiteRenderingContext.setDeriveBreadcrumbsFromMenu(true)`](./apidocs/org/apache/maven/doxia/siterenderer/SiteRenderingContext.html). The menu and the chain of menu items that contain the document being rendered are then added after the breadcrumbs the site descriptor declares or inherits, and a link that is already declared is not repeated. The document's own menu item is left out, because skins print the page title after the breadcrumbs. A menu item matches when its `href`, relative to the site root, equals the document's output path; links to other sites and links with `${esc.hash}` or `?` never match. The switch is off by default, and the document then renders with the declared breadcrumbs only.
 
 ${esc.h}${esc.h} Doxia Site Skins
 
@@ -43,7 +53,7 @@ Some documentation is available on [how to create a new skin](/plugins/maven-sit
 
 ${esc.h}${esc.h} Velocity processing
 
-Site and documents with file names ending in `.vm` are processed by Velocity.
+Site and documents with file names ending in `.vm` are processed by Velocity. A document can be named either way round: `index.md.vm` and, since 2.2.0, `index.vm.md` are both Velocity templates for a Markdown page and render to `index.html`. With the `.vm` first, editors open the file as Markdown. If a page exists under both names, the build fails with a duplicate document error.
 
 The Velocity context contains some variables related to rendering context that you can use:
 
