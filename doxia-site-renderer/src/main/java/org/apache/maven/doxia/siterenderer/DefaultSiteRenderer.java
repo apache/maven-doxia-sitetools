@@ -37,6 +37,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +45,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -64,6 +66,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
+import org.apache.maven.doxia.parser.ParserContext;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.parser.module.ParserModule;
 import org.apache.maven.doxia.parser.module.ParserModuleManager;
@@ -154,6 +157,10 @@ public class DefaultSiteRenderer implements Renderer {
     private static final String SKIN_TEMPLATE_LOCATION = "META-INF/maven/site.vm";
 
     private static final String TOOLS_LOCATION = "META-INF/maven/site-tools.xml";
+
+    /** Template properties that parsers get from their context in another form. */
+    private static final Collection<String> TEMPLATE_ONLY_PROPERTIES =
+            new HashSet<>(Arrays.asList("inputEncoding", "outputEncoding"));
 
     private static final String DOXIA_SITE_RENDERER_VERSION = getSiteRendererVersion();
 
@@ -393,6 +400,8 @@ public class DefaultSiteRenderer implements Renderer {
     public void render(
             Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext, File outputDirectory)
             throws RendererException, IOException {
+        siteRenderingContext.setOutputDirectory(outputDirectory);
+
         for (DocumentRenderer docRenderer : documents) {
             DocumentRenderingContext docRenderingContext = docRenderer.getRenderingContext();
 
@@ -509,7 +518,7 @@ public class DefaultSiteRenderer implements Renderer {
                 }
             }
 
-            doxia.parse(reader, docRenderingContext.getParserId(), sink, docRenderingContext.getDoxiaSourcePath());
+            parser.parse(createParserContext(docRenderingContext, siteContext, doc), reader, sink);
         } catch (ParserNotFoundException e) {
             throw new RendererException("Error getting a parser for '" + doc + "'", e);
         } catch (ParseException e) {
@@ -530,6 +539,49 @@ public class DefaultSiteRenderer implements Renderer {
         }
 
         mergeDocumentIntoSite(writer, (DocumentContent) sink, siteContext);
+    }
+
+    /**
+     * Collects what a parser may want to know about the document and the site,
+     * so that it does not have to ask its environment.
+     */
+    private static ParserContext createParserContext(
+            DocumentRenderingContext docRenderingContext, SiteRenderingContext siteContext, File doc) {
+        ParserContext.Builder builder = ParserContext.builder()
+                .reference(docRenderingContext.getDoxiaSourcePath())
+                .sourceFile(doc.toPath().toAbsolutePath())
+                .sourceDirectory(docRenderingContext.getBasedir().toPath().toAbsolutePath())
+                .outputName(docRenderingContext.getOutputPath());
+
+        if (siteContext.getRootDirectory() != null) {
+            builder.rootDirectory(siteContext.getRootDirectory().toPath().toAbsolutePath());
+        }
+        if (siteContext.getOutputDirectory() != null) {
+            builder.outputDirectory(siteContext.getOutputDirectory().toPath().toAbsolutePath());
+        }
+        if (siteContext.getLocale() != null) {
+            builder.locale(siteContext.getLocale());
+        }
+        if (siteContext.getInputEncoding() != null) {
+            builder.inputEncoding(Charset.forName(siteContext.getInputEncoding()));
+        }
+        if (siteContext.getOutputEncoding() != null) {
+            builder.outputEncoding(Charset.forName(siteContext.getOutputEncoding()));
+        }
+
+        // the template properties also hold objects for the Velocity templates, such as the Maven project
+        Map<String, String> properties = new LinkedHashMap<>();
+        if (siteContext.getTemplateProperties() != null) {
+            for (Map.Entry<String, ?> property :
+                    siteContext.getTemplateProperties().entrySet()) {
+                if (property.getValue() instanceof String && !TEMPLATE_ONLY_PROPERTIES.contains(property.getKey())) {
+                    properties.put(property.getKey(), (String) property.getValue());
+                }
+            }
+        }
+        builder.properties(properties);
+
+        return builder.build();
     }
 
     private void saveVelocityProcessedContent(
