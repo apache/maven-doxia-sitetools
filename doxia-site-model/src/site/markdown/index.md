@@ -38,6 +38,22 @@ The following are generated from this model:
 
 Site model can be merged from a parent `site.xml` into a child `site.xml` using `SiteModelInheritanceAssembler` ([javadoc](./apidocs/org/apache/maven/doxia/site/inheritance/SiteModelInheritanceAssembler.html)) with its `DefaultSiteModelInheritanceAssembler` implementation ([source](https://github.com/apache/maven-doxia-sitetools/blob/master/doxia-site-model/src/main/java/org/apache/maven/doxia/site/inheritance/DefaultSiteModelInheritanceAssembler.java)).
 
+By default, the child's links and breadcrumbs are added to the parent's. Since site descriptor 2.2.0, `combine.links="override"` and `combine.breadcrumbs="override"` on the child's `<body>` keep only the child's own entries; for breadcrumbs, the entry generated for the child project is left out too, so an empty list stays empty:
+
+```xml
+<body combine.breadcrumbs="override">
+  <breadcrumbs>
+    <item name="My project" href="https://example.com/"/>
+  </breadcrumbs>
+</body>
+```
+
+`<site combine.self="override">` drops the whole parent descriptor.
+
+## Model versions
+
+A descriptor declares its model version in its namespace, for example `http://maven.apache.org/SITE/2.2.0`. Since 2.2.0, reading a site or skin descriptor that declares a newer model than this release supports logs a warning naming both versions: the descriptor's unknown elements would otherwise fail with less obvious parse errors. Older model versions are read without a warning.
+
 ## Interpolation
 
 Interpolation is not done here: see [ Doxia Integration Tools](../doxia-integration-tools/) documentation for more details.
