@@ -137,6 +137,8 @@ public class SiteRenderingContext {
 
     private File rootDirectory;
 
+    private File outputDirectory;
+
     private List<SiteDirectory> siteDirectories = new ArrayList<>();
 
     private Map<String, String> moduleExcludes;
@@ -573,6 +575,28 @@ public class SiteRenderingContext {
      */
     public void setRootDirectory(File rootDirectory) {
         this.rootDirectory = rootDirectory;
+    }
+
+    /**
+     * The directory the site is rendered to. Parsers receive it through their
+     * {@link org.apache.maven.doxia.parser.ParserContext}.
+     *
+     * @return the output directory, {@code null} if the documents are not rendered to files
+     * @since 2.2.0
+     */
+    public File getOutputDirectory() {
+        return outputDirectory;
+    }
+
+    /**
+     * Set the directory the site is rendered to.
+     * {@link SiteRenderer#render(java.util.Collection, SiteRenderingContext, File)} sets it to its output directory.
+     *
+     * @param outputDirectory the output directory, may be {@code null}
+     * @since 2.2.0
+     */
+    public void setOutputDirectory(File outputDirectory) {
+        this.outputDirectory = outputDirectory;
     }
 
     /**
