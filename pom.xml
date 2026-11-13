@@ -68,7 +68,7 @@ under the License.
 
   <properties>
     <mavenVersion>3.9.16</mavenVersion>
-    <doxiaVersion>2.2.0</doxiaVersion>
+    <doxiaVersion>2.2.1-SNAPSHOT</doxiaVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
     <resolverVersion>1.9.27</resolverVersion>
     <l10nPluginVersion>1.3.0</l10nPluginVersion>
