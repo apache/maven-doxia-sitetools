@@ -135,6 +135,15 @@ public class DefaultSiteTool implements SiteTool {
     @Inject
     protected SiteModelInheritanceAssembler assembler;
 
+    /** Creates the tool and logs the default locale it works with. */
+    public DefaultSiteTool() {
+        LOGGER.debug(
+                "Default locale: {} (system property {}={})",
+                SiteTool.DEFAULT_LOCALE.toString().isEmpty() ? "ROOT" : SiteTool.DEFAULT_LOCALE,
+                SiteTool.DEFAULT_LOCALE_PROPERTY,
+                System.getProperty(SiteTool.DEFAULT_LOCALE_PROPERTY));
+    }
+
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
@@ -776,7 +785,10 @@ public class DefaultSiteTool implements SiteTool {
      * object.
      * <p>If localeCode = <code>system</code>, return the current value of the default locale for this instance
      * of the Java Virtual Machine.</p>
-     * <p>If localeCode = <code>default</code>, return the root locale.</p>
+     * <p>If localeCode = <code>default</code>, return {@link SiteTool#DEFAULT_LOCALE}, which {@link SiteTool} reads
+     * from the system property {@value SiteTool#DEFAULT_LOCALE_PROPERTY} when it is loaded.</p>
+     * <p>Any other code is parsed by {@link SiteTool#toLocale(String)}, so it may also be a language tag such as
+     * {@code en-US}.</p>
      *
      * @param localeCode the locale code string.
      * @return a java.util.Locale object instanced or null if errors occurred
@@ -796,30 +808,15 @@ public class DefaultSiteTool implements SiteTool {
             return SiteTool.DEFAULT_LOCALE;
         }
 
-        String language = "";
-        String country = "";
-        String variant = "";
-
-        StringTokenizer tokenizer = new StringTokenizer(localeCode, "_");
-        final int maxTokens = 3;
-        if (tokenizer.countTokens() > maxTokens) {
+        final int maxParts = 3;
+        if (localeCode.split("_", -1).length > maxParts) {
             if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn("Invalid java.util.Locale format for '" + localeCode + "' entry - IGNORING");
             }
             return null;
         }
 
-        if (tokenizer.hasMoreTokens()) {
-            language = tokenizer.nextToken();
-            if (tokenizer.hasMoreTokens()) {
-                country = tokenizer.nextToken();
-                if (tokenizer.hasMoreTokens()) {
-                    variant = tokenizer.nextToken();
-                }
-            }
-        }
-
-        return new Locale(language, country, variant);
+        return SiteTool.toLocale(localeCode);
     }
 
     // ----------------------------------------------------------------------
@@ -921,13 +918,13 @@ public class DefaultSiteTool implements SiteTool {
                 return siteDescriptor;
             }
             LOGGER.debug("No site descriptor found for '" + project.getId() + "' for locale '" + language
-                    + "', trying without language (default locale)...");
+                    + "', trying without explicit locale...");
         }
 
-        siteDescriptor = resolveSiteDescriptor(
-                project, repoSession, remoteProjectRepositories, SiteTool.DEFAULT_LOCALE.toString());
+        // parents attach site.xml with the plain "site" classifier, whatever the default locale is
+        siteDescriptor = resolveSiteDescriptor(project, repoSession, remoteProjectRepositories, "");
         if (siteDescriptor == null) {
-            LOGGER.debug("No site descriptor found for '" + project.getId() + "' with default locale");
+            LOGGER.debug("No site descriptor found for '" + project.getId() + "' without explicit locale");
         }
         return siteDescriptor;
     }
