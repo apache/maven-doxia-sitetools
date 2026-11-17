@@ -718,21 +718,20 @@ public class DefaultSiteRenderer implements Renderer {
         String projectTitle = null;
         if (StringUtils.isNotEmpty(siteRenderingContext.getSiteModel().getName())) {
             projectTitle = siteRenderingContext.getSiteModel().getName();
-        } else if (siteRenderingContext.getDefaultTitle() != null
-                && !siteRenderingContext.getDefaultTitle().isEmpty()) {
+        } else if (StringUtils.isNotEmpty(siteRenderingContext.getDefaultTitle())) {
             projectTitle = siteRenderingContext.getDefaultTitle();
         }
 
         StringBuilder title = new StringBuilder();
-        if (shortTitle != null && !shortTitle.isEmpty()) {
+        if (StringUtils.isNotEmpty(shortTitle)) {
             title.append(shortTitle);
         }
 
-        if (title.length() > 0 && (projectTitle != null && !projectTitle.isEmpty())) {
+        if (title.length() > 0 && StringUtils.isNotEmpty(projectTitle)) {
             title.append(" \u2013 "); // Symbol Name: En Dash
         }
 
-        if (projectTitle != null && !projectTitle.isEmpty()) {
+        if (StringUtils.isNotEmpty(projectTitle)) {
             title.append(projectTitle);
         }
 
