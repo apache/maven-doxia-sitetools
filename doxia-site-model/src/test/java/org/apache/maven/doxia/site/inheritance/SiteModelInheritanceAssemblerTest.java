@@ -823,7 +823,7 @@ class SiteModelInheritanceAssemblerTest {
 
         // now with file url
         parentHref = "file://parent.com/index.html";
-        (parent.getBody().getBreadcrumbs().get(0)).setHref(parentHref);
+        parent.getBody().getBreadcrumbs().get(0).setHref(parentHref);
         child = new SiteModel();
         assembler.assembleModelInheritance(
                 "childName", child, parent, "file://parent.com/child/", "file://parent.com/");
@@ -831,7 +831,7 @@ class SiteModelInheritanceAssemblerTest {
 
         // now with scp url
         parentHref = "scp://parent.com/index.html";
-        (parent.getBody().getBreadcrumbs().get(0)).setHref(parentHref);
+        parent.getBody().getBreadcrumbs().get(0).setHref(parentHref);
         child = new SiteModel();
         assembler.assembleModelInheritance("childName", child, parent, "scp://parent.com/child/", "scp://parent.com/");
         assertBreadcrumbsCorrect(child.getBody().getBreadcrumbs(), "childName", parentHref);

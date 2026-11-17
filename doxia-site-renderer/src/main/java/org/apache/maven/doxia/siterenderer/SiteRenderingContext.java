@@ -369,8 +369,8 @@ public class SiteRenderingContext {
     @Deprecated
     public void setSkin(Artifact skin) {
         this.skin = skin;
-        this.skinFile = (skin == null) ? null : skin.getFile();
-        this.skinId = (skin == null) ? null : skin.getId();
+        this.skinFile = skin == null ? null : skin.getFile();
+        this.skinId = skin == null ? null : skin.getId();
     }
 
     /**
