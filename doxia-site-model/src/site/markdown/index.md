@@ -26,7 +26,7 @@ under the License.
 
 # Doxia Sitetool Site Model
 
-This is strictly the model for Doxia Sitetool Site Model, used in maven-site-plugin as `site.xml` to inject parameters into site template: see [Doxia Site Renderer](../doxia-site-renderer/) for more details on site rendering.
+This is the model of the site descriptor, `site.xml`, which the Maven Site Plugin reads to build menus, breadcrumbs and other decoration around the pages: see [Doxia Site Renderer](../doxia-site-renderer/) for how a site is rendered. To write a `site.xml`, start with the [site descriptor guide](/guides/mini/guide-site-descriptor.html); the [descriptor reference](./site.html) lists every element.
 
 The following are generated from this model:
 

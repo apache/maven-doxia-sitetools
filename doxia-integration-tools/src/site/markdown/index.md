@@ -29,11 +29,11 @@ under the License.
 
 This shared component has some utilities that are useful when integrating Doxia in Maven, mainly for site generation and report creation.
 
-The main entry point is the [SiteTool](./apidocs/org/apache/maven/doxia/tools/SiteTool.html) Plexus component.
+The main entry point is the [SiteTool](./apidocs/org/apache/maven/doxia/tools/SiteTool.html) JSR-330 component.
 
 ## Usage
 
-Instructions on how to use the integration of Doxia in Maven can be found [here](./usage.html).
+[Using the SiteTool in a Mojo](./usage.html) shows how to read the site descriptor of a project from your own plugin.
 
 ## `site.xml` Model Interpolation
 
