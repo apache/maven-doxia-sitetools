@@ -46,6 +46,7 @@ public class ReportComparator implements Comparator<MavenReport> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int compare(MavenReport r1, MavenReport r2) {
         Collator collator = Collator.getInstance(locale);
         return collator.compare(r1.getName(locale), r2.getName(locale));

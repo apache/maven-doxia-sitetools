@@ -46,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SuppressWarnings("MethodLength")
 public class NestedItemsVerifier extends AbstractVerifier {
     /** {@inheritDoc} */
+    @Override
     public void verify(String file) throws Exception {
         HtmlPage page = htmlPage(file);
         assertNotNull(page);

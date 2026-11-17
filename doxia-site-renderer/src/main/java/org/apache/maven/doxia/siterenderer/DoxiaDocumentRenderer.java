@@ -41,6 +41,7 @@ public class DoxiaDocumentRenderer implements DocumentRenderer {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void renderDocument(Writer writer, SiteRenderer siteRenderer, SiteRenderingContext siteRenderingContext)
             throws IOException, RendererException {
         siteRenderer.renderDocument(writer, docRenderingContext, siteRenderingContext);
@@ -50,25 +51,30 @@ public class DoxiaDocumentRenderer implements DocumentRenderer {
      * @deprecated use {@link #getOutputPath()} instead
      */
     @Deprecated
+    @Override
     public String getOutputName() {
         return getOutputPath();
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getOutputPath() {
         return docRenderingContext.getOutputPath();
     }
 
     /** {@inheritDoc} */
+    @Override
     public DocumentRenderingContext getRenderingContext() {
         return docRenderingContext;
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isOverwrite() {
         return false;
     }
 
+    @Override
     public boolean isExternalReport() {
         return false;
     }

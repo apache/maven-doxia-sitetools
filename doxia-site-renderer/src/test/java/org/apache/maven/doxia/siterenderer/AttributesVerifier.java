@@ -53,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 @SuppressWarnings("MethodLength")
 public class AttributesVerifier extends AbstractVerifier {
     /** {@inheritDoc} */
+    @Override
     public void verify(String file) throws Exception {
         HtmlPage page = htmlPage(file);
         assertNotNull(page);

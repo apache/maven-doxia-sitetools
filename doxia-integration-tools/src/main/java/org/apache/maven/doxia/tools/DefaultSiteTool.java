@@ -140,6 +140,7 @@ public class DefaultSiteTool implements SiteTool {
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
+    @Override
     public Artifact getSkinArtifactFromRepository(
             RepositorySystemSession repoSession, List<RemoteRepository> remoteProjectRepositories, Skin skin)
             throws SiteToolException {
@@ -177,6 +178,7 @@ public class DefaultSiteTool implements SiteTool {
      * implemented method from a different library such as org.apache.http.client.utils.URIUtils#resolve.
      */
     @Deprecated
+    @Override
     public String getRelativePath(String to, String from) {
         Objects.requireNonNull(to, "to cannot be null");
         Objects.requireNonNull(from, "from cannot be null");
@@ -303,6 +305,7 @@ public class DefaultSiteTool implements SiteTool {
     }
 
     /** {@inheritDoc} */
+    @Override
     public File getSiteDescriptor(File siteDirectory, Locale locale) {
         Objects.requireNonNull(siteDirectory, "siteDirectory cannot be null");
         Objects.requireNonNull(locale, "locale cannot be null");
@@ -677,6 +680,7 @@ public class DefaultSiteTool implements SiteTool {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void populateReportsMenu(SiteModel siteModel, Locale locale, Map<String, List<MavenReport>> categories) {
         Objects.requireNonNull(siteModel, "siteModel cannot be null");
         Objects.requireNonNull(locale, "locale cannot be null");
@@ -722,6 +726,7 @@ public class DefaultSiteTool implements SiteTool {
     }
 
     /** {@inheritDoc} */
+    @Override
     public List<Locale> getSiteLocales(String locales) {
         if (locales == null) {
             return Collections.singletonList(DEFAULT_LOCALE);

@@ -53,6 +53,7 @@ public class JavascriptVerifier extends AbstractVerifier {
      *
      * @throws Exception if something goes wrong.
      */
+    @Override
     public void verify(String file) throws Exception {
         File jsTest = getTestFile(file);
         assertNotNull(jsTest);

@@ -327,21 +327,25 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
     // DocumentContent interface
 
     /** {@inheritDoc} */
+    @Override
     public String getTitle() {
         return title;
     }
 
     /** {@inheritDoc} */
+    @Override
     public List<String> getAuthors() {
         return authors;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getDate() {
         return date;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getBody() {
         String body = writer.toString();
 
@@ -349,6 +353,7 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getHead() {
         String head = headWriter.toString();
 
@@ -356,6 +361,7 @@ public class SiteRendererSink extends Xhtml5Sink implements DocumentContent {
     }
 
     /** {@inheritDoc} */
+    @Override
     public DocumentRenderingContext getRenderingContext() {
         return docRenderingContext;
     }
