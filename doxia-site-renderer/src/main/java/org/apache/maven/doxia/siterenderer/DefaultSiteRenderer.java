@@ -188,6 +188,7 @@ public class DefaultSiteRenderer implements Renderer {
     // ----------------------------------------------------------------------
 
     /** {@inheritDoc} */
+    @Override
     public Map<String, DocumentRenderer> locateDocumentFiles(SiteRenderingContext siteRenderingContext)
             throws IOException, RendererException {
         Map<String, DocumentRenderer> files = new LinkedHashMap<>();
@@ -390,6 +391,7 @@ public class DefaultSiteRenderer implements Renderer {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void render(
             Collection<DocumentRenderer> documents, SiteRenderingContext siteRenderingContext, File outputDirectory)
             throws RendererException, IOException {
@@ -441,6 +443,7 @@ public class DefaultSiteRenderer implements Renderer {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void renderDocument(
             Writer writer, DocumentRenderingContext docRenderingContext, SiteRenderingContext siteContext)
             throws RendererException {
@@ -759,6 +762,7 @@ public class DefaultSiteRenderer implements Renderer {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void mergeDocumentIntoSite(Writer writer, DocumentContent content, SiteRenderingContext siteRenderingContext)
             throws RendererException {
         String templateName = siteRenderingContext.getTemplateName();
@@ -830,6 +834,7 @@ public class DefaultSiteRenderer implements Renderer {
 
     /** {@inheritDoc} */
     @Deprecated
+    @Override
     public SiteRenderingContext createContextForSkin(
             Artifact skin, Map<String, ?> attributes, SiteModel siteModel, String defaultTitle, Locale locale)
             throws IOException, RendererException {
@@ -840,6 +845,7 @@ public class DefaultSiteRenderer implements Renderer {
     }
 
     /** {@inheritDoc} */
+    @Override
     public SiteRenderingContext createContextForSkin(
             File skinFile,
             String skinId,
@@ -935,6 +941,7 @@ public class DefaultSiteRenderer implements Renderer {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void copyResources(SiteRenderingContext siteRenderingContext, File outputDirectory) throws IOException {
         ZipFile file = getZipFile(siteRenderingContext.getSkinFile());
 

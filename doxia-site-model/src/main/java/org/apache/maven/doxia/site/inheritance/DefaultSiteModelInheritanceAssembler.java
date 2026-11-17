@@ -42,6 +42,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 @Named
 public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanceAssembler {
     /** {@inheritDoc} */
+    @Override
     public void assembleModelInheritance(
             String name, SiteModel child, SiteModel parent, String childBaseUrl, String parentBaseUrl) {
         if (parent == null || !child.isMergeParent()) {
@@ -90,6 +91,7 @@ public class DefaultSiteModelInheritanceAssembler implements SiteModelInheritanc
     }
 
     /** {@inheritDoc} */
+    @Override
     public void resolvePaths(final SiteModel siteModel, final String baseUrl) {
         if (baseUrl == null) {
             return;

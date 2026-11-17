@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class CommentsVerifier extends AbstractVerifier {
     /** {@inheritDoc} */
+    @Override
     public void verify(String file) throws Exception {
         String content = FileUtils.fileRead(new File(file), "UTF-8");
 
