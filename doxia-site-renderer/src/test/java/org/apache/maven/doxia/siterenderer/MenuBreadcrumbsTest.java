@@ -29,6 +29,7 @@ import org.apache.maven.doxia.site.MenuItem;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MenuBreadcrumbsTest {
@@ -67,7 +68,7 @@ class MenuBreadcrumbsTest {
 
         // only the enclosing menu is an ancestor; the matched item itself is not included
         assertTrail(trail, "Overview");
-        assertEquals(null, trail.get(0).getHref()); // a Menu has no href of its own
+        assertNull(trail.get(0).getHref()); // a Menu has no href of its own
     }
 
     @Test
@@ -79,7 +80,7 @@ class MenuBreadcrumbsTest {
         List<LinkItem> trail = MenuBreadcrumbs.derive(menus, "guides/user/index.html");
 
         assertTrail(trail, "Documentation", "Guides");
-        assertEquals(null, trail.get(1).getHref()); // "Guides" has no href of its own, only nested items
+        assertNull(trail.get(1).getHref()); // "Guides" has no href of its own, only nested items
     }
 
     @Test

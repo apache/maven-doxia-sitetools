@@ -70,7 +70,7 @@ class ModelNamespaceTest {
                         Pattern.DOTALL)
                 .matcher(pom);
         assertTrue(matcher.find(), "site.mdo version in pom.xml");
-        assertEquals(matcher.group(1), ModelNamespace.SITE_MODEL_VERSION);
+        assertEquals(ModelNamespace.SITE_MODEL_VERSION, matcher.group(1));
     }
 
     @Test
@@ -83,6 +83,6 @@ class ModelNamespaceTest {
                         Pattern.DOTALL)
                 .matcher(pom);
         assertTrue(matcher.find(), "skin.mdo version in doxia-skin-model/pom.xml");
-        assertEquals(matcher.group(1), ModelNamespace.SKIN_MODEL_VERSION);
+        assertEquals(ModelNamespace.SKIN_MODEL_VERSION, matcher.group(1));
     }
 }

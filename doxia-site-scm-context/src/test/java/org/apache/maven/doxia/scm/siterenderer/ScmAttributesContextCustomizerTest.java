@@ -140,7 +140,7 @@ class ScmAttributesContextCustomizerTest {
     }
 
     @Test
-    void detectsShallowGitRepository() throws IOException {
+    void detectsShallowGitRepository() throws Exception {
         Path gitDirectory = Files.createDirectories(tempDirectory.resolve(".git"));
         assertFalse(ScmAttributesContextCustomizer.isShallowRepository(tempDirectory.toFile()));
 
