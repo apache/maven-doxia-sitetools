@@ -1105,7 +1105,8 @@ public class DefaultSiteTool implements SiteTool {
             }
 
             String name = getName(project);
-            if (siteModel != null && StringUtils.isNotEmpty(siteModel.getName())) {
+            if (siteModel != null
+                    && (siteModel.getName() != null && !siteModel.getName().isEmpty())) {
                 name = siteModel.getName();
             }
 
