@@ -1,0 +1,70 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+# Doxia Sitetools - SCM Context
+
+This optional module adds the date and author of the last change to each page, read from the version control system
+of the site sources. A skin can then show "Last updated" information per page instead of one publish date for the
+whole site.
+
+${esc.h}${esc.h} Setup
+
+Add the module to the dependencies of the Maven Site Plugin. It needs Maven Site Plugin 3.22.0 or later, the first
+release built on Doxia Sitetools 2.1.0.
+
+```xml
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-site-plugin</artifactId>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-site-scm-context</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+</plugin>
+```
+
+${esc.h}${esc.h} What it adds
+
+For each rendered document the module adds two variables to the Velocity context:
+
+| Variable | Type | Description |
+|:---|:---|:---|
+| `scmModifiedDate` | `Date` | The date of the last commit that changed the source file. |
+| `scmModifiedAuthor` | `String` | The author of that commit. |
+
+When a page does not set an author or a date itself, the site template variables `authors` and `documentDate` fall
+back to these values; see the [Site Template section](../doxia-site-renderer/index.html${esc.hash}Site_Template) of the
+Site Renderer. Whether and how the values appear on the page is up to the skin.
+
+${esc.h}${esc.h} How it works
+
+The module is a [`ContextCustomizer`](../doxia-site-renderer/apidocs/org/apache/maven/doxia/siterenderer/ContextCustomizer.html).
+On the first document it looks for a working copy in the site root directory and then in its parent directories,
+using the [Maven SCM](/scm/) providers for Git, Mercurial and Subversion. It then asks the SCM for the last change of
+each source file, one query per document. If no working copy is found, nothing is added and the site renders as
+before.
+
+A shallow Git clone has no history beyond its last commits, so the dates would be wrong; the module logs a warning
+when the repository is shallow. On CI, check out the full history, for example with `fetch-depth: 0` in GitHub
+Actions' `actions/checkout`.
+
+Generated documents, such as reports, have no source file and get no SCM values.
