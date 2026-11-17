@@ -39,7 +39,7 @@ import org.apache.maven.doxia.site.SiteUtils;
  *
  * @since 2.1.1
  */
-class MenuBreadcrumbs {
+final class MenuBreadcrumbs {
 
     private MenuBreadcrumbs() {}
 

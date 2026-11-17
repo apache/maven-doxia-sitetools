@@ -248,7 +248,7 @@ public class DefaultSiteTool implements SiteTool {
             relativePath = to;
         }
 
-        if (LOGGER.isDebugEnabled() && !relativePath.toString().equals(to)) {
+        if (LOGGER.isDebugEnabled() && !relativePath.equals(to)) {
             LOGGER.debug("Mapped url: " + to + " to relative path: " + relativePath);
         }
 
@@ -299,7 +299,7 @@ public class DefaultSiteTool implements SiteTool {
 
         final String relativePath = buildRelativePath(toPath, fromPath, File.separatorChar);
 
-        return relativePath.toString();
+        return relativePath;
     }
 
     /** {@inheritDoc} */
@@ -836,7 +836,7 @@ public class DefaultSiteTool implements SiteTool {
         if (normalized == null) {
             normalized = path;
         }
-        return (normalized == null) ? null : normalized.replace('\\', '/');
+        return normalized == null ? null : normalized.replace('\\', '/');
     }
 
     // ----------------------------------------------------------------------
@@ -971,7 +971,7 @@ public class DefaultSiteTool implements SiteTool {
      * @return whether the resolution failed because the artifact is not in any repository
      */
     private static boolean isMissing(ArtifactResolutionException e) {
-        return e.getResult().getExceptions().stream().anyMatch(re -> re instanceof ArtifactNotFoundException);
+        return e.getResult().getExceptions().stream().anyMatch(ArtifactNotFoundException.class::isInstance);
     }
 
     // TODO Remove this transient method when everyone has migrated to Maven Site Plugin 4.0.0+

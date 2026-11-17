@@ -194,13 +194,13 @@ public class URIPathDescriptor {
 
     private static boolean sameSite(final URI baseURI, final URI newBaseURI) {
         final boolean sameScheme =
-                (newBaseURI.getScheme() == null ? false : baseURI.getScheme().equalsIgnoreCase(newBaseURI.getScheme()));
-        final boolean sameHost = (baseURI.getHost() == null
+                newBaseURI.getScheme() == null ? false : baseURI.getScheme().equalsIgnoreCase(newBaseURI.getScheme());
+        final boolean sameHost = baseURI.getHost() == null
                 ? newBaseURI.getHost() == null
-                : baseURI.getHost().equalsIgnoreCase(newBaseURI.getHost()));
-        final boolean samePort = (baseURI.getPort() == newBaseURI.getPort());
+                : baseURI.getHost().equalsIgnoreCase(newBaseURI.getHost());
+        final boolean samePort = baseURI.getPort() == newBaseURI.getPort();
 
-        return (sameScheme && samePort && sameHost);
+        return sameScheme && samePort && sameHost;
     }
 
     /**

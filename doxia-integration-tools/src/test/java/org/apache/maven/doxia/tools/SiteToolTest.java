@@ -508,7 +508,7 @@ class SiteToolTest {
                 "Interpolatesite &quot;quoted&quot; &amp; &apos;quoted&apos; &lt;sdf&gt;"));
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("interpolated-site");
-        List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList(project);
+        List<MavenProject> reactorProjects = Collections.singletonList(project);
 
         siteDescriptorContent =
                 tool.getInterpolatedSiteDescriptorContent(new HashMap<>(), project, siteDescriptorContent);
@@ -547,7 +547,7 @@ class SiteToolTest {
         effectiveProperties.putAll(childProject.getProperties());
         childProject.getModel().setProperties(effectiveProperties);
 
-        List<MavenProject> reactorProjects = Collections.<MavenProject>singletonList(parentProject);
+        List<MavenProject> reactorProjects = Collections.singletonList(parentProject);
         MavenExecutionRequest request = new DefaultMavenExecutionRequest();
         Properties userProperties = new Properties();
         userProperties.setProperty("userProp1", "from user properties");
@@ -621,7 +621,7 @@ class SiteToolTest {
         assertNotNull(tool);
 
         SiteToolMavenProjectStub project = new SiteToolMavenProjectStub("old-to-new-site-model-conversion-test");
-        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+        List<MavenProject> reactorProjects = new ArrayList<>();
 
         // model from current local build
         SiteModel model = tool.getSiteModel(
@@ -653,7 +653,7 @@ class SiteToolTest {
         MavenProject parentProject =
                 new SiteToolMavenProjectStub("org.apache.maven.shared.its", "mshared-217-parent", "1.0-SNAPSHOT");
         project.setParent(parentProject);
-        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+        List<MavenProject> reactorProjects = new ArrayList<>();
 
         RepositorySystemSession repoSession = newRepoSession();
         // coordinates for site descriptor: <groupId>:<artifactId>:xml:site:<version>

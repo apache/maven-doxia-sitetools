@@ -35,7 +35,7 @@ public class SiteUtils {
 
     private static boolean startsWithIgnoreCase(String str, String prefix) {
         if (str == null || prefix == null) {
-            return (str == null && prefix == null);
+            return str == null && prefix == null;
         }
         if (prefix.length() > str.length()) {
             return false;
@@ -82,7 +82,7 @@ public class SiteUtils {
      */
     public static String getCustomValue(Xpp3Dom custom, String path) {
         custom = getCustomChild(custom, path);
-        return (custom == null) ? null : custom.getValue();
+        return custom == null ? null : custom.getValue();
     }
 
     /**
@@ -96,6 +96,6 @@ public class SiteUtils {
      */
     public static String getCustomValue(Xpp3Dom custom, String path, String defaultValue) {
         custom = getCustomChild(custom, path);
-        return (custom == null) ? defaultValue : custom.getValue();
+        return custom == null ? defaultValue : custom.getValue();
     }
 }

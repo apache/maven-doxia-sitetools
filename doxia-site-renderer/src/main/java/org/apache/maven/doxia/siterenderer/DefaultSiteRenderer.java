@@ -202,7 +202,7 @@ public class DefaultSiteRenderer implements Renderer {
                 for (ParserModule module : modules) {
                     File moduleBasedir = new File(siteDirectoryPath, module.getSourceDirectory());
 
-                    String excludes = (moduleExcludes == null) ? null : moduleExcludes.get(module.getParserId());
+                    String excludes = moduleExcludes == null ? null : moduleExcludes.get(module.getParserId());
 
                     addModuleFiles(
                             siteRenderingContext.getRootDirectory(),
@@ -327,7 +327,7 @@ public class DefaultSiteRenderer implements Renderer {
             Map<String, DocumentRenderer> existingDocumentRenderers,
             boolean skipDuplicates)
             throws RendererException {
-        DuplicateCallback duplicateCallback = (message) -> {
+        DuplicateCallback duplicateCallback = message -> {
             if (skipDuplicates) {
                 LOGGER.debug(message + " (ignored due to flag 'skipDuplicates').");
             } else {
@@ -336,7 +336,7 @@ public class DefaultSiteRenderer implements Renderer {
             return true;
         };
 
-        DuplicateCallback caseInsensitiveDuplicateCallback = (message) -> {
+        DuplicateCallback caseInsensitiveDuplicateCallback = message -> {
             if (Os.isFamily(Os.FAMILY_WINDOWS)) {
                 return duplicateCallback.onDuplicate(message);
             } else {
@@ -785,9 +785,9 @@ public class DefaultSiteRenderer implements Renderer {
 
             try {
                 SkinModel skinModel = siteRenderingContext.getSkinModel();
-                String encoding = (skinModel == null) ? null : skinModel.getEncoding();
+                String encoding = skinModel == null ? null : skinModel.getEncoding();
 
-                template = (encoding == null)
+                template = encoding == null
                         ? velocity.getEngine().getTemplate(templateName)
                         : velocity.getEngine().getTemplate(templateName, encoding);
             } catch (ParseErrorException pee) {
@@ -885,7 +885,7 @@ public class DefaultSiteRenderer implements Renderer {
                         : skinModel.getPrerequisites().getDoxiaSitetools();
 
                 Package p = DefaultSiteRenderer.class.getPackage();
-                String current = (p == null) ? null : p.getImplementationVersion();
+                String current = p == null ? null : p.getImplementationVersion();
 
                 if (StringUtils.isNotBlank(toolsPrerequisite)
                         && (current != null)
