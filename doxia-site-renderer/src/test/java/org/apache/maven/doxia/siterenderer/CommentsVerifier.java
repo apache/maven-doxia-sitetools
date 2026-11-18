@@ -18,9 +18,9 @@
  */
 package org.apache.maven.doxia.siterenderer;
 
-import java.io.File;
-
-import org.codehaus.plexus.util.FileUtils;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,7 +31,7 @@ public class CommentsVerifier extends AbstractVerifier {
     /** {@inheritDoc} */
     @Override
     public void verify(String file) throws Exception {
-        String content = FileUtils.fileRead(new File(file), "UTF-8");
+        String content = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
         assertTrue(
                 content.indexOf("DOXIASITETOOLS-146") < 0,
