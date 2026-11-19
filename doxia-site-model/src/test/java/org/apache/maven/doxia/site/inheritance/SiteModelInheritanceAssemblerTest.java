@@ -640,42 +640,6 @@ class SiteModelInheritanceAssemblerTest {
         assertEquals(resolvedModel, model, "Check result");
     }
 
-    /* [MSITE-62] This is to test the ../ relative paths, which I am inclined not to use
-        public void testResolvingAllSiteChildUrls()
-            throws IOException, XmlPullParserException
-        {
-            SiteModel model = readModel( "subsite-urls.xml" );
-
-            assembler.resolvePaths( model, "http://maven.apache.org/foo" );
-
-            SiteModel resolvedModel = readModel( "subsite-relative-urls-resolved.xml" );
-            assertEquals( resolvedModel, model, "Check result" );
-        }
-
-        public void testResolvingAllSiteChildUrlsMultipleLevels()
-            throws IOException, XmlPullParserException
-        {
-            SiteModel model = readModel( "subsite-urls.xml" );
-
-            assembler.resolvePaths( model, "http://maven.apache.org/banner/right" );
-
-            SiteModel resolvedModel = readModel( "subsite-relative-urls-multiple-resolved.xml" );
-            assertEquals( resolvedModel, model, "Check result" );
-        }
-
-        public void testResolvingAllSiteChildFilesystemUrls()
-            throws IOException, XmlPullParserException
-        {
-            SiteModel model = readModel( "subsite-urls-file.xml" );
-
-            assembler.resolvePaths( model, "file://localhost/www/maven.apache.org/foo" );
-
-            SiteModel resolvedModel = readModel( "subsite-relative-urls-resolved.xml" );
-            assertEquals( resolvedModel, model, "Check result" );
-        }
-
-    */
-
     /**
      *
      * @throws IOException
