@@ -117,6 +117,8 @@ import org.eclipse.aether.version.VersionScheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
+
 /**
  * <p>DefaultSiteRenderer class.</p>
  *
@@ -1166,15 +1168,6 @@ public class DefaultSiteRenderer implements Renderer {
                     + document.substring(document.length() - extension.length());
         }
         return document;
-    }
-
-    // TODO replace with StringUtils.endsWithIgnoreCase() from maven-shared-utils 0.7
-    static boolean endsWithIgnoreCase(String str, String searchStr) {
-        if (str.length() < searchStr.length()) {
-            return false;
-        }
-
-        return str.regionMatches(true, str.length() - searchStr.length(), searchStr, 0, searchStr.length());
     }
 
     private static ZipFile getZipFile(File file) throws IOException {
