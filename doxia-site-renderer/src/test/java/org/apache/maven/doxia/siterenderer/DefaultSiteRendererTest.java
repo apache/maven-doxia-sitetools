@@ -53,6 +53,8 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.doxia.Doxia;
 import org.apache.maven.doxia.parser.ParseException;
+import org.apache.maven.doxia.parser.Parser;
+import org.apache.maven.doxia.parser.ParserContext;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.io.xpp3.SiteXpp3Reader;
@@ -70,6 +72,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.xml.sax.EntityResolver;
 
@@ -175,13 +178,8 @@ public class DefaultSiteRendererTest {
         final String testDocument = "head.xml";
         final String exceptionMessage = "parse error occurred";
 
-        Doxia doxiaInstance = container.lookup(Doxia.class);
-        Doxia doxiaSpy = spy(doxiaInstance);
-        Mockito.doThrow(new ParseException(exceptionMessage))
-                .when(doxiaSpy)
-                .parse(Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any(), Mockito.nullable(String.class));
         SiteRenderer siteRenderer = container.lookup(SiteRenderer.class);
-        ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
+        useParser(siteRenderer, "xdoc", failingParser(new ParseException(exceptionMessage)));
 
         DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
                 testBasedir, "src/test/resources/site/xdoc", testDocument, "xdoc", "", false);
@@ -206,13 +204,8 @@ public class DefaultSiteRendererTest {
         final String testDocumentName = "head.xml";
         final String exceptionMessage = "parse error occurred";
 
-        Doxia doxiaInstance = container.lookup(Doxia.class);
-        Doxia doxiaSpy = spy(doxiaInstance);
-        Mockito.doThrow(new ParseException(exceptionMessage, 42, 36))
-                .when(doxiaSpy)
-                .parse(Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any(), Mockito.nullable(String.class));
         SiteRenderer siteRenderer = container.lookup(SiteRenderer.class);
-        ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
+        useParser(siteRenderer, "xdoc", failingParser(new ParseException(exceptionMessage, 42, 36)));
 
         DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
                 testBasedir, "src/test/resources/site/xdoc", testDocumentName, "xdoc", "", false);
@@ -273,6 +266,92 @@ public class DefaultSiteRendererTest {
         // Validate the rendering pages
         // ----------------------------------------------------------------------
         validatePages();
+    }
+
+    /**
+     * Makes the renderer use the given parser for the given parser id.
+     */
+    private void useParser(SiteRenderer siteRenderer, String parserId, Parser parser) throws Exception {
+        Doxia doxiaSpy = spy(container.lookup(Doxia.class));
+        Mockito.doReturn(parser).when(doxiaSpy).getParser(parserId);
+        ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
+    }
+
+    private static Parser failingParser(ParseException exception) throws ParseException {
+        Parser parser = mock(Parser.class);
+        Mockito.doThrow(exception)
+                .when(parser)
+                .parse(Mockito.<ParserContext>any(), Mockito.<Reader>any(), Mockito.<Sink>any());
+        return parser;
+    }
+
+    @Test
+    void parserReceivesDocumentAndSiteContext() throws Exception {
+        File sourceDirectory = getTestFile("src/test/resources/site/xdoc");
+        File outputDirectory = getTestFile(OUTPUT);
+        Map<String, Object> templateProperties = new HashMap<>();
+        templateProperties.put("project.version", "1.0");
+        templateProperties.put("project", new Object());
+        templateProperties.put("inputEncoding", "ISO-8859-1");
+        templateProperties.put("outputEncoding", "UTF-8");
+        SiteRenderingContext context =
+                getSiteRenderingContext(new SiteModel(), minimalSkinJar, "src/test/resources/site", false);
+        context.setTemplateProperties(templateProperties);
+        context.setRootDirectory(getTestFile(""));
+        context.setInputEncoding("ISO-8859-1");
+        context.setLocale(Locale.FRENCH);
+        Parser parser = mock(Parser.class);
+        useParser(siteRenderer, "xdoc", parser);
+        DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
+                sourceDirectory, "src/test/resources/site/xdoc", "head.xml", "xdoc", "xml", false);
+
+        siteRenderer.render(
+                Collections.singletonList(new DoxiaDocumentRenderer(docRenderingContext)), context, outputDirectory);
+
+        ArgumentCaptor<ParserContext> captor = ArgumentCaptor.forClass(ParserContext.class);
+        verify(parser).parse(captor.capture(), Mockito.<Reader>any(), Mockito.<Sink>any());
+        ParserContext parserContext = captor.getValue();
+        assertEquals(docRenderingContext.getDoxiaSourcePath(), parserContext.getReference());
+        assertEquals(
+                new File(sourceDirectory, "head.xml").toPath().toAbsolutePath(),
+                parserContext.getSourceFile().get());
+        assertEquals(
+                sourceDirectory.toPath().toAbsolutePath(),
+                parserContext.getSourceDirectory().get());
+        assertEquals(
+                getTestFile("").toPath().toAbsolutePath(),
+                parserContext.getRootDirectory().get());
+        assertEquals("head.html", parserContext.getOutputName().get());
+        assertEquals(
+                outputDirectory.toPath().toAbsolutePath(),
+                parserContext.getOutputDirectory().get());
+        assertEquals(Locale.FRENCH, parserContext.getLocale());
+        assertEquals(StandardCharsets.ISO_8859_1, parserContext.getInputEncoding());
+        assertEquals(StandardCharsets.UTF_8, parserContext.getOutputEncoding());
+        assertEquals(Collections.singletonMap("project.version", "1.0"), parserContext.getProperties());
+        assertTrue(parserContext.getOptions().isEmpty());
+    }
+
+    @Test
+    void parserContextHasNoOutputDirectoryWhenRenderingToAWriter() throws Exception {
+        SiteRenderingContext context =
+                getSiteRenderingContext(new SiteModel(), minimalSkinJar, "src/test/resources/site", false);
+        Parser parser = mock(Parser.class);
+        useParser(siteRenderer, "xdoc", parser);
+        DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
+                getTestFile("src/test/resources/site/xdoc"),
+                "src/test/resources/site/xdoc",
+                "head.xml",
+                "xdoc",
+                "xml",
+                false);
+
+        siteRenderer.renderDocument(new StringWriter(), docRenderingContext, context);
+
+        ArgumentCaptor<ParserContext> captor = ArgumentCaptor.forClass(ParserContext.class);
+        verify(parser).parse(captor.capture(), Mockito.<Reader>any(), Mockito.<Sink>any());
+        assertFalse(captor.getValue().getOutputDirectory().isPresent());
+        assertFalse(captor.getValue().getRootDirectory().isPresent());
     }
 
     void renderDocument(
