@@ -14,72 +14,58 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-Contributing to [Apache Maven Doxia Sitetools](https://maven.apache.org/doxia/doxia-sitetools/)
-======================
 
-[![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/apache/maven.svg?label=License)][license]
-[![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven.doxia/doxia-sitetools.svg?label=Maven%20Central&versionPrefix=1.)](https://search.maven.org/artifact/org.apache.maven.doxia/doxia-sitetools)
-[![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven.doxia/doxia-sitetools.svg?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.maven.doxia/doxia-sitetools)
+# Apache Maven Doxia Sitetools
+
+[![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/apache/maven.svg?label=License)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven.doxia/doxia-sitetools.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/org.apache.maven.doxia/doxia-sitetools)
 [![Reproducible Builds](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/jvm-repo-rebuild/reproducible-central/master/content/org/apache/maven/doxia/doxia-sitetools/badge.json)](https://github.com/jvm-repo-rebuild/reproducible-central/blob/master/content/org/apache/maven/doxia/doxia-sitetools/README.md)
-[![Jenkins Status](https://img.shields.io/jenkins/s/https/ci-maven.apache.org/job/Maven/job/maven-box/job/maven-doxia-sitetools/job/master.svg)][build]
-[![Jenkins tests](https://img.shields.io/jenkins/t/https/ci-maven.apache.org/job/Maven/job/maven-box/job/maven-doxia-sitetools/job/master.svg)][test-results]
+[![Verify](https://github.com/apache/maven-doxia-sitetools/actions/workflows/maven-verify.yml/badge.svg)](https://github.com/apache/maven-doxia-sitetools/actions/workflows/maven-verify.yml)
 
+Doxia Sitetools turns single documents into a website. [Doxia](https://maven.apache.org/doxia/) converts each page
+to HTML; Sitetools adds the menus, breadcrumbs, header and footer described in `site.xml`, and a skin that gives the
+pages their look. The [Maven Site Plugin](https://maven.apache.org/plugins/maven-site-plugin/) uses it for every
+`mvn site` run.
 
-You have found a bug, or you have an idea for a cool new feature? Contributing
-code is a great way to give something back to the open source community. Before
-you dig right into the code, there are a few guidelines that we need
-contributors to follow so that we can have a chance of keeping on top of
-things.
+- Documentation: <https://maven.apache.org/doxia/doxia-sitetools/>
+- Issues: <https://github.com/apache/maven-doxia-sitetools/issues>
+- Security reports: <https://maven.apache.org/security.html>, never a public issue
+- Questions and design discussion: the [dev mailing list](https://maven.apache.org/mailing-lists.html)
 
-Getting Started
----------------
+## Modules
 
-+ Make sure you have a [GitHub account](https://github.com/signup/free).
-+ If you're planning to implement a new feature, it makes sense to discuss your changes 
-  on the [dev list][ml-list] first. 
-  This way you can make sure you're not wasting your time on something that isn't 
-  considered to be in Apache Maven's scope.
-+ Submit a ticket for your issue, assuming one does not already exist.
-  + Clearly describe the issue, including steps to reproduce when it is a bug.
-  + Make sure you fill in the earliest version that you know has the issue.
-+ Fork the repository on GitHub.
+| Module | What it does |
+|---|---|
+| `doxia-site-model` | The `site.xml` model and how a child descriptor inherits from its parent |
+| `doxia-skin-model` | The `skin.xml` model that a skin declares |
+| `doxia-integration-tools` | `SiteTool`, which finds, inherits and interpolates the site descriptor of a Maven project |
+| `doxia-site-renderer` | Renders documents and reports into a skin |
+| `doxia-site-scm-context` | Optional: adds the last change date and author of each page from the SCM |
 
-Making and Submitting Changes
---------------
+The artifacts run on Java 8 or later. Building them needs Maven 3.9 or later.
 
-We accept Pull Requests via GitHub. The [developer mailing list][ml-list] is the
-main channel of communication for contributors.  
-There are some guidelines which will make applying PRs easier for us:
-+ Create a topic branch from where you want to base your work (this is usually the master branch).
-  Push your changes to a topic branch in your fork of the repository.
-+ Make commits of logical units.
-+ Respect the original code style: by using the same [codestyle][code-style],
-  patches should only highlight the actual difference, not being disturbed by any formatting issues:
-  + Only use spaces for indentation.
-  + Create minimal diffs - disable on save actions like reformat source code or organize imports. 
-    If you feel the source code should be reformatted, create a separate PR for this change.
-  + Check for unnecessary whitespace with `git diff --check` before committing.
-+ Make sure you have added the necessary tests (JUnit/IT) for your changes.
-+ Run all the tests with `mvn -Prun-its verify` to assure nothing else was accidentally broken.
-+ Submit a pull request to the repository in the Apache organization.
+## Build
 
-If you plan to contribute on a regular basis, please consider filing a [contributor license agreement][cla].
+```shell
+mvn verify
+```
 
-Additional Resources
---------------------
+The integration test of `doxia-site-scm-context` runs only with the `run-its` profile:
 
-+ [Contributing patches](https://maven.apache.org/guides/development/guide-maven-development.html#Creating_and_submitting_a_patch)
-+ [Contributor License Agreement][cla]
-+ [General GitHub documentation](https://help.github.com/)
-+ [GitHub pull request documentation](https://help.github.com/send-pull-requests/)
-+ [Apache Maven X Account](https://x.com/ASFMavenProject)
-+ [Apache Maven Bluesky Account](https://bsky.app/profile/maven.apache.org)
-+ [Apache Maven Mastodon Account](https://mastodon.social/deck/@ASFMavenProject@fosstodon.org)
+```shell
+mvn -Prun-its verify
+```
 
-[license]: https://www.apache.org/licenses/LICENSE-2.0
-[ml-list]: https://maven.apache.org/mailing-lists.html
-[code-style]: https://maven.apache.org/developers/conventions/code.html
-[cla]: https://www.apache.org/licenses/#clas
-[maven-wiki]: https://cwiki.apache.org/confluence/display/MAVEN/Index
-[test-results]: https://ci-maven.apache.org/job/Maven/job/maven-box/job/maven-doxia-sitetools/job/master/lastCompletedBuild/testReport/
-[build]: https://ci-maven.apache.org/job/Maven/job/maven-box/job/maven-doxia-sitetools/job/master/
+## Contributing
+
+Open a pull request against `master` from your fork. The pull request title becomes the line in the release notes
+and its label picks the section, so write the title for a user of the Maven Site Plugin. Format the code before
+pushing:
+
+```shell
+mvn spotless:apply
+```
+
+See [Maven development](https://maven.apache.org/guides/development/guide-maven-development.html) for the general
+process, and file an [Individual Contributor License Agreement](https://www.apache.org/licenses/contributor-agreements.html)
+if you plan to contribute regularly.
