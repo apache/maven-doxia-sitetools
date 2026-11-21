@@ -29,7 +29,8 @@ pages their look. The [Maven Site Plugin](https://maven.apache.org/plugins/maven
 
 - Documentation: <https://maven.apache.org/doxia/doxia-sitetools/>
 - Issues: <https://github.com/apache/maven-doxia-sitetools/issues>
-- Security reports: <https://maven.apache.org/security.html>, never a public issue
+- Security reports: see [SECURITY.md](SECURITY.md); never a public issue
+- Conventions for contributors and agents: [AGENTS.md](AGENTS.md)
 - Questions and design discussion: the [dev mailing list](https://maven.apache.org/mailing-lists.html)
 
 ## Modules
