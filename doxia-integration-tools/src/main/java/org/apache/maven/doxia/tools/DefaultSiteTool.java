@@ -42,6 +42,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.site.Banner;
@@ -76,8 +77,6 @@ import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.MXParser;
@@ -741,7 +740,9 @@ public class DefaultSiteTool implements SiteTool {
             return Collections.singletonList(DEFAULT_LOCALE);
         }
 
-        String[] localesArray = StringUtils.split(locales, ",");
+        String[] localesArray = Arrays.stream(locales.split(","))
+                .filter(locale -> !locale.isEmpty())
+                .toArray(String[]::new);
         List<Locale> localesList = new ArrayList<>(localesArray.length);
         List<Locale> availableLocales = Arrays.asList(Locale.getAvailableLocales());
 
@@ -1043,7 +1044,7 @@ public class DefaultSiteTool implements SiteTool {
 
                 siteDescriptorReader = new XmlStreamReader(siteDescriptor);
 
-                String siteDescriptorContent = IOUtil.toString(siteDescriptorReader);
+                String siteDescriptorContent = IOUtils.toString(siteDescriptorReader);
 
                 // interpolate ${this.*} = early interpolation
                 siteDescriptorContent =
@@ -1058,7 +1059,7 @@ public class DefaultSiteTool implements SiteTool {
             throw new SiteToolException(
                     "The site descriptor for '" + project.getId() + "' cannot be read from " + siteDescriptor, e);
         } finally {
-            IOUtil.close(siteDescriptorReader);
+            IOUtils.closeQuietly(siteDescriptorReader);
         }
 
         // 3. look for parent project
@@ -1353,11 +1354,11 @@ public class DefaultSiteTool implements SiteTool {
         Reader reader = null;
         try {
             reader = new XmlStreamReader(getClass().getResourceAsStream("/default-site.xml"));
-            siteDescriptorContent = IOUtil.toString(reader);
+            siteDescriptorContent = IOUtils.toString(reader);
         } catch (IOException e) {
             throw new SiteToolException("Error reading default site descriptor", e);
         } finally {
-            IOUtil.close(reader);
+            IOUtils.closeQuietly(reader);
         }
 
         return readSiteModel(siteDescriptorContent, null, SiteTool.DEFAULT_LOCALE);
@@ -1372,7 +1373,7 @@ public class DefaultSiteTool implements SiteTool {
         } catch (IOException e) {
             throw new SiteToolException("Error reading site descriptor", e);
         } finally {
-            IOUtil.close(writer);
+            IOUtils.closeQuietly(writer);
         }
     }
 
@@ -1571,7 +1572,8 @@ public class DefaultSiteTool implements SiteTool {
             Xpp3Dom xpp3Dom = (Xpp3Dom) plugin.getConfiguration();
             if (xpp3Dom != null
                     && xpp3Dom.getChild(param) != null
-                    && StringUtils.isNotEmpty(xpp3Dom.getChild(param).getValue())) {
+                    && xpp3Dom.getChild(param).getValue() != null
+                    && !xpp3Dom.getChild(param).getValue().isEmpty()) {
                 return xpp3Dom.getChild(param).getValue();
             }
         }

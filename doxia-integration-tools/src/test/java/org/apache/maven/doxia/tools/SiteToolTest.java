@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.StringReader;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -37,6 +38,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.doxia.site.LinkItem;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.Skin;
@@ -48,8 +51,6 @@ import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.codehaus.plexus.testing.PlexusTest;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.XmlStreamWriter;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystemSession;
@@ -544,7 +545,7 @@ class SiteToolTest {
         assertNotNull(descriptorFile);
         assertTrue(descriptorFile.exists());
 
-        String siteDescriptorContent = FileUtils.fileRead(descriptorFile);
+        String siteDescriptorContent = FileUtils.readFileToString(descriptorFile, Charset.defaultCharset());
         assertNotNull(siteDescriptorContent);
         assertTrue(siteDescriptorContent.contains("${project.name}"));
         assertFalse(siteDescriptorContent.contains(
@@ -682,7 +683,7 @@ class SiteToolTest {
         assertNotNull(descriptorFile);
         assertTrue(descriptorFile.exists());
 
-        String siteDescriptorContent = FileUtils.fileRead(descriptorFile);
+        String siteDescriptorContent = FileUtils.readFileToString(descriptorFile, Charset.defaultCharset());
         SiteModel newModel = new SiteXpp3Reader().read(new StringReader(siteDescriptorContent));
         assertNotNull(newModel);
         assertEquals(newModel, model);
@@ -741,7 +742,7 @@ class SiteToolTest {
         try {
             new SiteXpp3Writer().write(writer, model);
         } finally {
-            IOUtil.close(writer);
+            IOUtils.closeQuietly(writer);
         }
     }
 }

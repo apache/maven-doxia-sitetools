@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.codehaus.plexus.util.PathTool;
+import org.apache.maven.doxia.site.PathTool;
 
 /**
  * The rendering context of a document.
