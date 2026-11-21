@@ -44,10 +44,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarOutputStream;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.versioning.VersionRange;
@@ -61,10 +65,6 @@ import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.doxia.xsd.AbstractXmlValidator;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.testing.PlexusTest;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReflectionUtils;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -181,7 +181,7 @@ public class DefaultSiteRendererTest {
                 .when(doxiaSpy)
                 .parse(Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any(), Mockito.nullable(String.class));
         SiteRenderer siteRenderer = container.lookup(SiteRenderer.class);
-        ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
+        FieldUtils.writeField(siteRenderer, "doxia", doxiaSpy, true);
 
         DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
                 testBasedir, "src/test/resources/site/xdoc", testDocument, "xdoc", "", false);
@@ -212,7 +212,7 @@ public class DefaultSiteRendererTest {
                 .when(doxiaSpy)
                 .parse(Mockito.<Reader>any(), Mockito.anyString(), Mockito.<Sink>any(), Mockito.nullable(String.class));
         SiteRenderer siteRenderer = container.lookup(SiteRenderer.class);
-        ReflectionUtils.setVariableValueInObject(siteRenderer, "doxia", doxiaSpy);
+        FieldUtils.writeField(siteRenderer, "doxia", doxiaSpy, true);
 
         DocumentRenderingContext docRenderingContext = new DocumentRenderingContext(
                 testBasedir, "src/test/resources/site/xdoc", testDocumentName, "xdoc", "", false);
@@ -344,7 +344,7 @@ public class DefaultSiteRendererTest {
         String renderResult = writer.toString();
         String expectedResult = IOUtils.toString(
                 getClass().getResourceAsStream("velocity-toolmanager.expected.txt"), StandardCharsets.UTF_8);
-        expectedResult = StringUtils.unifyLineSeparators(expectedResult);
+        expectedResult = unifyLineSeparators(expectedResult);
         assertEquals(expectedResult, renderResult);
     }
 
@@ -357,7 +357,7 @@ public class DefaultSiteRendererTest {
         try (InputStream skinIS = getClass().getResourceAsStream("velocity-toolmanager.vm");
                 JarOutputStream jarOS = new JarOutputStream(new FileOutputStream(skinFile))) {
             jarOS.putNextEntry(new ZipEntry("META-INF/maven/site.vm"));
-            IOUtil.copy(skinIS, jarOS);
+            IOUtils.copy(skinIS, jarOS);
             jarOS.closeEntry();
         }
 
@@ -381,7 +381,7 @@ public class DefaultSiteRendererTest {
         SiteRendererSink sink = new SiteRendererSink(context);
         siteRenderer.mergeDocumentIntoSite(writer, sink, siteRenderingContext);
         String renderResult = writer.toString();
-        String expectedResult = StringUtils.unifyLineSeparators(IOUtils.toString(
+        String expectedResult = unifyLineSeparators(IOUtils.toString(
                 getClass().getResourceAsStream("velocity-toolmanager.expected.txt"), StandardCharsets.UTF_8));
         assertEquals(expectedResult, renderResult);
     }
@@ -614,10 +614,10 @@ public class DefaultSiteRendererTest {
         Reader reader = null;
         try {
             reader = new XmlStreamReader(macro);
-            String content = IOUtil.toString(reader);
+            String content = IOUtils.toString(reader);
             assertEquals(-1, content.indexOf("</macro>"));
         } finally {
-            IOUtil.close(reader);
+            IOUtils.closeQuietly(reader);
         }
     }
 
@@ -683,16 +683,34 @@ public class DefaultSiteRendererTest {
      */
     public void verifyNewlines() throws Exception {
         /* apt */
-        checkNewlines(FileUtils.fileRead(getTestFile("target/output/apt.html"), "ISO-8859-1"));
-        checkNewlines(FileUtils.fileRead(getTestFile("target/output/cdc.html"), "ISO-8859-1"));
-        checkNewlines(FileUtils.fileRead(getTestFile("target/output/interpolation.html"), "ISO-8859-1"));
+        checkNewlines(new String(
+                Files.readAllBytes(getTestFile("target/output/apt.html").toPath()), StandardCharsets.ISO_8859_1));
+        checkNewlines(new String(
+                Files.readAllBytes(getTestFile("target/output/cdc.html").toPath()), StandardCharsets.ISO_8859_1));
+        checkNewlines(new String(
+                Files.readAllBytes(
+                        getTestFile("target/output/interpolation.html").toPath()),
+                StandardCharsets.ISO_8859_1));
         /* fml */
-        checkNewlines(FileUtils.fileRead(getTestFile("target/output/faq.html"), "ISO-8859-1"));
+        checkNewlines(new String(
+                Files.readAllBytes(getTestFile("target/output/faq.html").toPath()), StandardCharsets.ISO_8859_1));
         /* xdoc */
-        checkNewlines(FileUtils.fileRead(getTestFile("target/output/attributes.html"), "ISO-8859-1"));
-        checkNewlines(FileUtils.fileRead(getTestFile("target/output/javascript.html"), "ISO-8859-1"));
-        checkNewlines(FileUtils.fileRead(getTestFile("target/output/head.html"), "ISO-8859-1"));
-        checkNewlines(FileUtils.fileRead(getTestFile("target/output/macro.html"), "ISO-8859-1"));
+        checkNewlines(new String(
+                Files.readAllBytes(getTestFile("target/output/attributes.html").toPath()),
+                StandardCharsets.ISO_8859_1));
+        checkNewlines(new String(
+                Files.readAllBytes(getTestFile("target/output/javascript.html").toPath()),
+                StandardCharsets.ISO_8859_1));
+        checkNewlines(new String(
+                Files.readAllBytes(getTestFile("target/output/head.html").toPath()), StandardCharsets.ISO_8859_1));
+        checkNewlines(new String(
+                Files.readAllBytes(getTestFile("target/output/macro.html").toPath()), StandardCharsets.ISO_8859_1));
+    }
+
+    private static String unifyLineSeparators(String content) {
+        return content == null
+                ? null
+                : content.replaceAll("\\r\\n|\\r|\\n", Matcher.quoteReplacement(System.lineSeparator()));
     }
 
     private void checkNewlines(String content) {
@@ -749,17 +767,18 @@ public class DefaultSiteRendererTest {
 
             File dir = new File(getBasedir(), "target/output");
 
-            List<String> l =
-                    FileUtils.getFileNames(dir, getIncludes()[0], FileUtils.getDefaultExcludesAsString(), true);
+            List<String> l = DefaultSiteRenderer.getFileNames(dir, getIncludes()[0], null, true).stream()
+                    .map(name -> new File(dir, name).getPath())
+                    .collect(Collectors.toList());
 
             for (String file : l) {
                 file = file == null || file.isEmpty() ? file : file.replace("\\", "/");
 
                 Reader reader = new XmlStreamReader(new File(file));
                 try {
-                    testDocs.put(file, IOUtil.toString(reader));
+                    testDocs.put(file, IOUtils.toString(reader));
                 } finally {
-                    IOUtil.close(reader);
+                    IOUtils.closeQuietly(reader);
                 }
             }
 

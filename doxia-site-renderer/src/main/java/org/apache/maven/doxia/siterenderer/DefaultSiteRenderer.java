@@ -37,9 +37,12 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -54,11 +57,16 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.Doxia;
@@ -69,6 +77,7 @@ import org.apache.maven.doxia.parser.module.ParserModule;
 import org.apache.maven.doxia.parser.module.ParserModuleManager;
 import org.apache.maven.doxia.site.LinkItem;
 import org.apache.maven.doxia.site.ModelNamespace;
+import org.apache.maven.doxia.site.PathTool;
 import org.apache.maven.doxia.site.SiteModel;
 import org.apache.maven.doxia.site.skin.ResourceCondition;
 import org.apache.maven.doxia.site.skin.SkinModel;
@@ -100,12 +109,6 @@ import org.apache.velocity.tools.generic.ResourceTool;
 import org.apache.velocity.tools.generic.SortTool;
 import org.apache.velocity.tools.generic.XmlTool;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.Os;
-import org.codehaus.plexus.util.PathTool;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.velocity.VelocityComponent;
@@ -270,7 +273,7 @@ public class DefaultSiteRenderer implements Renderer {
             return;
         }
 
-        List<String> allFiles = FileUtils.getFileNames(moduleBasedir, "**/*", excludes, false);
+        List<String> allFiles = getFileNames(moduleBasedir, "**/*", excludes, false);
 
         for (String extension : module.getExtensions()) {
             String fullExtension = "." + extension;
@@ -340,7 +343,7 @@ public class DefaultSiteRenderer implements Renderer {
         };
 
         DuplicateCallback caseInsensitiveDuplicateCallback = message -> {
-            if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            if (SystemUtils.IS_OS_WINDOWS) {
                 return duplicateCallback.onDuplicate(message);
             } else {
                 if (LOGGER.isWarnEnabled()) {
@@ -430,7 +433,7 @@ public class DefaultSiteRenderer implements Renderer {
                     docRenderer.renderDocument(writer, this, siteRenderingContext);
                     rendered = true;
                 } finally {
-                    IOUtil.close(writer);
+                    IOUtils.closeQuietly(writer);
                     // a partly written page is newer than its source and would be skipped as unchanged next time
                     if (!rendered && writer != null) {
                         Files.deleteIfExists(outputFile.toPath());
@@ -531,7 +534,7 @@ public class DefaultSiteRenderer implements Renderer {
 
             sink.close();
 
-            IOUtil.close(reader);
+            IOUtils.closeQuietly(reader);
         }
 
         mergeDocumentIntoSite(writer, (DocumentContent) sink, siteContext);
@@ -554,7 +557,11 @@ public class DefaultSiteRenderer implements Renderer {
             outputParent.mkdirs();
         }
 
-        FileUtils.fileWrite(outputFile, siteContext.getInputEncoding(), doxiaContent);
+        Files.write(
+                outputFile.toPath(),
+                doxiaContent.getBytes(Charset.forName(siteContext.getInputEncoding())),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING);
     }
 
     /**
@@ -814,7 +821,7 @@ public class DefaultSiteRenderer implements Renderer {
                 throw new RendererException("IO exception while merging site template.", ioe);
             }
         } finally {
-            IOUtil.close(writer);
+            IOUtils.closeQuietly(writer);
 
             if (old != null) {
                 Thread.currentThread().setContextClassLoader(old);
@@ -874,9 +881,9 @@ public class DefaultSiteRenderer implements Renderer {
             ZipEntry skinDescriptorEntry = zipFile.getEntry(SkinModel.SKIN_DESCRIPTOR_LOCATION);
             if (skinDescriptorEntry != null) {
                 in = zipFile.getInputStream(skinDescriptorEntry);
-                byte[] skinDescriptor = IOUtil.toByteArray(in);
+                byte[] skinDescriptor = IOUtils.toByteArray(in);
                 String skinDescriptorContent =
-                        IOUtil.toString(new XmlStreamReader(new ByteArrayInputStream(skinDescriptor)));
+                        IOUtils.toString(new XmlStreamReader(new ByteArrayInputStream(skinDescriptor)));
                 if (ModelNamespace.isNewerThan(skinDescriptorContent, "SKIN", ModelNamespace.SKIN_MODEL_VERSION)) {
                     LOGGER.warn("Skin " + skinId + " declares the skin model "
                             + ModelNamespace.declaredVersion(skinDescriptorContent, "SKIN")
@@ -911,7 +918,7 @@ public class DefaultSiteRenderer implements Renderer {
                             + " skin",
                     e);
         } finally {
-            IOUtil.close(in);
+            IOUtils.closeQuietly(in);
             closeZipFile(zipFile);
         }
 
@@ -1007,7 +1014,7 @@ public class DefaultSiteRenderer implements Renderer {
                 // DOXIA-290...the file should not be 0 bytes.
                 writer.write("/* You can override this file with your own styles */");
             } finally {
-                IOUtil.close(writer);
+                IOUtils.closeQuietly(writer);
             }
         }
 
@@ -1032,7 +1039,7 @@ public class DefaultSiteRenderer implements Renderer {
                 throw new IllegalArgumentException("Could not find the resource with name " + name);
             } else {
                 try (OutputStream out = new FileOutputStream(destFile)) {
-                    IOUtil.copy(in, out);
+                    IOUtils.copy(in, out);
                 }
             }
         }
@@ -1094,9 +1101,9 @@ public class DefaultSiteRenderer implements Renderer {
         FileOutputStream fos = new FileOutputStream(destFile);
 
         try {
-            IOUtil.copy(file.getInputStream(entry), fos);
+            IOUtils.copy(file.getInputStream(entry), fos);
         } finally {
-            IOUtil.close(fos);
+            IOUtils.closeQuietly(fos);
         }
     }
 
@@ -1109,26 +1116,15 @@ public class DefaultSiteRenderer implements Renderer {
      */
     protected void copyDirectory(File source, File destination) throws IOException {
         if (source.exists()) {
-            DirectoryScanner scanner = new DirectoryScanner();
-
-            String[] includedResources = {"**/*"};
-
-            scanner.setIncludes(includedResources);
-
-            scanner.addDefaultExcludes();
-
-            scanner.setBasedir(source);
-
-            scanner.scan();
-
-            List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
-
-            for (String name : includedFiles) {
+            for (String name : getFileNames(source, "**/*", null, true)) {
                 File sourceFile = new File(source, name);
-
                 File destinationFile = new File(destination, name);
 
-                FileUtils.copyFile(sourceFile, destinationFile);
+                if (sourceFile.getCanonicalPath().equals(destinationFile.getCanonicalPath())) {
+                    continue;
+                }
+                Files.createDirectories(destinationFile.getParentFile().toPath());
+                Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         }
     }
@@ -1137,13 +1133,13 @@ public class DefaultSiteRenderer implements Renderer {
         LOGGER.debug("Validating: " + resource);
 
         try {
-            String content = IOUtil.toString(new BufferedReader(source));
+            String content = IOUtils.toString(new BufferedReader(source));
 
             new XmlValidator().validate(content);
 
             return new StringReader(content);
         } finally {
-            IOUtil.close(source);
+            IOUtils.closeQuietly(source);
         }
     }
 
@@ -1185,8 +1181,124 @@ public class DefaultSiteRenderer implements Renderer {
         }
     }
 
+    /**
+     * Scans a directory with the same Ant-style pattern semantics as the plexus-utils scanner.
+     * When requested, the scanner's default excludes (VCS metadata, editor backups, and so on)
+     * are applied in addition to the caller's excludes.
+     */
+    static List<String> getFileNames(File basedir, String includes, String excludes, boolean addDefaultExcludes)
+            throws IOException {
+        List<Pattern> includePatterns = compilePatterns(includes);
+        List<Pattern> excludePatterns = compilePatterns(excludes);
+        if (addDefaultExcludes) {
+            for (String pattern : DEFAULT_EXCLUDES) {
+                excludePatterns.add(toRegexPattern(pattern));
+            }
+        }
+
+        Path basePath = basedir.toPath();
+        try (Stream<Path> paths = Files.walk(basePath)) {
+            return paths.filter(Files::isRegularFile)
+                    .map(path -> basePath.relativize(path).toString().replace(File.separatorChar, '/'))
+                    .filter(name -> matchesAny(name, includePatterns))
+                    .filter(name -> !matchesAny(name, excludePatterns))
+                    .sorted()
+                    .collect(Collectors.toList());
+        }
+    }
+
+    private static List<Pattern> compilePatterns(String patterns) {
+        List<Pattern> result = new ArrayList<>();
+        if (patterns != null) {
+            for (String pattern : StringUtils.split(patterns, ",")) {
+                result.add(toRegexPattern(pattern));
+            }
+        }
+        return result;
+    }
+
+    private static boolean matchesAny(String name, List<Pattern> patterns) {
+        for (Pattern pattern : patterns) {
+            if (pattern.matcher(name).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Converts an Ant-style path pattern into a regular expression. {@code **} matches across
+     * directory boundaries, {@code *} and {@code ?} match within a single segment.
+     */
+    private static Pattern toRegexPattern(String antPattern) {
+        StringBuilder regex = new StringBuilder();
+        for (int i = 0; i < antPattern.length(); i++) {
+            char c = antPattern.charAt(i);
+            if (c == '*') {
+                if (i + 1 < antPattern.length() && antPattern.charAt(i + 1) == '*') {
+                    i++;
+                    if (i + 1 < antPattern.length() && antPattern.charAt(i + 1) == '/') {
+                        i++;
+                        regex.append("(?:.*/)?");
+                    } else {
+                        regex.append(".*");
+                    }
+                } else {
+                    regex.append("[^/]*");
+                }
+            } else if (c == '?') {
+                regex.append("[^/]");
+            } else {
+                if ("\\.[]{}()+-^$|".indexOf(c) >= 0) {
+                    regex.append('\\');
+                }
+                regex.append(c);
+            }
+        }
+        return Pattern.compile(regex.toString());
+    }
+
+    private static final String[] DEFAULT_EXCLUDES = {
+        "**/*~",
+        "**/#*#",
+        "**/.#*",
+        "**/%*%",
+        "**/._*",
+        "**/CVS",
+        "**/CVS/**",
+        "**/RCS",
+        "**/RCS/**",
+        "**/SCCS",
+        "**/SCCS/**",
+        "**/vssver.scc",
+        "**/project.pj",
+        "**/.svn",
+        "**/.svn/**",
+        "**/.arch-ids",
+        "**/.arch-ids/**",
+        "**/.bzr",
+        "**/.bzr/**",
+        "**/.MySCMServerInfo",
+        "**/.DS_Store",
+        "**/.metadata",
+        "**/.metadata/**",
+        "**/.hg",
+        "**/.hg/**",
+        "**/.git",
+        "**/.git/**",
+        "**/BitKeeper",
+        "**/BitKeeper/**",
+        "**/ChangeSet",
+        "**/ChangeSet/**",
+        "**/_darcs",
+        "**/_darcs/**",
+        "**/.darcsrepo",
+        "**/.darcsrepo/**",
+        "**/-darcs-backup*",
+        "**/.darcs-temp-mail"
+    };
+
     private static void closeZipFile(ZipFile zipFile) {
-        // TODO: move to plexus utils
         try {
             zipFile.close();
         } catch (IOException e) {

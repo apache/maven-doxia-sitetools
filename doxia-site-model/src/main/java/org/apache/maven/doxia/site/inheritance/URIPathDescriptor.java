@@ -21,7 +21,7 @@ package org.apache.maven.doxia.site.inheritance;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.codehaus.plexus.util.PathTool;
+import org.apache.maven.doxia.site.PathTool;
 
 /**
  * Describes a link that may be absolute or relative, and that is anchored to an absolute URI.

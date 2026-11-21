@@ -18,7 +18,6 @@
  */
 package org.apache.maven.doxia.site;
 
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
@@ -28,7 +27,8 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  */
 public class SiteUtils {
     public static boolean isLink(String href) {
-        return StringUtils.isNotBlank(href)
+        return href != null
+                && !href.trim().isEmpty()
                 && (startsWithAnyIgnoreCase(href, "http:/", "https:/", "ftp:/", "mailto:", "file:/")
                         || href.contains("://"));
     }
