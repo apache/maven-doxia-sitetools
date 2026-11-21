@@ -90,7 +90,8 @@ public class YourOwnMojo extends AbstractMojo {
 }
 ```
 
-`getSiteLocales(null)` returns only `Locale.ROOT`, the default site locale. `getRelativePath(to, from)` computes a
+`getSiteLocales(null)` returns only `SiteTool.DEFAULT_LOCALE`, the [default site locale](./index.html#Default_Locale):
+`Locale.ROOT` unless the `maven.doxiaSitetools.defaultLocale` system property names another one. `getRelativePath(to, from)` computes a
 relative link between two locations and treats `from` as a directory.
 
 ## References

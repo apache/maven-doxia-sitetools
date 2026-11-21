@@ -35,6 +35,24 @@ The main entry point is the [SiteTool](./apidocs/org/apache/maven/doxia/tools/Si
 
 [Using the SiteTool in a Mojo](./usage.html) shows how to read the site descriptor of a project from your own plugin.
 
+## Default Locale
+
+The default site, the one generated at the top of the output directory, uses the root locale: it reads `site.xml`
+and the untranslated texts. Since Doxia Sitetools 2.2.0, the system property `maven.doxiaSitetools.defaultLocale`
+sets another locale for it, in the form of the Maven Site Plugin&apos;s `locales` parameter (`en`, `en_US`) or as a
+language tag (`en-US`). With the property set to `de`, the default site reads `site_de.xml` when it exists and
+falls back to `site.xml`, as a translated site does. A parent descriptor resolved from a repository falls back to
+the plain `site` classifier, the one under which a parent attaches its `site.xml`.
+
+The property is read once, when the `SiteTool` class is loaded, so set it for the JVM that runs Maven, for example
+in `.mvn/jvm.config`:
+
+```
+-Dmaven.doxiaSitetools.defaultLocale=en
+```
+
+Under the Maven Daemon (mvnd), a daemon keeps the value it started with.
+
 ## `site.xml` Model Interpolation
 
 Interpolation of [`site.xml` model](../doxia-site-model/site.html) injects Maven project&apos;s information, replacing `${...}` with calculated values like it happens in [Maven model interpolation](/ref/current/maven-model-builder/#Model_Interpolation).
