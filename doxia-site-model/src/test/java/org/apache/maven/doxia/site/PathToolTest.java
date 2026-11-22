@@ -18,11 +18,13 @@
  */
 package org.apache.maven.doxia.site;
 
-import java.io.File;
-
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Checks that {@link PathTool} keeps the behavior of the plexus-utils implementation it replaces.
@@ -63,13 +65,21 @@ class PathToolTest {
     }
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void relativeFilePath() {
-        assertEquals(
-                "java" + File.separator + "bin", PathTool.getRelativeFilePath("/usr/local", "/usr/local/java/bin"));
-        assertEquals(
-                ".." + File.separator + ".." + File.separator,
-                PathTool.getRelativeFilePath("/usr/local/java/bin", "/usr/local/"));
+        assertEquals("java/bin", PathTool.getRelativeFilePath("/usr/local", "/usr/local/java/bin"));
+        assertEquals("../../", PathTool.getRelativeFilePath("/usr/local/java/bin", "/usr/local/"));
         assertEquals("", PathTool.getRelativeFilePath(null, "/usr/local"));
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void relativeFilePathOnWindows() {
+        assertEquals("java\\bin", PathTool.getRelativeFilePath("c:\\tools", "c:\\tools\\java\\bin"));
+        assertEquals("java\\bin\\", PathTool.getRelativeFilePath("c:\\tools", "c:\\tools\\java\\bin\\"));
+        assertEquals("..\\..", PathTool.getRelativeFilePath("c:\\tools\\java\\bin", "c:\\tools"));
+        assertEquals("", PathTool.getRelativeFilePath(null, "c:\\tools"));
+        assertNull(PathTool.getRelativeFilePath("c:\\tools", "d:\\tools"));
     }
 
     @Test

@@ -1211,6 +1211,15 @@ public class DefaultSiteRenderer implements Renderer {
         List<Pattern> result = new ArrayList<>();
         if (patterns != null) {
             for (String pattern : StringUtils.split(patterns, ",")) {
+                // same normalization as the plexus-utils scanner: trimmed, either separator, and a
+                // trailing separator meaning everything below that directory
+                pattern = pattern.trim().replace('\\', '/');
+                if (pattern.isEmpty()) {
+                    continue;
+                }
+                if (pattern.endsWith("/")) {
+                    pattern += "**";
+                }
                 result.add(toRegexPattern(pattern));
             }
         }
