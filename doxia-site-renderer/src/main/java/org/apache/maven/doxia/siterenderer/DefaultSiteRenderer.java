@@ -67,6 +67,7 @@ import java.util.zip.ZipFile;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.Doxia;
@@ -119,8 +120,6 @@ import org.eclipse.aether.version.VersionConstraint;
 import org.eclipse.aether.version.VersionScheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 
 /**
  * <p>DefaultSiteRenderer class.</p>
@@ -241,7 +240,7 @@ public class DefaultSiteRenderer implements Renderer {
             String name = it.next();
 
             // Take care of extension case
-            if (!endsWithIgnoreCase(name, extension)) {
+            if (!Strings.CI.endsWith(name, extension)) {
                 it.remove();
             }
         }
@@ -1148,17 +1147,17 @@ public class DefaultSiteRenderer implements Renderer {
      * Markdown.
      */
     static boolean isVelocityDocument(String document, String extension) {
-        return endsWithIgnoreCase(document, ".vm") || endsWithIgnoreCase(document, ".vm." + extension);
+        return Strings.CI.endsWith(document, ".vm") || Strings.CI.endsWith(document, ".vm." + extension);
     }
 
     /**
      * Removes the Velocity extension: {@code index.md.vm} and {@code index.vm.md} give {@code index.md}.
      */
     static String withoutVelocityExtension(String document, String extension) {
-        if (endsWithIgnoreCase(document, ".vm")) {
+        if (Strings.CI.endsWith(document, ".vm")) {
             return document.substring(0, document.length() - ".vm".length());
         }
-        if (endsWithIgnoreCase(document, ".vm." + extension)) {
+        if (Strings.CI.endsWith(document, ".vm." + extension)) {
             return document.substring(0, document.length() - (".vm." + extension).length())
                     + '.'
                     + document.substring(document.length() - extension.length());
