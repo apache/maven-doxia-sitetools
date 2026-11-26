@@ -38,13 +38,19 @@ import java.io.Writer;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystemLoopException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -58,8 +64,6 @@ import java.util.Properties;
 import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -1123,7 +1127,11 @@ public class DefaultSiteRenderer implements Renderer {
                     continue;
                 }
                 Files.createDirectories(destinationFile.getParentFile().toPath());
-                Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(
+                        sourceFile.toPath(),
+                        destinationFile.toPath(),
+                        StandardCopyOption.REPLACE_EXISTING,
+                        StandardCopyOption.COPY_ATTRIBUTES);
             }
         }
     }
@@ -1196,14 +1204,33 @@ public class DefaultSiteRenderer implements Renderer {
         }
 
         Path basePath = basedir.toPath();
-        try (Stream<Path> paths = Files.walk(basePath)) {
-            return paths.filter(Files::isRegularFile)
-                    .map(path -> basePath.relativize(path).toString().replace(File.separatorChar, '/'))
-                    .filter(name -> matchesAny(name, includePatterns))
-                    .filter(name -> !matchesAny(name, excludePatterns))
-                    .sorted()
-                    .collect(Collectors.toList());
-        }
+        List<String> names = new ArrayList<>();
+        // follow directory symbolic links, as the plexus-utils scanner did by default
+        Files.walkFileTree(
+                basePath, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                        if (attrs.isRegularFile()) {
+                            String name = basePath.relativize(file).toString().replace(File.separatorChar, '/');
+                            if (matchesAny(name, includePatterns) && !matchesAny(name, excludePatterns)) {
+                                names.add(name);
+                            }
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                        if (exc instanceof FileSystemLoopException) {
+                            // a link back to one of its own ancestors: the files below it are listed by the ancestor
+                            LOGGER.warn("Skipping symbolic link loop {}", file);
+                            return FileVisitResult.CONTINUE;
+                        }
+                        throw exc;
+                    }
+                });
+        Collections.sort(names);
+        return names;
     }
 
     private static List<Pattern> compilePatterns(String patterns) {
