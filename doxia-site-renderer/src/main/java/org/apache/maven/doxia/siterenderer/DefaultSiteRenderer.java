@@ -1127,11 +1127,8 @@ public class DefaultSiteRenderer implements Renderer {
                     continue;
                 }
                 Files.createDirectories(destinationFile.getParentFile().toPath());
-                Files.copy(
-                        sourceFile.toPath(),
-                        destinationFile.toPath(),
-                        StandardCopyOption.REPLACE_EXISTING,
-                        StandardCopyOption.COPY_ATTRIBUTES);
+                Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.setLastModifiedTime(destinationFile.toPath(), Files.getLastModifiedTime(sourceFile.toPath()));
             }
         }
     }
