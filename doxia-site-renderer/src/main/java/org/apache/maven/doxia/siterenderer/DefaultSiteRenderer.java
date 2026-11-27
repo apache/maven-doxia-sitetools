@@ -56,6 +56,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -162,7 +163,7 @@ public class DefaultSiteRenderer implements Renderer {
     private static final String TOOLS_LOCATION = "META-INF/maven/site-tools.xml";
 
     /** Template properties that parsers get from their context in another form. */
-    private static final Collection<String> TEMPLATE_ONLY_PROPERTIES =
+    private static final Set<String> TEMPLATE_ONLY_PROPERTIES =
             new HashSet<>(Arrays.asList("inputEncoding", "outputEncoding"));
 
     private static final String DOXIA_SITE_RENDERER_VERSION = getSiteRendererVersion();
